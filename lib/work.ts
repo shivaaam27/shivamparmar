@@ -6,6 +6,8 @@ import type { Tone } from './content';
  * To add work, add a project to a sub-category. A project with `images`
  * gets its own page at /work/<slug>; one without is shown as "Coming soon".
  * Rename or add sub-categories freely — filters, counts and links follow.
+ * Photography: each shoot (CocoZuri, Dar es Salaam…) is its own sub-category
+ * of Photography, holding one project with that shoot's pictures.
  */
 
 export type WorkImage = { src: string; alt: string; caption?: string };
@@ -65,6 +67,25 @@ export const categories: Category[] = [
     slug: 'photography',
     name: 'Photography',
     subcategories: [
+      {
+        slug: 'cocozuri',
+        name: 'CocoZuri',
+        projects: [
+          {
+            slug: 'cocozuri',
+            title: 'CocoZuri',
+            tone: 'oxblood',
+            cover: '/images/cocozuri-cookies.jpg',
+            summary: 'Product photography for CocoZuri Chocolat, chocolate made in Tanzania: pralines, cookies and the hazelnuts that go into them.',
+            images: [
+              { src: '/images/cocozuri-pralines.jpg', alt: 'A gold tray of twelve CocoZuri pralines on white marble, seen from above', caption: 'Praline box' },
+              { src: '/images/cocozuri-cookies.jpg', alt: 'Chocolate cookies in a CocoZuri box balanced on the edge of a glass shelf', caption: 'Cookies' },
+              { src: '/images/cocozuri-cookie-break.jpg', alt: 'Two hands breaking a chocolate cookie in half against a white background', caption: 'The break' },
+              { src: '/images/cocozuri-hazelnuts.jpg', alt: 'Chocolate-coated hazelnuts tumbling inside a coating pan', caption: 'Hazelnuts in the pan' },
+            ],
+          },
+        ],
+      },
       { slug: 'portraits', name: 'Portraits', projects: [soon('portraits-soon', 'amber')] },
       { slug: 'street', name: 'Street', projects: [soon('street-soon', 'sand')] },
       { slug: 'events', name: 'Events', projects: [soon('events-soon', 'cyan')] },
