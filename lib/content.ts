@@ -49,8 +49,9 @@ export const about = {
   link: { label: 'Read more about me', href: '/about' },
   /** image: '/about-1.jpg' replaces the tonal placeholder */
   images: [
-    { tone: 'cyan' as Tone, image: '/images/about-waves.jpg' as string | null, alt: 'Waves breaking over dark rocks' },
+    { tone: 'stone' as Tone, image: '/images/about-floating-ui.jpg' as string | null, alt: 'Someone at a laptop surrounded by floating panels of the Task Management dashboard' },
     { tone: 'ink' as Tone, image: '/images/about-task-management.jpg' as string | null, alt: 'Someone looking at a studio display showing the Task Management app' },
+    { tone: 'ink' as Tone, image: '/images/about-ipad.jpg' as string | null, alt: 'A hand with a stylus over an iPad showing the Task Management dashboard' },
   ],
 };
 
