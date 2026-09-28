@@ -2,6 +2,9 @@ import { NextResponse, type NextRequest } from 'next/server';
 import { SESSION_COOKIE, STATE_COOKIE, allowedUser, authConfigured, cookieBase, createSession } from '@/lib/auth';
 
 const notFound = () => new NextResponse('Not found', { status: 404 });
+/** Setup problems get a plain explanation; only "not the owner" stays a silent 404. */
+const problem = (text: string) =>
+  new NextResponse(`${text}\n\nTry again: /insights`, { status: 400, headers: { 'Content-Type': 'text/plain; charset=utf-8' } });
 
 /**
  * Step 2: GitHub sends the browser back with a code. Check the state, swap
@@ -13,7 +16,11 @@ export async function GET(req: NextRequest) {
   const code = req.nextUrl.searchParams.get('code');
   const state = req.nextUrl.searchParams.get('state');
   const expected = req.cookies.get(STATE_COOKIE)?.value;
-  if (!code || !state || !expected || state !== expected) return notFound();
+  const ghError = req.nextUrl.searchParams.get('error_description') ?? req.nextUrl.searchParams.get('error');
+  if (ghError) return problem(`GitHub stopped the sign-in: ${ghError}`);
+  if (!code || !state || !expected || state !== expected) {
+    return problem('The sign-in link expired or was opened in a different browser. Start again from /insights.');
+  }
 
   const tokenRes = await fetch('https://github.com/login/oauth/access_token', {
     method: 'POST',
@@ -26,8 +33,13 @@ export async function GET(req: NextRequest) {
     }),
     cache: 'no-store',
   });
-  const token = (await tokenRes.json().catch(() => null))?.access_token as string | undefined;
-  if (!token) return notFound();
+  const tokenJson = await tokenRes.json().catch(() => null);
+  const token = tokenJson?.access_token as string | undefined;
+  if (!token) {
+    return problem(`GitHub didn't accept the sign-in (${tokenJson?.error_description ?? tokenJson?.error ?? tokenRes.status}). `
+      + 'Check GITHUB_CLIENT_ID and GITHUB_CLIENT_SECRET in Vercel, and that the app\'s callback URL is '
+      + new URL('/api/auth/github/callback', req.nextUrl.origin).toString());
+  }
 
   const userRes = await fetch('https://api.github.com/user', {
     headers: { Authorization: `Bearer ${token}`, Accept: 'application/vnd.github+json', 'User-Agent': 'shivamparmar-insights' },

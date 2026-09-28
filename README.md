@@ -83,6 +83,7 @@ Setup (all in Vercel → Project → Settings → Environment Variables; see `.e
    Put its ID and secret in `GITHUB_CLIENT_ID` / `GITHUB_CLIENT_SECRET`.
 3. `INSIGHTS_GITHUB_USER`: your GitHub username. `AUTH_SECRET`: any long random string.
 4. Redeploy. Opening /insights on a device also stops that device's visits being counted.
+5. Signed in, open `/api/insights/status` to check each setting and whether Umami answers.
 
 Tracked actions: work filters, project opens, contact clicks, and reading the About intro to the end
 (see `lib/track.ts`). Charts and lists read Umami's API in `lib/umami.ts`, refreshed every minute.

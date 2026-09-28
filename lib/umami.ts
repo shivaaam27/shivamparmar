@@ -265,6 +265,19 @@ function sample(range: RangeKey, note: string): Insights {
 
 /* ------------------------------------------------------------------ api */
 
+/** For the status check: which credential is set, and does Umami answer. */
+export async function umamiStatus() {
+  const via = API_KEY ? 'api key' : SHARE_ID ? 'share link' : 'not set';
+  if (!connected()) return { via, ok: false, detail: 'Add UMAMI_SHARE_ID in Vercel' };
+  try {
+    const now = Date.now();
+    const s = await get<Record<string, unknown>>('/stats', { startAt: now - 86400e3, endAt: now });
+    return { via, ok: true, detail: `Umami answered; last 24h visitors: ${JSON.stringify(s.visitors)}` };
+  } catch (e) {
+    return { via, ok: false, detail: (e as Error).message };
+  }
+}
+
 export async function getInsights(range: RangeKey): Promise<Insights> {
   if (!connected()) return sample(range, 'Sample data. Add UMAMI_SHARE_ID in Vercel to see your real numbers.');
   try {
