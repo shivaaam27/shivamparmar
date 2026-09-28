@@ -145,7 +145,7 @@ export default function Hero() {
           ))}
         </div>
         <p className="hero__descriptor mono">
-          {hero.descriptor[0]}<br />{hero.descriptor[1]}
+          {hero.descriptor.map((line, i) => <span key={i}>{i > 0 && <br />}{line}</span>)}
         </p>
       </div>
 

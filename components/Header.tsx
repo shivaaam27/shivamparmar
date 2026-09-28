@@ -26,7 +26,7 @@ export default function Header() {
   return (
     <>
       <header className="site-header">
-        <a className="wordmark" href="#top" aria-label={`${site.name} — home`}>{site.name}</a>
+        <a className="wordmark" href="/#top" aria-label={`${site.name} — home`}>{site.name}</a>
         <button
           ref={btn}
           className="menu-btn"

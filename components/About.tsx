@@ -20,7 +20,9 @@ export default function About() {
         </figure>
         <div className="about__text reveal" data-delay="3">
           <p className="lead">{about.body}</p>
-          <p className="about__sign">{about.sign}</p>
+          <a className="about__sign" href={about.link.href}>
+            {about.link.label}<span aria-hidden="true">→</span>
+          </a>
         </div>
       </div>
     </section>

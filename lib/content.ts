@@ -12,17 +12,18 @@ export const site = {
 };
 
 export const nav = [
-  { label: 'Home', href: '#top' },
-  { label: 'About', href: '#about' },
-  { label: 'Work', href: '#work' },
-  { label: 'Contact', href: '#contact' },
+  { label: 'Home', href: '/#top' },
+  { label: 'About', href: '/#about' },
+  { label: 'Work', href: '/#work' },
+  { label: 'Contact', href: '/#contact' },
 ];
 
 export const hero = {
   /** Letters that jumble; the centre row resolves into this word. */
   word: 'SHIVAM',
-  descriptor: ['Lorem ipsum based', 'dolor sit amet'],
-  footer: ['Lorem ipsum', 'Dolor', 'Sit amet', 'Consectetur'],
+  /** Small mono lines under the name (one or more). */
+  descriptor: ['Since 1998'],
+  footer: ['Pharmacist', 'Photographer', 'Claude Code & AI expert', 'Building systems'],
   /** Put a photo in /public and set e.g. '/hero.jpg'. Set to null for the Three.js light instead. */
   image: '/images/hero-boat.jpg' as string | null,
   /** Optional portrait crop used on phones (screens up to 720px wide). */
@@ -43,9 +44,9 @@ export type Tone =
 
 export const about = {
   tag: 'About',
-  headline: ['Lorem ipsum', 'dolor sit amet,', 'consectetur elit'],
+  headline: ['Hi, I’m Shivam,', 'pharmacist, photographer', 'and systems builder.'],
   body: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua — ut enim ad minim veniam, quis nostrud exercitation.',
-  sign: 'Lorem in Ipsum, 2026.',
+  link: { label: 'Read more about me', href: '/about' },
   /** image: '/about-1.jpg' replaces the tonal placeholder */
   images: [
     { tone: 'cyan' as Tone, image: '/images/about-waves.jpg' as string | null, alt: 'Waves breaking over dark rocks' },
