@@ -11,7 +11,14 @@ import 'server-only';
  */
 
 const WEBSITE_ID = process.env.NEXT_PUBLIC_UMAMI_WEBSITE_ID || 'c8e39f81-6be1-4b1b-a492-801b885b6347';
-const SHARE_ID = process.env.UMAMI_SHARE_ID?.trim().split('/').pop();   // accepts the id or the whole share URL
+/** Accepts the bare id or the whole share URL (…/share/<id> or …/share/<id>/<name>). */
+function shareIdFrom(raw?: string) {
+  const v = raw?.trim();
+  if (!v) return undefined;
+  const m = v.match(/\/share\/([^/?#]+)/);
+  return m ? m[1] : v.replace(/[/?#].*$/, '');
+}
+const SHARE_ID = shareIdFrom(process.env.UMAMI_SHARE_ID);
 const API_KEY = process.env.UMAMI_API_KEY;
 const connected = () => Boolean(SHARE_ID || API_KEY);
 
