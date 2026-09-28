@@ -22,13 +22,42 @@ const SHARE_ID = shareIdFrom(process.env.UMAMI_SHARE_ID);
 const API_KEY = process.env.UMAMI_API_KEY;
 const connected = () => Boolean(SHARE_ID || API_KEY);
 
-/** Base URL and auth header, from whichever credential is set. */
-async function access(): Promise<{ base: string; website: string; headers: Record<string, string> }> {
+type Access = { base: string; website: string; headers: Record<string, string> };
+
+/**
+ * Umami Cloud answers its share lookup on different hosts depending on its
+ * version, so try each until one hands out a token that can actually read
+ * this website. The winner is remembered for half an hour.
+ */
+const SHARE_HOSTS = ['https://api.umami.is/v1', 'https://cloud.umami.is/api', 'https://cloud.umami.is/analytics/api'];
+let remembered: { access: Access; until: number } | null = null;
+/** What each attempt answered, for /api/insights/status. */
+export let shareAttempts: string[] = [];
+
+async function access(): Promise<Access> {
   if (API_KEY) return { base: 'https://api.umami.is/v1', website: WEBSITE_ID, headers: { 'x-umami-api-key': API_KEY } };
-  const res = await fetch(`https://cloud.umami.is/api/share/${SHARE_ID}`, { next: { revalidate: 1800 } });
-  if (!res.ok) throw new Error(`share link answered ${res.status}`);
-  const { websiteId, token } = (await res.json()) as { websiteId: string; token: string };
-  return { base: 'https://cloud.umami.is/api', website: websiteId || WEBSITE_ID, headers: { 'x-umami-share-token': token } };
+  if (remembered && remembered.until > Date.now()) return remembered.access;
+  const attempts: string[] = [];
+  for (const base of SHARE_HOSTS) {
+    try {
+      const res = await fetch(`${base}/share/${SHARE_ID}`, { cache: 'no-store', headers: { Accept: 'application/json' } });
+      if (!res.ok) { attempts.push(`${base}/share → ${res.status}`); continue; }
+      const j = (await res.json()) as { token?: string; websiteId?: string; website?: { id?: string }; data?: { websiteId?: string } };
+      if (!j.token) { attempts.push(`${base}/share → no token in answer`); continue; }
+      const found: Access = { base, website: j.websiteId ?? j.website?.id ?? j.data?.websiteId ?? WEBSITE_ID, headers: { 'x-umami-share-token': j.token } };
+      // make sure the token can read stats on this host before trusting it
+      const probe = await fetch(`${base}/websites/${found.website}/active`, { cache: 'no-store', headers: { ...found.headers, Accept: 'application/json' } });
+      if (!probe.ok) { attempts.push(`${base}/share → token ok, reading stats → ${probe.status}`); continue; }
+      attempts.push(`${base} → connected`);
+      shareAttempts = attempts;
+      remembered = { access: found, until: Date.now() + 30 * 60e3 };
+      return found;
+    } catch (e) {
+      attempts.push(`${base} → ${(e as Error).message}`);
+    }
+  }
+  shareAttempts = attempts;
+  throw new Error(`share link not accepted (${attempts.join('; ')})`);
 }
 export const TIMEZONE = process.env.INSIGHTS_TIMEZONE || 'Africa/Dar_es_Salaam';
 
@@ -269,12 +298,15 @@ function sample(range: RangeKey, note: string): Insights {
 export async function umamiStatus() {
   const via = API_KEY ? 'api key' : SHARE_ID ? 'share link' : 'not set';
   if (!connected()) return { via, ok: false, detail: 'Add UMAMI_SHARE_ID in Vercel' };
+  remembered = null; // always re-check here
+  // show the id we read (first and last characters only), so a wrong value is easy to spot
+  const shareId = SHARE_ID ? `${SHARE_ID.slice(0, 3)}…${SHARE_ID.slice(-2)} (${SHARE_ID.length} characters)` : undefined;
   try {
     const now = Date.now();
     const s = await get<Record<string, unknown>>('/stats', { startAt: now - 86400e3, endAt: now });
-    return { via, ok: true, detail: `Umami answered; last 24h visitors: ${JSON.stringify(s.visitors)}` };
+    return { via, shareId, ok: true, detail: `Umami answered; last 24h visitors: ${JSON.stringify(s.visitors)}`, attempts: shareAttempts };
   } catch (e) {
-    return { via, ok: false, detail: (e as Error).message };
+    return { via, shareId, ok: false, detail: (e as Error).message, attempts: shareAttempts };
   }
 }
 
