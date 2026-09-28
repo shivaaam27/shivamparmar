@@ -160,6 +160,23 @@ export const categories: Category[] = [
           },
         ],
       },
+      {
+        slug: 'moshi',
+        name: 'Moshi',
+        projects: [
+          {
+            slug: 'moshi',
+            title: 'Moshi',
+            tone: 'olive',
+            cover: '/images/moshi-town.jpg',
+            summary: 'Moshi, Tanzania, from the air: the town and its airstrip in morning haze, and the patchwork of fields meeting the forest on the slopes above.',
+            images: [
+              { src: '/images/moshi-town.jpg', alt: 'Aerial view over Moshi town in morning haze, rooftops and streets leading to a dry airstrip', caption: 'The town' },
+              { src: '/images/moshi-fields.jpg', alt: 'Aerial view of patchwork farm fields and red dirt paths on a hillside, a dense pine forest in front', caption: 'Fields and forest' },
+            ],
+          },
+        ],
+      },
       { slug: 'portraits', name: 'Portraits', projects: [soon('portraits-soon', 'amber')] },
       { slug: 'street', name: 'Street', projects: [soon('street-soon', 'sand')] },
       { slug: 'events', name: 'Events', projects: [soon('events-soon', 'cyan')] },
