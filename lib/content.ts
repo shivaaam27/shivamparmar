@@ -101,7 +101,7 @@ export const work = {
   ],
   /** image: '/work/01.jpg' replaces the tonal placeholder */
   items: [
-    { title: 'Lorem ipsum', tone: 'ink' },
+    { title: 'Files Management', tone: 'ink', image: '/images/work-files-management.jpg', alt: 'Two people at a monitor showing the Files Management app' },
     { title: 'Dolor sit', tone: 'amber' },
     { title: 'Amet', tone: 'rose' },
     { title: 'Consectetur', tone: 'stone' },
