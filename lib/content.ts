@@ -24,9 +24,11 @@ export const hero = {
   descriptor: ['Lorem ipsum based', 'dolor sit amet'],
   footer: ['Lorem ipsum', 'Dolor', 'Sit amet', 'Consectetur'],
   /** Put a photo in /public and set e.g. '/hero.jpg'. Set to null for the Three.js light instead. */
-  image: '/images/hero-beach.jpg' as string | null,
+  image: '/images/hero-boat.jpg' as string | null,
   /** 'light' photo (bright, like the beach) keeps dark text; 'dark' photo switches text to white. */
-  imageTone: 'light' as 'light' | 'dark',
+  imageTone: 'dark' as 'light' | 'dark',
+  /** Where the name sits on desktop: 'left' keeps it in open water beside the boat; 'center' is the Rowan layout. */
+  align: 'left' as 'left' | 'center',
   /** Replay the intro when scrolling back to the top. */
   replayOnReturn: false,
 };
@@ -43,7 +45,7 @@ export const about = {
   /** image: '/about-1.jpg' replaces the tonal placeholder */
   images: [
     { tone: 'cyan' as Tone, image: '/images/about-waves.jpg' as string | null, alt: 'Waves breaking over dark rocks' },
-    { tone: 'cyan' as Tone, image: '/images/about-boat.jpg' as string | null, alt: 'A catamaran sailing on open water, seen from above' },
+    { tone: 'sand' as Tone, image: '/images/about-beach.jpg' as string | null, alt: 'A lone figure walking across white sand, seen from above' },
   ],
 };
 

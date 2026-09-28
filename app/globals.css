@@ -91,6 +91,7 @@ img { display: block; max-width: 100%; }
   color: #fff;
   mix-blend-mode: difference;   /* reads dark on paper, light on images */
 }
+.site-header--on-image { mix-blend-mode: normal; }
 .wordmark {
   font: 400 clamp(1.5rem, 2vw, 1.875rem)/1 var(--serif);
   letter-spacing: -.01em;
@@ -164,6 +165,10 @@ body.menu-open { overflow: hidden; }
 .hero--image .jumble__cell { color: rgba(255,255,255,.45); }
 .hero--image .jumble__cell.is-locked { color: #fff; }
 
+@media (min-width: 721px) {
+  .hero--left { justify-items: start; }
+  .hero--left .hero__stage { margin-left: calc(var(--cell) * -.2); }  /* optical: first letter aligns with the gutter */
+}
 .hero__stage {
   --cell: clamp(2.9rem, min(9.5vw, 11.5vh), 7.25rem);
   position: relative; z-index: 1;

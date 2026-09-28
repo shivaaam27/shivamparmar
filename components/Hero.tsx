@@ -107,6 +107,17 @@ export default function Hero() {
     document.fonts?.ready.then(start);
     const fallback = setTimeout(start, 1200);
 
+    // over a dark photo the header switches to plain white (the paper-page inversion goes murky)
+    if (hero.image && hero.imageTone === 'dark') {
+      const header = document.querySelector('.site-header');
+      ScrollTrigger.create({
+        trigger: root.current,
+        start: 'top bottom',
+        end: 'bottom top+=80',
+        toggleClass: header ? { targets: header, className: 'site-header--on-image' } : undefined,
+      });
+    }
+
     if (hero.replayOnReturn) {
       ScrollTrigger.create({ trigger: root.current, start: 'top top', end: 'bottom 40%', onEnterBack: play });
     }
@@ -115,7 +126,7 @@ export default function Hero() {
   }, { scope: root });
 
   return (
-    <section ref={root} className={`hero${hero.image ? (hero.imageTone === 'dark' ? ' hero--image' : ' hero--image-light') : ''}`} id="top" aria-label="Intro">
+    <section ref={root} className={`hero hero--${hero.align}${hero.image ? (hero.imageTone === 'dark' ? ' hero--image' : ' hero--image-light') : ''}`} id="top" aria-label="Intro">
       <div className="hero__media" aria-hidden="true">
         {hero.image ? <img src={hero.image} alt="" fetchPriority="high" /> : <HeroAtmosphere />}
       </div>
