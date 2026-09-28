@@ -47,12 +47,6 @@ export const about = {
   headline: ['Hi, I’m Shivam,', 'pharmacist, photographer', 'and systems builder.'],
   body: 'I help brands design and build custom systems that work beautifully: functional at their core and considered in every detail. Alongside photography and design, from posters and websites to social posts and video, I build AI workflows that save hours of work. I pair technical precision with emotional depth, so what I make resonates with customers, teams and communities, and builds lasting growth.',
   link: { label: 'Read more about me', href: '/about' },
-  /** image: '/about-1.jpg' replaces the tonal placeholder */
-  images: [
-    { tone: 'stone' as Tone, image: '/images/about-floating-ui.jpg' as string | null, alt: 'Someone at a laptop surrounded by floating panels of the Task Management dashboard' },
-    { tone: 'ink' as Tone, image: '/images/about-task-management.jpg' as string | null, alt: 'Someone looking at a studio display showing the Task Management app' },
-    { tone: 'ink' as Tone, image: '/images/about-ipad.jpg' as string | null, alt: 'A hand with a stylus over an iPad showing the Task Management dashboard' },
-  ],
 };
 
 /** The full /about page. */
@@ -102,9 +96,9 @@ export const work = {
   /** image: '/work/01.jpg' replaces the tonal placeholder */
   items: [
     { title: 'Files Management', tone: 'ink', image: '/images/work-files-management.jpg', alt: 'Two people at a monitor showing the Files Management app' },
-    { title: 'Dolor sit', tone: 'amber' },
-    { title: 'Amet', tone: 'rose' },
-    { title: 'Consectetur', tone: 'stone' },
+    { title: 'Task Management', tone: 'ink', image: '/images/work-task-management.jpg', alt: 'Someone looking at a studio display showing the Task Management app' },
+    { title: 'Dashboard', tone: 'stone', image: '/images/work-dashboard.jpg', alt: 'Someone at a laptop surrounded by floating panels of the Task Management dashboard' },
+    { title: 'Dashboard on iPad', tone: 'ink', image: '/images/work-dashboard-ipad.jpg', alt: 'A hand with a stylus over an iPad showing the Task Management dashboard' },
     { title: 'Adipiscing', tone: 'sand' },
     { title: 'Elit sed', tone: 'oxblood' },
     { title: 'Tempor', tone: 'sage' },

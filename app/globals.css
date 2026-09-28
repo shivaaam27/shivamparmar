@@ -321,13 +321,8 @@ body.menu-open { overflow: hidden; }
   column-gap: clamp(1rem, 2vw, 1.5rem);
   margin-top: clamp(2.5rem, 5vw, 4.5rem);
 }
-.about__img { overflow: hidden; }
-.about__img .ph { object-fit: cover; }
-.about__stack { grid-column: 3 / span 2; align-self: start; display: grid; gap: clamp(1rem, 2vw, 1.5rem); }
-.about__img--small { aspect-ratio: 4 / 5; }
-.about__img--large { grid-column: 5 / span 4; aspect-ratio: 4 / 5; }
 .about__text {
-  grid-column: 9 / span 4; align-self: end;
+  grid-column: 4 / span 6;
   display: grid; gap: clamp(1.5rem, 3vw, 2.75rem);
 }
 .about__sign {
@@ -475,9 +470,7 @@ body.menu-open { overflow: hidden; }
    Responsive
    ========================================================= */
 @media (max-width: 900px) {
-  .about__stack { grid-column: 1 / span 4; }
-  .about__img--large { grid-column: 5 / span 8; }
-  .about__text { grid-column: 3 / -1; margin-top: 2.5rem; }
+  .about__text { grid-column: 2 / -2; }
   .contact__cols { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
 
