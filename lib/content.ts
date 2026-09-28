@@ -25,9 +25,9 @@ export const hero = {
   descriptor: ['Since 1998'],
   footer: ['Pharmacist', 'Photographer', 'Claude Code & AI expert', 'Building systems'],
   /** Put a photo in /public and set e.g. '/hero.jpg'. Set to null for the Three.js light instead. */
-  image: '/images/hero-files.jpg' as string | null,
+  image: '/images/hero-dashboard.jpg' as string | null,
   /** Optional portrait crop used on phones (screens up to 720px wide). */
-  imageMobile: '/images/hero-files-portrait.jpg' as string | null,
+  imageMobile: '/images/hero-dashboard-portrait.jpg' as string | null,
   /** Which part of the photo stays in view when the screen crops it (CSS object-position). */
   imagePosition: '50% 50%',
   /** 'light' photo (bright, like the beach) keeps dark text; 'dark' photo switches text to white. */
