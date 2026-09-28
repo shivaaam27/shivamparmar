@@ -1,17 +1,30 @@
-# Shivam — landing page
+# Shivam Parmar — portfolio
 
-Plain HTML, CSS and JS, with no build step. Open `index.html` in a browser, or run any static server
-(`npx serve .`).
+Built with **Next.js** (React), **GSAP** for motion and TypeScript. It deploys to Vercel as is:
+import the repo at vercel.com and press Deploy, with no settings to change.
+
+## Run it locally
 
 ```
-index.html      the page: hero → about → work → contact → footer
-css/style.css   the design system (tokens at the top) and every section
-js/main.js      hero intro, scroll reveals, menu, image strips
+npm install
+npm run dev        # http://localhost:3000
+```
+
+## Where things live
+
+```
+lib/content.ts        ← ALL text, links and image paths. Edit this to change content.
+public/               ← put photos here (e.g. public/hero.jpg → '/hero.jpg' in content.ts)
+app/globals.css       design system: colours, fonts, spacing (tokens at the top)
+app/layout.tsx        fonts (self-hosted via next/font) + page shell
+app/page.tsx          section order: Hero → About → Work → Contact → Footer
+components/Hero.tsx   jumble → SHIVAM intro (GSAP timeline)
+components/Effects.tsx scroll reveals + label decoding (GSAP ScrollTrigger)
+components/Work.tsx   hover-expand image strips
+lib/motion.ts         shared GSAP setup and the scramble helper
 ```
 
 ## The system
-
-The seven reference images use seven different design languages. This page combines them into one:
 
 | Token   | Value                                        | From the reference                              |
 |---------|----------------------------------------------|-------------------------------------------------|
@@ -22,40 +35,24 @@ The seven reference images use seven different design languages. This page combi
 | Reading | **Inter Tight**, lead text ~18–22px           | VOIR description paragraph, sized up on purpose |
 | Labels  | **IBM Plex Mono**, uppercase                 | Rowan: "LOS ANGELES BASED" and the bottom row   |
 
-The rules are:
-
-- **Big and small, with little in between.** Headlines and the "Work" title are very large, body
-  text is large enough to read comfortably, and labels are small mono. Nothing is tiny.
-- **Space does the work.** Sections are separated by generous vertical padding (`--section`), not
-  by lines or boxes.
+- **Big and small, with little in between.** Headlines are very large, body text is comfortable to
+  read, and labels are small mono. Nothing is tiny.
+- **Space does the work.** Sections are separated by generous padding, not by lines or boxes.
 - **One marker.** Every section opens with the same `■ TAG`.
-- **One motion idea.** Letters jumble and then resolve. The hero does this at full scale, and the
-  section tags and the footer name repeat it briefly when they scroll into view.
-
-## Sections
-
-1. **Hero** uses the Rowan layout: wordmark at top left, menu at top right, centre title with a
-   mono descriptor beside it, and four labels along the bottom. The centre is a 6×5 grid of
-   S‑H‑I‑V‑A‑M letters that keep rolling. The middle row then locks into **SHIVAM** from left to
-   right, and the rest fade out. It plays once per page load and does not loop.
-2. **About** uses the VOIR layout: centred uppercase serif headline with the tag inline, two
-   offset images, and the description with a serif sign-off.
-3. **Work** follows the minimalism reference (a huge title, two readable meta columns, lots of
-   air), then the hover-expand strips. Hovering or focusing a strip expands it and collapses the
-   previous one. On phones the strips stack vertically and expand on tap.
-4. **Contact** has a large headline, an email link and three info columns. The footer shows the
-   name at full width.
+- **One motion idea.** Letters jumble and then resolve: at full scale in the hero, and briefly on
+  section tags and the footer name.
 
 ## Placeholders
 
-All copy is *lorem ipsum* so the layout can be judged without real content. Only the name and the
-section and nav labels are real. Replace the text in `index.html`.
+All copy is *lorem ipsum*. Images are tonal stand-ins. In `lib/content.ts`:
 
-- **Hero photo**: put `<img src="assets/hero.jpg" alt="">` inside `.hero__media`. The hero switches
-  to light text on a darkened photo automatically.
-- **Images**: each `<span class="ph" data-tone="…">` (and `<figure class="ph …">` in About) is a
-  tonal stand-in. Replace it with an `<img>`. Strip images get `object-fit: cover` automatically.
-- **Replay intro when scrolling back up**: set `REPLAY_ON_RETURN = true` in `js/main.js`.
+- `hero.image`: set to e.g. `'/hero.jpg'` and the hero switches to light text on the photo.
+- `about.images[n].image` and `work.items[n].image`: set a path and the photo replaces the stand-in.
+- `hero.replayOnReturn`: set to `true` to replay the intro when scrolling back to the top.
 
-Users who ask their system for reduced motion see the resolved name immediately, with no
-animation.
+## Adding more
+
+- **3D (Three.js):** `npm install three @react-three/fiber @react-three/drei`, then build a client
+  component with a `<Canvas>`.
+- **New pages:** add a folder, for example `app/work/page.tsx` for `/work`.
+- **Smooth scrolling:** `npm install lenis` works well alongside GSAP ScrollTrigger.
