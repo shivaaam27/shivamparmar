@@ -25,9 +25,9 @@ export const hero = {
   descriptor: ['Since 1998'],
   footer: ['Pharmacist', 'Photographer', 'Claude Code & AI expert', 'Building systems'],
   /** Put a photo in /public and set e.g. '/hero.jpg'. Set to null for the Three.js light instead. */
-  image: '/images/hero-signin.jpg' as string | null,
+  image: '/images/hero-files.jpg' as string | null,
   /** Optional portrait crop used on phones (screens up to 720px wide). */
-  imageMobile: '/images/hero-signin-portrait.jpg' as string | null,
+  imageMobile: '/images/hero-files-portrait.jpg' as string | null,
   /** Which part of the photo stays in view when the screen crops it (CSS object-position). */
   imagePosition: '50% 50%',
   /** 'light' photo (bright, like the beach) keeps dark text; 'dark' photo switches text to white. */
@@ -95,10 +95,10 @@ export const work = {
   ],
   /** image: '/work/01.jpg' replaces the tonal placeholder */
   items: [
-    { title: 'Files Management', tone: 'ink', image: '/images/work-files-management.jpg', alt: 'Two people at a monitor showing the Files Management app' },
-    { title: 'Task Management', tone: 'ink', image: '/images/work-task-management.jpg', alt: 'Someone looking at a studio display showing the Task Management app' },
+    { title: 'Sign in', tone: 'ink', image: '/images/work-signin.jpg', alt: 'Two people at a monitor showing the Task Management sign-in screen' },
     { title: 'Dashboard', tone: 'stone', image: '/images/work-dashboard.jpg', alt: 'Someone at a laptop surrounded by floating panels of the Task Management dashboard' },
     { title: 'Dashboard on iPad', tone: 'ink', image: '/images/work-dashboard-ipad.jpg', alt: 'A hand with a stylus over an iPad showing the Task Management dashboard' },
+    { title: 'Lorem ipsum', tone: 'amber' },
     { title: 'Adipiscing', tone: 'sand' },
     { title: 'Elit sed', tone: 'oxblood' },
     { title: 'Tempor', tone: 'sage' },
