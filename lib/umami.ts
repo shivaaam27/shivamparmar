@@ -133,6 +133,10 @@ export type Insights = {
   year: Day[];
   /** Page views by weekday (0 = Monday) × hour (0–23) over the last 4 weeks (independent of range). */
   rhythm: number[][];
+  /** Visitors and page views hour by hour over the last 4 weeks (independent of range). */
+  hourly: Point[];
+  /** Countries of people on the site in the last 5 minutes (own database only). */
+  liveCountries: Row[];
   lists: Record<ListKey, Row[]>;
 };
 
@@ -215,6 +219,8 @@ export async function fromUmami(range: RangeKey): Promise<Insights> {
     prevSeries: fillSeries(unit, startAt - ms, startAt, before.sessions, before.pageviews),
     year: fillSeries('day', yearStart, endAt, yearViews.sessions, yearViews.pageviews).map((p) => ({ t: p.t, visitors: p.visitors })),
     rhythm: toRhythm(hourViews.pageviews),
+    hourly: fillSeries('hour', rhythmStart, endAt, hourViews.sessions, hourViews.pageviews),
+    liveCountries: [],
     lists: Object.fromEntries((Object.keys(LISTS) as ListKey[]).map((k, i) => [k, lists[i]])) as Record<ListKey, Row[]>,
   };
 }
@@ -287,6 +293,14 @@ export function sample(range: RangeKey, note: string): Insights {
     const day = Math.exp(-((h - 11) ** 2) / 18) + 0.7 * Math.exp(-((h - 20) ** 2) / 10);
     return Math.round((d >= 5 ? 5 : 11) * day * (0.6 + rnd() * 0.8));
   }));
+  const hourly: Point[] = Array.from({ length: 28 * 24 }, (_, i) => {
+    const t = endAt - (28 * 24 - 1 - i) * 3600e3;
+    const d = new Date(t);
+    const h = d.getUTCHours() + 3;
+    const w = (d.getUTCDay() + 6) % 7;
+    const v = Math.max(0, Math.round((w >= 5 ? 1.2 : 2.6) * (Math.exp(-((h - 11) ** 2) / 14) + 0.6 * Math.exp(-((h - 20) ** 2) / 8)) * (0.3 + rnd() * 1.4) - 0.3));
+    return { t, visitors: v, pageviews: Math.round(v * (2 + rnd())) };
+  });
   const scale = (rows: [string, number][]) => rows.map(([label, share]) => ({ label, value: Math.max(1, Math.round(visitors * share)) }));
   return {
     source: 'sample',
@@ -299,6 +313,8 @@ export function sample(range: RangeKey, note: string): Insights {
     prevSeries,
     year,
     rhythm,
+    hourly,
+    liveCountries: [{ label: 'TZ', value: 2 }, { label: 'IN', value: 1 }],
     lists: {
       pages: scale([['/', 0.92], ['/work/task-management', 0.31], ['/about', 0.22], ['/work/files-management', 0.14]]),
       entries: scale([['/', 0.81], ['/work/task-management', 0.11], ['/about', 0.05]]),

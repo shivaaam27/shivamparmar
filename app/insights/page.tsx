@@ -1,27 +1,28 @@
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
-import {
-  ArrowDownRight, ArrowUpRight, BookOpen, CalendarDays, Clock, Compass, Download, FileText, FolderOpen,
-  Database, Languages, Link2, LogOut, Mail, Maximize2, MousePointerClick, Route, Smartphone, Timer, Users,
-} from 'lucide-react';
-import type { LucideIcon } from 'lucide-react';
+import { ArrowDownRight, ArrowUpRight, Database, Download, LogOut } from 'lucide-react';
 import { MIN_SECRET, authConfigured, currentUser, secretStrong } from '@/lib/auth';
-import { RANGES, TIMEZONE, toRange, type ListKey, type RangeKey, type Row, type Totals } from '@/lib/umami';
+import { RANGES, TIMEZONE, toRange, type Insights, type ListKey, type RangeKey, type Row } from '@/lib/umami';
 import { defaultSource, getInsights, toSource, type Source } from '@/lib/insights-data';
 import { buildGeo } from '@/lib/geo';
 import { duration, label, pct } from '@/lib/insights-format';
 import { compact } from '@/lib/chart';
+import { coverOf, pagedProjects } from '@/lib/work';
+import Deck, { type Slide } from '@/components/insights/Deck';
+import FlatMap from '@/components/insights/FlatMap';
 import TrafficChart from '@/components/insights/TrafficChart';
-import GeoExplorer from '@/components/insights/GeoExplorer';
 import Skyline from '@/components/insights/Skyline';
 import Rhythm from '@/components/insights/Rhythm';
-import Sparkline from '@/components/insights/Sparkline';
 import ExcludeMe from '@/components/insights/ExcludeMe';
+import { NeedleBars, PillBars, Progress, Segments, Spectrum, TickRing } from '@/components/insights/Charts';
 
 export const dynamic = 'force-dynamic';
 export const metadata: Metadata = { title: 'Insights', robots: { index: false, follow: false, nocache: true } };
 
 type Props = { searchParams: Promise<{ range?: string; source?: string }> };
+const fmt = (n: number) => n.toLocaleString('en');
+const DAYS = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+const PLURAL = ['Mondays', 'Tuesdays', 'Wednesdays', 'Thursdays', 'Fridays', 'Saturdays', 'Sundays'];
 
 export default async function InsightsPage({ searchParams }: Props) {
   if (!authConfigured()) notFound();
@@ -33,166 +34,319 @@ export default async function InsightsPage({ searchParams }: Props) {
   const source: Source = toSource(params.source) ?? defaultSource();
   const data = await getInsights(range, source);
   const link = (r: RangeKey, s: Source) => `/insights?range=${r}${s === defaultSource() ? '' : `&source=${s}`}`;
-  const { lists, totals, previous } = data;
-  const since = `vs previous ${RANGES[range].short}`;
-  const built = buildGeo(lists.countries, lists.regions, lists.cities);
-  // detailed outlines load when a country is opened, to keep this page light
-  const geo = { ...built, countries: built.countries.map((c) => ({ ...c, land: [], bars: [] })) };
+  const csv = (list: ListKey) => `/api/insights/export?list=${list}&range=${range}&source=${source}`;
 
-  const pagesPerVisit = (t: Totals) => (t.visits ? t.pageviews / t.visits : 0);
-  const projects = lists.pages.filter((r) => r.label.startsWith('/work/'));
-  const contact = lists.events.filter((r) => r.label.startsWith('Contact · ')).map((r) => ({ ...r, label: r.label.replace('Contact · ', '') }));
-  const actions = lists.events.filter((r) => !r.label.startsWith('Contact · '));
-  const count = (prefix: string) => lists.events.filter((r) => r.label.startsWith(prefix)).reduce((s, r) => s + r.value, 0);
+  const slides: Slide[] = [
+    { id: 'overview', title: 'Overview', content: <Overview data={data} /> },
+    { id: 'audience', title: 'Audience', content: <Audience data={data} csv={csv} /> },
+    { id: 'content', title: 'Content', content: <Content data={data} csv={csv} /> },
+    { id: 'map', title: 'Map', content: <MapSlide data={data} /> },
+    { id: 'trends', title: 'Trends', content: <Trends data={data} /> },
+    { id: 'year', title: 'Year', content: <Year data={data} /> },
+  ];
 
   return (
     <main id="main" className="ins">
-      {/* ---------------------------------------------------------------- top */}
       <header className="ins__bar">
-        <a className="wordmark" href="/">Shivam</a>
-        <div className="ins__who mono">
-          <span className="ins__live"><i aria-hidden="true" />{data.live} on the site now</span>
-          <span className="ins__user">@{user}</span>
+        <div className="ins__brand">
+          <a className="wordmark" href="/">Shivam</a>
+          <span className="ins__crumb">Insights</span>
+        </div>
+        <div className="ins__controls">
+          <nav className="seg" aria-label="Date range">
+            {(Object.keys(RANGES) as RangeKey[]).map((k) => (
+              <a key={k} href={link(k, source)} aria-current={k === range ? 'true' : undefined}>{RANGES[k].short.replace(' hours', 'h').replace(' days', 'd').replace(' months', 'm')}</a>
+            ))}
+          </nav>
+          <nav className="seg" aria-label="Data source">
+            {(['own', 'umami'] as Source[]).map((k) => (
+              <a key={k} href={link(range, k)} aria-current={k === source ? 'true' : undefined} title={k === 'own' ? 'Your own database' : 'Umami'}>
+                {k === 'own' ? <><Database size={13} aria-hidden="true" />Yours</> : 'Umami'}
+              </a>
+            ))}
+          </nav>
+          <span className="ins__live"><i aria-hidden="true" />{data.live} live</span>
           <form action="/api/auth/signout" method="post">
-            <button type="submit" aria-label="Sign out"><LogOut size={15} aria-hidden="true" /><span>Sign out</span></button>
+            <button type="submit" className="ins__out" aria-label={`Sign out @${user}`} title={`Signed in as @${user}`}><LogOut size={15} aria-hidden="true" /></button>
           </form>
         </div>
       </header>
 
-      {/* --------------------------------------------------------------- hero */}
-      <section className="ins__hero">
-        <div className="ins__title">
-          <p className="ins__eyebrow mono">Private · {RANGES[range].label}</p>
-          <h1 className="ins__h1">Insights</h1>
-        </div>
-        <nav className="ins__ranges" aria-label="Date range">
-          {(Object.keys(RANGES) as RangeKey[]).map((k) => (
-            <a key={k} href={link(k, source)} aria-current={k === range ? 'true' : undefined}>{RANGES[k].short}</a>
-          ))}
-        </nav>
+      {data.note && <p className="ins__note" role="note">{data.note}</p>}
 
-        <nav className="ins__ranges ins__sources" aria-label="Data source">
-          {(['own', 'umami'] as Source[]).map((k) => (
-            <a key={k} href={link(range, k)} aria-current={k === source ? 'true' : undefined}>
-              <Database size={14} aria-hidden="true" />{k === 'own' ? 'Your database' : 'Umami'}
-            </a>
-          ))}
-        </nav>
-
-        {data.note && <p className="ins__note" role="note">{data.note}</p>}
-
-        <div className="ins__kpis">
-          <div className="kpi kpi--hero">
-            <p className="kpi__label"><Users size={16} aria-hidden="true" />Visitors</p>
-            <p className="kpi__value">{totals.visitors.toLocaleString('en')}</p>
-            <Delta now={totals.visitors} before={previous.visitors} since={since} />
-            <Sparkline values={data.series.map((p) => p.visitors)} height={70} />
-          </div>
-          <Kpi icon={Route} label="Visits" value={compact(totals.visits)} now={totals.visits} before={previous.visits} since={since} />
-          <Kpi icon={FileText} label="Page views" value={compact(totals.pageviews)} now={totals.pageviews} before={previous.pageviews} since={since}
-            spark={data.series.map((p) => p.pageviews)} sparkColor="var(--viz-2)" />
-          <Kpi icon={Timer} label="Average visit" value={duration(totals.avgVisit)} now={totals.avgVisit} before={previous.avgVisit} since={since} />
-          <Kpi icon={MousePointerClick} label="Bounce rate" value={pct(totals.bounceRate)} now={totals.bounceRate} before={previous.bounceRate} since={since} upIsBad
-            hint="Visits that saw one page and left" />
-        </div>
-      </section>
-
-      {/* ------------------------------------------------------------ the map */}
-      <section className="ins__geo" aria-labelledby="geo-h">
-        <div className="ins__geo-head">
-          <p className="ins__eyebrow mono">Where they are · {RANGES[range].label}</p>
-          <h2 id="geo-h" className="ins__h2">Around the world</h2>
-          <p className="ins__geo-sub">Each column is as tall as its visitors. Pick a country to see its regions and cities.</p>
-        </div>
-        <GeoExplorer model={geo} range={`${range}&source=${source}`} rangeLabel={RANGES[range].label} />
-      </section>
-
-      {/* -------------------------------------------------------------- cards */}
-      <section className="ins__cards" aria-label="Details">
-        <Card icon={Users} title="Traffic" wide>
-          <TrafficChart points={data.series} previous={data.prevSeries} unit={RANGES[range].unit} timeZone={TIMEZONE}
-            totals={{ visitors: totals.visitors, pageviews: totals.pageviews }} />
-        </Card>
-
-        <Card icon={Timer} title="Engagement">
-          <div className="figs">
-            <Fig label="Average visit" value={duration(totals.avgVisit)} now={totals.avgVisit} before={previous.avgVisit} />
-            <Fig label="Pages per visit" value={pagesPerVisit(totals).toFixed(1)} now={pagesPerVisit(totals)} before={pagesPerVisit(previous)} />
-            <Fig label="Bounce rate" value={pct(totals.bounceRate)} now={totals.bounceRate} before={previous.bounceRate} upIsBad />
-          </div>
-          <Meter label="Stayed for more than one page" value={1 - totals.bounceRate} />
-          <div className="engage__trend">
-            <p><span>Pages per visitor, over the period</span><b>{(totals.visitors ? totals.pageviews / totals.visitors : 0).toFixed(1)}</b></p>
-            <Sparkline values={data.series.map((p) => (p.visitors ? p.pageviews / p.visitors : 0))} color="var(--viz-2)" height={64} />
-          </div>
-        </Card>
-
-        <Card icon={Compass} title="Where they come from" csv="referrers" range={range} source={source}>
-          <BarList list="referrers" rows={lists.referrers} icon={Link2} />
-        </Card>
-
-        <Card icon={Smartphone} title="Devices" csv="devices" range={range} source={source}>
-          <Split rows={lists.devices.map((r) => ({ label: label('devices', r.label), value: r.value }))} />
-          <div className="minirows">
-            <MiniRows title="Browsers" rows={lists.browsers.slice(0, 4).map((r) => ({ label: label('browsers', r.label), value: r.value }))} />
-            <MiniRows title="Systems" rows={lists.os.slice(0, 4)} />
-          </div>
-        </Card>
-
-        <Card icon={Route} title="Journey" note="Actions per 100 visitors">
-          <Journey visitors={totals.visitors} steps={[
-            { label: 'Read the About intro', value: count('Read about') },
-            { label: 'Used a work filter', value: count('Filter · ') },
-            { label: 'Opened a project', value: count('Open project · ') },
-            { label: 'Clicked a contact link', value: count('Contact · ') },
-          ]} />
-        </Card>
-
-        <Card icon={FileText} title="Pages" csv="pages" range={range} source={source}>
-          <BarList list="pages" rows={lists.pages} unit="views" />
-        </Card>
-
-        <Card icon={FolderOpen} title="Projects viewed">
-          <BarList list="pages" rows={projects} unit="views" empty="No project pages opened yet." />
-        </Card>
-
-        <Card icon={MousePointerClick} title="What people do" csv="events" range={range} source={source}>
-          <BarList list="events" rows={actions} unit="times" raw />
-        </Card>
-
-        <Card icon={Clock} title="When they visit" note="Last 4 weeks" wide>
-          <Rhythm grid={data.rhythm} />
-        </Card>
-
-        <Card icon={Mail} title="Contact clicks">
-          <BarList list="events" rows={contact} unit="times" raw empty="No contact clicks yet." />
-          <div className="minirows minirows--single">
-            <MiniRows title="Entry pages" rows={lists.entries.slice(0, 4).map((r) => ({ label: label('entries', r.label), value: r.value }))} />
-          </div>
-        </Card>
-
-        <Card icon={Languages} title="Languages" csv="languages" range={range} source={source}>
-          <BarList list="languages" rows={lists.languages} />
-        </Card>
-
-        <Card icon={Maximize2} title="Screen sizes" csv="screens" range={range} source={source}>
-          <BarList list="screens" rows={lists.screens} />
-        </Card>
-
-        <Card icon={BookOpen} title="Regions" csv="regions" range={range} source={source}>
-          <BarList list="regions" rows={lists.regions} />
-        </Card>
-
-        <Card icon={CalendarDays} title="The year in visits" note="Last 12 months" full>
-          <Skyline days={data.year} timeZone={TIMEZONE} />
-        </Card>
-      </section>
+      <Deck slides={slides} />
 
       <footer className="ins__foot mono">
         <ExcludeMe />
-        <span>{data.source === 'own' ? 'From your own database, live' : data.source === 'umami' ? 'From Umami, refreshed every minute' : 'Sample data'} · times in {TIMEZONE.replace(/_/g, ' ')}</span>
+        <span>{data.source === 'own' ? 'Your own database, live' : data.source === 'umami' ? 'Umami, refreshed every minute' : 'Sample data'} · {RANGES[range].label} · times in {TIMEZONE.replace(/_/g, ' ')}</span>
       </footer>
     </main>
+  );
+}
+
+/* ================================================================ slides */
+
+function Head({ n, eyebrow, title, sub }: { n: number; eyebrow: string; title: string; sub?: string }) {
+  return (
+    <header className="slide__head">
+      <p className="tiny">{String(n).padStart(2, '0')} · {eyebrow}</p>
+      <h2 className="slide__title">{title}</h2>
+      {sub && <p className="slide__sub">{sub}</p>}
+    </header>
+  );
+}
+
+function Overview({ data }: { data: Insights }) {
+  const { totals, previous, range } = data;
+  const since = `vs previous ${RANGES[range].short}`;
+  const unit = RANGES[range].unit;
+  const tick = new Intl.DateTimeFormat('en-GB', unit === 'hour' ? { hour: '2-digit', minute: '2-digit', timeZone: TIMEZONE } : unit === 'month' ? { month: 'short', timeZone: TIMEZONE } : { day: 'numeric', month: 'short', timeZone: TIMEZONE });
+  const s = data.series;
+  const mid = s[Math.floor(s.length / 2)];
+  const weekday = byWeekday(data);
+  const busiest = data.hourly.reduce((b, p) => (p.visitors > b.visitors ? p : b), data.hourly[0] ?? { t: 0, visitors: 0, pageviews: 0 });
+  const peakDay = new Intl.DateTimeFormat('en-GB', { weekday: 'long', timeZone: TIMEZONE });
+  const peakHour = new Intl.DateTimeFormat('en-GB', { hour: '2-digit', hourCycle: 'h23', timeZone: TIMEZONE });
+  const peakFmt = { format: (t: number) => `${peakDay.format(t)} ${peakHour.format(t)}:00` };
+
+  return (
+    <div className="slide">
+      <Head n={1} eyebrow="Overview" title="At a glance" sub={RANGES[range].label} />
+      <div className="bento">
+        <article className="card card--blue span-7 rows-2">
+          <p className="tiny">Visitors</p>
+          <p className="big big--xl">{fmt(totals.visitors)}</p>
+          <Delta now={totals.visitors} before={previous.visitors} since={since} onDark />
+          <div className="card__foot">
+            <NeedleBars values={s.map((p) => p.visitors)}
+              labels={[s[0] ? tick.format(s[0].t) : '', mid ? tick.format(mid.t) : '', s.at(-1) ? tick.format(s.at(-1)!.t) : '']}
+              tips={s.map((p) => `${fmt(p.visitors)} visitors · ${tick.format(p.t)}`)} />
+          </div>
+        </article>
+
+        <article className="card span-5">
+          <div className="card__row">
+            <div>
+              <p className="tiny">Page views</p>
+              <p className="big">{compact(totals.pageviews)}</p>
+              <Delta now={totals.pageviews} before={previous.pageviews} since={since} />
+            </div>
+            <p className="tiny card__aside">{weekday.caption}</p>
+          </div>
+          <PillBars items={weekday.items} unit="page views" />
+        </article>
+
+        <article className="card card--sky span-3">
+          <p className="tiny">Average visit</p>
+          <p className="big big--lg">{duration(totals.avgVisit)}</p>
+          <Delta now={totals.avgVisit} before={previous.avgVisit} since={since} />
+          <p className="card__note">{(totals.visits ? totals.pageviews / totals.visits : 0).toFixed(1)} pages per visit</p>
+        </article>
+
+        <article className="card span-2 card--center">
+          <p className="tiny">Stayed on</p>
+          <TickRing value={1 - totals.bounceRate} label="of visits saw more than one page" size={150} />
+          <p className="card__note">saw more than one page</p>
+        </article>
+
+        <article className="card card--ink span-12">
+          <div className="card__row">
+            <div>
+              <p className="tiny">Hour by hour · last 4 weeks</p>
+              <p className="big big--md">{busiest.visitors ? peakFmt.format(busiest.t) : '—'}<small> busiest hour</small></p>
+            </div>
+            <p className="tiny card__aside">{fmt(data.hourly.reduce((a, p) => a + p.visitors, 0))} visitor-hours</p>
+          </div>
+          <Spectrum points={data.hourly} timeZone={TIMEZONE} />
+        </article>
+      </div>
+    </div>
+  );
+}
+
+/** Page views grouped so the capsules read naturally for the range. */
+function byWeekday(data: Insights) {
+  const unit = RANGES[data.range].unit;
+  const wd = new Intl.DateTimeFormat('en-GB', { weekday: 'short', timeZone: TIMEZONE });
+  if (unit === 'day') {
+    const sums = new Map(DAYS.map((d) => [d, 0]));
+    data.series.forEach((p) => { const d = wd.format(p.t); sums.set(d, (sums.get(d) ?? 0) + p.pageviews); });
+    return { caption: 'By day of the week', items: DAYS.map((d) => ({ label: d, value: sums.get(d) ?? 0 })) };
+  }
+  if (unit === 'hour') {
+    const hr = new Intl.DateTimeFormat('en-GB', { hour: '2-digit', hourCycle: 'h23', timeZone: TIMEZONE });
+    const blocks = [0, 4, 8, 12, 16, 20].map((h) => ({ label: `${String(h).padStart(2, '0')}h`, value: 0 }));
+    data.series.forEach((p) => { blocks[Math.floor(Number(hr.format(p.t)) / 4)].value += p.pageviews; });
+    return { caption: 'By time of day', items: blocks };
+  }
+  const mo = new Intl.DateTimeFormat('en-GB', { month: 'short', timeZone: TIMEZONE });
+  return { caption: 'Last 7 months', items: data.series.slice(-7).map((p) => ({ label: mo.format(p.t), value: p.pageviews })) };
+}
+
+function Audience({ data, csv }: { data: Insights; csv: (l: ListKey) => string }) {
+  const { lists } = data;
+  const countries = lists.countries.filter((r) => r.label);
+  const devices = lists.devices.map((r) => ({ label: label('devices', r.label), value: r.value }));
+  const devTotal = devices.reduce((s, r) => s + r.value, 0);
+  const topDevice = devices[0];
+  const refs = lists.referrers.map((r) => ({ label: label('referrers', r.label), value: r.value }));
+  const topRef = refs.find((r) => r.label !== 'Direct or unknown') ?? refs[0];
+  return (
+    <div className="slide">
+      <Head n={2} eyebrow="Audience" title="Who they are" sub={RANGES[data.range].label} />
+      <div className="bento">
+        <article className="card span-5 rows-2">
+          <div className="card__row">
+            <div>
+              <p className="tiny">Countries</p>
+              <p className="big">{countries.length}<small> reached</small></p>
+            </div>
+            <a className="pill-link mono" href="#map">Open map<ArrowUpRight size={13} aria-hidden="true" /></a>
+          </div>
+          <List list="countries" rows={lists.countries} csv={csv('countries')} limit={8} />
+        </article>
+
+        <article className="card span-4 rows-2">
+          <p className="tiny">Where they come from</p>
+          <p className="big big--md">{topRef ? topRef.label : '—'}</p>
+          <p className="card__note">{topRef ? `${fmt(topRef.value)} visitors, the most of any source` : 'No visits yet'}</p>
+          <List list="referrers" rows={lists.referrers} csv={csv('referrers')} limit={7} />
+        </article>
+
+        <article className="card card--ink span-3">
+          <p className="tiny">Devices</p>
+          <p className="big big--md">{topDevice && devTotal ? `${Math.round((topDevice.value / devTotal) * 100)}%` : '—'}<small> {topDevice ? `on ${topDevice.label.toLowerCase()}` : ''}</small></p>
+          <Segments parts={devices.slice(0, 3)} />
+        </article>
+
+        <article className="card span-3">
+          <p className="tiny">Browsers</p>
+          <Mini rows={lists.browsers.slice(0, 5).map((r) => ({ label: label('browsers', r.label), value: r.value }))} />
+        </article>
+
+        <article className="card span-4">
+          <p className="tiny">Languages</p>
+          <Mini rows={lists.languages.slice(0, 5).map((r) => ({ label: label('languages', r.label), value: r.value }))} />
+        </article>
+        <article className="card span-4">
+          <p className="tiny">Systems</p>
+          <Mini rows={lists.os.slice(0, 5)} />
+        </article>
+        <article className="card span-4">
+          <p className="tiny">Screen sizes</p>
+          <Mini rows={lists.screens.slice(0, 5).map((r) => ({ label: label('screens', r.label), value: r.value }))} />
+        </article>
+      </div>
+    </div>
+  );
+}
+
+function Content({ data, csv }: { data: Insights; csv: (l: ListKey) => string }) {
+  const { lists, totals } = data;
+  const views = new Map(lists.pages.map((r) => [r.label, r.value]));
+  const projects = pagedProjects().map(({ project, sub }) => ({ project, sub, views: views.get(`/work/${project.slug}`) ?? 0 }))
+    .sort((a, b) => b.views - a.views).slice(0, 3);
+  const count = (prefix: string) => lists.events.filter((r) => r.label.startsWith(prefix)).reduce((s, r) => s + r.value, 0);
+  const per100 = (v: number) => (totals.visitors ? Math.min(100, Math.round((v / totals.visitors) * 100)) : 0);
+  const contacts = lists.events.filter((r) => r.label.startsWith('Contact · ')).map((r) => ({ label: r.label.replace('Contact · ', ''), value: r.value }));
+  const contactTotal = contacts.reduce((s, r) => s + r.value, 0);
+  const actions = lists.events.filter((r) => !r.label.startsWith('Contact · '));
+
+  return (
+    <div className="slide">
+      <Head n={3} eyebrow="Content" title="What they look at" sub={RANGES[data.range].label} />
+      <div className="bento">
+        {projects.map(({ project, sub, views: v }) => (
+          <a key={project.slug} className={`card card--photo span-${projects.length === 1 ? 12 : projects.length === 2 ? 6 : 4}`} href={`/work/${project.slug}`}
+            style={{ backgroundImage: `url(${coverOf(project)})` }}>
+            <p className="tiny">{sub.name}</p>
+            <div className="card__photo-foot">
+              <p className="card__photo-title">{project.title}</p>
+              <p className="big big--lg">{fmt(v)}<small> views</small></p>
+            </div>
+          </a>
+        ))}
+
+        <article className="card span-5">
+          <p className="tiny">Journey · per 100 visitors</p>
+          <div className="progs">
+            <Progress label="Read the About intro" value={per100(count('Read about'))} of={100} />
+            <Progress label="Used a work filter" value={per100(count('Filter · '))} of={100} />
+            <Progress label="Opened a project" value={per100(count('Open project · '))} of={100} />
+            <Progress label="Clicked a contact link" value={per100(contactTotal)} of={100} />
+          </div>
+        </article>
+
+        <article className="card span-4">
+          <p className="tiny">Pages</p>
+          <List list="pages" rows={lists.pages} csv={csv('pages')} limit={6} unit="Views" />
+        </article>
+
+        <article className="card card--ink span-3">
+          <p className="tiny">Contact clicks</p>
+          <p className="big big--lg">{fmt(contactTotal)}</p>
+          <Mini rows={contacts} onDark empty="No contact clicks yet." />
+        </article>
+
+        <article className="card span-6">
+          <p className="tiny">What people do</p>
+          <List list="events" rows={actions} csv={csv('events')} limit={6} unit="Times" raw />
+        </article>
+        <article className="card span-6">
+          <p className="tiny">First page of a visit</p>
+          <List list="entries" rows={lists.entries} csv={csv('entries')} limit={6} unit="Visits" />
+        </article>
+      </div>
+    </div>
+  );
+}
+
+function MapSlide({ data }: { data: Insights }) {
+  const geo = buildGeo(data.lists.countries, data.lists.regions, data.lists.cities, data.liveCountries);
+  return (
+    <div className="slide">
+      <Head n={4} eyebrow="Map" title="Where they are" sub="Scroll or use + and − to zoom, drag to move, click a country to look inside." />
+      <div className="bento">
+        <article className="card card--map span-12"><FlatMap model={geo} rangeLabel={RANGES[data.range].label} /></article>
+      </div>
+    </div>
+  );
+}
+
+function Trends({ data }: { data: Insights }) {
+  const { totals, range } = data;
+  const byDay = data.rhythm.map((row, d) => ({ label: DAYS[d], value: row.reduce((a, b) => a + b, 0) }));
+  return (
+    <div className="slide">
+      <Head n={5} eyebrow="Trends" title="How it moves" sub={RANGES[range].label} />
+      <div className="bento">
+        <article className="card span-8">
+          <p className="tiny">Traffic, with the previous period dashed</p>
+          <TrafficChart points={data.series} previous={data.prevSeries} unit={RANGES[range].unit} timeZone={TIMEZONE}
+            totals={{ visitors: totals.visitors, pageviews: totals.pageviews }} />
+        </article>
+        <article className="card card--sky span-4">
+          <p className="tiny">Busiest days · last 4 weeks</p>
+          <p className="big big--md">{byDay.some((d) => d.value) ? PLURAL[byDay.indexOf(byDay.reduce((b, d) => (d.value > b.value ? d : b)))] : '—'}</p>
+          <PillBars items={byDay} unit="page views" />
+        </article>
+        <article className="card span-12">
+          <p className="tiny">When they visit · weekday and hour, last 4 weeks</p>
+          <Rhythm grid={data.rhythm} />
+        </article>
+      </div>
+    </div>
+  );
+}
+
+function Year({ data }: { data: Insights }) {
+  return (
+    <div className="slide">
+      <Head n={6} eyebrow="Year" title="The year in visits" sub="Last 12 months, day by day" />
+      <div className="bento">
+        <article className="card span-12"><Skyline days={data.year} timeZone={TIMEZONE} /></article>
+      </div>
+    </div>
   );
 }
 
@@ -201,7 +355,7 @@ export default async function InsightsPage({ searchParams }: Props) {
 function SignIn() {
   return (
     <main id="main" className="ins ins--signin">
-      <p className="ins__eyebrow mono">Private</p>
+      <p className="tiny">Private</p>
       <h1 className="ins__h1">Insights</h1>
       {secretStrong() ? (
         <>
@@ -218,146 +372,51 @@ function SignIn() {
   );
 }
 
-function ratio(now: number, before: number) { return before ? (now - before) / before : null; }
-
-function Delta({ now, before, since, upIsBad }: { now: number; before: number; since?: string; upIsBad?: boolean }) {
-  const r = ratio(now, before);
-  if (r === null) return <p className="delta mono">No earlier data</p>;
+function Delta({ now, before, since, upIsBad, onDark }: { now: number; before: number; since?: string; upIsBad?: boolean; onDark?: boolean }) {
+  const r = before ? (now - before) / before : null;
+  if (r === null) return <p className={`delta${onDark ? ' on-dark' : ''}`}>No earlier data to compare</p>;
   const flat = Math.abs(r) < 0.005;
   const good = (r > 0) !== Boolean(upIsBad);
   const Icon = r > 0 ? ArrowUpRight : ArrowDownRight;
   return (
-    <p className={`delta mono${flat ? '' : good ? ' is-good' : ' is-bad'}`}>
-      {flat ? <span>No change</span> : <b><Icon size={13} aria-hidden="true" />{Math.abs(Math.round(r * 100))}%</b>}
+    <p className={`delta${onDark ? ' on-dark' : ''}`}>
+      <b className={flat ? '' : good ? 'is-good' : 'is-bad'}>{flat ? 'Same' : <><Icon size={13} aria-hidden="true" />{Math.abs(Math.round(r * 100))}%</>}</b>
       {since && <span>{since}</span>}
     </p>
   );
 }
 
-function Kpi({ icon: Icon, label: name, value, now, before, since, upIsBad, hint, spark, sparkColor }: {
-  icon: LucideIcon; label: string; value: string; now: number; before: number; since: string;
-  upIsBad?: boolean; hint?: string; spark?: number[]; sparkColor?: string;
-}) {
-  return (
-    <div className="kpi" title={hint}>
-      <p className="kpi__label"><Icon size={15} aria-hidden="true" />{name}</p>
-      <p className="kpi__value">{value}</p>
-      <Delta now={now} before={before} since={since} upIsBad={upIsBad} />
-      {spark && <Sparkline values={spark} color={sparkColor} height={34} />}
-    </div>
-  );
-}
-
-function Card({ icon: Icon, title, children, csv, range, source, note, wide, full }: {
-  icon: LucideIcon; title: string; children: React.ReactNode; csv?: ListKey; range?: RangeKey; source?: Source; note?: string; wide?: boolean; full?: boolean;
-}) {
-  return (
-    <section className={`card${wide ? ' card--wide' : ''}${full ? ' card--full' : ''}`}>
-      <header className="card__head">
-        <h2><span className="card__icon"><Icon size={16} aria-hidden="true" /></span>{title}</h2>
-        {note && <span className="card__note mono">{note}</span>}
-        {csv && range && (
-          <a className="card__csv" href={`/api/insights/export?list=${csv}&range=${range}&source=${source ?? ''}`} aria-label={`Download ${title} as CSV`} title="Download CSV">
-            <Download size={15} aria-hidden="true" />
-          </a>
-        )}
-      </header>
-      {children}
-    </section>
-  );
-}
-
-function Fig({ label: name, value, now, before, upIsBad }: { label: string; value: string; now: number; before: number; upIsBad?: boolean }) {
-  return (
-    <div className="fig">
-      <p className="fig__value">{value}</p>
-      <p className="fig__label">{name}</p>
-      <Delta now={now} before={before} upIsBad={upIsBad} />
-    </div>
-  );
-}
-
-function Meter({ label: name, value }: { label: string; value: number }) {
-  return (
-    <div className="meter">
-      <p className="meter__label"><span>{name}</span><b>{pct(value)}</b></p>
-      <div className="meter__track"><i style={{ width: pct(value) }} /></div>
-    </div>
-  );
-}
-
-function BarList({ list, rows, unit, raw, empty, icon: Icon }: { list: ListKey; rows: Row[]; unit?: string; raw?: boolean; empty?: string; icon?: LucideIcon }) {
+function List({ list, rows, csv, limit, unit, raw }: { list: ListKey; rows: Row[]; csv?: string; limit: number; unit?: string; raw?: boolean }) {
   const shown = rows.map((r) => ({ label: raw ? r.label : label(list, r.label), value: r.value }));
-  if (!shown.length) return <p className="blist__empty">{empty ?? 'Nothing yet for this range.'}</p>;
   const max = Math.max(1, ...shown.map((r) => r.value));
   const total = shown.reduce((s, r) => s + r.value, 0);
   const row = (r: Row) => (
-    <li key={r.label} className="blist__row">
-      <i className="blist__bar" style={{ width: `${(r.value / max) * 100}%` }} aria-hidden="true" />
-      <span className="blist__label">{Icon && <Icon size={13} aria-hidden="true" />}{r.label}</span>
-      <span className="blist__value">{r.value.toLocaleString('en')}<small>{pct(r.value / total)}</small></span>
+    <li key={r.label}>
+      <span className="list__label">{r.label}</span>
+      <span className="list__val">{fmt(r.value)}<small>{total ? pct(r.value / total) : ''}</small></span>
+      <i style={{ width: `${(r.value / max) * 100}%` }} aria-hidden="true" />
     </li>
   );
   return (
-    <div className="blist">
-      {unit && <p className="blist__unit mono">{unit}</p>}
-      <ol className="blist__rows">{shown.slice(0, 7).map(row)}</ol>
-      {shown.length > 7 && (
-        <details><summary className="mono">Show all {shown.length}</summary><ol className="blist__rows">{shown.slice(7).map(row)}</ol></details>
-      )}
+    <div className="list">
+      <p className="list__head mono"><span>{unit ?? 'Visitors'}</span>{csv && <a href={csv} aria-label="Download as CSV" title="Download CSV"><Download size={13} /></a>}</p>
+      {shown.length ? (
+        <>
+          <ol>{shown.slice(0, limit).map(row)}</ol>
+          {shown.length > limit && <details><summary className="mono">Show all {shown.length}</summary><ol>{shown.slice(limit).map(row)}</ol></details>}
+        </>
+      ) : <p className="empty">Nothing yet for this range.</p>}
     </div>
   );
 }
 
-const SPLIT = ['var(--viz-1)', 'var(--viz-2)', 'var(--viz-3)', 'var(--taupe-lite)'];
-function Split({ rows }: { rows: Row[] }) {
+function Mini({ rows, onDark, empty }: { rows: Row[]; onDark?: boolean; empty?: string }) {
   const total = rows.reduce((s, r) => s + r.value, 0);
-  if (!total) return <p className="blist__empty">No devices yet.</p>;
-  const main = rows.slice(0, 3);
-  const other = rows.slice(3).reduce((s, r) => s + r.value, 0);
-  const parts = other ? [...main, { label: 'Other', value: other }] : main;
+  if (!rows.length) return <p className="empty">{empty ?? 'Nothing yet.'}</p>;
   return (
-    <div className="split">
-      <div className="split__bar" role="img" aria-label={parts.map((p) => `${p.label} ${pct(p.value / total)}`).join(', ')}>
-        {parts.map((p, i) => <i key={p.label} style={{ flexGrow: p.value, background: SPLIT[i] }} />)}
-      </div>
-      <ul className="split__legend">
-        {parts.map((p, i) => (
-          <li key={p.label}><i style={{ background: SPLIT[i] }} aria-hidden="true" /><span>{p.label}</span><b>{pct(p.value / total)}</b></li>
-        ))}
-      </ul>
-    </div>
+    <ul className={`mini${onDark ? ' on-dark' : ''}`}>
+      {rows.map((r) => <li key={r.label}><span>{r.label || 'Unknown'}</span><b>{total ? pct(r.value / total) : ''}</b></li>)}
+    </ul>
   );
 }
 
-function MiniRows({ title, rows }: { title: string; rows: Row[] }) {
-  const total = rows.reduce((s, r) => s + r.value, 0);
-  return (
-    <div className="mini">
-      <p className="mini__title mono">{title}</p>
-      {rows.length ? (
-        <ul>{rows.map((r) => <li key={r.label}><span>{r.label || 'Unknown'}</span><b>{total ? pct(r.value / total) : ''}</b></li>)}</ul>
-      ) : <p className="blist__empty">None yet.</p>}
-    </div>
-  );
-}
-
-function Journey({ visitors, steps }: { visitors: number; steps: { label: string; value: number }[] }) {
-  const per100 = (v: number) => (visitors ? Math.round((v / visitors) * 100) : 0);
-  return (
-    <ol className="journey">
-      <li className="journey__step is-first">
-        <span className="journey__label">Visited</span>
-        <span className="journey__value">{visitors.toLocaleString('en')}<small>visitors</small></span>
-        <i style={{ width: '100%' }} aria-hidden="true" />
-      </li>
-      {steps.map((s) => (
-        <li key={s.label} className="journey__step">
-          <span className="journey__label">{s.label}</span>
-          <span className="journey__value">{per100(s.value)}<small>{s.value.toLocaleString('en')} times</small></span>
-          <i style={{ width: `${Math.min(100, per100(s.value))}%` }} aria-hidden="true" />
-        </li>
-      ))}
-    </ol>
-  );
-}

@@ -1,5 +1,5 @@
 import 'server-only';
-import { geoArea, geoEqualEarth, geoMercator, geoPath, type GeoProjection } from 'd3-geo';
+import { geoArea, geoEqualEarth, geoPath, type GeoProjection } from 'd3-geo';
 import { feature } from 'topojson-client';
 import countries from 'i18n-iso-countries';
 import iso3166 from 'iso-3166-2';
@@ -10,95 +10,76 @@ import world50 from 'world-atlas/countries-50m.json';
 import type { Row } from './umami';
 
 /**
- * Turns Umami's country / region / city lists into flat 2D shapes and points
- * for the 3D map. The browser tilts the plane and raises the bars; here we
- * only project, place and name things. Umami gives cities without a country,
- * so each city is placed at the most populous place of that name, preferring
- * countries the site actually has visitors from.
+ * Everything the flat map needs, in one world projection so zooming is just
+ * scaling: country shapes, a point per visited country and city, and the
+ * lists beside the map. Umami and the site's own database both report cities
+ * without a country, so each city is placed at the most populous place of
+ * that name, preferring countries the site has visitors from.
  */
 
-export const VIEW = { w: 1000, h: 560 } as const;
+export const VIEW = { w: 1000, h: 520 } as const;
 
-export type Shape = { id: string; d: string; value: number; name: string };
-export type Bar = { id: string; name: string; value: number; x: number; y: number };
+type Box = [[number, number], [number, number]];
+export type Land = { id: string; d: string; value: number };
+export type CountryPoint = { code: string; name: string; value: number; live: number; x: number; y: number; box: Box };
+export type CityPoint = { id: string; name: string; country: string; value: number; x: number; y: number };
 export type Place = { name: string; value: number };
 
-export type CountryDetail = {
-  code: string;
-  name: string;
-  value: number;
-  land: Shape[];          // the country itself (value > 0) and its neighbours (value 0) for context
-  bars: Bar[];            // one per placed city
-  regions: Place[];
-  cities: Place[];
-};
-
 export type GeoModel = {
-  world: { land: Shape[]; bars: Bar[] };
-  countries: CountryDetail[];   // countries with visitors, most first
-  unplaced: Place[];            // cities we couldn't place on the map
-  totals: { countries: number; regions: number; cities: number };
+  land: Land[];
+  countries: CountryPoint[];            // visited countries, most first
+  cities: CityPoint[];                  // placed cities, most first
+  regions: Record<string, Place[]>;     // by country code
+  unplaced: Place[];
+  totals: { countries: number; regions: number; cities: number; visitors: number };
 };
 
 type F = Feature<Geometry, { name: string }>;
 const regionNames = new Intl.DisplayNames(['en'], { type: 'region' });
 export const countryName = (a2: string) => { try { return regionNames.of(a2.toUpperCase()) ?? a2; } catch { return a2; } };
-
 const toA2 = (numeric: unknown) => (numeric == null ? '' : countries.numericToAlpha2(String(numeric).padStart(3, '0')) ?? '');
 const load = (topo: unknown) => {
   const t = topo as Topology<{ countries: GeometryCollection<{ name: string }> }>;
   return (feature(t, t.objects.countries).features as F[]).filter((f) => f.id !== '010'); // no Antarctica
 };
 
-let cache: { w110: F[]; w50: F[]; world: GeoProjection; worldLand: { a2: string; d: string; name: string }[] } | null = null;
-function base() {
-  if (cache) return cache;
-  const w110 = load(world110);
-  const w50 = load(world50);
-  const world = geoEqualEarth().fitExtent([[8, 8], [VIEW.w - 8, VIEW.h - 8]], { type: 'FeatureCollection', features: w110 });
-  const path = geoPath(world).digits(1);
-  const worldLand = w110.map((f) => ({ a2: toA2(f.id), d: path(f) ?? '', name: f.properties.name })).filter((s) => s.d);
-  cache = { w110, w50, world, worldLand };
-  return cache;
-}
-
-/** The main landmass of a country, so France's bar sits in France and not in the Atlantic. */
+/** The main landmass of a country, so France's point sits in France and not in the Atlantic. */
 function mainland(f: F): F {
   if (f.geometry.type !== 'MultiPolygon') return f;
-  const polys = (f.geometry as MultiPolygon).coordinates;
-  let best = polys[0];
+  let best = (f.geometry as MultiPolygon).coordinates[0];
   let area = -1;
-  for (const p of polys) {
+  for (const p of (f.geometry as MultiPolygon).coordinates) {
     const a = geoArea({ type: 'Polygon', coordinates: p } as Polygon);
     if (a > area) { area = a; best = p; }
   }
   return { ...f, geometry: { type: 'Polygon', coordinates: best } };
 }
 
-const detailCache = new Map<string, { land: { a2: string; d: string; name: string }[]; projection: GeoProjection }>();
-function countryShapes(a2: string) {
-  const hit = detailCache.get(a2);
-  if (hit) return hit;
-  const { w50 } = base();
-  const self = w50.find((f) => toA2(f.id) === a2);
-  if (!self) return null;
-  const pad = 70;
-  const projection = geoMercator().fitExtent([[pad, pad], [VIEW.w - pad, VIEW.h - pad]], mainland(self));
-  projection.clipExtent([[-40, -40], [VIEW.w + 40, VIEW.h + 40]]);
+let base: { w110: F[]; projection: GeoProjection; land: { a2: string; name: string; d: string }[] } | null = null;
+function world() {
+  if (base) return base;
+  const w110 = load(world110);
+  const projection = geoEqualEarth().fitExtent([[4, 4], [VIEW.w - 4, VIEW.h - 4]], { type: 'FeatureCollection', features: w110 });
   const path = geoPath(projection).digits(1);
-  const land = w50
-    .map((f) => ({ a2: toA2(f.id), d: path(f) ?? '', name: f.properties.name }))
-    .filter((s) => s.d && s.d.length > 20);
-  const out = { land, projection };
-  detailCache.set(a2, out);
-  return out;
+  base = { w110, projection, land: w110.map((f) => ({ a2: toA2(f.id), name: f.properties.name, d: path(f) ?? '' })).filter((s) => s.d) };
+  return base;
 }
 
-/* ---------- cities: name → [lng, lat], most populous first ---------- */
+/** A country's detailed (1:50m) outline in the same projection, for when the map zooms in. */
+const outlineCache = new Map<string, string>();
+export function countryOutline(a2: string) {
+  if (outlineCache.has(a2)) return outlineCache.get(a2)!;
+  const f = load(world50).find((x) => toA2(x.id) === a2);
+  const d = f ? geoPath(world().projection).digits(2)(f) ?? '' : '';
+  outlineCache.set(a2, d);
+  return d;
+}
+
+/* ---------- cities: name → places, most populous first ---------- */
 type City = { name: string; country: string; population: number; loc: { coordinates: [number, number] } };
 let cityIndex: Map<string, City[]> | null = null;
 const norm = (s: string) => s.normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase().trim();
-function cities() {
+function cityList() {
   if (cityIndex) return cityIndex;
   // eslint-disable-next-line @typescript-eslint/no-require-imports
   const all = require('all-the-cities') as City[];
@@ -112,69 +93,67 @@ function cities() {
   return cityIndex;
 }
 
-function regionName(code: string) {
-  const sub = iso3166.subdivision(code);
+export function regionName(code: string) {
+  const sub = iso3166.subdivision(code.toUpperCase());
   return (sub && 'name' in sub && sub.name) || code.split('-')[1] || code;
 }
 
-export function buildGeo(countryRows: Row[], regionRows: Row[], cityRows: Row[], detailFor = 6): GeoModel {
-  const { w110, world, worldLand } = base();
+export function buildGeo(countryRows: Row[], regionRows: Row[], cityRows: Row[], liveRows: Row[] = []): GeoModel {
+  const { w110, projection, land } = world();
+  const path = geoPath(projection);
   const visited = new Map(countryRows.filter((r) => r.label).map((r) => [r.label.toUpperCase(), r.value]));
+  const live = new Map(liveRows.filter((r) => r.label).map((r) => [r.label.toUpperCase(), r.value]));
+  const index = cityList();
 
-  // world: countries shaded, one bar per country at its mainland's centre
-  const worldPath = geoPath(world);
-  const land: Shape[] = worldLand.map((s) => ({ id: s.a2 || s.name, d: s.d, value: visited.get(s.a2) ?? 0, name: s.a2 ? countryName(s.a2) : s.name }));
-  const worldBars: Bar[] = [];
-  visited.forEach((value, a2) => {
-    const f = w110.find((x) => toA2(x.id) === a2);
+  const points: CountryPoint[] = [];
+  visited.forEach((value, code) => {
+    const f = w110.find((x) => toA2(x.id) === code);
     let xy: [number, number] | null = null;
-    if (f) xy = worldPath.centroid(mainland(f)) as [number, number];
-    else {
-      // too small for the 110m map (Singapore, Bahrain…): use its biggest city
-      const c = [...cities().values()].flat().find((c) => c.country === a2);
-      if (c) xy = world(c.loc.coordinates) as [number, number];
+    let box: Box | null = null;
+    if (f) {
+      const main = mainland(f);
+      xy = path.centroid(main) as [number, number];
+      box = path.bounds(main) as Box;
+    } else {
+      // too small for the world map (Singapore, Bahrain…): use its biggest city
+      let best: City | null = null;
+      index.forEach((list) => list.forEach((c) => { if (c.country === code && (!best || c.population > best.population)) best = c; }));
+      const found = best as City | null;
+      const p = found ? projection(found.loc.coordinates) : null;
+      if (p) { xy = [p[0], p[1]]; box = [[p[0] - 4, p[1] - 3], [p[0] + 4, p[1] + 3]]; }
     }
-    if (xy && Number.isFinite(xy[0])) worldBars.push({ id: a2, name: countryName(a2), value, x: xy[0], y: xy[1] });
+    if (xy && box && Number.isFinite(xy[0])) points.push({ code, name: countryName(code), value, live: live.get(code) ?? 0, x: xy[0], y: xy[1], box });
   });
+  points.sort((a, b) => b.value - a.value);
 
-  // cities: pick a country for each, preferring ones with visitors
-  const index = cities();
-  const placedCities: { name: string; value: number; country: string; lnglat: [number, number] }[] = [];
+  const cities: CityPoint[] = [];
   const unplaced: Place[] = [];
   cityRows.filter((r) => r.label).forEach((r) => {
     const options = index.get(norm(r.label)) ?? [];
     const pick = options.find((c) => visited.has(c.country)) ?? options[0];
-    if (pick) placedCities.push({ name: r.label, value: r.value, country: pick.country, lnglat: pick.loc.coordinates });
+    const p = pick ? projection(pick.loc.coordinates) : null;
+    if (pick && p) cities.push({ id: `${pick.country}:${r.label}`, name: r.label, country: pick.country, value: r.value, x: p[0], y: p[1] });
     else unplaced.push({ name: r.label, value: r.value });
   });
+  cities.sort((a, b) => b.value - a.value);
 
-  // detail for the busiest countries
-  const detail: CountryDetail[] = [];
-  [...visited.entries()].sort((a, b) => b[1] - a[1]).slice(0, detailFor).forEach(([a2, value]) => {
-    const shapes = countryShapes(a2);
-    const regions = regionRows.filter((r) => r.label.toUpperCase().startsWith(`${a2}-`)).map((r) => ({ name: regionName(r.label.toUpperCase()), value: r.value }));
-    const own = placedCities.filter((c) => c.country === a2);
-    const bars: Bar[] = shapes
-      ? own.map((c) => {
-          const [x, y] = shapes.projection(c.lnglat) ?? [NaN, NaN];
-          return { id: `${a2}:${c.name}`, name: c.name, value: c.value, x, y };
-        }).filter((b) => Number.isFinite(b.x) && b.x > -20 && b.x < VIEW.w + 20 && b.y > -20 && b.y < VIEW.h + 20)
-      : [];
-    detail.push({
-      code: a2,
-      name: countryName(a2),
-      value,
-      land: shapes ? shapes.land.map((s) => ({ id: s.a2 || s.name, d: s.d, value: s.a2 === a2 ? value : 0, name: s.a2 ? countryName(s.a2) : s.name })) : [],
-      bars,
-      regions,
-      cities: own.map((c) => ({ name: c.name, value: c.value })),
-    });
+  const regions: Record<string, Place[]> = {};
+  regionRows.filter((r) => r.label.includes('-')).forEach((r) => {
+    const code = r.label.split('-')[0].toUpperCase();
+    (regions[code] ??= []).push({ name: regionName(r.label), value: r.value });
   });
 
   return {
-    world: { land, bars: worldBars },
-    countries: detail,
+    land: land.map((s) => ({ id: s.a2 || s.name, d: s.d, value: visited.get(s.a2) ?? 0 })),
+    countries: points,
+    cities,
+    regions,
     unplaced,
-    totals: { countries: visited.size, regions: regionRows.filter((r) => r.label).length, cities: cityRows.filter((r) => r.label).length },
+    totals: {
+      countries: visited.size,
+      regions: regionRows.filter((r) => r.label).length,
+      cities: cityRows.filter((r) => r.label).length,
+      visitors: countryRows.reduce((s, r) => s + r.value, 0),
+    },
   };
 }

@@ -78,6 +78,10 @@ Visits are recorded twice, so no single service can lose them:
 - **Umami**, as an independent second copy with its own dashboard. Every night `/api/cron/umami-backup`
   (scheduled in `vercel.json`) also copies Umami's daily numbers into your database.
 
+How it counts: a **visitor** is one person per day (reloading doesn't add visitors); a **visit** is one browser tab's
+session (a new one after 30 idle minutes); a **page view** is each page opened, except that your own database ignores
+reloads of the same page within the same visit for 30 minutes. Umami counts reloads, so its page views can be higher.
+
 On /insights you can switch between the two sources; if one can't be read, the page falls back to the other and says so.
 
 The site counts visits with [Umami](https://umami.is): no cookies, Do Not Track respected,

@@ -70,7 +70,7 @@ export async function fromDb(range: RangeKey): Promise<Insights> {
   const rhythmStart = endAt - 28 * 86400e3;
   const keys = Object.keys(LISTS) as ListKey[];
 
-  const [now, before, cur, prev, year, hours, live, ...lists] = await Promise.all([
+  const [now, before, cur, prev, year, hours, live, liveBy, ...lists] = await Promise.all([
     totals(startAt, endAt),
     totals(startAt - ms, startAt),
     buckets(unit, startAt, endAt),
@@ -78,6 +78,7 @@ export async function fromDb(range: RangeKey): Promise<Insights> {
     buckets('day', yearStart, endAt),
     buckets('hour', rhythmStart, endAt),
     db(`select count(distinct session) as n from visits_events where ts > now() - interval '5 minutes'`),
+    db(`select coalesce(country, '') as label, count(distinct session) as value from visits_events where ts > now() - interval '5 minutes' group by 1 order by 2 desc`),
     ...keys.map((k) => list(k, startAt, endAt)),
   ]);
 
@@ -91,6 +92,8 @@ export async function fromDb(range: RangeKey): Promise<Insights> {
     prevSeries: fillSeries(unit, startAt - ms, startAt, prev.visitors, prev.pageviews),
     year: fillSeries('day', yearStart, endAt, year.visitors, year.pageviews).map((p) => ({ t: p.t, visitors: p.visitors })),
     rhythm: toRhythm(hours.pageviews),
+    hourly: fillSeries('hour', rhythmStart, endAt, hours.visitors, hours.pageviews),
+    liveCountries: liveBy.map((r) => ({ label: String(r.label), value: n(r.value) })),
     lists: Object.fromEntries(keys.map((k, i) => [k, lists[i]])) as Insights['lists'],
   };
 }

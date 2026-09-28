@@ -55,9 +55,14 @@ export async function POST(req: NextRequest) {
   const { device, browser, os } = parseUA(ua);
 
   try {
+    // a reload of the same page in the same visit within 30 minutes isn't another page view
     await db(
       `insert into visits_events (kind, name, path, referrer, country, region, city, device, browser, os, screen, language, visitor, session)
-       values ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14)`,
+       select $1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14
+       where $1 <> 'pageview' or not exists (
+         select 1 from visits_events
+         where session = $14 and path = $3 and kind = 'pageview' and ts > now() - interval '30 minutes'
+       )`,
       [kind, name, path, referrer, country, country && regionCode ? `${country}-${regionCode}` : null, header(req, 'x-vercel-ip-city'),
         device, browser, os, clip(body.screen, 20), clip(body.language, 20), visitor, session],
     );

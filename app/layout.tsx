@@ -6,7 +6,7 @@ import Analytics from '@/components/Analytics';
 import './globals.css';
 
 const serif = Instrument_Serif({ subsets: ['latin'], weight: '400', style: ['normal', 'italic'], variable: '--font-serif' });
-const sans = Inter_Tight({ subsets: ['latin'], weight: ['400', '500'], variable: '--font-sans' });
+const sans = Inter_Tight({ subsets: ['latin'], weight: ['300', '400', '500'], variable: '--font-sans' });
 const mono = IBM_Plex_Mono({ subsets: ['latin'], weight: ['400', '500'], variable: '--font-mono' });
 
 export const metadata: Metadata = {
