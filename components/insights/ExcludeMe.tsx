@@ -13,7 +13,7 @@ export default function ExcludeMe() {
   }, []);
   if (off === null) return null;
   return (
-    <p className="insights__exclude mono">
+    <p className="insights__exclude">
       {off ? 'Your visits on this device are not counted' : 'Couldn’t exclude this device (storage blocked)'}
     </p>
   );

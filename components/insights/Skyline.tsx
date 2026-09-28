@@ -3,8 +3,8 @@ import type { Day } from '@/lib/umami';
 
 /* Daily visitors for a year, as GitHub's isometric contribution skyline plus the flat calendar. */
 
-const RAMP = ['#cfdfea', '#9fc0d7', '#6a9cc0', '#2f78a8', '#0e5585'];
-const EMPTY = '#e4ded4';
+const RAMP = ['#b7ebc8', '#7fd6a0', '#3fb971', '#1e9453', '#11693a'];
+const EMPTY = '#eceef1';
 const C = 11;                                   // plane size of one day
 const A = Math.PI / 6;                          // true isometric: 30°
 const iso = (x: number, y: number): [number, number] => [(x - y) * Math.cos(A), (x + y) * Math.sin(A)];
@@ -14,7 +14,7 @@ const shade = (hex: string, f: number) => {
 };
 const pts = (p: [number, number][]) => p.map((q) => q.map((v) => v.toFixed(1)).join(',')).join(' ');
 
-export default function Skyline({ days, timeZone }: { days: Day[]; timeZone: string }) {
+export default function Skyline({ days, timeZone, view = 'calendar' }: { days: Day[]; timeZone: string; view?: 'calendar' | 'skyline' }) {
   const dayFmt = new Intl.DateTimeFormat('en-GB', { day: 'numeric', month: 'short', timeZone });
   const longFmt = new Intl.DateTimeFormat('en-GB', { weekday: 'short', day: 'numeric', month: 'short', year: 'numeric', timeZone });
   const monthFmt = new Intl.DateTimeFormat('en-GB', { month: 'short', timeZone });
@@ -73,13 +73,11 @@ export default function Skyline({ days, timeZone }: { days: Day[]; timeZone: str
         <Stat label="Current streak" value={String(cur)} unit={cur === 1 ? 'day' : 'days'} sub={cur ? span(days.length - cur, days.length - 1) : 'No visitors today yet'} />
       </div>
 
-      <HoverTip className="sky__iso">
-        <svg viewBox={`${minX} ${minY} ${maxX - minX} ${maxY - minY}`} role="img" aria-label="Daily visitors over the last 12 months as a skyline. The calendar below shows the same days.">
+      {view === 'skyline' ? <HoverTip className="sky__iso">
+        <svg viewBox={`${minX} ${minY} ${maxX - minX} ${maxY - minY}`} role="img" aria-label="Daily visitors over the last 12 months as a skyline. The calendar view shows the same days.">
           {columns}
         </svg>
-      </HoverTip>
-
-      <HoverTip className="sky__cal">
+      </HoverTip> : <HoverTip className="sky__cal">
         <svg viewBox={`-26 -16 ${cols * 12 + 28} ${7 * 12 + 18}`} role="img" aria-label="Calendar of daily visitors">
           {months.map((m, i) => (i === 0 && months[1] && months[1].col - m.col < 3 ? null :
             <text key={m.col} x={m.col * 12} y={-5} className="sky__label">{m.label}</text>))}
@@ -89,8 +87,8 @@ export default function Skyline({ days, timeZone }: { days: Day[]; timeZone: str
               data-tip={`${d.visitors.toLocaleString('en')} visitors · ${longFmt.format(d.t)}`} />
           ))}
         </svg>
-        <div className="sky__key mono" aria-hidden="true"><span>Less</span>{[EMPTY, ...RAMP].map((c) => <i key={c} style={{ background: c }} />)}<span>More</span></div>
-      </HoverTip>
+        <div className="sky__key" aria-hidden="true"><span>Less</span>{[EMPTY, ...RAMP].map((c) => <i key={c} style={{ background: c }} />)}<span>More</span></div>
+      </HoverTip>}
     </div>
   );
 }

@@ -1,7 +1,7 @@
 'use client';
 
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { ArrowLeft, Minus, Plus, RotateCcw } from 'lucide-react';
+import { ArrowLeft, Maximize2, Minimize2, Minus, Plus, RotateCcw } from 'lucide-react';
 import type { CityPoint, CountryPoint, GeoModel, Place } from '@/lib/geo';
 
 const W = 1000, H = 520;
@@ -35,6 +35,8 @@ function fit([[x0, y0], [x1, y1]]: [[number, number], [number, number]]): View {
  */
 export default function FlatMap({ model, rangeLabel }: { model: GeoModel; rangeLabel: string }) {
   const svg = useRef<SVGSVGElement>(null);
+  const root = useRef<HTMLDivElement>(null);
+  const [full, setFull] = useState(false);
   const [view, setView] = useState<View>(HOME);
   const [focus, setFocus] = useState<string | null>(null);
   const [outline, setOutline] = useState<Record<string, string>>({});
@@ -70,6 +72,20 @@ export default function FlatMap({ model, rangeLabel }: { model: GeoModel; rangeL
     const io = new IntersectionObserver(([e]) => { if (e.isIntersecting) { setRisen(true); io.disconnect(); } }, { threshold: 0.3 });
     io.observe(el);
     return () => io.disconnect();
+  }, []);
+
+  // the whole screen for the map, or a fixed overlay where full screen isn't allowed
+  const toggleFull = async () => {
+    if (document.fullscreenElement) { await document.exitFullscreen(); return; }
+    if (full) { setFull(false); return; }
+    try { await root.current!.requestFullscreen(); } catch { setFull(true); }
+  };
+  useEffect(() => {
+    const onChange = () => setFull(Boolean(document.fullscreenElement));
+    const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape' && !document.fullscreenElement) setFull(false); };
+    document.addEventListener('fullscreenchange', onChange);
+    window.addEventListener('keydown', onKey);
+    return () => { document.removeEventListener('fullscreenchange', onChange); window.removeEventListener('keydown', onKey); };
   }, []);
 
   const country = focus ? model.countries.find((c) => c.code === focus) ?? null : null;
@@ -157,7 +173,7 @@ export default function FlatMap({ model, rangeLabel }: { model: GeoModel; rangeL
     : null;
 
   return (
-    <div className="map">
+    <div ref={root} className={`map${full ? ' is-full' : ''}`}>
       <div className="map__stage" data-noswipe>
         <svg
           ref={svg}
@@ -232,8 +248,11 @@ export default function FlatMap({ model, rangeLabel }: { model: GeoModel; rangeL
           <button type="button" onClick={() => zoomAt(1.6)} aria-label="Zoom in"><Plus size={16} /></button>
           <button type="button" onClick={() => zoomAt(1 / 1.6)} aria-label="Zoom out"><Minus size={16} /></button>
           <button type="button" onClick={() => open(null)} aria-label="Show the whole world"><RotateCcw size={15} /></button>
+          <button type="button" onClick={toggleFull} aria-label={full ? 'Leave full screen' : 'Full screen'} aria-pressed={full}>
+            {full ? <Minimize2 size={15} /> : <Maximize2 size={15} />}
+          </button>
         </div>
-        <div className="map__legend mono" aria-hidden="true">
+        <div className="map__legend" aria-hidden="true">
           <svg width="44" height="30" viewBox="0 0 44 30">
             <path d="M6,28L10,14L14,28Z" fill="url(#spike-fill)" stroke="var(--map-spike)" />
             <path d="M24,28L28,2L32,28Z" fill="url(#spike-fill)" stroke="var(--map-spike)" />
@@ -245,9 +264,9 @@ export default function FlatMap({ model, rangeLabel }: { model: GeoModel; rangeL
       <aside className="map__panel" aria-label="Visitors by place">
         {country && listRows ? (
           <>
-            <button type="button" className="map__back mono" onClick={() => open(null)}><ArrowLeft size={14} aria-hidden="true" />All countries</button>
+            <button type="button" className="map__back" onClick={() => open(null)}><ArrowLeft size={14} aria-hidden="true" />All countries</button>
             <div className="map__head">
-              <p className="tiny">{country.name}</p>
+              <p className="map__eyebrow">{country.name}</p>
               <p className="map__big">{fmt(country.value)}<small>visitors · {share(country.value, total)} of all</small></p>
             </div>
             <Places title="Cities" rows={listRows.cities.map((c) => ({ name: c.name, value: c.value }))} total={country.value}
@@ -257,7 +276,7 @@ export default function FlatMap({ model, rangeLabel }: { model: GeoModel; rangeL
         ) : (
           <>
             <div className="map__head">
-              <p className="tiny">{rangeLabel}</p>
+              <p className="map__eyebrow">{rangeLabel}</p>
               <p className="map__big">{model.totals.countries}<small>{model.totals.countries === 1 ? 'country' : 'countries'} · {model.totals.cities} cities</small></p>
             </div>
             <Places title="Countries" rows={model.countries.map((c) => ({ name: c.name, value: c.value, id: c.code }))} total={total}
@@ -282,7 +301,7 @@ function Places({ title, rows, total, empty, hover, idOf, onHover, onPick }: {
   const shown = all ? rows : rows.slice(0, 7);
   return (
     <section className="map__list">
-      <p className="map__list-head tiny"><span>{title}</span><span>Visitors</span></p>
+      <p className="map__list-head"><span>{title}</span><span>Visitors</span></p>
       {rows.length ? (
         <ol>
           {shown.map((r) => {
@@ -302,7 +321,7 @@ function Places({ title, rows, total, empty, hover, idOf, onHover, onPick }: {
           })}
         </ol>
       ) : <p className="map__note">{empty}</p>}
-      {rows.length > 7 && <button type="button" className="map__more mono" onClick={() => setAll((a) => !a)}>{all ? 'Show fewer' : `Show all ${rows.length}`}</button>}
+      {rows.length > 7 && <button type="button" className="map__more" onClick={() => setAll((a) => !a)}>{all ? 'Show fewer' : `Show all ${rows.length}`}</button>}
     </section>
   );
 }

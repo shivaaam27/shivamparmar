@@ -8,8 +8,8 @@ type Unit = 'hour' | 'day' | 'month';
 type Key = 'visitors' | 'pageviews';
 
 const SERIES: Record<Key, { name: string; color: string }> = {
-  visitors: { name: 'Visitors', color: 'var(--viz-1)' },
-  pageviews: { name: 'Page views', color: 'var(--viz-2)' },
+  visitors: { name: 'Visitors', color: 'var(--c1)' },
+  pageviews: { name: 'Page views', color: 'var(--c2)' },
 };
 const H = 280;
 const M = { top: 16, right: 12, bottom: 30, left: 40 };
@@ -19,8 +19,8 @@ const M = { top: 16, right: 12, bottom: 30, left: 40 };
  * a smooth line over a soft wash, the previous period as a dashed line, and a
  * crosshair that reads out both. Drawn only after it knows its real width.
  */
-export default function TrafficChart({ points, previous, unit, timeZone, totals }: {
-  points: Point[]; previous: Point[]; unit: Unit; timeZone: string; totals: Record<Key, number>;
+export default function TrafficChart({ points, previous, unit, timeZone, totals, before }: {
+  points: Point[]; previous: Point[]; unit: Unit; timeZone: string; totals: Record<Key, number>; before: Record<Key, number>;
 }) {
   const wrap = useRef<HTMLDivElement>(null);
   const [w, setW] = useState<number | null>(null);
@@ -68,16 +68,19 @@ export default function TrafficChart({ points, previous, unit, timeZone, totals 
   return (
     <figure className="traffic">
       <div className="traffic__head">
-        <div className="seg" role="tablist" aria-label="Measure">
-          {(Object.keys(SERIES) as Key[]).map((k) => (
-            <button key={k} role="tab" type="button" aria-selected={k === key} onClick={() => setKey(k)}>
-              <i style={{ background: SERIES[k].color }} aria-hidden="true" />
-              <span className="traffic__seg-name">{SERIES[k].name}</span>
-              <b>{totals[k].toLocaleString('en')}</b>
-            </button>
-          ))}
+        <div className="traffic__keys" role="tablist" aria-label="Measure">
+          {(Object.keys(SERIES) as Key[]).map((k) => {
+            const r = before[k] ? (totals[k] - before[k]) / before[k] : null;
+            return (
+              <button key={k} role="tab" type="button" aria-selected={k === key} onClick={() => setKey(k)}>
+                <span className="traffic__name"><i style={{ background: SERIES[k].color }} aria-hidden="true" />{SERIES[k].name}</span>
+                <b>{totals[k].toLocaleString('en')}</b>
+                {r !== null && Math.abs(r) >= 0.005 && <small className={r > 0 ? 'is-up' : 'is-down'}>{r > 0 ? '↑' : '↓'} {Math.abs(Math.round(r * 100))}%</small>}
+              </button>
+            );
+          })}
         </div>
-        <figcaption className="traffic__legend mono">
+        <figcaption className="traffic__legend">
           <span><i className="is-now" style={{ background: color }} />This period</span>
           <span><i className="is-prev" style={{ borderColor: color }} />Previous period</span>
         </figcaption>
@@ -91,7 +94,7 @@ export default function TrafficChart({ points, previous, unit, timeZone, totals 
           <svg width={w} height={H} viewBox={`0 0 ${w} ${H}`} aria-hidden="true">
             <defs>
               <linearGradient id="traffic-wash" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="0" stopColor={color} stopOpacity=".18" />
+                <stop offset="0" stopColor={color} stopOpacity=".16" />
                 <stop offset="1" stopColor={color} stopOpacity="0" />
               </linearGradient>
             </defs>
@@ -108,12 +111,12 @@ export default function TrafficChart({ points, previous, unit, timeZone, totals 
             <path d={prevLine} fill="none" stroke={color} strokeOpacity={0.45} strokeWidth={1.5} strokeDasharray="3 4" />
             <path d={line} fill="none" stroke={color} strokeWidth={2} strokeLinecap="round" />
             {n > 0 && at === null && (
-              <circle cx={x(n - 1)} cy={y(points[n - 1][key])} r={4.5} fill={color} stroke="var(--card)" strokeWidth={2} />
+              <circle cx={x(n - 1)} cy={y(points[n - 1][key])} r={4.5} fill={color} stroke="#fff" strokeWidth={2} />
             )}
             {p && at !== null && (
               <g>
                 <line x1={x(at)} x2={x(at)} y1={M.top} y2={M.top + ih} className="traffic__cross" />
-                <circle cx={x(at)} cy={y(p[key])} r={5} fill={color} stroke="var(--card)" strokeWidth={2} />
+                <circle cx={x(at)} cy={y(p[key])} r={5} fill={color} stroke="#fff" strokeWidth={2} />
               </g>
             )}
           </svg>
@@ -128,7 +131,7 @@ export default function TrafficChart({ points, previous, unit, timeZone, totals 
       </div>
 
       <details className="traffic__table">
-        <summary className="mono">Show as table</summary>
+        <summary>Show as table</summary>
         <div className="traffic__table-scroll">
           <table>
             <thead><tr><th>{unit === 'hour' ? 'Hour' : unit === 'month' ? 'Month' : 'Day'}</th><th>Visitors</th><th>Page views</th></tr></thead>
