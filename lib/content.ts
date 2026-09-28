@@ -98,5 +98,6 @@ export const contact = {
     { label: 'Ipsum', lines: ['Lorem ipsum dolor', 'Sit amet, 00000'] },
     { label: 'Dolor', lines: ['Lorem ipsum dolor sit amet, consectetur adipiscing.'] },
   ] as { label: string; links?: { label: string; href: string }[]; lines?: string[] }[],
-  footerNote: 'Lorem ipsum dolor',
+  /** Shown in the footer; the site counts visits anonymously with Umami (no cookies). */
+  footerNote: 'No cookies · anonymous visit stats',
 };

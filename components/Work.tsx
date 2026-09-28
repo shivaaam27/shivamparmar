@@ -8,6 +8,7 @@ import { categories, countAll, countCategory, coverOf, hasPage } from '@/lib/wor
 import Tag from './Tag';
 import Placeholder from './Placeholder';
 import MetaCol from './MetaCol';
+import { track } from '@/lib/track';
 
 const pad = (n: number) => String(n).padStart(2, '0');
 
@@ -55,6 +56,8 @@ export default function Work() {
   }, []);
 
   const setFilter = useCallback((f: Filter) => {
+    const cat = categories[f.c];
+    track(cat ? `Filter · ${cat.name}${f.s >= 0 ? ` › ${cat.subcategories[f.s].name}` : ''}` : 'Filter · All work');
     setFilterState(f);
     setOpen(firstOpen(f));
     writeFilter(f);
@@ -146,7 +149,11 @@ export default function Work() {
                                 aria-label={page ? `${project.title}, ${sub.name}` : `${sub.name}: coming soon`}
                                 onMouseEnter={canHover ? () => setOpen({ g, s, p }) : undefined}
                                 onFocus={() => setOpen({ g, s, p })}
-                                onClick={() => (on && page ? router.push(`/work/${project.slug}`) : setOpen({ g, s, p }))}
+                                onClick={() => {
+                                  if (!(on && page)) return setOpen({ g, s, p });
+                                  track(`Open project · ${project.title}`);
+                                  router.push(`/work/${project.slug}`);
+                                }}
                               >
                                 <Placeholder tone={project.tone} image={cover} alt={project.images?.[0]?.alt} />
                                 <span className="strip__label">
@@ -155,7 +162,7 @@ export default function Work() {
                                 </span>
                               </button>
                               {on && page && (
-                                <Link className="strip__open mono" href={`/work/${project.slug}`}>
+                                <Link className="strip__open mono" href={`/work/${project.slug}`} onClick={() => track(`Open project · ${project.title}`)}>
                                   View project<span aria-hidden="true"> →</span>
                                 </Link>
                               )}

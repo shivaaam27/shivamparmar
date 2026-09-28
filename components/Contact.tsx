@@ -10,7 +10,7 @@ export default function Contact() {
         {contact.headline.map((line, i) => <span key={i}>{i > 0 && <br />}{line}</span>)}
       </h2>
 
-      <a className="contact__mail reveal" data-delay="1" href={`mailto:${site.email}`}>
+      <a className="contact__mail reveal" data-delay="1" href={`mailto:${site.email}`} data-umami-event="Contact · Email">
         {site.email}<span aria-hidden="true">↗</span>
       </a>
 
@@ -18,7 +18,7 @@ export default function Contact() {
         {contact.columns.map((col) => (
           <MetaCol key={col.label} label={col.label}>
             <ul>
-              {col.links?.map((l) => <li key={l.label}><a href={l.href}>{l.label}</a></li>)}
+              {col.links?.map((l) => <li key={l.label}><a href={l.href} data-umami-event={`Contact · ${l.label}`}>{l.label}</a></li>)}
               {col.lines?.map((line) => <li key={line}>{line}</li>)}
             </ul>
           </MetaCol>

@@ -3,6 +3,7 @@
 import { useRef } from 'react';
 import { about } from '@/lib/content';
 import { gsap, useGSAP, prefersReducedMotion } from '@/lib/motion';
+import { track } from '@/lib/track';
 
 /**
  * Scroll-told intro: the section pins, "Hi, I'm Shivam" rises in, then the
@@ -31,6 +32,7 @@ export default function About() {
       scrollTrigger: { trigger: root.current, start: 'top 85%', end: 'top 20%', scrub: true },
     });
 
+    let readSent = false;
     // then the section holds while the rest plays out with the scroll
     const tall = () => (root.current?.offsetHeight ?? 0) > window.innerHeight;
     const tl = gsap.timeline({
@@ -41,6 +43,8 @@ export default function About() {
         pin: true,
         scrub: 0.6,
         invalidateOnRefresh: true,
+        // counts once per visit: someone scrolled the whole intro through
+        onLeave: () => { if (!readSent) { readSent = true; track('Read about to the end'); } },
       },
     });
     tl.fromTo(rest, { opacity: 0, y: 60 }, { opacity: 1, y: 0, duration: 1, stagger: 0.35, ease: 'power2.out' })

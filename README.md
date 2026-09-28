@@ -67,3 +67,21 @@ All copy is *lorem ipsum*. Images are tonal stand-ins. In `lib/content.ts`:
 ## Adding pages
 
 Add a folder, for example `app/work/page.tsx` for `/work`.
+
+## Visitor insights (private)
+
+The site counts visits with [Umami](https://umami.is): no cookies, Do Not Track respected,
+live site only. You see the numbers at **/insights**, which only your GitHub account can open;
+everyone else gets a 404, and search engines are told not to index it.
+
+Setup (all in Vercel → Project → Settings → Environment Variables; see `.env.example`):
+
+1. `UMAMI_API_KEY`: Umami → Settings → API keys. Without it /insights shows sample data.
+2. A GitHub OAuth app (GitHub → Settings → Developer settings → OAuth Apps → New):
+   homepage `https://<your-domain>`, callback `https://<your-domain>/api/auth/github/callback`.
+   Put its ID and secret in `GITHUB_CLIENT_ID` / `GITHUB_CLIENT_SECRET`.
+3. `INSIGHTS_GITHUB_USER`: your GitHub username. `AUTH_SECRET`: any long random string.
+4. Redeploy. Opening /insights on a device also stops that device's visits being counted.
+
+Tracked actions: work filters, project opens, contact clicks, and reading the About intro to the end
+(see `lib/track.ts`). Charts and lists read Umami's API in `lib/umami.ts`, refreshed every minute.
