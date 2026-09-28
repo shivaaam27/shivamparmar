@@ -34,20 +34,33 @@ let remembered: { access: Access; until: number } | null = null;
 /** What each attempt answered, for /api/insights/status. */
 export let shareAttempts: string[] = [];
 
+/** Status plus the start of the body, so a refusal says why. */
+async function why(res: Response) {
+  const text = (await res.text().catch(() => '')).replace(/\s+/g, ' ').trim();
+  return `${res.status}${text ? ` ${text.startsWith('<') ? '(web page)' : text.slice(0, 160)}` : ''}`;
+}
+
 async function access(): Promise<Access> {
   if (API_KEY) return { base: 'https://api.umami.is/v1', website: WEBSITE_ID, headers: { 'x-umami-api-key': API_KEY } };
   if (remembered && remembered.until > Date.now()) return remembered.access;
   const attempts: string[] = [];
+  // Umami's own share page asks with an empty bearer, and sends the share
+  // context header with every request that uses the token (without it the token is refused).
+  const ask = { Accept: 'application/json', authorization: 'Bearer ', 'x-umami-share-context': '1' };
   for (const base of SHARE_HOSTS) {
     try {
-      const res = await fetch(`${base}/share/${SHARE_ID}`, { cache: 'no-store', headers: { Accept: 'application/json' } });
-      if (!res.ok) { attempts.push(`${base}/share → ${res.status}`); continue; }
+      const res = await fetch(`${base}/share/${SHARE_ID}`, { cache: 'no-store', headers: ask });
+      if (!res.ok) { attempts.push(`${base}/share → ${await why(res)}`); continue; }
       const j = (await res.json()) as { token?: string; websiteId?: string; website?: { id?: string }; data?: { websiteId?: string } };
       if (!j.token) { attempts.push(`${base}/share → no token in answer`); continue; }
-      const found: Access = { base, website: j.websiteId ?? j.website?.id ?? j.data?.websiteId ?? WEBSITE_ID, headers: { 'x-umami-share-token': j.token } };
+      const found: Access = {
+        base,
+        website: j.websiteId ?? j.website?.id ?? j.data?.websiteId ?? WEBSITE_ID,
+        headers: { 'x-umami-share-token': j.token, 'x-umami-share-context': '1' },
+      };
       // make sure the token can read stats on this host before trusting it
       const probe = await fetch(`${base}/websites/${found.website}/active`, { cache: 'no-store', headers: { ...found.headers, Accept: 'application/json' } });
-      if (!probe.ok) { attempts.push(`${base}/share → token ok, reading stats → ${probe.status}`); continue; }
+      if (!probe.ok) { attempts.push(`${base}/share → token ok, reading stats → ${await why(probe)}`); continue; }
       attempts.push(`${base} → connected`);
       shareAttempts = attempts;
       remembered = { access: found, until: Date.now() + 30 * 60e3 };
