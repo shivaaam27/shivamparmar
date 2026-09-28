@@ -76,7 +76,8 @@ everyone else gets a 404, and search engines are told not to index it.
 
 Setup (all in Vercel → Project → Settings → Environment Variables; see `.env.example`):
 
-1. `UMAMI_API_KEY`: Umami → Settings → API keys. Without it /insights shows sample data.
+1. `UMAMI_SHARE_ID`: in Umami, Websites → your site → Edit → Share URL → on, and paste the id at the end
+   of that URL (paid plans can use `UMAMI_API_KEY` instead). Without either, /insights shows sample data.
 2. A GitHub OAuth app (GitHub → Settings → Developer settings → OAuth Apps → New):
    homepage `https://<your-domain>`, callback `https://<your-domain>/api/auth/github/callback`.
    Put its ID and secret in `GITHUB_CLIENT_ID` / `GITHUB_CLIENT_SECRET`.

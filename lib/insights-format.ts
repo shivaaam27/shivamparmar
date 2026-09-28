@@ -1,3 +1,4 @@
+import iso3166 from 'iso-3166-2';
 import { findProject } from './work';
 import type { ListKey, Row } from './umami';
 
@@ -33,7 +34,9 @@ export function label(list: ListKey, raw: string): string {
     case 'countries': return countryName(raw);
     case 'regions': {
       const [c, r] = raw.split('-');
-      return r ? `${r} · ${countryName(c)}` : raw || 'Unknown';
+      if (!r) return raw || 'Unknown';
+      const sub = iso3166.subdivision(raw.toUpperCase());
+      return `${(sub && 'name' in sub && sub.name) || r} · ${countryName(c)}`;
     }
     case 'cities': return raw || 'Unknown';
     case 'devices': return raw ? cap(raw) : 'Unknown';

@@ -1,15 +1,28 @@
 import 'server-only';
 
 /**
- * Reads visit statistics from Umami Cloud for /insights.
- * Env: UMAMI_API_KEY (Umami → Settings → API keys), optional
- * NEXT_PUBLIC_UMAMI_WEBSITE_ID and INSIGHTS_TIMEZONE.
- * Without a key, or if Umami can't be reached, it returns sample data
+ * Reads visit statistics from Umami Cloud for /insights, in one of two ways:
+ *  - UMAMI_SHARE_ID (free plan): the id at the end of the website's Share URL.
+ *    Umami trades it for a read-only token, the same way its public share page does.
+ *  - UMAMI_API_KEY (paid plans): Umami → Settings → API keys.
+ * Optional: NEXT_PUBLIC_UMAMI_WEBSITE_ID, INSIGHTS_TIMEZONE.
+ * Without either, or if Umami can't be reached, it returns sample data
  * flagged as such so the page never pretends.
  */
 
-const API = 'https://api.umami.is/v1';
 const WEBSITE_ID = process.env.NEXT_PUBLIC_UMAMI_WEBSITE_ID || 'c8e39f81-6be1-4b1b-a492-801b885b6347';
+const SHARE_ID = process.env.UMAMI_SHARE_ID?.trim().split('/').pop();   // accepts the id or the whole share URL
+const API_KEY = process.env.UMAMI_API_KEY;
+const connected = () => Boolean(SHARE_ID || API_KEY);
+
+/** Base URL and auth header, from whichever credential is set. */
+async function access(): Promise<{ base: string; website: string; headers: Record<string, string> }> {
+  if (API_KEY) return { base: 'https://api.umami.is/v1', website: WEBSITE_ID, headers: { 'x-umami-api-key': API_KEY } };
+  const res = await fetch(`https://cloud.umami.is/api/share/${SHARE_ID}`, { next: { revalidate: 1800 } });
+  if (!res.ok) throw new Error(`share link answered ${res.status}`);
+  const { websiteId, token } = (await res.json()) as { websiteId: string; token: string };
+  return { base: 'https://cloud.umami.is/api', website: websiteId || WEBSITE_ID, headers: { 'x-umami-share-token': token } };
+}
 export const TIMEZONE = process.env.INSIGHTS_TIMEZONE || 'Africa/Dar_es_Salaam';
 
 export const RANGES = {
@@ -42,6 +55,9 @@ export const LISTS = {
 } as const;
 export type ListKey = keyof typeof LISTS;
 
+/** One day of the last 12 months (for the skyline). */
+export type Day = { t: number; visitors: number };
+
 export type Insights = {
   source: 'umami' | 'sample';
   note?: string;
@@ -50,16 +66,23 @@ export type Insights = {
   previous: Totals;
   live: number;
   series: Point[];
+  /** The previous period, bucket for bucket, for the comparison line. */
+  prevSeries: Point[];
+  /** Daily visitors for the last 365 days, oldest first (independent of range). */
+  year: Day[];
+  /** Page views by weekday (0 = Monday) × hour (0–23) over the last 4 weeks (independent of range). */
+  rhythm: number[][];
   lists: Record<ListKey, Row[]>;
 };
 
 /* ---------------------------------------------------------------- Umami */
 
 async function get<T>(path: string, params: Record<string, string | number>): Promise<T> {
-  const url = new URL(`${API}/websites/${WEBSITE_ID}${path}`);
+  const { base, website, headers } = await access();
+  const url = new URL(`${base}/websites/${website}${path}`);
   Object.entries(params).forEach(([k, v]) => url.searchParams.set(k, String(v)));
   const res = await fetch(url, {
-    headers: { 'x-umami-api-key': process.env.UMAMI_API_KEY!, Accept: 'application/json' },
+    headers: { ...headers, Accept: 'application/json' },
     next: { revalidate: 60 },
   });
   if (!res.ok) throw new Error(`Umami ${path} answered ${res.status}`);
@@ -104,11 +127,19 @@ async function fromUmami(range: RangeKey): Promise<Insights> {
   const endAt = Date.now();
   const startAt = endAt - ms;
 
-  const [stats, prevStats, active, views, ...lists] = await Promise.all([
+  type Views = { pageviews: { x: string; y: number }[]; sessions: { x: string; y: number }[] };
+  const views = (from: number, to: number, u: string) => get<Views>('/pageviews', { startAt: from, endAt: to, unit: u, timezone: TIMEZONE });
+  const yearStart = endAt - 365 * 86400e3;
+  const rhythmStart = endAt - 28 * 86400e3;
+
+  const [stats, prevStats, active, cur, before, yearViews, hourViews, ...lists] = await Promise.all([
     get<StatsV>('/stats', { startAt, endAt }),
     get<StatsV>('/stats', { startAt: startAt - ms, endAt: startAt }),
     get<{ visitors?: number; x?: number }>('/active', {}).catch((): { visitors?: number; x?: number } => ({ visitors: 0 })),
-    get<{ pageviews: { x: string; y: number }[]; sessions: { x: string; y: number }[] }>('/pageviews', { startAt, endAt, unit, timezone: TIMEZONE }),
+    views(startAt, endAt, unit),
+    views(startAt - ms, startAt, unit).catch((): Views => ({ pageviews: [], sessions: [] })),
+    views(yearStart, endAt, 'day').catch((): Views => ({ pageviews: [], sessions: [] })),
+    views(rhythmStart, endAt, 'hour').catch((): Views => ({ pageviews: [], sessions: [] })),
     ...(Object.keys(LISTS) as ListKey[]).map((k) => metric(k, startAt, endAt)),
   ]);
 
@@ -119,14 +150,16 @@ async function fromUmami(range: RangeKey): Promise<Insights> {
     totals: toTotals(flat(stats)),
     previous: toTotals(flat(prevStats)),
     live: active.visitors ?? active.x ?? 0,
-    series: fillSeries(range, startAt, endAt, views.sessions, views.pageviews),
+    series: fillSeries(unit, startAt, endAt, cur.sessions, cur.pageviews),
+    prevSeries: fillSeries(unit, startAt - ms, startAt, before.sessions, before.pageviews),
+    year: fillSeries('day', yearStart, endAt, yearViews.sessions, yearViews.pageviews).map((p) => ({ t: p.t, visitors: p.visitors })),
+    rhythm: toRhythm(hourViews.pageviews),
     lists: Object.fromEntries((Object.keys(LISTS) as ListKey[]).map((k, i) => [k, lists[i]])) as Record<ListKey, Row[]>,
   };
 }
 
 /** Umami only returns buckets that had visits; lay out every bucket so gaps read as zero. */
-function fillSeries(range: RangeKey, startAt: number, endAt: number, sessions: { x: string; y: number }[], pageviews: { x: string; y: number }[]): Point[] {
-  const unit = RANGES[range].unit;
+function fillSeries(unit: 'hour' | 'day' | 'month', startAt: number, endAt: number, sessions: { x: string; y: number }[], pageviews: { x: string; y: number }[]): Point[] {
   const key = (d: Date) => {
     const p = Object.fromEntries(new Intl.DateTimeFormat('en-CA', { timeZone: TIMEZONE, year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', hourCycle: 'h23' })
       .formatToParts(d).map((x) => [x.type, x.value]));
@@ -145,6 +178,18 @@ function fillSeries(range: RangeKey, startAt: number, endAt: number, sessions: {
     out.push({ t, visitors: v.get(k) ?? 0, pageviews: p.get(k) ?? 0 });
   }
   return out;
+}
+
+/** Hourly buckets ("2026-09-28 14:00:00", already in TIMEZONE) → weekday × hour totals. */
+function toRhythm(rows: { x: string; y: number }[]): number[][] {
+  const grid = Array.from({ length: 7 }, () => Array(24).fill(0));
+  rows.forEach(({ x, y }) => {
+    const [date, time = '00'] = x.replace('T', ' ').split(' ');
+    const [yy, mm, dd] = date.split('-').map(Number);
+    const weekday = (new Date(Date.UTC(yy, mm - 1, dd)).getUTCDay() + 6) % 7;
+    grid[weekday][Number(time.slice(0, 2)) || 0] += y;
+  });
+  return grid;
 }
 
 /* --------------------------------------------------------------- sample */
@@ -167,6 +212,20 @@ function sample(range: RangeKey, note: string): Insights {
   const pageviews = series.reduce((s, p) => s + p.pageviews, 0);
   const totals: Totals = { visitors, visits: Math.round(visitors * 1.18), pageviews, bounceRate: 0.41, avgVisit: 102 };
   const previous: Totals = { visitors: Math.round(visitors * 0.86), visits: Math.round(visitors * 1.02), pageviews: Math.round(pageviews * 0.8), bounceRate: 0.46, avgVisit: 88 };
+  const prevSeries = series.map((p) => ({ t: p.t - ms, visitors: Math.round(p.visitors * (0.7 + rnd() * 0.35)), pageviews: Math.round(p.pageviews * (0.7 + rnd() * 0.3)) }));
+  // a year that starts quiet and picks up, with weekday rhythm and a few spikes
+  const year: Day[] = Array.from({ length: 365 }, (_, i) => {
+    const t = endAt - (364 - i) * 86400e3;
+    const weekday = new Date(t).getUTCDay();
+    const growth = 0.25 + (i / 364) * 0.9;
+    const spike = rnd() > 0.965 ? 2.6 + rnd() * 2 : 1;
+    const quiet = rnd() < 0.12 ? 0 : 1;
+    return { t, visitors: Math.round(quiet * spike * growth * (weekday === 0 || weekday === 6 ? 9 : 17) * (0.55 + rnd() * 0.9)) };
+  });
+  const rhythm = Array.from({ length: 7 }, (_, d) => Array.from({ length: 24 }, (_, h) => {
+    const day = Math.exp(-((h - 11) ** 2) / 18) + 0.7 * Math.exp(-((h - 20) ** 2) / 10);
+    return Math.round((d >= 5 ? 5 : 11) * day * (0.6 + rnd() * 0.8));
+  }));
   const scale = (rows: [string, number][]) => rows.map(([label, share]) => ({ label, value: Math.max(1, Math.round(visitors * share)) }));
   return {
     source: 'sample',
@@ -176,6 +235,9 @@ function sample(range: RangeKey, note: string): Insights {
     previous,
     live: 3,
     series,
+    prevSeries,
+    year,
+    rhythm,
     lists: {
       pages: scale([['/', 0.92], ['/work/task-management', 0.31], ['/about', 0.22], ['/work/files-management', 0.14]]),
       entries: scale([['/', 0.81], ['/work/task-management', 0.11], ['/about', 0.05]]),
@@ -197,10 +259,10 @@ function sample(range: RangeKey, note: string): Insights {
 /* ------------------------------------------------------------------ api */
 
 export async function getInsights(range: RangeKey): Promise<Insights> {
-  if (!process.env.UMAMI_API_KEY) return sample(range, 'Sample data. Add UMAMI_API_KEY in Vercel to see your real numbers.');
+  if (!connected()) return sample(range, 'Sample data. Add UMAMI_SHARE_ID in Vercel to see your real numbers.');
   try {
     return await fromUmami(range);
   } catch (e) {
-    return sample(range, `Couldn't reach Umami (${(e as Error).message}), so this is sample data. Check UMAMI_API_KEY in Vercel.`);
+    return sample(range, `Couldn't reach Umami (${(e as Error).message}), so this is sample data. Check UMAMI_SHARE_ID in Vercel.`);
   }
 }

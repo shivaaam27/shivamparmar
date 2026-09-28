@@ -20,6 +20,9 @@ export default function Analytics() {
       src="https://cloud.umami.is/script.js"
       data-website-id={WEBSITE_ID}
       data-do-not-track="true"
+      // filters and in-page links change ?c=… and #…; count those as the same page
+      data-exclude-search="true"
+      data-exclude-hash="true"
       {...(DOMAINS ? { 'data-domains': DOMAINS } : {})}
       strategy="afterInteractive"
     />
