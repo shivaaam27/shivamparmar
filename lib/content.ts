@@ -84,48 +84,10 @@ export const aboutPage = {
   },
 };
 
-export type WorkItem = { title: string; tone: Tone; image?: string; alt?: string };
-
+/** Heading for the Work section; the work itself lives in lib/work.ts. */
 export const work = {
   tag: 'Selected',
   title: 'Work',
-  /**
-   * Projects grouped by what they are. Each category sits in its own run of
-   * strips; add an item to a category and it joins that run. `image` replaces
-   * the tonal placeholder.
-   */
-  categories: [
-    {
-      name: 'Systems',
-      items: [
-        { title: 'Sign in', tone: 'ink', image: '/images/work-signin.jpg', alt: 'Two people at a monitor showing the Task Management sign-in screen' },
-        { title: 'Dashboard', tone: 'stone', image: '/images/work-dashboard.jpg', alt: 'Someone at a laptop surrounded by floating panels of the Task Management dashboard' },
-        { title: 'Dashboard on iPad', tone: 'ink', image: '/images/work-dashboard-ipad.jpg', alt: 'A hand with a stylus over an iPad showing the Task Management dashboard' },
-      ],
-    },
-    {
-      name: 'Photography',
-      items: [
-        { title: 'Coming soon', tone: 'amber' },
-        { title: 'Coming soon', tone: 'sand' },
-        { title: 'Coming soon', tone: 'cyan' },
-      ],
-    },
-    {
-      name: 'Design',
-      items: [
-        { title: 'Coming soon', tone: 'oxblood' },
-        { title: 'Coming soon', tone: 'rose' },
-      ],
-    },
-    {
-      name: 'Pharmacy',
-      items: [
-        { title: 'Coming soon', tone: 'sage' },
-        { title: 'Coming soon', tone: 'olive' },
-      ],
-    },
-  ] as { name: string; items: WorkItem[] }[],
 };
 
 export const contact = {

@@ -14,7 +14,8 @@ npm run dev        # http://localhost:3000
 ## Where things live
 
 ```
-lib/content.ts        ← ALL text, links and image paths. Edit this to change content.
+lib/content.ts        ← text, links and image paths. Edit this to change content.
+lib/work.ts           ← all work: Category → Sub-category → Project → images.
 public/               ← put photos here (e.g. public/hero.jpg → '/hero.jpg' in content.ts)
 app/globals.css       design system: colours, fonts, spacing (tokens at the top)
 app/layout.tsx        fonts (self-hosted via next/font) + page shell
@@ -23,7 +24,8 @@ components/Hero.tsx   jumble → SHIVAM intro (GSAP timeline)
 components/Effects.tsx scroll reveals + label decoding (GSAP ScrollTrigger)
 components/HeroAtmosphere.tsx  Three.js warm light behind the hero (shader; follows the pointer)
 components/SmoothScroll.tsx    Lenis smooth scroll, synced to GSAP ScrollTrigger
-components/Work.tsx   hover-expand image strips
+components/Work.tsx   work strips, category / sub-category filter (kept in the URL)
+app/work/[slug]/      one page per project that has images
 lib/motion.ts         shared GSAP setup and the scramble helper
 ```
 
@@ -50,7 +52,7 @@ lib/motion.ts         shared GSAP setup and the scramble helper
 All copy is *lorem ipsum*. Images are tonal stand-ins. In `lib/content.ts`:
 
 - `hero.image`: set to e.g. `'/hero.jpg'` and the hero switches to light text on the photo.
-- `about.images[n].image` and `work.items[n].image`: set a path and the photo replaces the stand-in.
+- Work lives in `lib/work.ts`. Add a project to a sub-category; give it `images` and it gets its own page at `/work/<slug>`. A project without images shows as "Coming soon".
 - `hero.replayOnReturn`: set to `true` to replay the intro when scrolling back to the top.
 
 ## Motion notes
