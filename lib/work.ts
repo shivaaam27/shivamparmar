@@ -196,6 +196,24 @@ export const categories: Category[] = [
           },
         ],
       },
+      {
+        slug: 'sgr-train',
+        name: 'SGR Train',
+        projects: [
+          {
+            slug: 'sgr-train',
+            title: 'SGR Train',
+            tone: 'oxblood',
+            cover: '/images/sgr-platform.jpg',
+            summary: 'Tanzania’s SGR electric train: the orange and white carriages at the platform, the long empty aisle, and the view out of the door.',
+            images: [
+              { src: '/images/sgr-platform.jpg', alt: 'The side of an orange and white SGR train at a platform, reflections in its windows, city towers behind', caption: 'At the platform' },
+              { src: '/images/sgr-carriage.jpg', alt: 'Looking down the aisle of an empty SGR carriage, rows of patterned brown seats under warm ceiling light', caption: 'The carriage' },
+              { src: '/images/sgr-door.jpg', alt: 'An orange door inside the train, a window onto the rail yard outside', caption: 'The door' },
+            ],
+          },
+        ],
+      },
       { slug: 'portraits', name: 'Portraits', projects: [soon('portraits-soon', 'amber')] },
       { slug: 'street', name: 'Street', projects: [soon('street-soon', 'sand')] },
       { slug: 'events', name: 'Events', projects: [soon('events-soon', 'cyan')] },
