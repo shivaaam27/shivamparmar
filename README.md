@@ -1,6 +1,7 @@
 # Shivam Parmar — portfolio
 
-Built with **Next.js** (React), **GSAP** for motion and TypeScript. It deploys to Vercel as is:
+Built with **Next.js** (React), **GSAP** for motion, **Three.js** (via React Three Fiber) for 3D,
+**Lenis** for smooth scrolling, and TypeScript. It deploys to Vercel as is:
 import the repo at vercel.com and press Deploy, with no settings to change.
 
 ## Run it locally
@@ -20,6 +21,8 @@ app/layout.tsx        fonts (self-hosted via next/font) + page shell
 app/page.tsx          section order: Hero → About → Work → Contact → Footer
 components/Hero.tsx   jumble → SHIVAM intro (GSAP timeline)
 components/Effects.tsx scroll reveals + label decoding (GSAP ScrollTrigger)
+components/HeroAtmosphere.tsx  Three.js warm light behind the hero (shader; follows the pointer)
+components/SmoothScroll.tsx    Lenis smooth scroll, synced to GSAP ScrollTrigger
 components/Work.tsx   hover-expand image strips
 lib/motion.ts         shared GSAP setup and the scramble helper
 ```
@@ -50,9 +53,15 @@ All copy is *lorem ipsum*. Images are tonal stand-ins. In `lib/content.ts`:
 - `about.images[n].image` and `work.items[n].image`: set a path and the photo replaces the stand-in.
 - `hero.replayOnReturn`: set to `true` to replay the intro when scrolling back to the top.
 
-## Adding more
+## Motion notes
 
-- **3D (Three.js):** `npm install three @react-three/fiber @react-three/drei`, then build a client
-  component with a `<Canvas>`.
-- **New pages:** add a folder, for example `app/work/page.tsx` for `/work`.
-- **Smooth scrolling:** `npm install lenis` works well alongside GSAP ScrollTrigger.
+- **Hero light (Three.js):** it loads after the page, only renders while the hero is on screen,
+  holds still for reduced-motion users and is replaced by the photo once `hero.image` is set. Its
+  colours are the `uPaper` / `uWarm` / `uDeep` values in `HeroAtmosphere.tsx`.
+- **Smooth scroll (Lenis):** `lerp` in `SmoothScroll.tsx` sets how floaty it feels (lower is
+  smoother). It pauses while the menu is open. Reduced-motion users get normal scrolling.
+- More 3D helpers: `npm install @react-three/drei`.
+
+## Adding pages
+
+Add a folder, for example `app/work/page.tsx` for `/work`.

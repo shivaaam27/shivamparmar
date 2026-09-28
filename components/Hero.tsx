@@ -1,8 +1,12 @@
 'use client';
 
 import { useRef } from 'react';
+import dynamic from 'next/dynamic';
 import { hero } from '@/lib/content';
 import { gsap, useGSAP, POOL, rand, prefersReducedMotion, ScrollTrigger } from '@/lib/motion';
+
+// Three.js light behind the name — loaded after the page, browser only
+const HeroAtmosphere = dynamic(() => import('./HeroAtmosphere'), { ssr: false });
 
 const ROWS = 5;
 const NAME_ROW = 2; // zero-based centre row
@@ -113,7 +117,7 @@ export default function Hero() {
   return (
     <section ref={root} className={`hero${hero.image ? ' hero--image' : ''}`} id="top" aria-label="Intro">
       <div className="hero__media" aria-hidden="true">
-        {hero.image && <img src={hero.image} alt="" />}
+        {hero.image ? <img src={hero.image} alt="" /> : <HeroAtmosphere />}
       </div>
 
       <h1 className="sr-only">{hero.word}</h1>

@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
+import { useLenis } from 'lenis/react';
 import { nav, site } from '@/lib/content';
 
 export default function Header() {
@@ -8,8 +9,11 @@ export default function Header() {
   const btn = useRef<HTMLButtonElement>(null);
   const firstLink = useRef<HTMLAnchorElement>(null);
 
+  const lenis = useLenis();
+
   useEffect(() => {
     document.body.classList.toggle('menu-open', open);
+    if (open) lenis?.stop(); else lenis?.start();
     if (open) firstLink.current?.focus({ preventScroll: true });
 
     const onKey = (e: KeyboardEvent) => {
@@ -17,7 +21,7 @@ export default function Header() {
     };
     document.addEventListener('keydown', onKey);
     return () => document.removeEventListener('keydown', onKey);
-  }, [open]);
+  }, [open, lenis]);
 
   return (
     <>
@@ -40,7 +44,7 @@ export default function Header() {
         <ol className="menu__list">
           {nav.map((item, i) => (
             <li key={item.href}>
-              <a ref={i === 0 ? firstLink : undefined} href={item.href} onClick={() => setOpen(false)}>
+              <a ref={i === 0 ? firstLink : undefined} href={item.href} onClick={() => { lenis?.start(); setOpen(false); }}>
                 <span className="mono">{String(i + 1).padStart(2, '0')}</span>
                 {item.label}
               </a>

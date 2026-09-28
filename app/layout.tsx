@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from 'next';
 import { Instrument_Serif, Inter_Tight, IBM_Plex_Mono } from 'next/font/google';
 import { site } from '@/lib/content';
+import SmoothScroll from '@/components/SmoothScroll';
 import './globals.css';
 
 const serif = Instrument_Serif({ subsets: ['latin'], weight: '400', style: ['normal', 'italic'], variable: '--font-serif' });
@@ -25,7 +26,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       </head>
       <body>
         <a className="skip" href="#main">Skip to content</a>
-        {children}
+        <SmoothScroll>{children}</SmoothScroll>
         <div className="grain" aria-hidden="true" />
       </body>
     </html>
