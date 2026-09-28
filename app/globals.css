@@ -150,7 +150,14 @@ body.menu-open { overflow: hidden; }
 
 /* optional photo slot — add an <img> and the hero goes light-on-dark */
 .hero__media { position: absolute; inset: 0; z-index: 0; }
-.hero__media img { width: 100%; height: 100%; object-fit: cover; }
+.hero__media picture { position: absolute; inset: 0; }
+.hero__media img { width: 100%; height: 100%; object-fit: cover; object-position: var(--hero-pos, 50% 50%); }
+@media (max-width: 720px) { .hero__media img { object-position: 50% 50%; } }
+/* screens as wide as the photo (16:9) can't crop it, so zoom slightly from the top-left
+   to move the boat right, clear of the centred name */
+@media (min-width: 721px) and (min-aspect-ratio: 17/10) {
+  .hero--image .hero__media img { transform: scale(1.1); transform-origin: 0 0; }
+}
 .hero--image-light .hero__media::after {
   content: ""; position: absolute; inset: 0;
   background: linear-gradient(180deg, rgba(238,234,227,.55), rgba(238,234,227,0) 22%, rgba(238,234,227,0) 78%, rgba(238,234,227,.6));
@@ -160,17 +167,40 @@ body.menu-open { overflow: hidden; }
 .hero--image { color: var(--paper); }
 .hero--image .hero__media::after {
   content: ""; position: absolute; inset: 0;
-  background: linear-gradient(180deg, rgba(0,0,0,.18), rgba(0,0,0,0) 30%, rgba(0,0,0,0) 70%, rgba(0,0,0,.28));
+  /* darken the photo so white type reads: an even base, a soft pool behind the name, heavier edges */
+  background:
+    radial-gradient(ellipse 55% 40% at 50% 52%, rgba(6,12,14,.32), rgba(6,12,14,0) 75%),
+    linear-gradient(180deg, rgba(6,12,14,.5), rgba(6,12,14,.3) 28%, rgba(6,12,14,.3) 72%, rgba(6,12,14,.55));
 }
-.hero--image .jumble__cell { color: rgba(255,255,255,.45); }
+@media (max-width: 720px) {
+  /* on phones the name sits over the sail, so the pool behind it is deeper */
+  .hero--image .hero__media::after {
+    background:
+      radial-gradient(ellipse 90% 20% at 50% 53%, rgba(6,12,14,.72), rgba(6,12,14,0) 85%),
+      linear-gradient(180deg, rgba(6,12,14,.5), rgba(6,12,14,.32) 28%, rgba(6,12,14,.32) 72%, rgba(6,12,14,.55));
+  }
+  .hero--image .jumble__cell,
+  .hero--image .hero__descriptor { text-shadow: 0 0 18px rgba(0,0,0,.7), 0 1px 3px rgba(0,0,0,.5) !important; }
+}
+.hero--image .jumble__cell { color: rgba(255,255,255,.5); }
 .hero--image .jumble__cell.is-locked { color: #fff; }
+.hero--image .jumble__cell,
+.hero--image .hero__descriptor { text-shadow: 0 1px 24px rgba(0,0,0,.35); }
+
+/* on photos the descriptor sits centred under the name, clear of the image */
+.hero--image .hero__descriptor {
+  top: calc((var(--name-row, 2) + 1) * var(--cell) - var(--cell) * .15); height: auto;
+  left: 0; right: 0; justify-content: center; text-align: center;
+}
+.js .hero--image .hero__descriptor { transform: translateY(-.5rem); }
+.intro-done .hero--image .hero__descriptor { transform: none; }
 
 @media (min-width: 721px) {
   .hero--left { justify-items: start; }
   .hero--left .hero__stage { margin-left: calc(var(--cell) * -.2); }  /* optical: first letter aligns with the gutter */
 }
 .hero__stage {
-  --cell: clamp(2.9rem, min(9.5vw, 11.5vh), 7.25rem);
+  --cell: clamp(2.5rem, min(6.8vw, 8.5vh), 5.25rem);
   position: relative; z-index: 1;
 }
 
@@ -182,7 +212,7 @@ body.menu-open { overflow: hidden; }
 .jumble__cell {
   position: relative; overflow: hidden;
   display: grid; place-items: center;
-  font: 400 calc(var(--cell) * .9)/1 var(--serif);
+  font: 400 calc(var(--cell) * .82)/1 var(--serif);
   color: var(--taupe-lite);
   transition: color .45s var(--ease);
 }

@@ -25,10 +25,14 @@ export const hero = {
   footer: ['Lorem ipsum', 'Dolor', 'Sit amet', 'Consectetur'],
   /** Put a photo in /public and set e.g. '/hero.jpg'. Set to null for the Three.js light instead. */
   image: '/images/hero-boat.jpg' as string | null,
+  /** Optional portrait crop used on phones (screens up to 720px wide). */
+  imageMobile: '/images/hero-boat-portrait.jpg' as string | null,
+  /** Which part of the photo stays in view when the screen crops it (CSS object-position). */
+  imagePosition: '0% 50%',
   /** 'light' photo (bright, like the beach) keeps dark text; 'dark' photo switches text to white. */
   imageTone: 'dark' as 'light' | 'dark',
   /** Where the name sits on desktop: 'left' keeps it in open water beside the boat; 'center' is the Rowan layout. */
-  align: 'left' as 'left' | 'center',
+  align: 'center' as 'left' | 'center',
   /** Replay the intro when scrolling back to the top. */
   replayOnReturn: false,
 };

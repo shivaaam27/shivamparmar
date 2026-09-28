@@ -128,7 +128,12 @@ export default function Hero() {
   return (
     <section ref={root} className={`hero hero--${hero.align}${hero.image ? (hero.imageTone === 'dark' ? ' hero--image' : ' hero--image-light') : ''}`} id="top" aria-label="Intro">
       <div className="hero__media" aria-hidden="true">
-        {hero.image ? <img src={hero.image} alt="" fetchPriority="high" /> : <HeroAtmosphere />}
+        {hero.image ? (
+          <picture>
+            {hero.imageMobile && <source media="(max-width: 720px)" srcSet={hero.imageMobile} />}
+            <img src={hero.image} alt="" fetchPriority="high" style={{ '--hero-pos': hero.imagePosition } as React.CSSProperties} />
+          </picture>
+        ) : <HeroAtmosphere />}
       </div>
 
       <h1 className="sr-only">{hero.word}</h1>
