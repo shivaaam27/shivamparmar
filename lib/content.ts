@@ -45,13 +45,50 @@ export type Tone =
 export const about = {
   tag: 'About',
   headline: ['Hi, I’m Shivam,', 'pharmacist, photographer', 'and systems builder.'],
-  body: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua — ut enim ad minim veniam, quis nostrud exercitation.',
+  body: 'I help brands design and build custom systems that work beautifully: functional at their core and considered in every detail. Alongside photography and design, from posters and websites to social posts and video, I build AI workflows that save hours of work. I pair technical precision with emotional depth, so what I make resonates with customers, teams and communities, and builds lasting growth.',
   link: { label: 'Read more about me', href: '/about' },
   /** image: '/about-1.jpg' replaces the tonal placeholder */
   images: [
     { tone: 'cyan' as Tone, image: '/images/about-waves.jpg' as string | null, alt: 'Waves breaking over dark rocks' },
     { tone: 'sand' as Tone, image: '/images/about-beach.jpg' as string | null, alt: 'A lone figure walking across white sand, seen from above' },
   ],
+};
+
+/** The full /about page. */
+export const aboutPage = {
+  tag: 'About',
+  headline: ['Hi, I’m Shivam.'],
+  intro: [
+    'I help brands design and build custom systems that work beautifully: functional at their core and considered in every detail.',
+    'I believe the most lasting work pairs technical precision with emotional depth. It creates systems that resonate with the people they serve, from customers to teams and communities, and builds strong connections and long-term growth in business and in life.',
+  ],
+  disciplinesTag: 'What I do',
+  disciplines: [
+    {
+      title: 'Systems',
+      text: 'Custom systems built around how a brand actually works. They are functional first, easy to use, and designed to grow with the business.',
+    },
+    {
+      title: 'AI & prompt engineering',
+      text: 'I design AI workflows and integrate them into everyday work with tools like Claude Code, with prompts engineered for reliable results. Repetitive tasks get automated so people spend their time where it matters, saving hours every week.',
+    },
+    {
+      title: 'Design',
+      text: 'Posters, websites, social media posts and video. Every piece is designed to be clear, consistent and visually striking, from a single post to a full site.',
+    },
+    {
+      title: 'Photography',
+      text: 'Images with atmosphere and intent, from open water and quiet landscapes to people and places. Photography shapes how I see composition, light and detail in everything I make.',
+    },
+    {
+      title: 'Pharmacy',
+      text: 'I’m a pharmacist. The precision, care and responsibility of that work carry into every system I build.',
+    },
+  ],
+  closing: {
+    headline: ['Let’s build something', 'that lasts.'],
+    link: { label: 'Get in touch', href: '/#contact' },
+  },
 };
 
 export const work = {
