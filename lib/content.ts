@@ -25,11 +25,11 @@ export const hero = {
   descriptor: ['Since 1998'],
   footer: ['Pharmacist', 'Photographer', 'Claude Code & AI expert', 'Building systems'],
   /** Put a photo in /public and set e.g. '/hero.jpg'. Set to null for the Three.js light instead. */
-  image: '/images/hero-boat.jpg' as string | null,
+  image: '/images/hero-signin.jpg' as string | null,
   /** Optional portrait crop used on phones (screens up to 720px wide). */
-  imageMobile: '/images/hero-boat-portrait.jpg' as string | null,
+  imageMobile: '/images/hero-signin-portrait.jpg' as string | null,
   /** Which part of the photo stays in view when the screen crops it (CSS object-position). */
-  imagePosition: '0% 50%',
+  imagePosition: '50% 50%',
   /** 'light' photo (bright, like the beach) keeps dark text; 'dark' photo switches text to white. */
   imageTone: 'dark' as 'light' | 'dark',
   /** Where the name sits on desktop: 'left' keeps it in open water beside the boat; 'center' is the Rowan layout. */
