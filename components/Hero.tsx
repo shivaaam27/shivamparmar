@@ -13,8 +13,17 @@ const NAME_ROW = 2; // zero-based centre row
 const COLS = hero.word.length;
 
 /**
- * A grid of jumbled letters rolls; the centre row locks into the name
- * left to right, then everything else fades away. Plays once per load.
+ * Where every letter comes to rest: a Latin square around the name (no row or
+ * column repeats a letter), with EST on top and the year along the bottom.
+ */
+const SETTLED = ['ESTIVH', 'MVAHSI', 'SHIVAM', 'IASMHV', 'HM2026'];
+/** How small the mark sits once it has settled. */
+const REST_SCALE = { desktop: 0.62, phone: 0.8 };
+
+/**
+ * A grid of jumbled letters rolls; the centre row locks into the name left
+ * to right, the rest settle into a fixed grey square (EST … 2026), and the
+ * whole mark eases down to a smaller resting size where it stays.
  */
 export default function Hero() {
   const root = useRef<HTMLElement>(null);
@@ -30,12 +39,15 @@ export default function Hero() {
     const row = (i: number) => Math.floor(i / COLS);
 
     const finish = () => html.classList.add('intro-done');
+    const jumble = root.current!.querySelector<HTMLElement>('.jumble')!;
+    const restScale = () => (window.matchMedia('(max-width: 720px)').matches ? REST_SCALE.phone : REST_SCALE.desktop);
 
     if (prefersReducedMotion()) {
       cells.forEach((cell, i) => {
-        if (isName(i)) { spans[i].textContent = name[col(i)]; cell.classList.add('is-locked'); }
-        else gsap.set(cell, { opacity: 0 });
+        spans[i].textContent = SETTLED[row(i)][col(i)];
+        cell.classList.add(isName(i) ? 'is-locked' : 'is-settled');
       });
+      gsap.set(jumble, { scale: restScale() });
       finish();
       return;
     }
@@ -50,10 +62,10 @@ export default function Hero() {
       const locked = new Set<number>();
 
       cells.forEach((cell, i) => {
-        cell.classList.remove('is-locked');
+        cell.classList.remove('is-locked', 'is-settled');
         spans[i].textContent = rand(POOL);
       });
-      gsap.set(cells, { opacity: 1, filter: 'blur(0px)', y: 0 });
+      gsap.set(jumble, { scale: 1 });
 
       const roll = (i: number, letter: string) => {
         spans[i].textContent = letter;
@@ -84,21 +96,23 @@ export default function Hero() {
         }, undefined, 1.1 + col(i) * 0.19);
       });
 
-      // stop and fade the rest, outward from the name
+      // the rest settle into the square, rippling out from the name
       const allLocked = 1.1 + (COLS - 1) * 0.19 + 0.35;
-      tl.call(() => clearInterval(tick), undefined, allLocked);
       cells.forEach((cell, i) => {
         if (isName(i)) return;
-        const distance = Math.abs(row(i) - NAME_ROW);
-        tl!.to(cell, {
-          opacity: 0,
-          filter: 'blur(6px)',
-          yPercent: row(i) < NAME_ROW ? -12 : 12,
-          duration: 0.75,
-          ease: 'power2.inOut',
-        }, allLocked + distance * 0.11 + Math.random() * 0.16);
+        tl!.call(() => {
+          locked.add(i);
+          spans[i].textContent = SETTLED[row(i)][col(i)];
+          cell.classList.add('is-settled');
+          gsap.fromTo(spans[i], { yPercent: -30, opacity: 0 }, { yPercent: 0, opacity: 1, duration: 0.4, ease: 'power3.out' });
+        }, undefined, allLocked + Math.abs(row(i) - NAME_ROW) * 0.12 + col(i) * 0.05);
       });
-      tl.call(finish, undefined, allLocked + 0.65);
+      const settled = allLocked + 2 * 0.12 + (COLS - 1) * 0.05 + 0.4;
+      tl.call(() => clearInterval(tick), undefined, settled);
+
+      // then the whole mark eases down to its resting size
+      tl.to(jumble, { scale: restScale, duration: 1.3, ease: 'power3.inOut' }, settled + 0.35);
+      tl.call(finish, undefined, settled + 0.9);
     };
 
     // wait for fonts (max 1.2s) so letters never swap typeface mid-roll
@@ -144,9 +158,6 @@ export default function Hero() {
             <div className="jumble__cell" key={i}><span /></div>
           ))}
         </div>
-        <p className="hero__descriptor mono">
-          {hero.descriptor.map((line, i) => <span key={i}>{i > 0 && <br />}{line}</span>)}
-        </p>
       </div>
 
       <ul className="hero__foot mono">

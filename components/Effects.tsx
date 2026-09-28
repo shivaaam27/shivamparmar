@@ -6,6 +6,7 @@ import { gsap, ScrollTrigger, useGSAP, scramble, prefersReducedMotion } from '@/
  * Page-wide scroll motion:
  *  - `.reveal` elements rise in (optional `data-delay="1..3"` staggers them)
  *  - `[data-scramble]` text decodes from SHIVAM letters
+ *  - the header name hides while the work strips pass under it
  */
 export default function Effects() {
   useGSAP(() => {
@@ -22,6 +23,16 @@ export default function Effects() {
         scrollTrigger: { trigger: el, start: 'top 88%', once: true },
       });
     });
+
+    // the header name steps aside while the work images pass beneath it
+    const strips = document.querySelector('.strips');
+    const header = document.querySelector('.site-header');
+    if (strips && header) {
+      ScrollTrigger.create({
+        trigger: strips, start: 'top top+=90', end: 'bottom top+=20',
+        toggleClass: { targets: header, className: 'site-header--over-work' },
+      });
+    }
 
     gsap.utils.toArray<HTMLElement>('[data-scramble]').forEach((el) => {
       ScrollTrigger.create({

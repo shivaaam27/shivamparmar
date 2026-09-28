@@ -21,8 +21,6 @@ export const nav = [
 export const hero = {
   /** Letters that jumble; the centre row resolves into this word. */
   word: 'SHIVAM',
-  /** Small mono lines under the name (one or more). */
-  descriptor: ['Since 1998'],
   footer: ['Pharmacist', 'Photographer', 'Claude Code & AI expert', 'Building systems'],
   /** Put a photo in /public and set e.g. '/hero.jpg'. Set to null for the Three.js light instead. */
   image: '/images/hero-dashboard.jpg' as string | null,

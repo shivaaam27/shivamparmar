@@ -92,6 +92,8 @@ img { display: block; max-width: 100%; }
   mix-blend-mode: difference;   /* reads dark on paper, light on images */
 }
 .site-header--on-image { mix-blend-mode: normal; }
+.wordmark { transition: opacity .4s var(--ease); }
+.site-header--over-work .wordmark { opacity: 0; pointer-events: none; }
 .wordmark {
   font: 400 clamp(1.5rem, 2vw, 1.875rem)/1 var(--serif);
   letter-spacing: -.01em;
@@ -174,21 +176,13 @@ body.menu-open { overflow: hidden; }
       radial-gradient(ellipse 90% 20% at 50% 53%, rgba(6,12,14,.72), rgba(6,12,14,0) 85%),
       linear-gradient(180deg, rgba(6,12,14,.5), rgba(6,12,14,.32) 28%, rgba(6,12,14,.32) 72%, rgba(6,12,14,.55));
   }
-  .hero--image .jumble__cell,
-  .hero--image .hero__descriptor { text-shadow: 0 0 18px rgba(0,0,0,.7), 0 1px 3px rgba(0,0,0,.5) !important; }
+  .hero--image .jumble__cell { text-shadow: 0 0 18px rgba(0,0,0,.7), 0 1px 3px rgba(0,0,0,.5) !important; }
 }
 .hero--image .jumble__cell { color: rgba(255,255,255,.5); }
 .hero--image .jumble__cell.is-locked { color: #fff; }
-.hero--image .jumble__cell,
-.hero--image .hero__descriptor { text-shadow: 0 1px 24px rgba(0,0,0,.35); }
-
-/* on photos the descriptor sits centred under the name, clear of the image */
-.hero--image .hero__descriptor {
-  top: calc((var(--name-row, 2) + 1) * var(--cell) - var(--cell) * .15); height: auto;
-  left: 0; right: 0; justify-content: center; text-align: center;
-}
-.js .hero--image .hero__descriptor { transform: translateY(-.5rem); }
-.intro-done .hero--image .hero__descriptor { transform: none; }
+.hero--image .jumble__cell { text-shadow: 0 1px 24px rgba(0,0,0,.35); }
+/* settled letters (EST, the year, the square) stay grey; only the name is white */
+.hero--image .jumble__cell.is-settled { color: rgba(255,255,255,.34); }
 
 @media (min-width: 721px) {
   .hero--left { justify-items: start; }
@@ -213,15 +207,8 @@ body.menu-open { overflow: hidden; }
 }
 .jumble__cell > span { display: block; padding-top: .08em; will-change: transform; }
 .jumble__cell.is-locked { color: var(--ink); }
+.jumble__cell.is-settled { color: var(--taupe-lite); }
 
-.hero__descriptor {
-  position: absolute;
-  top: calc(var(--name-row, 2) * var(--cell)); height: var(--cell);
-  left: calc(100% + clamp(.75rem, 1.6vw, 1.75rem));
-  display: flex; align-items: center;
-  white-space: nowrap;
-  color: inherit;
-}
 
 .hero__foot {
   position: absolute; z-index: 1;
@@ -231,17 +218,13 @@ body.menu-open { overflow: hidden; }
 
 /* chrome waits for the name to land (JS only) */
 .js:where(:has(.hero)) .site-header,
-.js .hero__descriptor,
 .js .hero__foot li {
   opacity: 0;
   transition: opacity 1s var(--ease), transform 1s var(--ease);
 }
-.js .hero__descriptor { transform: translateX(-.5rem); }
 .js .hero__foot li { transform: translateY(.5rem); }
 .intro-done .site-header,
-.intro-done .hero__descriptor,
 .intro-done .hero__foot li { opacity: 1; transform: none; }
-.intro-done .hero__descriptor { transition-delay: .1s; }
 .intro-done .hero__foot li:nth-child(1) { transition-delay: .25s; }
 .intro-done .hero__foot li:nth-child(2) { transition-delay: .32s; }
 .intro-done .hero__foot li:nth-child(3) { transition-delay: .39s; }
@@ -500,12 +483,6 @@ body.menu-open { overflow: hidden; }
 }
 
 @media (max-width: 720px) {
-  /* descriptor sits under the name instead of beside it */
-  .hero__descriptor {
-    top: calc((var(--name-row, 2) + 1) * var(--cell) + .5rem); height: auto;
-    left: 0; right: 0; justify-content: center; text-align: center;
-  }
-  .js .hero__descriptor { transform: translateY(-.5rem); }
   .hero__foot { display: grid; grid-template-columns: 1fr 1fr; row-gap: .35rem; }
   .hero__foot li:nth-child(even) { text-align: right; }
 
