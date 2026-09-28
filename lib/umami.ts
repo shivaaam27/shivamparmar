@@ -29,7 +29,14 @@ type Access = { base: string; website: string; headers: Record<string, string> }
  * version, so try each until one hands out a token that can actually read
  * this website. The winner is remembered for half an hour.
  */
-const SHARE_HOSTS = ['https://api.umami.is/v1', 'https://cloud.umami.is/api', 'https://cloud.umami.is/analytics/api'];
+// Umami Cloud serves each region's share pages from a regional gateway (found via /api/insights/status)
+const SHARE_HOSTS = [
+  process.env.UMAMI_GATEWAY,                 // optional override
+  'https://gateway-eu.umami.is/api',
+  'https://gateway-us.umami.is/api',
+  'https://gateway.umami.is/api',
+  'https://cloud.umami.is/api',
+].filter((h): h is string => Boolean(h));
 let remembered: { access: Access; until: number } | null = null;
 /** What each attempt answered, for /api/insights/status. */
 export let shareAttempts: string[] = [];
@@ -46,17 +53,20 @@ async function access(): Promise<Access> {
   const attempts: string[] = [];
   // Umami's own share page asks with an empty bearer, and sends the share
   // context header with every request that uses the token (without it the token is refused).
-  const ask = { Accept: 'application/json', authorization: 'Bearer ', 'x-umami-share-context': '1' };
+  // …and the gateway expects requests from the share page itself
+  const from = { Origin: 'https://cloud.umami.is', Referer: `https://cloud.umami.is/share/${SHARE_ID}` };
+  const ask = { Accept: 'application/json', authorization: 'Bearer ', 'x-umami-share-context': '1', ...from };
   for (const base of SHARE_HOSTS) {
     try {
       const res = await fetch(`${base}/share/${SHARE_ID}`, { cache: 'no-store', headers: ask });
       if (!res.ok) { attempts.push(`${base}/share → ${await why(res)}`); continue; }
+      if (!(res.headers.get('content-type') ?? '').includes('json')) { attempts.push(`${base}/share → answered with a web page`); continue; }
       const j = (await res.json()) as { token?: string; websiteId?: string; website?: { id?: string }; data?: { websiteId?: string } };
       if (!j.token) { attempts.push(`${base}/share → no token in answer`); continue; }
       const found: Access = {
         base,
         website: j.websiteId ?? j.website?.id ?? j.data?.websiteId ?? WEBSITE_ID,
-        headers: { 'x-umami-share-token': j.token, 'x-umami-share-context': '1' },
+        headers: { 'x-umami-share-token': j.token, 'x-umami-share-context': '1', authorization: 'Bearer ', ...from },
       };
       // make sure the token can read stats on this host before trusting it
       const probe = await fetch(`${base}/websites/${found.website}/active`, { cache: 'no-store', headers: { ...found.headers, Accept: 'application/json' } });
