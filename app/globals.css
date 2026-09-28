@@ -150,6 +150,10 @@ body.menu-open { overflow: hidden; }
 /* optional photo slot — add an <img> and the hero goes light-on-dark */
 .hero__media { position: absolute; inset: 0; z-index: 0; }
 .hero__media img { width: 100%; height: 100%; object-fit: cover; }
+.hero--image-light .hero__media::after {
+  content: ""; position: absolute; inset: 0;
+  background: linear-gradient(180deg, rgba(238,234,227,.55), rgba(238,234,227,0) 22%, rgba(238,234,227,0) 78%, rgba(238,234,227,.6));
+}
 .hero__atmosphere { position: absolute; inset: 0; }
 .hero__atmosphere canvas { display: block; }
 .hero--image { color: var(--paper); }

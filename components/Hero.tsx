@@ -115,9 +115,9 @@ export default function Hero() {
   }, { scope: root });
 
   return (
-    <section ref={root} className={`hero${hero.image ? ' hero--image' : ''}`} id="top" aria-label="Intro">
+    <section ref={root} className={`hero${hero.image ? (hero.imageTone === 'dark' ? ' hero--image' : ' hero--image-light') : ''}`} id="top" aria-label="Intro">
       <div className="hero__media" aria-hidden="true">
-        {hero.image ? <img src={hero.image} alt="" /> : <HeroAtmosphere />}
+        {hero.image ? <img src={hero.image} alt="" fetchPriority="high" /> : <HeroAtmosphere />}
       </div>
 
       <h1 className="sr-only">{hero.word}</h1>
