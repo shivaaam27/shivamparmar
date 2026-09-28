@@ -124,6 +124,24 @@ export const categories: Category[] = [
           },
         ],
       },
+      {
+        slug: 'dar-es-salaam',
+        name: 'Dar es Salaam',
+        projects: [
+          {
+            slug: 'dar-es-salaam',
+            title: 'Dar es Salaam',
+            tone: 'cyan',
+            cover: '/images/dar-bridge.jpg',
+            summary: 'Dar es Salaam from the air and at the water’s edge: the new bridge over the bay, a beach at golden hour, a kayak on still water.',
+            images: [
+              { src: '/images/dar-bridge.jpg', alt: 'Aerial view of the cable-stayed bridge running across the bay towards the Masaki peninsula', caption: 'The bridge' },
+              { src: '/images/dar-beach.jpg', alt: 'Looking straight down on a beach at golden hour: palms, two people on loungers, long shadows, rocks and surf', caption: 'Golden hour' },
+              { src: '/images/dar-kayak.jpg', alt: 'A blue kayak on dark still water under overhanging green leaves', caption: 'Still water' },
+            ],
+          },
+        ],
+      },
       { slug: 'portraits', name: 'Portraits', projects: [soon('portraits-soon', 'amber')] },
       { slug: 'street', name: 'Street', projects: [soon('street-soon', 'sand')] },
       { slug: 'events', name: 'Events', projects: [soon('events-soon', 'cyan')] },
