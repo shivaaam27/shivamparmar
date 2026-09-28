@@ -86,6 +86,26 @@ export const categories: Category[] = [
           },
         ],
       },
+      {
+        slug: 'delta-hotel',
+        name: 'Delta Hotel',
+        projects: [
+          {
+            slug: 'delta-hotel',
+            title: 'Delta Hotel',
+            tone: 'stone',
+            cover: '/images/delta-facade.jpg',
+            summary: 'Delta Hotels by Marriott, Dar es Salaam: the pool, the terrace over the bay, the building and the quiet water in front of it.',
+            images: [
+              { src: '/images/delta-facade.jpg', alt: 'The Delta Hotels Marriott building in Dar es Salaam, rows of curved balconies seen through leaves', caption: 'The building' },
+              { src: '/images/delta-pool.jpg', alt: 'A folded Delta Hotels umbrella over wooden loungers, the round pool and palms behind', caption: 'By the pool' },
+              { src: '/images/delta-terrace.jpg', alt: 'A terrace with tables above the bay, framed by palm fronds', caption: 'The terrace' },
+              { src: '/images/delta-canoe.jpg', alt: 'A lone paddler in a wooden canoe on calm grey-blue water under a wide sky', caption: 'The bay' },
+              { src: '/images/delta-door.jpg', alt: 'The Delta D frosted on a glass door, a wooden carving on the wall behind', caption: 'The D' },
+            ],
+          },
+        ],
+      },
       { slug: 'portraits', name: 'Portraits', projects: [soon('portraits-soon', 'amber')] },
       { slug: 'street', name: 'Street', projects: [soon('street-soon', 'sand')] },
       { slug: 'events', name: 'Events', projects: [soon('events-soon', 'cyan')] },
