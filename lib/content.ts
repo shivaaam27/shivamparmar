@@ -50,7 +50,7 @@ export const about = {
   /** image: '/about-1.jpg' replaces the tonal placeholder */
   images: [
     { tone: 'cyan' as Tone, image: '/images/about-waves.jpg' as string | null, alt: 'Waves breaking over dark rocks' },
-    { tone: 'sand' as Tone, image: '/images/about-beach.jpg' as string | null, alt: 'A lone figure walking across white sand, seen from above' },
+    { tone: 'ink' as Tone, image: '/images/about-task-management.jpg' as string | null, alt: 'Someone looking at a studio display showing the Task Management app' },
   ],
 };
 
