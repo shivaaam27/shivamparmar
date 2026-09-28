@@ -366,6 +366,22 @@ body.menu-open { overflow: hidden; }
   margin-bottom: clamp(3rem, 7vw, 6rem);
 }
 
+.work__meta {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 2rem;
+  max-width: 52rem;
+}
+/* the category filter: plain words, the chosen one in ink, counts in mono */
+.work__filter button {
+  display: inline-flex; align-items: baseline; gap: .5em;
+  font: inherit; color: var(--taupe-lite); text-align: left;
+  transition: color .35s var(--ease);
+}
+.work__filter button .mono { font-size: .75em; }
+.work__filter button:hover, .work__filter button.is-active { color: var(--ink); }
+.work__filter button:focus-visible { outline: 1px solid var(--ink); outline-offset: 3px; }
+
 /* category runs sit side by side; the wide gap between them is the division */
 .strips {
   --strip-gap: clamp(.375rem, .7vw, .625rem);
@@ -489,6 +505,7 @@ body.menu-open { overflow: hidden; }
   .display .tag { vertical-align: 1.9em; }
 
   /* strips stack vertically on phones: tap to expand */
+  .work__meta { grid-template-columns: 1fr; }
   .strips { flex-direction: column; height: auto; gap: 1.75rem; }
   .strip-group { flex: none !important; }
   .strip-group__row { flex: none; flex-direction: column; height: calc(var(--n, 3) * 3.25rem); transition: height .8s var(--ease); }
