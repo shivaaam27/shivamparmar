@@ -214,9 +214,6 @@ export const categories: Category[] = [
           },
         ],
       },
-      { slug: 'portraits', name: 'Portraits', projects: [soon('portraits-soon', 'amber')] },
-      { slug: 'street', name: 'Street', projects: [soon('street-soon', 'sand')] },
-      { slug: 'events', name: 'Events', projects: [soon('events-soon', 'cyan')] },
     ],
   },
   {
