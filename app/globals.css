@@ -612,7 +612,7 @@ body.menu-open { overflow: hidden; }
 /* hero */
 .ins__hero { padding: clamp(2rem, 6vw, 5rem) var(--wrap) clamp(2.5rem, 5vw, 4rem); display: grid; gap: clamp(1.5rem, 3vw, 2.5rem); }
 .ins__title { display: grid; gap: .5rem; }
-.ins__h1 { font: 400 clamp(5rem, 15vw, 13rem)/.8 var(--serif); letter-spacing: -.03em; }
+.ins__h1 { font: 400 clamp(5rem, 15vw, 13rem)/.8 var(--serif); letter-spacing: -.03em; padding-bottom: .2em; } /* room for the g's descender */
 .ins__h2 { font: 400 clamp(3rem, 7vw, 6.5rem)/.85 var(--serif); letter-spacing: -.02em; }
 .ins__ranges { display: inline-flex; flex-wrap: wrap; gap: 2px; padding: 3px; border-radius: 999px; background: var(--paper-deep); justify-self: start; }
 .ins__ranges a { padding: .5rem 1rem; border-radius: 999px; font-size: .875rem; color: var(--ink-soft); transition: background .2s, color .2s; }
@@ -837,6 +837,7 @@ body.menu-open { overflow: hidden; }
 /* sign-in */
 .ins--signin { min-height: 100svh; display: grid; align-content: center; justify-items: start; gap: 1.25rem; padding-inline: var(--wrap); }
 .ins--signin p { color: var(--ink-soft); }
+.ins--signin .ins__h1 { margin-bottom: .25rem; }
 .ins__signin { display: inline-flex; align-items: center; gap: .5rem; background: var(--ink); color: var(--paper); padding: .9rem 1.4rem; border-radius: 999px; font-weight: 500; }
 .ins__signin:hover { background: #000; }
 
