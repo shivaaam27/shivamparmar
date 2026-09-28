@@ -1,6 +1,7 @@
 import { NextResponse, type NextRequest } from 'next/server';
 import { currentUser } from '@/lib/auth';
-import { LISTS, getInsights, toRange, type ListKey } from '@/lib/umami';
+import { LISTS, toRange, type ListKey } from '@/lib/umami';
+import { getInsights, toSource } from '@/lib/insights-data';
 import { labelled, toCsv } from '@/lib/insights-format';
 
 /** CSV download of one list, owner only: /api/insights/export?list=countries&range=30d */
@@ -9,7 +10,7 @@ export async function GET(req: NextRequest) {
   const list = req.nextUrl.searchParams.get('list') as ListKey;
   if (!(list in LISTS)) return new NextResponse('Unknown list', { status: 400 });
   const range = toRange(req.nextUrl.searchParams.get('range') ?? undefined);
-  const data = await getInsights(range);
+  const data = await getInsights(range, toSource(req.nextUrl.searchParams.get('source')));
   const csv = toCsv(list, labelled(list, data.lists[list]), LISTS[list]);
   return new NextResponse(csv, {
     headers: {

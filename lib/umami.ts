@@ -20,7 +20,8 @@ function shareIdFrom(raw?: string) {
 }
 const SHARE_ID = shareIdFrom(process.env.UMAMI_SHARE_ID);
 const API_KEY = process.env.UMAMI_API_KEY;
-const connected = () => Boolean(SHARE_ID || API_KEY);
+export const umamiConnected = () => Boolean(SHARE_ID || API_KEY);
+const connected = umamiConnected;
 
 type Access = { base: string; website: string; headers: Record<string, string> };
 
@@ -118,7 +119,8 @@ export type ListKey = keyof typeof LISTS;
 export type Day = { t: number; visitors: number };
 
 export type Insights = {
-  source: 'umami' | 'sample';
+  /** 'own' = this site's database, 'umami' = Umami Cloud, 'sample' = made-up numbers */
+  source: 'own' | 'umami' | 'sample';
   note?: string;
   range: RangeKey;
   totals: Totals;
@@ -154,7 +156,7 @@ type StatsV = Record<'pageviews' | 'visitors' | 'visits' | 'bounces' | 'totaltim
 };
 
 const now = (s: Stat) => (typeof s === 'number' ? s : s?.value ?? 0);
-function toTotals(v: Record<string, number>): Totals {
+export function toTotals(v: Record<string, number>): Totals {
   const visits = v.visits || 0;
   return {
     visitors: v.visitors || 0,
@@ -181,7 +183,7 @@ async function metric(key: ListKey, startAt: number, endAt: number): Promise<Row
   return [];
 }
 
-async function fromUmami(range: RangeKey): Promise<Insights> {
+export async function fromUmami(range: RangeKey): Promise<Insights> {
   const { ms, unit } = RANGES[range];
   const endAt = Date.now();
   const startAt = endAt - ms;
@@ -218,7 +220,7 @@ async function fromUmami(range: RangeKey): Promise<Insights> {
 }
 
 /** Umami only returns buckets that had visits; lay out every bucket so gaps read as zero. */
-function fillSeries(unit: 'hour' | 'day' | 'month', startAt: number, endAt: number, sessions: { x: string; y: number }[], pageviews: { x: string; y: number }[]): Point[] {
+export function fillSeries(unit: 'hour' | 'day' | 'month', startAt: number, endAt: number, sessions: { x: string; y: number }[], pageviews: { x: string; y: number }[]): Point[] {
   const key = (d: Date) => {
     const p = Object.fromEntries(new Intl.DateTimeFormat('en-CA', { timeZone: TIMEZONE, year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', hourCycle: 'h23' })
       .formatToParts(d).map((x) => [x.type, x.value]));
@@ -240,7 +242,7 @@ function fillSeries(unit: 'hour' | 'day' | 'month', startAt: number, endAt: numb
 }
 
 /** Hourly buckets ("2026-09-28 14:00:00", already in TIMEZONE) → weekday × hour totals. */
-function toRhythm(rows: { x: string; y: number }[]): number[][] {
+export function toRhythm(rows: { x: string; y: number }[]): number[][] {
   const grid = Array.from({ length: 7 }, () => Array(24).fill(0));
   rows.forEach(({ x, y }) => {
     const [date, time = '00'] = x.replace('T', ' ').split(' ');
@@ -254,7 +256,7 @@ function toRhythm(rows: { x: string; y: number }[]): number[][] {
 /* --------------------------------------------------------------- sample */
 
 /** Plausible, fixed sample numbers so the page can be designed and reviewed before real data exists. */
-function sample(range: RangeKey, note: string): Insights {
+export function sample(range: RangeKey, note: string): Insights {
   const { ms, unit } = RANGES[range];
   let seed = 7;
   const rnd = () => ((seed = (seed * 16807) % 2147483647) - 1) / 2147483646;
@@ -317,37 +319,6 @@ function sample(range: RangeKey, note: string): Insights {
 
 /* ------------------------------------------------------------------ api */
 
-/**
- * For the status check only: open Umami's own share page for this id and
- * read its scripts for the address that page gets its data from, so the
- * right host can be set without guessing.
- */
-export async function discoverShareApi() {
-  if (!SHARE_ID) return { note: 'no share id' };
-  const out: Record<string, unknown> = {};
-  try {
-    const page = await fetch(`https://cloud.umami.is/share/${SHARE_ID}`, { cache: 'no-store', headers: { Accept: 'text/html' } });
-    out.page = `${page.status} ${page.url}`;
-    const html = await page.text();
-    const scripts = [...html.matchAll(/<script[^>]+src="([^"]+)"/g)].map((m) => new URL(m[1], page.url).toString()).slice(0, 60);
-    out.scripts = scripts.length;
-    const found = new Set<string>();
-    const hints = new Set<string>();
-    await Promise.all(scripts.map(async (src) => {
-      try {
-        const js = await (await fetch(src, { cache: 'no-store' })).text();
-        for (const m of js.matchAll(/https?:\/\/[a-z0-9.-]*umami[a-z0-9.-]*(?:\/[A-Za-z0-9_\-./]*)?/gi)) found.add(m[0]);
-        for (const m of js.matchAll(/(apiUrl|basePath|API_URL|cloudUrl)["']?\s*[:=]\s*["']([^"']{0,120})["']/g)) hints.add(`${m[1]}=${m[2]}`);
-      } catch { /* skip */ }
-    }));
-    out.urls = [...found].slice(0, 40);
-    out.hints = [...hints].slice(0, 20);
-  } catch (e) {
-    out.error = (e as Error).message;
-  }
-  return out;
-}
-
 /** For the status check: which credential is set, and does Umami answer. */
 export async function umamiStatus() {
   const via = API_KEY ? 'api key' : SHARE_ID ? 'share link' : 'not set';
@@ -364,7 +335,19 @@ export async function umamiStatus() {
   }
 }
 
-export async function getInsights(range: RangeKey): Promise<Insights> {
+/** One day's totals and top lists from Umami, for the nightly backup. */
+export async function umamiDay(startAt: number, endAt: number) {
+  const keys = Object.keys(LISTS) as ListKey[];
+  const [stats, ...lists] = await Promise.all([
+    get<StatsV>('/stats', { startAt, endAt }),
+    ...keys.map((k) => metric(k, startAt, endAt)),
+  ]);
+  const t = Object.fromEntries((['pageviews', 'visitors', 'visits', 'bounces', 'totaltime'] as const).map((k) => [k, Math.round(now(stats[k]))]));
+  return { totals: t as Record<'pageviews' | 'visitors' | 'visits' | 'bounces' | 'totaltime', number>, lists: keys.map((k, i) => ({ list: k, rows: lists[i] })) };
+}
+
+/** Umami, or sample data with the reason. (Which source to show is decided in lib/insights-data.ts.) */
+export async function umamiOrSample(range: RangeKey): Promise<Insights> {
   if (!connected()) return sample(range, 'Sample data. Add UMAMI_SHARE_ID in Vercel to see your real numbers.');
   try {
     return await fromUmami(range);

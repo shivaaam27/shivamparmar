@@ -9,6 +9,7 @@
   },
   "dependencies": {
     "@gsap/react": "^2.1.2",
+    "@neondatabase/serverless": "^1.1.0",
     "@react-three/fiber": "^9.8.1",
     "all-the-cities": "^3.1.0",
     "d3-geo": "^3.1.1",
@@ -26,12 +27,14 @@
     "world-atlas": "^2.0.2"
   },
   "devDependencies": {
+    "@electric-sql/pglite": "^0.5.8",
     "@types/d3-geo": "^3.1.1",
     "@types/node": "^26.6.3",
     "@types/react": "^19.3.0",
     "@types/react-dom": "^19.3.0",
     "@types/three": "^0.186.0",
     "@types/topojson-client": "^3.1.5",
+    "tsx": "^4.23.15",
     "typescript": "^7.0.2"
   }
 }

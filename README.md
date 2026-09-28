@@ -70,6 +70,16 @@ Add a folder, for example `app/work/page.tsx` for `/work`.
 
 ## Visitor insights (private)
 
+Visits are recorded twice, so no single service can lose them:
+
+- **Your own database** (Neon Postgres, connected in Vercel → Storage): the site sends each page view and
+  action to `/api/collect`, which saves it with the country/region/city Vercel provides. No cookies and no IP
+  addresses are stored; a visitor is an anonymous id that changes every day. This is the dashboard's default source.
+- **Umami**, as an independent second copy with its own dashboard. Every night `/api/cron/umami-backup`
+  (scheduled in `vercel.json`) also copies Umami's daily numbers into your database.
+
+On /insights you can switch between the two sources; if one can't be read, the page falls back to the other and says so.
+
 The site counts visits with [Umami](https://umami.is): no cookies, Do Not Track respected,
 live site only. You see the numbers at **/insights**, which only your GitHub account can open;
 everyone else gets a 404, and search engines are told not to index it.

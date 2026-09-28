@@ -2,11 +2,12 @@ import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import {
   ArrowDownRight, ArrowUpRight, BookOpen, CalendarDays, Clock, Compass, Download, FileText, FolderOpen,
-  Languages, Link2, LogOut, Mail, Maximize2, MousePointerClick, Route, Smartphone, Timer, Users,
+  Database, Languages, Link2, LogOut, Mail, Maximize2, MousePointerClick, Route, Smartphone, Timer, Users,
 } from 'lucide-react';
 import type { LucideIcon } from 'lucide-react';
 import { MIN_SECRET, authConfigured, currentUser, secretStrong } from '@/lib/auth';
-import { RANGES, TIMEZONE, getInsights, toRange, type ListKey, type RangeKey, type Row, type Totals } from '@/lib/umami';
+import { RANGES, TIMEZONE, toRange, type ListKey, type RangeKey, type Row, type Totals } from '@/lib/umami';
+import { defaultSource, getInsights, toSource, type Source } from '@/lib/insights-data';
 import { buildGeo } from '@/lib/geo';
 import { duration, label, pct } from '@/lib/insights-format';
 import { compact } from '@/lib/chart';
@@ -20,15 +21,18 @@ import ExcludeMe from '@/components/insights/ExcludeMe';
 export const dynamic = 'force-dynamic';
 export const metadata: Metadata = { title: 'Insights', robots: { index: false, follow: false, nocache: true } };
 
-type Props = { searchParams: Promise<{ range?: string }> };
+type Props = { searchParams: Promise<{ range?: string; source?: string }> };
 
 export default async function InsightsPage({ searchParams }: Props) {
   if (!authConfigured()) notFound();
   const user = await currentUser();
   if (!user) return <SignIn />;
 
-  const range = toRange((await searchParams).range);
-  const data = await getInsights(range);
+  const params = await searchParams;
+  const range = toRange(params.range);
+  const source: Source = toSource(params.source) ?? defaultSource();
+  const data = await getInsights(range, source);
+  const link = (r: RangeKey, s: Source) => `/insights?range=${r}${s === defaultSource() ? '' : `&source=${s}`}`;
   const { lists, totals, previous } = data;
   const since = `vs previous ${RANGES[range].short}`;
   const built = buildGeo(lists.countries, lists.regions, lists.cities);
@@ -63,7 +67,15 @@ export default async function InsightsPage({ searchParams }: Props) {
         </div>
         <nav className="ins__ranges" aria-label="Date range">
           {(Object.keys(RANGES) as RangeKey[]).map((k) => (
-            <a key={k} href={`/insights?range=${k}`} aria-current={k === range ? 'true' : undefined}>{RANGES[k].short}</a>
+            <a key={k} href={link(k, source)} aria-current={k === range ? 'true' : undefined}>{RANGES[k].short}</a>
+          ))}
+        </nav>
+
+        <nav className="ins__ranges ins__sources" aria-label="Data source">
+          {(['own', 'umami'] as Source[]).map((k) => (
+            <a key={k} href={link(range, k)} aria-current={k === source ? 'true' : undefined}>
+              <Database size={14} aria-hidden="true" />{k === 'own' ? 'Your database' : 'Umami'}
+            </a>
           ))}
         </nav>
 
@@ -92,7 +104,7 @@ export default async function InsightsPage({ searchParams }: Props) {
           <h2 id="geo-h" className="ins__h2">Around the world</h2>
           <p className="ins__geo-sub">Each column is as tall as its visitors. Pick a country to see its regions and cities.</p>
         </div>
-        <GeoExplorer model={geo} range={range} rangeLabel={RANGES[range].label} />
+        <GeoExplorer model={geo} range={`${range}&source=${source}`} rangeLabel={RANGES[range].label} />
       </section>
 
       {/* -------------------------------------------------------------- cards */}
@@ -115,11 +127,11 @@ export default async function InsightsPage({ searchParams }: Props) {
           </div>
         </Card>
 
-        <Card icon={Compass} title="Where they come from" csv="referrers" range={range}>
+        <Card icon={Compass} title="Where they come from" csv="referrers" range={range} source={source}>
           <BarList list="referrers" rows={lists.referrers} icon={Link2} />
         </Card>
 
-        <Card icon={Smartphone} title="Devices" csv="devices" range={range}>
+        <Card icon={Smartphone} title="Devices" csv="devices" range={range} source={source}>
           <Split rows={lists.devices.map((r) => ({ label: label('devices', r.label), value: r.value }))} />
           <div className="minirows">
             <MiniRows title="Browsers" rows={lists.browsers.slice(0, 4).map((r) => ({ label: label('browsers', r.label), value: r.value }))} />
@@ -136,7 +148,7 @@ export default async function InsightsPage({ searchParams }: Props) {
           ]} />
         </Card>
 
-        <Card icon={FileText} title="Pages" csv="pages" range={range}>
+        <Card icon={FileText} title="Pages" csv="pages" range={range} source={source}>
           <BarList list="pages" rows={lists.pages} unit="views" />
         </Card>
 
@@ -144,7 +156,7 @@ export default async function InsightsPage({ searchParams }: Props) {
           <BarList list="pages" rows={projects} unit="views" empty="No project pages opened yet." />
         </Card>
 
-        <Card icon={MousePointerClick} title="What people do" csv="events" range={range}>
+        <Card icon={MousePointerClick} title="What people do" csv="events" range={range} source={source}>
           <BarList list="events" rows={actions} unit="times" raw />
         </Card>
 
@@ -159,15 +171,15 @@ export default async function InsightsPage({ searchParams }: Props) {
           </div>
         </Card>
 
-        <Card icon={Languages} title="Languages" csv="languages" range={range}>
+        <Card icon={Languages} title="Languages" csv="languages" range={range} source={source}>
           <BarList list="languages" rows={lists.languages} />
         </Card>
 
-        <Card icon={Maximize2} title="Screen sizes" csv="screens" range={range}>
+        <Card icon={Maximize2} title="Screen sizes" csv="screens" range={range} source={source}>
           <BarList list="screens" rows={lists.screens} />
         </Card>
 
-        <Card icon={BookOpen} title="Regions" csv="regions" range={range}>
+        <Card icon={BookOpen} title="Regions" csv="regions" range={range} source={source}>
           <BarList list="regions" rows={lists.regions} />
         </Card>
 
@@ -178,7 +190,7 @@ export default async function InsightsPage({ searchParams }: Props) {
 
       <footer className="ins__foot mono">
         <ExcludeMe />
-        <span>{data.source === 'umami' ? 'Live from Umami, refreshed every minute' : 'Sample data'} · times in {TIMEZONE.replace(/_/g, ' ')}</span>
+        <span>{data.source === 'own' ? 'From your own database, live' : data.source === 'umami' ? 'From Umami, refreshed every minute' : 'Sample data'} · times in {TIMEZONE.replace(/_/g, ' ')}</span>
       </footer>
     </main>
   );
@@ -236,8 +248,8 @@ function Kpi({ icon: Icon, label: name, value, now, before, since, upIsBad, hint
   );
 }
 
-function Card({ icon: Icon, title, children, csv, range, note, wide, full }: {
-  icon: LucideIcon; title: string; children: React.ReactNode; csv?: ListKey; range?: RangeKey; note?: string; wide?: boolean; full?: boolean;
+function Card({ icon: Icon, title, children, csv, range, source, note, wide, full }: {
+  icon: LucideIcon; title: string; children: React.ReactNode; csv?: ListKey; range?: RangeKey; source?: Source; note?: string; wide?: boolean; full?: boolean;
 }) {
   return (
     <section className={`card${wide ? ' card--wide' : ''}${full ? ' card--full' : ''}`}>
@@ -245,7 +257,7 @@ function Card({ icon: Icon, title, children, csv, range, note, wide, full }: {
         <h2><span className="card__icon"><Icon size={16} aria-hidden="true" /></span>{title}</h2>
         {note && <span className="card__note mono">{note}</span>}
         {csv && range && (
-          <a className="card__csv" href={`/api/insights/export?list=${csv}&range=${range}`} aria-label={`Download ${title} as CSV`} title="Download CSV">
+          <a className="card__csv" href={`/api/insights/export?list=${csv}&range=${range}&source=${source ?? ''}`} aria-label={`Download ${title} as CSV`} title="Download CSV">
             <Download size={15} aria-hidden="true" />
           </a>
         )}
