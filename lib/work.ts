@@ -142,6 +142,24 @@ export const categories: Category[] = [
           },
         ],
       },
+      {
+        slug: 'morogoro-hotel',
+        name: 'Morogoro Hotel',
+        projects: [
+          {
+            slug: 'morogoro-hotel',
+            title: 'Morogoro Hotel',
+            tone: 'amber',
+            cover: '/images/morogoro-aerial.jpg',
+            summary: 'Morogoro Hotel, under the Uluguru Mountains: round red roofs from above, and the white walls and clipped hedges between them.',
+            images: [
+              { src: '/images/morogoro-aerial.jpg', alt: 'Straight down from above: round buildings with red tiled roofs like flowers, among trees and curving hedges', caption: 'From above' },
+              { src: '/images/morogoro-roofs.jpg', alt: 'Red tiled roofs and white angled walls in a garden, a tall tree and cloudy mountains behind', caption: 'Under the mountains' },
+              { src: '/images/morogoro-garden.jpg', alt: 'A stone path winding through sunlit hedges past white walls and red roofs, palms and tall trees above', caption: 'The garden path' },
+            ],
+          },
+        ],
+      },
       { slug: 'portraits', name: 'Portraits', projects: [soon('portraits-soon', 'amber')] },
       { slug: 'street', name: 'Street', projects: [soon('street-soon', 'sand')] },
       { slug: 'events', name: 'Events', projects: [soon('events-soon', 'cyan')] },
