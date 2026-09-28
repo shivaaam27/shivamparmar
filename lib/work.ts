@@ -177,6 +177,25 @@ export const categories: Category[] = [
           },
         ],
       },
+      {
+        slug: 'roros',
+        name: 'Roro’s',
+        projects: [
+          {
+            slug: 'roros',
+            title: 'Roro’s',
+            tone: 'sand',
+            cover: '/images/roros-beach.jpg',
+            summary: 'Roro’s Beach Bar, Dar es Salaam: sofas on the sand, a bar built from an old boat, live saxophone, and the bay going blue at dusk.',
+            images: [
+              { src: '/images/roros-beach.jpg', alt: 'Wooden sofas with grey cushions on white sand under a tree, people talking, the sea behind', caption: 'On the sand' },
+              { src: '/images/roros-boat-bar.jpg', alt: 'A bar made from an old wooden boat, stools in front, the bay and city skyline behind', caption: 'The boat bar' },
+              { src: '/images/roros-sax.jpg', alt: 'A saxophonist in a cap playing beside a wooden DJ booth against an orange timber wall', caption: 'Live sax' },
+              { src: '/images/roros-dusk.jpg', alt: 'A waiter in a Roro’s shirt looking out over the sea under a wide blue dusk sky', caption: 'Dusk' },
+            ],
+          },
+        ],
+      },
       { slug: 'portraits', name: 'Portraits', projects: [soon('portraits-soon', 'amber')] },
       { slug: 'street', name: 'Street', projects: [soon('street-soon', 'sand')] },
       { slug: 'events', name: 'Events', projects: [soon('events-soon', 'cyan')] },
