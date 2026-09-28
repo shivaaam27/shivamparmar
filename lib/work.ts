@@ -106,6 +106,23 @@ export const categories: Category[] = [
           },
         ],
       },
+      {
+        slug: 'mikumi',
+        name: 'Mikumi National Park',
+        projects: [
+          {
+            slug: 'mikumi-national-park',
+            title: 'Mikumi National Park',
+            tone: 'sage',
+            cover: '/images/mikumi-elephants.jpg',
+            summary: 'A day in Mikumi National Park, Tanzania: open grassland, big skies and the animals that live under them.',
+            images: [
+              { src: '/images/mikumi-elephants.jpg', alt: 'Two young elephants facing each other in tall green grass, acacia trees and heavy clouds behind', caption: 'Elephants' },
+              { src: '/images/mikumi-giraffe.jpg', alt: 'A giraffe’s head and neck against a grey, cloudy sky', caption: 'Giraffe' },
+            ],
+          },
+        ],
+      },
       { slug: 'portraits', name: 'Portraits', projects: [soon('portraits-soon', 'amber')] },
       { slug: 'street', name: 'Street', projects: [soon('street-soon', 'sand')] },
       { slug: 'events', name: 'Events', projects: [soon('events-soon', 'cyan')] },
