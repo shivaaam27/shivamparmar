@@ -17,6 +17,16 @@ const MAX_AGE = 60 * 60 * 24 * 30;
 export const authConfigured = () =>
   Boolean(process.env.GITHUB_CLIENT_ID && process.env.GITHUB_CLIENT_SECRET && process.env.INSIGHTS_GITHUB_USER && process.env.AUTH_SECRET);
 
+/**
+ * AUTH_SECRET signs the session cookie; anyone who can guess it can forge a
+ * sign-in. Refuse to sign in (or trust a cookie) until it is long and random.
+ */
+export const MIN_SECRET = 32;
+export const secretStrong = () => {
+  const s = process.env.AUTH_SECRET ?? '';
+  return s.length >= MIN_SECRET && new Set(s).size >= 12;
+};
+
 export const allowedUser = () => (process.env.INSIGHTS_GITHUB_USER ?? '').trim().toLowerCase();
 
 const b64 = (s: string) => Buffer.from(s).toString('base64url');
@@ -29,7 +39,7 @@ export function createSession(login: string) {
 
 /** The signed-in owner's GitHub login, or null. */
 export async function currentUser(): Promise<string | null> {
-  if (!authConfigured()) return null;
+  if (!authConfigured() || !secretStrong()) return null;
   const raw = (await cookies()).get(SESSION_COOKIE)?.value;
   if (!raw) return null;
   const [payload, sig] = raw.split('.');

@@ -5,7 +5,7 @@ import {
   Languages, Link2, LogOut, Mail, Maximize2, MousePointerClick, Route, Smartphone, Timer, Users,
 } from 'lucide-react';
 import type { LucideIcon } from 'lucide-react';
-import { authConfigured, currentUser } from '@/lib/auth';
+import { MIN_SECRET, authConfigured, currentUser, secretStrong } from '@/lib/auth';
 import { RANGES, TIMEZONE, getInsights, toRange, type ListKey, type RangeKey, type Row, type Totals } from '@/lib/umami';
 import { buildGeo } from '@/lib/geo';
 import { duration, label, pct } from '@/lib/insights-format';
@@ -191,8 +191,17 @@ function SignIn() {
     <main id="main" className="ins ins--signin">
       <p className="ins__eyebrow mono">Private</p>
       <h1 className="ins__h1">Insights</h1>
-      <p>Sign in with the GitHub account that owns this site.</p>
-      <a className="ins__signin" href="/api/auth/github">Sign in with GitHub<ArrowUpRight size={16} aria-hidden="true" /></a>
+      {secretStrong() ? (
+        <>
+          <p>Sign in with the GitHub account that owns this site.</p>
+          <a className="ins__signin" href="/api/auth/github">Sign in with GitHub<ArrowUpRight size={16} aria-hidden="true" /></a>
+        </>
+      ) : (
+        <p className="ins__note" role="alert">
+          Sign-in is paused: AUTH_SECRET in Vercel is too short to keep this page private. Set it to a random value of at
+          least {MIN_SECRET} characters and redeploy.
+        </p>
+      )}
     </main>
   );
 }

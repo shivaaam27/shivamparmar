@@ -1,5 +1,5 @@
 import { NextResponse, type NextRequest } from 'next/server';
-import { SESSION_COOKIE, STATE_COOKIE, allowedUser, authConfigured, cookieBase, createSession } from '@/lib/auth';
+import { MIN_SECRET, SESSION_COOKIE, STATE_COOKIE, allowedUser, authConfigured, cookieBase, createSession, secretStrong } from '@/lib/auth';
 
 const notFound = () => new NextResponse('Not found', { status: 404 });
 /** Setup problems get a plain explanation; only "not the owner" stays a silent 404. */
@@ -13,6 +13,10 @@ const problem = (text: string) =>
  */
 export async function GET(req: NextRequest) {
   if (!authConfigured()) return notFound();
+  if (!secretStrong()) {
+    return problem(`AUTH_SECRET in Vercel is too weak to protect your sign-in. Set it to a random value of at least ${MIN_SECRET} characters `
+      + '(a password manager can generate one), then redeploy.');
+  }
   const code = req.nextUrl.searchParams.get('code');
   const state = req.nextUrl.searchParams.get('state');
   const expected = req.cookies.get(STATE_COOKIE)?.value;

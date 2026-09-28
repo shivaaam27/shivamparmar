@@ -307,6 +307,37 @@ function sample(range: RangeKey, note: string): Insights {
 
 /* ------------------------------------------------------------------ api */
 
+/**
+ * For the status check only: open Umami's own share page for this id and
+ * read its scripts for the address that page gets its data from, so the
+ * right host can be set without guessing.
+ */
+export async function discoverShareApi() {
+  if (!SHARE_ID) return { note: 'no share id' };
+  const out: Record<string, unknown> = {};
+  try {
+    const page = await fetch(`https://cloud.umami.is/share/${SHARE_ID}`, { cache: 'no-store', headers: { Accept: 'text/html' } });
+    out.page = `${page.status} ${page.url}`;
+    const html = await page.text();
+    const scripts = [...html.matchAll(/<script[^>]+src="([^"]+)"/g)].map((m) => new URL(m[1], page.url).toString()).slice(0, 60);
+    out.scripts = scripts.length;
+    const found = new Set<string>();
+    const hints = new Set<string>();
+    await Promise.all(scripts.map(async (src) => {
+      try {
+        const js = await (await fetch(src, { cache: 'no-store' })).text();
+        for (const m of js.matchAll(/https?:\/\/[a-z0-9.-]*umami[a-z0-9.-]*(?:\/[A-Za-z0-9_\-./]*)?/gi)) found.add(m[0]);
+        for (const m of js.matchAll(/(apiUrl|basePath|API_URL|cloudUrl)["']?\s*[:=]\s*["']([^"']{0,120})["']/g)) hints.add(`${m[1]}=${m[2]}`);
+      } catch { /* skip */ }
+    }));
+    out.urls = [...found].slice(0, 40);
+    out.hints = [...hints].slice(0, 20);
+  } catch (e) {
+    out.error = (e as Error).message;
+  }
+  return out;
+}
+
 /** For the status check: which credential is set, and does Umami answer. */
 export async function umamiStatus() {
   const via = API_KEY ? 'api key' : SHARE_ID ? 'share link' : 'not set';
