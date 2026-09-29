@@ -42,15 +42,20 @@ export default function Hero() {
     const jumble = root.current!.querySelector<HTMLElement>('.jumble')!;
     const restScale = () => (window.matchMedia('(max-width: 720px)').matches ? REST_SCALE.phone : REST_SCALE.desktop);
 
-    if (prefersReducedMotion()) {
+    // show the settled mark straight away (no intro)
+    const settleNow = () => {
       cells.forEach((cell, i) => {
         spans[i].textContent = SETTLED[row(i)][col(i)];
         cell.classList.add(isName(i) ? 'is-locked' : 'is-settled');
       });
       gsap.set(jumble, { scale: restScale() });
       finish();
-      return;
-    }
+    };
+    // a refresh part-way down the page (or a link to #work) skips the intro, so
+    // the header and page are ready at once instead of waiting for it off screen
+    const awayFromTop = () => window.scrollY > window.innerHeight * 0.5 || (location.hash && location.hash !== '#top');
+
+    if (prefersReducedMotion() || awayFromTop()) { settleNow(); return; }
 
     let tick: ReturnType<typeof setInterval> | undefined;
     let tl: gsap.core.Timeline | undefined;
@@ -117,7 +122,7 @@ export default function Hero() {
 
     // wait for fonts (max 1.2s) so letters never swap typeface mid-roll
     let started = false;
-    const start = () => { if (!started) { started = true; play(); } };
+    const start = () => { if (!started) { started = true; if (awayFromTop()) settleNow(); else play(); } };
     document.fonts?.ready.then(start);
     const fallback = setTimeout(start, 1200);
 
