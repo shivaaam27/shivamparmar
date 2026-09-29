@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { track } from '@/lib/track';
-import PhotoViewer from './PhotoViewer';
+import PhotoCarousel from './ui/PhotoCarousel';
 
 export type Shot = { src: string; alt: string; w: number; h: number; project: string; slug: string; n: number };
 export type Group = { slug: string; name: string; shots: Shot[] };
@@ -13,12 +13,13 @@ const pad = (n: number) => String(n).padStart(2, '0');
  * A category's full page body: an index of its sub-categories on the left
  * (hover to pick them out, click to show only that one, kept in ?s=) and all
  * of its pictures on the right as an even grid of same-size tiles. Clicking
- * one opens the viewer, moving left and right through the same set.
+ * one opens the carousel over exactly the pictures on show (all, or one collection).
  */
 export default function CategoryGallery({ category, groups }: { category: string; groups: Group[] }) {
   const [sel, setSel] = useState<string | null>(null);
   const [hover, setHover] = useState<string | null>(null);
   const [viewing, setViewing] = useState<number | null>(null);
+  const closeViewer = useCallback(() => setViewing(null), []);
 
   useEffect(() => {
     const sync = () => {
@@ -82,7 +83,7 @@ export default function CategoryGallery({ category, groups }: { category: string
         ))}
       </div>
 
-      {viewing !== null && <PhotoViewer shots={placed} start={viewing} onClose={() => setViewing(null)} />}
+      {viewing !== null && <PhotoCarousel shots={placed} start={viewing} onClose={closeViewer} />}
     </div>
   );
 }

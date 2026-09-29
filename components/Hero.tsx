@@ -16,13 +16,13 @@ const COLS = hero.word.length;
  * Where every letter comes to rest: a Latin square around the name (no row or
  * column repeats a letter), with EST on top and the year along the bottom.
  */
-const SETTLED = ['ESTIVH', 'MVAHSI', 'SHIVAM', 'IASMHV', 'HM2026'];
+const SETTLED = ['ESTIVH', 'MVAHSI', 'SHIVAM', 'IASMHV', 'HM1998'];
 /** How small the mark sits once it has settled. */
 const REST_SCALE = { desktop: 0.62, phone: 0.8 };
 
 /**
  * A grid of jumbled letters rolls; the centre row locks into the name left
- * to right, the rest settle into a fixed grey square (EST … 2026), and the
+ * to right, the rest settle into a fixed grey square (EST … 1998), and the
  * whole mark eases down to a smaller resting size where it stays.
  */
 export default function Hero() {

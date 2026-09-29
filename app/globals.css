@@ -412,44 +412,63 @@ body.menu-open { overflow: hidden; }
 .cat-shot img { width: 100%; height: 100%; object-fit: cover; transition: transform 1s var(--ease); }
 .cat-shot button:hover img { transform: scale(1.03); }
 .cat-shot button:focus-visible { outline: 1px solid var(--ink); outline-offset: 3px; }
-/* the viewer: pictures side by side, moved through left and right */
-.viewer {
+/* the photo carousel: coverflow in the middle, tiny thumbnails and dots under it */
+.pc {
   position: fixed; inset: 0; z-index: 120; background: var(--paper);
   display: grid; grid-template-rows: auto minmax(0, 1fr) auto;
-  animation: viewer-in .45s var(--ease);
+  animation: pc-in .45s var(--ease);
 }
-@keyframes viewer-in { from { opacity: 0; } }
-.viewer__bar {
+@keyframes pc-in { from { opacity: 0; } }
+.pc__bar {
   display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; gap: 1rem;
   padding: clamp(1rem, 2vw, 1.5rem) var(--gutter); font-size: .75rem; letter-spacing: .06em; color: var(--ink);
 }
-.viewer__project { justify-self: center; }
-.viewer__close { justify-self: end; font: inherit; letter-spacing: inherit; text-transform: uppercase; }
-.viewer__project:hover, .viewer__close:hover { opacity: .65; }
-.viewer__track {
-  display: flex; align-items: center; gap: clamp(.75rem, 1.5vw, 1.5rem);
-  overflow-x: auto; overscroll-behavior: contain; scroll-snap-type: x mandatory; scrollbar-width: none;
-  padding: 0 calc(50vw - 20vh);
+.pc__project { justify-self: center; }
+.pc__close { justify-self: end; display: inline-flex; align-items: center; gap: .4rem; font: inherit; letter-spacing: inherit; text-transform: uppercase; }
+.pc__project:hover, .pc__close:hover { opacity: .65; }
+
+.pc__stage { position: relative; min-height: 0; display: grid; align-items: center; }
+.pc__swiper { width: 100%; height: 100%; padding: 2vh 0 !important; }
+.pc__swiper .swiper-wrapper { align-items: center; }
+.pc__slide {
+  --h: min(62svh, 44rem);
+  height: var(--h) !important; width: calc(var(--h) * .8) !important;   /* every picture the same 4:5 frame */
 }
-.viewer__track::-webkit-scrollbar { display: none; }
-.viewer__slide { flex: none; height: 100%; display: grid; place-items: center; scroll-snap-align: center; }
-.viewer__slide img {
-  height: 100%; max-height: calc(100svh - 9rem); width: auto; max-width: 86vw; object-fit: contain;
-  opacity: .35; transition: opacity .5s var(--ease);
+.pc__slide img { width: 100%; height: 100%; object-fit: cover; user-select: none; }
+.pc__arrow {
+  position: absolute; top: 50%; z-index: 5; transform: translateY(-50%);
+  width: 2.75rem; height: 2.75rem; border-radius: 50%; display: grid; place-items: center;
+  background: var(--paper); color: var(--ink); border: 1px solid var(--line);
+  box-shadow: 0 4px 18px rgba(21, 20, 18, .08); transition: opacity .2s, transform .2s;
 }
-.viewer__slide.is-on img { opacity: 1; }
-.viewer__slide:not(.is-on) { cursor: pointer; }
-.viewer__nav { display: flex; justify-content: center; gap: .5rem; padding: clamp(.75rem, 1.6vw, 1.25rem); }
-.viewer__nav button {
-  width: 2.75rem; height: 2.75rem; border-radius: 50%; border: 1px solid var(--line);
-  font-size: 1rem; color: var(--ink); transition: background .2s, opacity .2s;
+.pc__arrow--prev { left: var(--gutter); }
+.pc__arrow--next { right: var(--gutter); }
+.pc__arrow:hover:not(:disabled) { transform: translateY(-50%) scale(1.06); }
+.pc__arrow:disabled { opacity: .25; cursor: default; }
+
+.pc__foot { display: grid; justify-items: center; gap: .9rem; padding: .5rem var(--gutter) clamp(1rem, 2.4vw, 1.75rem); }
+/* thumbnails: slivers that open up when chosen */
+.pc__thumbs {
+  position: relative; display: flex; gap: 3px; width: min(100%, 46rem); overflow-x: auto;
+  scrollbar-width: none; mask-image: linear-gradient(90deg, transparent, #000 12%, #000 88%, transparent);
 }
-.viewer__nav button:hover:not(:disabled) { background: var(--paper-deep); }
-.viewer__nav button:disabled { opacity: .3; cursor: default; }
+.pc__thumbs::-webkit-scrollbar { display: none; }
+/* room either side so the first and last thumbnails can sit in the middle too */
+.pc__thumbs::before, .pc__thumbs::after { content: ''; flex: none; width: calc(50% - 1.8rem); }
+.pc__thumbs button {
+  flex: none; width: 1.35rem; height: 2.6rem; overflow: hidden; opacity: .55;
+  transition: width .35s var(--ease), opacity .3s, margin .35s var(--ease);
+}
+.pc__thumbs button:hover { opacity: .9; }
+.pc__thumbs button.is-on { width: 3.6rem; opacity: 1; margin: 0 3px; }
+.pc__thumbs img { width: 100%; height: 100%; object-fit: cover; pointer-events: none; }
+.pc__dots { position: static !important; display: flex; justify-content: center; align-items: center; min-height: 8px; width: auto !important; transform: none !important; }
+.pc__dots .swiper-pagination-bullet { width: 5px; height: 5px; margin: 0 3px !important; background: var(--ink); opacity: .22; }
+.pc__dots .swiper-pagination-bullet-active { opacity: 1; }
+
 @media (max-width: 720px) {
-  .viewer__track { padding: 0 6vw; }
-  .viewer__slide { height: auto; }
-  .viewer__slide img { height: auto; width: 88vw; max-width: none; max-height: calc(100svh - 10rem); }
+  .pc__slide { --h: min(56svh, 97vw); }
+  .pc__arrow { display: none; }
 }
 
 @keyframes cat-in { from { opacity: 0; transform: translateY(16px); } }
