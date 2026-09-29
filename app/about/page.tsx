@@ -23,7 +23,7 @@ const ICONS = [LayoutDashboard, Sparkles, PenTool, Camera, Pill];
 const wa = (n: string) => `https://wa.me/${n}`;
 
 export default function AboutPage() {
-  const { sections, headline, eyebrow, intro, disciplines, clients, experience, hello, ending } = aboutPage;
+  const { sections, headline, eyebrow, intro, facts, disciplines, clients, experience, hello, ending } = aboutPage;
   const projects = pagedProjects();
   const photo = visibleCategories().find((c) => c.slug === 'photography');
   const photos = projects.filter((p) => p.category.slug === 'photography').reduce((n, p) => n + (p.project.images?.length ?? 0), 0);
@@ -112,6 +112,11 @@ export default function AboutPage() {
               ))}
             </ul>
             <p className="ab-text">{intro[1]}</p>
+            <dl className="ab-facts" aria-label="Quick facts">
+              {facts.map((f) => (
+                <div key={f.label}><dt>{f.label}</dt><dd>{f.value}</dd></div>
+              ))}
+            </dl>
           </section>
 
           {/* 03 what I do */}

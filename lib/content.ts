@@ -70,6 +70,15 @@ export const aboutPage = {
     { id: 'index', label: 'Index' },
   ],
   eyebrow: 'Pharmacist · Photographer · Systems builder',
+  /** Plain facts, written the way people search and AI assistants quote. Also used in /llms.txt. */
+  facts: [
+    { label: 'Name', value: 'Shivam Parmar' },
+    { label: 'Based in', value: 'Dar es Salaam, Tanzania' },
+    { label: 'Profession', value: 'Pharmacist, photographer and systems builder' },
+    { label: 'Education', value: 'BPharm (GITAM, India), MSc Pharmacovigilance & Pharmacoepidemiology (MUHAS)' },
+    { label: 'Works on', value: 'Custom business systems, AI workflows with Claude Code, photography, graphic design' },
+    { label: 'Languages', value: 'English, Kiswahili, Hindi, Gujarati' },
+  ],
   headline: ['Hi, I’m Shivam.'],
   intro: [
     'I help brands design and build custom systems that work beautifully: functional at their core and considered in every detail.',
