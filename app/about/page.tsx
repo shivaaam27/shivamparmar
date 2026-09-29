@@ -5,7 +5,6 @@ import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import Effects from '@/components/Effects';
 import AboutShell from '@/components/about/AboutShell';
-import Portrait from '@/components/about/Portrait';
 import { aboutPage, nav, site } from '@/lib/content';
 import { pagedProjects, visibleCategories } from '@/lib/work';
 import './about.css';
@@ -36,7 +35,6 @@ export default function AboutPage() {
   const endingPanel = (
     <section id="index" className="ab-sec ab-end" aria-label="Index">
       <div className="ab-end__art">
-        <Portrait className="ab-end__img" id="pt-end" fit="meet" />
         <div className="ab-end__caption">
           <p className="ab-end__logo">{site.name}</p>
           <p><b>{ending.greeting}</b><br />{ending.line}</p>

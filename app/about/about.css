@@ -3,7 +3,7 @@
    An index on the left and the story centred beside it: stats, cards, gliding logos, compact rows,
    and an index page to end on. White, soft grey cards, no black.
    ========================================================= */
-.about-page { --card: #F5F5F5; --card-line: rgba(0, 0, 0, .07); --accent: #1A1A1A; --r: 6px; --ink: #111111; --ink-soft: #555555; --line: rgba(0, 0, 0, .1); }
+.about-page { --card: #F5F5F5; --card-line: rgba(0, 0, 0, .07); --accent: #1A1A1A; --brown: var(--tag); --r: 6px; --ink: #111111; --ink-soft: #555555; --line: rgba(0, 0, 0, .1); }
 
 /* ---- frame: index left, story centred */
 .ab {
@@ -16,7 +16,7 @@
 .ab-side__nav ol { display: grid; gap: .2rem; }
 .ab-side__nav a {
   display: grid; grid-template-columns: 2.1rem 1fr; align-items: baseline; padding: .2rem 0;
-  font-size: .9375rem; color: var(--ink); opacity: .45; transition: opacity .3s var(--ease);
+  font-size: .9375rem; color: var(--brown); opacity: .55; transition: opacity .3s var(--ease);
 }
 .ab-side__nav a .mono { font-size: .6875rem; }
 .ab-side__nav a:hover { opacity: .8; }
@@ -26,7 +26,7 @@
 
 /* ---- shared pieces */
 .ab-sec { display: grid; gap: clamp(1.25rem, 2.4vw, 2rem); scroll-margin-top: 7rem; }
-.ab-label { font-size: .75rem; letter-spacing: .06em; color: var(--accent); display: flex; align-items: center; gap: .55em; }
+.ab-label { font-size: .75rem; letter-spacing: .06em; color: var(--brown); display: flex; align-items: center; gap: .55em; }
 .ab-label::before { content: ''; width: .7em; height: .7em; background: currentColor; opacity: .75; }
 .ab-h2 { font: 400 clamp(2.25rem, 4.6vw, 4rem)/.95 var(--serif); letter-spacing: -.015em; text-wrap: balance; }
 .ab-center { text-align: center; justify-self: center; }
@@ -46,7 +46,7 @@
 
 /* ---- 01 intro: centred */
 .ab-intro-sec { justify-items: center; text-align: center; padding-top: clamp(0rem, 2vw, 1.5rem); }
-.ab-eyebrow { font-size: .75rem; letter-spacing: .06em; }
+.ab-eyebrow { font-size: .75rem; letter-spacing: .06em; color: var(--brown); }
 .ab-hello { font: 400 clamp(3rem, 7vw, 6.25rem)/.9 var(--serif); letter-spacing: -.02em; text-transform: uppercase; }
 .ab-lead { font-size: clamp(1.1875rem, 1.7vw, 1.5rem); line-height: 1.45; max-width: 34rem; text-wrap: balance; }
 
@@ -97,12 +97,11 @@
   grid-template-columns: minmax(0, 5fr) minmax(0, 8fr); gap: clamp(1.5rem, 3vw, 3rem);
   min-height: min(100svh, 52rem); padding: clamp(.75rem, 1.2vw, 1rem); background: var(--card); border-radius: var(--r);
 }
-.ab-end__art { position: relative; border-radius: var(--r); overflow: hidden; min-height: 26rem; background: radial-gradient(60% 45% at 70% 30%, #fff, transparent), linear-gradient(#F4F4F4, #E3E3E3); }
-.ab-end__img { position: absolute; left: 0; right: 0; bottom: 0; width: 100%; height: 82%; }
+.ab-end__art { position: relative; border-radius: var(--r); overflow: hidden; min-height: 26rem; background: #EBEBEB; }
 .ab-end__caption { position: absolute; inset: 0; display: flex; flex-direction: column; justify-content: space-between; padding: 1.25rem; font-size: .9375rem; line-height: 1.45; }
 .ab-end__caption b { font-weight: 500; }
 .ab-end__caption p:last-child { align-self: flex-start; max-width: 22rem; padding: .85rem 1rem; border-radius: var(--r); background: rgba(255, 255, 255, .72); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); }
-.ab-end__logo { font: 400 1.75rem/1 var(--serif); }
+.ab-end__logo { font: 400 clamp(4rem, 9vw, 8rem)/.85 var(--serif); letter-spacing: -.025em; }
 .ab-end__body { display: grid; grid-template-rows: auto 1fr auto; gap: 2rem; padding: clamp(1rem, 2vw, 1.75rem) clamp(.5rem, 1.5vw, 1.25rem) clamp(.5rem, 1.5vw, 1.25rem) 0; }
 .ab-end__top { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1.25rem; font-size: .9063rem; line-height: 1.35; }
 .ab-end__top p { display: grid; }
