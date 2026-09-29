@@ -102,13 +102,13 @@ export default function AboutPage() {
           {/* 02 numbers */}
           <section id="numbers" className="ab-sec" aria-label="In numbers">
             <p className="ab-label">In numbers</p>
-            <Glow className="ab-glow">
-              <ul className="ab-stats">
-                {stats.map((s) => (
-                  <li key={s.label}><b><CountUp to={s.value} /></b><span>{s.label}</span></li>
-                ))}
-              </ul>
-            </Glow>
+            <ul className="ab-stats">
+              {stats.map((s, i) => (
+                <Glow key={s.label} as="li" seed={i}>
+                  <b><CountUp to={s.value} /></b><span>{s.label}</span>
+                </Glow>
+              ))}
+            </ul>
             <p className="ab-text">{intro[1]}</p>
           </section>
 
@@ -150,9 +150,9 @@ export default function AboutPage() {
               {[0, 1].map((row) => (
                 <div key={row} className={`ab-marquee${row ? ' ab-marquee--back' : ''}`}>
                   <ul className="ab-marquee__track">
-                    {[...clients.logos, ...clients.logos].map((l, i) => (
+                    {(row ? [...clients.logos.slice(4), ...clients.logos.slice(0, 4)] : clients.logos).concat(row ? [...clients.logos.slice(4), ...clients.logos.slice(0, 4)] : clients.logos).map((l, i) => (
                       <li key={i} aria-hidden={row > 0 || i >= clients.logos.length}>
-                        {l.src ? <img src={l.src} alt={l.name} /> : <span className="ab-logo-ph">{l.name}</span>}
+                        {l.src ? <img src={l.src} alt={row || i >= clients.logos.length ? '' : l.name} loading="lazy" /> : <span className="ab-logo-ph">{l.name}</span>}
                       </li>
                     ))}
                   </ul>

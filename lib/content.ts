@@ -102,8 +102,18 @@ export const aboutPage = {
   ],
   clients: {
     title: ['Brands and people', 'I’ve worked with.'],
-    /** Placeholders until the real logos arrive: put files in /public/logos and set `src`. */
-    logos: Array.from({ length: 8 }, (_, i) => ({ name: `Logo ${String(i + 1).padStart(2, '0')}`, src: null as string | null })),
+    /** Companies I've worked with (backgrounds removed, in /public/logos). */
+    logos: [
+      { name: 'CocoZuri Chocolat', src: '/logos/cocozuri.png' },
+      { name: 'Dar Spice Centre', src: '/logos/dar-spice-centre.png' },
+      { name: 'Mining Engineering Services', src: '/logos/mes.png' },
+      { name: 'Oracle', src: '/logos/oracle.png' },
+      { name: 'Pamoja+', src: '/logos/pamoja-plus.png' },
+      { name: 'Pinnacle Engineering Solutions', src: '/logos/pinnacle-engineering.png' },
+      { name: 'Rugantino', src: '/logos/rugantino.png' },
+      { name: 'TerraGreen', src: '/logos/terragreen.png' },
+      { name: 'V1 Supermarket', src: '/logos/v1-supermarket.png' },
+    ] as { name: string; src: string | null }[],
   },
   /** The journey so far, newest first: a summary from the CV (the full story comes later). */
   experience: [
