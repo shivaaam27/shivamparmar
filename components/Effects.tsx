@@ -1,29 +1,15 @@
 'use client';
 
-import { gsap, ScrollTrigger, useGSAP, scramble, prefersReducedMotion } from '@/lib/motion';
+import { gsap, ScrollTrigger, useGSAP, scramble } from '@/lib/motion';
 
 /**
  * Page-wide scroll motion:
- *  - `.reveal` elements rise in (optional `data-delay="1..3"` staggers them)
- *  - `[data-scramble]` text decodes from SHIVAM letters
+ *  - `[data-scramble]` text (the footer name) decodes from SHIVAM letters
  *  - the header name hides while the work strips pass under it
+ * Section content doesn't fade in on scroll any more: it simply shows.
  */
 export default function Effects() {
   useGSAP(() => {
-    const reduce = prefersReducedMotion();
-
-    gsap.utils.toArray<HTMLElement>('.reveal').forEach((el) => {
-      if (reduce) { gsap.set(el, { opacity: 1, y: 0 }); return; }
-      gsap.fromTo(el, { opacity: 0, y: 32 }, {
-        opacity: 1,
-        y: 0,
-        duration: 1.2,
-        ease: 'expo.out',
-        delay: Number(el.dataset.delay ?? 0) * 0.12,
-        scrollTrigger: { trigger: el, start: 'top 88%', once: true },
-      });
-    });
-
     // the header name steps aside while the work images pass beneath it
     const strips = document.querySelector('.strips');
     const header = document.querySelector('.site-header');

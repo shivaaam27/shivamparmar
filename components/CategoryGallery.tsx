@@ -1,8 +1,8 @@
 'use client';
 
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import Link from 'next/link';
 import { track } from '@/lib/track';
+import PhotoViewer from './PhotoViewer';
 
 export type Shot = { src: string; alt: string; w: number; h: number; project: string; slug: string; n: number };
 export type Group = { slug: string; name: string; shots: Shot[] };
@@ -12,11 +12,13 @@ const pad = (n: number) => String(n).padStart(2, '0');
 /**
  * A category's full page body: an index of its sub-categories on the left
  * (hover to pick them out, click to show only that one, kept in ?s=) and all
- * of its pictures on the right as an even grid of same-size tiles.
+ * of its pictures on the right as an even grid of same-size tiles. Clicking
+ * one opens the viewer, moving left and right through the same set.
  */
 export default function CategoryGallery({ category, groups }: { category: string; groups: Group[] }) {
   const [sel, setSel] = useState<string | null>(null);
   const [hover, setHover] = useState<string | null>(null);
+  const [viewing, setViewing] = useState<number | null>(null);
 
   useEffect(() => {
     const sync = () => {
@@ -73,12 +75,14 @@ export default function CategoryGallery({ category, groups }: { category: string
       <div className="cat-grid" key={sel ?? 'all'} data-hover={hover ?? undefined}>
         {placed.map((p, i) => (
           <figure key={p.src} className={`cat-shot${hover && hover !== p.sub ? ' is-dim' : ''}`} style={{ '--i': i } as React.CSSProperties}>
-            <Link href={`/work/${p.slug}#photo-${p.n}`} aria-label={`${p.project}, photo ${p.n}: ${p.alt}`}>
+            <button type="button" onClick={() => { setViewing(i); track(`View photo · ${p.project}`); }} aria-label={`View ${p.project}, photo ${p.n}: ${p.alt}`}>
               <img src={p.src} alt={p.alt} width={p.w} height={p.h} loading={i < 6 ? 'eager' : 'lazy'} />
-            </Link>
+            </button>
           </figure>
         ))}
       </div>
+
+      {viewing !== null && <PhotoViewer shots={placed} start={viewing} onClose={() => setViewing(null)} />}
     </div>
   );
 }

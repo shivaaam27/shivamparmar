@@ -18,7 +18,11 @@ export default function Contact() {
         {contact.columns.map((col) => (
           <MetaCol key={col.label} label={col.label}>
             <ul>
-              {col.links?.map((l) => <li key={l.label}><a href={l.href} data-umami-event={`Contact · ${l.label}`}>{l.label}</a></li>)}
+              {col.links?.map((l) => (
+                <li key={l.href}>
+                  <a href={l.href} data-umami-event={`Contact · ${col.label}`} {...(l.href.startsWith('http') ? { target: '_blank', rel: 'noopener' } : {})}>{l.label}</a>
+                </li>
+              ))}
               {col.lines?.map((line) => <li key={line}>{line}</li>)}
             </ul>
           </MetaCol>

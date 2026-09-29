@@ -1,4 +1,4 @@
-/** The small square marker every section opens with. Decodes on scroll (see Effects). */
+/** The small square marker every section opens with. */
 export default function Tag({ children }: { children: string }) {
-  return <span className="tag" data-scramble aria-label={children}>{children}</span>;
+  return <span className="tag">{children}</span>;
 }

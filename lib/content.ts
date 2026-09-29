@@ -8,7 +8,13 @@ export const site = {
   name: 'Shivam',
   fullName: 'Shivam Parmar',
   description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
-  email: 'lorem@ipsum.dolor',
+  email: 'ishivamparmar@gmail.com',
+  /** Both numbers take calls and WhatsApp. `tel` / `wa` are the same number in international form, without spaces. */
+  phones: [
+    { label: '+255 686 450 999', tel: '+255686450999', wa: '255686450999' },
+    { label: '+255 795 334 455', tel: '+255795334455', wa: '255795334455' },
+  ],
+  location: 'Dar es Salaam, Tanzania',
 };
 
 export const nav = [
@@ -92,11 +98,11 @@ export const work = {
 
 export const contact = {
   tag: 'Contact',
-  headline: ['Lorem ipsum', 'dolor sit amet.'],
+  headline: ['Got something', 'worth making?'],
   columns: [
-    { label: 'Lorem', links: [{ label: 'Ipsum', href: '#' }, { label: 'Dolor', href: '#' }, { label: 'Sit amet', href: '#' }] },
-    { label: 'Ipsum', lines: ['Lorem ipsum dolor', 'Sit amet, 00000'] },
-    { label: 'Dolor', lines: ['Lorem ipsum dolor sit amet, consectetur adipiscing.'] },
+    { label: 'Call', links: site.phones.map((p) => ({ label: p.label, href: `tel:${p.tel}` })) },
+    { label: 'WhatsApp', links: site.phones.map((p) => ({ label: p.label, href: `https://wa.me/${p.wa}` })) },
+    { label: 'Based in', lines: [site.location, 'Working with people anywhere'] },
   ] as { label: string; links?: { label: string; href: string }[]; lines?: string[] }[],
   /** Shown in the footer; the site counts visits anonymously with Umami (no cookies). */
   footerNote: 'No cookies · anonymous visit stats',
