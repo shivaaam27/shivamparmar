@@ -13,7 +13,9 @@ import './about.css';
 
 export const metadata: Metadata = {
   title: `About — ${site.fullName}`,
-  description: aboutPage.intro[0],
+  description: 'About Shivam Parmar: pharmacist (BPharm, MSc Pharmacovigilance), photographer and systems builder in Dar es Salaam. From pharmacy to AI workflows and custom business systems.',
+  alternates: { canonical: '/about' },
+  openGraph: { url: '/about', title: `About — ${site.fullName}` },
 };
 
 const pad = (n: number) => String(n).padStart(2, '0');

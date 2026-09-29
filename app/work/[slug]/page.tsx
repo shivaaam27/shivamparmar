@@ -23,14 +23,20 @@ export function generateStaticParams() {
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const slug = (await params).slug;
   const category = findCategory(slug);
-  if (category) return { title: `${category.name} — ${site.fullName}` };
+  if (category) return {
+    title: `${category.name} — ${site.fullName}`,
+    description: `${category.name} by Shivam Parmar: ${category.subcategories.filter((s) => s.projects.some((p) => p.images?.length)).map((s) => s.name).join(", ")}.`,
+    alternates: { canonical: `/work/${category.slug}` },
+    openGraph: { url: `/work/${category.slug}`, title: `${category.name} — ${site.fullName}` },
+  };
   const entry = findProject(slug);
   if (!entry) return {};
   const { project } = entry;
   return {
     title: `${project.title} — ${site.fullName}`,
     description: project.summary,
-    openGraph: project.images?.[0] ? { images: [project.images[0].src] } : undefined,
+    alternates: { canonical: `/work/${project.slug}` },
+    openGraph: { url: `/work/${project.slug}`, title: `${project.title} — ${site.fullName}`, description: project.summary, ...(project.images?.[0] ? { images: [project.images[0].src] } : {}) },
   };
 }
 
