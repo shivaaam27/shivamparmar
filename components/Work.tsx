@@ -80,7 +80,10 @@ export default function Work() {
   return (
     <section className="work section" id="work">
       <div className="work__head">
-        <h2 className="display reveal"><Tag>{work.tag}</Tag>{work.title}</h2>
+        <h2 className="display reveal">
+          <Tag>{work.tag}</Tag>
+          <Link className="work__title-link" href="/work" onClick={() => track('Open work page')}>{work.title}<span className="work__title-arrow" aria-hidden="true">↗</span></Link>
+        </h2>
         <div className="work__meta reveal" data-delay="1">
           <MetaCol label="Categories">
             <ul className="work__filter">
@@ -88,6 +91,9 @@ export default function Work() {
                 <button type="button" className={filter.c < 0 ? 'is-active' : undefined} aria-pressed={filter.c < 0} onClick={() => setFilter({ c: -1, s: -1 })}>
                   All<span className="mono">{pad(countAll())}</span>
                 </button>
+                <Link className="work__page mono" href="/work" aria-label="Open the work page" onClick={() => track('Open work page')}>
+                  Open<span aria-hidden="true">↗</span>
+                </Link>
               </li>
               {categories.map((cat, g) => (
                 <li key={cat.slug}>

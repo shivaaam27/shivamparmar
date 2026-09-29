@@ -4,11 +4,10 @@ import { notFound } from 'next/navigation';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import Effects from '@/components/Effects';
-import Tag from '@/components/Tag';
-import CategoryGallery, { type Group } from '@/components/CategoryGallery';
+import WorkBrowser from '@/components/WorkBrowser';
 import { site } from '@/lib/content';
-import { categories, findCategory, findProject, hasPage, pagedProjects, type Category } from '@/lib/work';
-import { imageSize } from '@/lib/image-size';
+import { categories, findCategory, findProject, pagedProjects, type Category } from '@/lib/work';
+import { workData } from '@/lib/work-data';
 
 type Props = { params: Promise<{ slug: string }> };
 
@@ -43,35 +42,15 @@ export default async function WorkPage({ params }: Props) {
   return category ? <CategoryPage category={category} /> : <ProjectPage slug={slug} />;
 }
 
-/* ---------- a category: its index on the left, every picture on the right ---------- */
+/* ---------- a category: the work page, opened on it ---------- */
 
 function CategoryPage({ category }: { category: Category }) {
-  const groups: Group[] = category.subcategories.map((sub) => ({
-    slug: sub.slug,
-    name: sub.name,
-    page: sub.projects.find(hasPage) ? `/work/${sub.projects.find(hasPage)!.slug}` : undefined,
-    summary: sub.projects.find(hasPage)?.summary,
-    shots: sub.projects.flatMap((project) => (project.images ?? []).map((img, i) => {
-      const { w, h } = imageSize(img.src);
-      return { src: img.src, alt: img.alt, w, h, project: project.title, slug: project.slug, n: i + 1 };
-    })),
-  }));
-  const images = groups.reduce((n, g) => n + g.shots.length, 0);
-
   return (
     <>
       <Header />
-      <main id="main" className="page category">
-        <section className="section category__head">
-          <h1 className="display reveal"><Tag>Work</Tag>{category.name}</h1>
-          <p className="category__meta mono reveal" data-delay="1">
-            <span>{pad(groups.length)} collections</span>
-            <span>{pad(images)} images</span>
-            <Link href="/#work"><span aria-hidden="true">← </span>All work</Link>
-          </p>
-        </section>
-        <section className="section category__body" aria-label={`${category.name} pictures`}>
-          {images ? <CategoryGallery category={category.name} groups={groups} /> : <p className="lead">Coming soon.</p>}
+      <main id="main" className="page work-page">
+        <section className="section work-page__body" aria-label={category.name}>
+          <WorkBrowser cats={workData()} initial={{ c: category.slug, s: null }} />
         </section>
       </main>
       <Footer />
@@ -105,7 +84,7 @@ function ProjectPage({ slug }: { slug: string }) {
       <main id="main" className="page project">
         <section className="section project__intro">
           <nav className="project__crumbs mono reveal" aria-label="Breadcrumb">
-            <Link href="/#work">Work</Link>
+            <Link href="/work">Work</Link>
             <span aria-hidden="true">/</span>
             <Link href={`/work/${category.slug}`}>{category.name}</Link>
             <span aria-hidden="true">/</span>

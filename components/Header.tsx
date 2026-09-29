@@ -10,32 +10,31 @@ export default function Header() {
   const firstLink = useRef<HTMLAnchorElement>(null);
 
   const lenis = useLenis();
-  const lines = useRef<HTMLSpanElement>(null);
-
-  // the menu lines follow the scroll: a bump runs down the three lines as the
-  // page moves (like a proximity minimap), then they settle back when it stops
+  // one line per section of the page; the long one is the section you're in
+  const [count, setCount] = useState(3);
+  const [at, setAt] = useState(0);
   useEffect(() => {
-    const el = lines.current;
-    if (!el || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-    const bars = Array.from(el.children) as HTMLElement[];
-    let idle = 0, frame = 0;
+    // the page's top-level sections (a pinned section may sit inside a wrapper, so not just main > section)
+    const sections = () => Array.from(document.querySelectorAll<HTMLElement>('main section'))
+      .filter((el) => !el.parentElement?.closest('section'));
+    const n = sections().length;
+    if (n < 2) return;
+    setCount(Math.min(n, 7));
+    let frame = 0;
     const update = () => {
       frame = 0;
-      const max = document.documentElement.scrollHeight - window.innerHeight;
-      const p = max > 0 ? window.scrollY / max : 0;
-      // three passes of the bump over the page, so it keeps moving while you read
-      const pos = ((p * 3) % 1) * (bars.length + 1) - 1;
-      bars.forEach((b, i) => {
-        const near = Math.max(0, 1 - Math.abs(i - pos) / 1.1);
-        b.style.setProperty('--w', `${12 + 18 * near}px`);
-      });
-      el.classList.add('is-scrolling');
-      clearTimeout(idle);
-      idle = window.setTimeout(() => el.classList.remove('is-scrolling'), 450);
+      const mid = window.innerHeight * 0.45;
+      const list = sections();
+      let i = list.findIndex((el) => { const r = el.getBoundingClientRect(); return r.top <= mid && r.bottom > mid; });
+      if (i < 0) i = list[0].getBoundingClientRect().top > mid ? 0 : list.length - 1;
+      // the footer belongs to the last section
+      setAt(Math.min(i, 6));
     };
     const onScroll = () => { if (!frame) frame = requestAnimationFrame(update); };
+    update();
     window.addEventListener('scroll', onScroll, { passive: true });
-    return () => { window.removeEventListener('scroll', onScroll); cancelAnimationFrame(frame); clearTimeout(idle); };
+    window.addEventListener('resize', onScroll);
+    return () => { window.removeEventListener('scroll', onScroll); window.removeEventListener('resize', onScroll); cancelAnimationFrame(frame); };
   }, []);
 
   useEffect(() => {
@@ -63,7 +62,11 @@ export default function Header() {
           onClick={() => setOpen((o) => !o)}
         >
           <span className="sr-only">Menu</span>
-          <span className="menu-btn__lines" ref={lines} aria-hidden="true"><i /><i /><i /></span>
+          <span className="menu-btn__lines" aria-hidden="true" style={{ '--n': count } as React.CSSProperties}>
+            {Array.from({ length: count }, (_, i) => (
+              <i key={i} className={i === at ? 'is-here' : undefined} style={{ '--i': i } as React.CSSProperties} />
+            ))}
+          </span>
         </button>
       </header>
 
