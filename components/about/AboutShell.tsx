@@ -37,7 +37,7 @@ export default function AboutShell({ sections, children, end }: { sections: Sect
     if (!el) return;
     // on narrow screens the index is a strip pinned under the header: clear it
     const side = document.querySelector<HTMLElement>('.ab-side');
-    const offset = window.innerWidth < 1000 && side ? -(side.offsetHeight + 16) : -110;
+    const offset = window.innerWidth < 1000 && side ? -(side.offsetHeight + 40) : -110;
     if (lenis) lenis.scrollTo(el, { offset }); else window.scrollTo({ top: pageTop(el) + offset, behavior: 'smooth' });
     history.replaceState(null, '', `#${id}`);
     setActive(id);

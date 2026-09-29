@@ -91,7 +91,6 @@ export default function AboutPage() {
         <AboutShell sections={sections} end={endingPanel}>
           {/* 01 intro */}
           <section id="intro" className="ab-sec ab-intro-sec" aria-label="Intro">
-            <div className="ab-avatar"><Portrait /></div>
             <p className="ab-eyebrow mono">{eyebrow}</p>
             <h2 className="ab-hello">{headline.join(' ')}</h2>
             <p className="ab-lead">{intro[0]}</p>
