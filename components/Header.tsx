@@ -10,6 +10,33 @@ export default function Header() {
   const firstLink = useRef<HTMLAnchorElement>(null);
 
   const lenis = useLenis();
+  const lines = useRef<HTMLSpanElement>(null);
+
+  // the menu lines follow the scroll: a bump runs down the three lines as the
+  // page moves (like a proximity minimap), then they settle back when it stops
+  useEffect(() => {
+    const el = lines.current;
+    if (!el || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    const bars = Array.from(el.children) as HTMLElement[];
+    let idle = 0, frame = 0;
+    const update = () => {
+      frame = 0;
+      const max = document.documentElement.scrollHeight - window.innerHeight;
+      const p = max > 0 ? window.scrollY / max : 0;
+      // three passes of the bump over the page, so it keeps moving while you read
+      const pos = ((p * 3) % 1) * (bars.length + 1) - 1;
+      bars.forEach((b, i) => {
+        const near = Math.max(0, 1 - Math.abs(i - pos) / 1.1);
+        b.style.setProperty('--w', `${12 + 18 * near}px`);
+      });
+      el.classList.add('is-scrolling');
+      clearTimeout(idle);
+      idle = window.setTimeout(() => el.classList.remove('is-scrolling'), 450);
+    };
+    const onScroll = () => { if (!frame) frame = requestAnimationFrame(update); };
+    window.addEventListener('scroll', onScroll, { passive: true });
+    return () => { window.removeEventListener('scroll', onScroll); cancelAnimationFrame(frame); clearTimeout(idle); };
+  }, []);
 
   useEffect(() => {
     document.body.classList.toggle('menu-open', open);
@@ -36,7 +63,7 @@ export default function Header() {
           onClick={() => setOpen((o) => !o)}
         >
           <span className="sr-only">Menu</span>
-          <span className="menu-btn__lines" aria-hidden="true"><i /><i /><i /></span>
+          <span className="menu-btn__lines" ref={lines} aria-hidden="true"><i /><i /><i /></span>
         </button>
       </header>
 

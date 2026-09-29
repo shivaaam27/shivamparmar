@@ -7,7 +7,7 @@ import Effects from '@/components/Effects';
 import Tag from '@/components/Tag';
 import CategoryGallery, { type Group } from '@/components/CategoryGallery';
 import { site } from '@/lib/content';
-import { categories, findCategory, findProject, pagedProjects, type Category } from '@/lib/work';
+import { categories, findCategory, findProject, hasPage, pagedProjects, type Category } from '@/lib/work';
 import { imageSize } from '@/lib/image-size';
 
 type Props = { params: Promise<{ slug: string }> };
@@ -49,6 +49,8 @@ function CategoryPage({ category }: { category: Category }) {
   const groups: Group[] = category.subcategories.map((sub) => ({
     slug: sub.slug,
     name: sub.name,
+    page: sub.projects.find(hasPage) ? `/work/${sub.projects.find(hasPage)!.slug}` : undefined,
+    summary: sub.projects.find(hasPage)?.summary,
     shots: sub.projects.flatMap((project) => (project.images ?? []).map((img, i) => {
       const { w, h } = imageSize(img.src);
       return { src: img.src, alt: img.alt, w, h, project: project.title, slug: project.slug, n: i + 1 };

@@ -1,11 +1,13 @@
 'use client';
 
 import { useCallback, useEffect, useMemo, useState } from 'react';
+import Link from 'next/link';
 import { track } from '@/lib/track';
 import PhotoCarousel from './ui/PhotoCarousel';
 
 export type Shot = { src: string; alt: string; w: number; h: number; project: string; slug: string; n: number };
-export type Group = { slug: string; name: string; shots: Shot[] };
+/** A collection; `page` and `summary` come from its project, for the intro shown when it's chosen. */
+export type Group = { slug: string; name: string; shots: Shot[]; page?: string; summary?: string };
 
 const pad = (n: number) => String(n).padStart(2, '0');
 
@@ -43,6 +45,7 @@ export default function CategoryGallery({ category, groups }: { category: string
     .filter((g) => !sel || g.slug === sel)
     .flatMap((g) => g.shots.map((s) => ({ ...s, sub: g.slug }))), [groups, sel]);
   const total = groups.reduce((n, g) => n + g.shots.length, 0);
+  const chosen = groups.find((g) => g.slug === sel) ?? null;
 
   return (
     <div className="cat">
@@ -73,6 +76,18 @@ export default function CategoryGallery({ category, groups }: { category: string
         </ol>
       </nav>
 
+      <div className="cat-main">
+      {chosen && (
+        <header className="cat-intro" key={chosen.slug}>
+          <h2 className="cat-intro__title">{chosen.name}</h2>
+          {chosen.summary && <p className="cat-intro__text">{chosen.summary}</p>}
+          {chosen.page && (
+            <Link className="cat-intro__link mono" href={chosen.page} onClick={() => track(`Open project · ${chosen.name}`)}>
+              About this project<span aria-hidden="true"> ↗</span>
+            </Link>
+          )}
+        </header>
+      )}
       <div className="cat-grid" key={sel ?? 'all'} data-hover={hover ?? undefined}>
         {placed.map((p, i) => (
           <figure key={p.src} className={`cat-shot${hover && hover !== p.sub ? ' is-dim' : ''}`} style={{ '--i': i } as React.CSSProperties}>
@@ -81,6 +96,7 @@ export default function CategoryGallery({ category, groups }: { category: string
             </button>
           </figure>
         ))}
+      </div>
       </div>
 
       {viewing !== null && <PhotoCarousel shots={placed} start={viewing} onClose={closeViewer} />}

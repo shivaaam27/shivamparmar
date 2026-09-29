@@ -47,7 +47,7 @@ export default function PhotoCarousel({ shots, start, onClose }: { shots: Carous
     <div className="pc" role="dialog" aria-modal="true" aria-label="Photos" data-lenis-prevent>
       <header className="pc__bar mono">
         <span aria-live="polite">{pad(at + 1)} / {pad(shots.length)}</span>
-        <Link className="pc__project" href={`/work/${shot.slug}`}>{shot.project}<span aria-hidden="true"> ↗</span></Link>
+        <Link className="pc__project" href={`/work/${shot.slug}`} title="About this project">{shot.project} · About<span aria-hidden="true"> ↗</span></Link>
         <button type="button" className="pc__close" onClick={onClose} autoFocus>Close<X size={14} aria-hidden="true" /></button>
       </header>
 
