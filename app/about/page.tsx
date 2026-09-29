@@ -6,6 +6,7 @@ import Footer from '@/components/Footer';
 import Effects from '@/components/Effects';
 import AboutShell from '@/components/about/AboutShell';
 import CountUp from '@/components/about/CountUp';
+import Glow from '@/components/about/Glow';
 import { aboutPage, nav, site } from '@/lib/content';
 import { pagedProjects, visibleCategories } from '@/lib/work';
 import './about.css';
@@ -101,11 +102,13 @@ export default function AboutPage() {
           {/* 02 numbers */}
           <section id="numbers" className="ab-sec" aria-label="In numbers">
             <p className="ab-label">In numbers</p>
-            <ul className="ab-stats">
-              {stats.map((s) => (
-                <li key={s.label}><b><CountUp to={s.value} /></b><span>{s.label}</span></li>
-              ))}
-            </ul>
+            <Glow className="ab-glow">
+              <ul className="ab-stats">
+                {stats.map((s) => (
+                  <li key={s.label}><b><CountUp to={s.value} /></b><span>{s.label}</span></li>
+                ))}
+              </ul>
+            </Glow>
             <p className="ab-text">{intro[1]}</p>
           </section>
 
@@ -118,16 +121,23 @@ export default function AboutPage() {
                 const Icon = ICONS[i] ?? Sparkles;
                 return (
                   <li key={d.title} className="ab-card">
-                    <span className="ab-card__icon" aria-hidden="true"><Icon size={18} strokeWidth={1.5} /></span>
-                    <h3>{d.title}</h3>
-                    <p>{d.text}</p>
+                    <div className={`ab-card__media${d.image ? '' : ' is-empty'}`}>
+                      {d.image ? <img src={d.image} alt="" loading="lazy" /> : <span>Image coming</span>}
+                      <span className="ab-card__icon" aria-hidden="true"><Icon size={16} strokeWidth={1.5} /></span>
+                    </div>
+                    <div className="ab-card__body">
+                      <h3>{d.title}</h3>
+                      <p>{d.text}</p>
+                    </div>
                   </li>
                 );
               })}
               <li className="ab-card ab-card--cta">
-                <h3>Something else?</h3>
-                <p>Most good projects mix a few of these. Tell me what you have in mind.</p>
-                <a href="#say-hello" className="ab-link mono">Say hello<span aria-hidden="true"> ↓</span></a>
+                <div className="ab-card__body">
+                  <h3>Something else?</h3>
+                  <p>Most good projects mix a few of these. Tell me what you have in mind.</p>
+                  <a href="#say-hello" className="ab-link mono">Say hello<span aria-hidden="true"> ↓</span></a>
+                </div>
               </li>
             </ul>
           </section>

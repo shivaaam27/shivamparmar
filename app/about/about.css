@@ -55,18 +55,37 @@
 
 /* ---- 02 numbers: big light figures, tiny labels */
 .ab-stats { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: .75rem; }
-.ab-stats li { display: grid; gap: .5rem; align-content: space-between; min-height: 9rem; padding: 1.25rem; background: var(--card); border-radius: var(--r); }
+.ab-stats li {
+  display: grid; gap: .5rem; align-content: space-between; min-height: 10.5rem; padding: 1.25rem; border-radius: var(--r); color: #fff;
+  background: rgba(255, 255, 255, .08); border: 1px solid rgba(255, 255, 255, .14);
+  backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px);
+}
+.ab-stats li > span { color: rgba(255, 255, 255, .8); }
+
+/* the moving backdrop behind the numbers */
+.glow { position: relative; isolation: isolate; overflow: hidden; border-radius: var(--r); background: #253027; }
+.glow__field { position: absolute; inset: -20%; z-index: -1; filter: blur(42px) saturate(1.15); }
+.glow__blob { position: absolute; aspect-ratio: 1; border-radius: 50%; transform: translate(-50%, -50%); opacity: .95; }
+.glow::after { content: ''; position: absolute; inset: 0; z-index: -1; background: linear-gradient(180deg, rgba(0, 0, 0, 0) 40%, rgba(0, 0, 0, .25)); }
+.glow__content { position: relative; }
+.ab-glow { padding: clamp(.75rem, 1.4vw, 1rem); }
 .ab-stats b { font: 300 clamp(2.5rem, 4.4vw, 3.75rem)/1 var(--sans); letter-spacing: -.045em; font-variant-numeric: tabular-nums; }
 .ab-stats li > span { font-size: .8125rem; line-height: 1.3; max-width: 10rem; }
 
 /* ---- 03 cards */
 .ab-cards { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: .75rem; }
-.ab-card { display: grid; align-content: start; gap: .75rem; padding: 1.4rem 1.4rem 1.6rem; background: var(--card); border-radius: var(--r); min-height: 15rem; transition: transform .35s var(--ease), box-shadow .35s; }
+.ab-card { display: flex; flex-direction: column; background: var(--card); border-radius: var(--r); overflow: hidden; transition: transform .35s var(--ease), box-shadow .35s; }
+.ab-card__media { position: relative; aspect-ratio: 4 / 3; background: #E9E9E9; overflow: hidden; }
+.ab-card__media img { width: 100%; height: 100%; object-fit: cover; object-position: 50% 40%; transition: transform 1s var(--ease); }
+.ab-card:hover .ab-card__media img { transform: scale(1.04); }
+.ab-card__media.is-empty { display: grid; place-items: center; }
+.ab-card__media.is-empty > span:first-child { font-size: .75rem; letter-spacing: .04em; color: #9A9A9A; }
+.ab-card__body { display: grid; align-content: start; gap: .6rem; padding: 1.2rem 1.3rem 1.5rem; }
 .ab-card:hover { transform: translateY(-3px); box-shadow: 0 10px 24px rgba(0, 0, 0, .05); }
-.ab-card__icon { width: 2.4rem; height: 2.4rem; border-radius: var(--r); display: grid; place-items: center; background: #fff; color: var(--accent); margin-bottom: .6rem; }
+.ab-card__icon { position: absolute; left: .75rem; top: .75rem; width: 2rem; height: 2rem; border-radius: var(--r); display: grid; place-items: center; background: rgba(255, 255, 255, .9); color: var(--accent); }
 .ab-card h3 { font-size: 1.0625rem; font-weight: 500; letter-spacing: -.01em; }
 .ab-card p { font-size: .9063rem; line-height: 1.5; color: var(--ink-soft); }
-.ab-card--cta { background: #fff; border: 1px dashed rgba(0, 0, 0, .16); align-content: end; }
+.ab-card--cta { background: #fff; border: 1px dashed rgba(0, 0, 0, .16); justify-content: flex-end; }
 .ab-card--cta .ab-link { margin-top: .4rem; }
 
 /* ---- 04 logos glide past, two rows in opposite directions */
@@ -145,9 +164,8 @@
 }
 @media (max-width: 720px) {
   .ab-stats { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-  .ab-stats li { min-height: 7.5rem; }
+  .ab-stats li { min-height: 8rem; }
   .ab-cards { grid-template-columns: minmax(0, 1fr); }
-  .ab-card { min-height: 0; }
   .ab-rows li { grid-template-columns: minmax(0, 1fr); gap: .35rem; }
   .ab-marquee li { height: 4.75rem; }
   .ab-end__top, .ab-end__lists { grid-template-columns: minmax(0, 1fr); }
@@ -156,4 +174,5 @@
 }
 @media (prefers-reduced-motion: reduce) {
   .ab-marquee__track { animation: none; }
+  .glow__field { filter: blur(48px); }
 }

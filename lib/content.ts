@@ -76,22 +76,27 @@ export const aboutPage = {
   disciplines: [
     {
       title: 'Systems',
+      image: '/images/work-dashboard-ipad.jpg' as string | null,
       text: 'Custom systems built around how a brand actually works. They are functional first, easy to use, and designed to grow with the business.',
     },
     {
       title: 'AI & prompt engineering',
+      image: null as string | null,   // coming: generated image
       text: 'I design AI workflows and integrate them into everyday work with tools like Claude Code, with prompts engineered for reliable results. Repetitive tasks get automated so people spend their time where it matters, saving hours every week.',
     },
     {
       title: 'Design',
+      image: '/images/about-design.jpg' as string | null,
       text: 'Posters, websites, social media posts and video. Every piece is designed to be clear, consistent and visually striking, from a single post to a full site.',
     },
     {
       title: 'Photography',
+      image: '/images/mikumi-elephants.jpg' as string | null,
       text: 'Images with atmosphere and intent, from open water and quiet landscapes to people and places. Photography shapes how I see composition, light and detail in everything I make.',
     },
     {
       title: 'Pharmacy',
+      image: null as string | null,   // coming: generated image
       text: 'I’m a pharmacist. The precision, care and responsibility of that work carry into every system I build.',
     },
   ],
