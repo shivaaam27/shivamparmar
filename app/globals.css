@@ -398,24 +398,18 @@ body.menu-open { overflow: hidden; }
 .cat-index button:disabled small { opacity: 1; }
 .cat-index button:focus-visible { outline: 1px solid var(--ink); outline-offset: 3px; }
 
-/* the pictures: rows of mixed sizes on 12 columns, each at its own shape, tops aligned */
-.cat-grid {
-  display: grid; grid-template-columns: repeat(12, minmax(0, 1fr));
-  gap: clamp(2.5rem, 5vw, 4.5rem) clamp(.75rem, 1.3vw, 1.25rem); align-items: start;
-}
+/* the pictures: an even grid of same-size tiles, each photo cropped to fill it */
+.cat-grid { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: clamp(.5rem, 1vw, .875rem); }
 .cat-shot {
-  grid-column: span var(--span); display: grid; gap: .6rem; min-width: 0;
-  animation: cat-in .8s var(--ease) backwards; animation-delay: calc(min(var(--i), 14) * 45ms);
+  min-width: 0;
+  animation: cat-in .8s var(--ease) backwards; animation-delay: calc(min(var(--i), 15) * 35ms);
   transition: opacity .45s var(--ease);
 }
 .cat-shot.is-dim { opacity: .16; }
-.cat-shot a { display: block; overflow: hidden; background: var(--paper-deep); }
-.cat-shot img { width: 100%; height: auto; transition: transform 1s var(--ease); }
+.cat-shot a { display: block; overflow: hidden; aspect-ratio: 4 / 5; background: var(--paper-deep); }
+.cat-shot img { width: 100%; height: 100%; object-fit: cover; transition: transform 1s var(--ease); }
 .cat-shot a:hover img { transform: scale(1.03); }
 .cat-shot a:focus-visible { outline: 1px solid var(--ink); outline-offset: 3px; }
-.cat-shot figcaption { display: flex; justify-content: space-between; gap: .5rem; font-size: .6875rem; letter-spacing: .06em; text-transform: uppercase; color: var(--ink); }
-.cat-shot figcaption span:first-child { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.cat-shot figcaption span:last-child { color: var(--taupe); }
 @keyframes cat-in { from { opacity: 0; transform: translateY(16px); } }
 
 @media (max-width: 1000px) {
@@ -424,11 +418,10 @@ body.menu-open { overflow: hidden; }
   .cat-index ol { display: flex; flex-wrap: wrap; gap: .35rem 1.25rem; }
   .cat-index button { display: inline-flex; gap: .4rem; width: auto; }
   .cat-index button small { display: none; }
+  .cat-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
 }
 @media (max-width: 720px) {
-  .cat-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); grid-auto-flow: row dense; row-gap: 2rem; }
-  .cat-shot { grid-column: span 1; }
-  .cat-shot.is-wide { grid-column: 1 / -1; }
+  .cat-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
 @media (prefers-reduced-motion: reduce) {
   .cat-shot { animation: none; }

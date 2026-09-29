@@ -9,43 +9,10 @@ export type Group = { slug: string; name: string; shots: Shot[] };
 
 const pad = (n: number) => String(n).padStart(2, '0');
 
-/*
- * Rows on a 12-column grid, cycling through a few rhythms so sizes vary:
- * small-big-small, five small, big-and-three, six thumbnails, a wide centre.
- * Each row fills all 12 columns, so rows break cleanly; the last row takes a
- * shape that fits however many pictures are left.
- */
-const RHYTHM = [[3, 6, 3], [2, 3, 2, 3, 2], [5, 2, 2, 3], [2, 2, 2, 2, 2, 2], [2, 7, 3]];
-const TAIL: Record<number, number[]> = { 1: [6], 2: [5, 7], 3: [3, 6, 3], 4: [5, 2, 2, 3], 5: [2, 3, 2, 3, 2], 6: [2, 2, 2, 2, 2, 2] };
-
-type Placed = Shot & { sub: string; span: number };
-
-function arrange(items: (Shot & { sub: string })[]): Placed[] {
-  const out: Placed[] = [];
-  let i = 0, r = 0;
-  while (i < items.length) {
-    const left = items.length - i;
-    let spans = RHYTHM[r++ % RHYTHM.length];
-    if (spans.length > left) spans = TAIL[left];
-    const row = items.slice(i, i + spans.length);
-    const s = [...spans];
-    // a landscape picture never gets a narrow slot: trade with the widest portrait one
-    row.forEach((it, k) => {
-      if (it.w / it.h > 1.15 && s[k] < 5) {
-        const j = s.reduce((best, v, q) => (row[q].w / row[q].h <= 1.15 && v > s[best] ? q : best), k);
-        if (j !== k) [s[k], s[j]] = [s[j], s[k]];
-      }
-    });
-    row.forEach((it, k) => out.push({ ...it, span: s[k] }));
-    i += spans.length;
-  }
-  return out;
-}
-
 /**
  * A category's full page body: an index of its sub-categories on the left
  * (hover to pick them out, click to show only that one, kept in ?s=) and all
- * of its pictures on the right in rows of mixed sizes.
+ * of its pictures on the right as an even grid of same-size tiles.
  */
 export default function CategoryGallery({ category, groups }: { category: string; groups: Group[] }) {
   const [sel, setSel] = useState<string | null>(null);
@@ -69,9 +36,9 @@ export default function CategoryGallery({ category, groups }: { category: string
     window.history.pushState(null, '', `${window.location.pathname}${slug ? `?s=${slug}` : ''}`);
   }, [groups, category]);
 
-  const placed = useMemo(() => arrange(
-    groups.filter((g) => !sel || g.slug === sel).flatMap((g) => g.shots.map((s) => ({ ...s, sub: g.slug }))),
-  ), [groups, sel]);
+  const placed = useMemo(() => groups
+    .filter((g) => !sel || g.slug === sel)
+    .flatMap((g) => g.shots.map((s) => ({ ...s, sub: g.slug }))), [groups, sel]);
   const total = groups.reduce((n, g) => n + g.shots.length, 0);
 
   return (
@@ -105,11 +72,10 @@ export default function CategoryGallery({ category, groups }: { category: string
 
       <div className="cat-grid" key={sel ?? 'all'} data-hover={hover ?? undefined}>
         {placed.map((p, i) => (
-          <figure key={p.src} className={`cat-shot${p.span >= 5 ? ' is-wide' : ''}${hover && hover !== p.sub ? ' is-dim' : ''}`} style={{ '--span': p.span, '--i': i } as React.CSSProperties}>
+          <figure key={p.src} className={`cat-shot${hover && hover !== p.sub ? ' is-dim' : ''}`} style={{ '--i': i } as React.CSSProperties}>
             <Link href={`/work/${p.slug}#photo-${p.n}`} aria-label={`${p.project}, photo ${p.n}: ${p.alt}`}>
               <img src={p.src} alt={p.alt} width={p.w} height={p.h} loading={i < 6 ? 'eager' : 'lazy'} />
             </Link>
-            <figcaption className="mono"><span>{p.project}</span><span>{pad(p.n)}</span></figcaption>
           </figure>
         ))}
       </div>
