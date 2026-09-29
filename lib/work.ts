@@ -251,3 +251,10 @@ export const pagedProjects = () =>
   );
 
 export const findProject = (slug: string) => pagedProjects().find((e) => e.project.slug === slug);
+
+/** Categories have their own page at /work/<category>, sharing the address space with projects. */
+export const findCategory = (slug: string) => categories.find((c) => c.slug === slug);
+/** A category gets a full page once any of its projects has pictures. */
+export const categoryHasWork = (c: Category) => c.subcategories.some((s) => s.projects.some(hasPage));
+/** How many sub-categories the Work filter lists before linking to the category page. */
+export const FILTER_SUBS = 5;

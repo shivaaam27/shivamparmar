@@ -4,16 +4,28 @@ import { notFound } from 'next/navigation';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import Effects from '@/components/Effects';
+import Tag from '@/components/Tag';
+import CategoryGallery, { type Group } from '@/components/CategoryGallery';
 import { site } from '@/lib/content';
-import { findProject, pagedProjects } from '@/lib/work';
+import { categories, findCategory, findProject, pagedProjects, type Category } from '@/lib/work';
+import { imageSize } from '@/lib/image-size';
 
 type Props = { params: Promise<{ slug: string }> };
 
+/** /work/<slug> is either a category's full page or a project's page. */
 export const dynamicParams = false;
-export const generateStaticParams = () => pagedProjects().map(({ project }) => ({ slug: project.slug }));
+export function generateStaticParams() {
+  const projects = pagedProjects().map(({ project }) => project.slug);
+  const clash = categories.find((c) => projects.includes(c.slug));
+  if (clash) throw new Error(`"${clash.slug}" is both a category and a project slug; rename one in lib/work.ts`);
+  return [...categories.map((c) => c.slug), ...projects].map((slug) => ({ slug }));
+}
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const entry = findProject((await params).slug);
+  const slug = (await params).slug;
+  const category = findCategory(slug);
+  if (category) return { title: `${category.name} — ${site.fullName}` };
+  const entry = findProject(slug);
   if (!entry) return {};
   const { project } = entry;
   return {
@@ -25,8 +37,51 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 const pad = (n: number) => String(n).padStart(2, '0');
 
-export default async function ProjectPage({ params }: Props) {
-  const entry = findProject((await params).slug);
+export default async function WorkPage({ params }: Props) {
+  const slug = (await params).slug;
+  const category = findCategory(slug);
+  return category ? <CategoryPage category={category} /> : <ProjectPage slug={slug} />;
+}
+
+/* ---------- a category: its index on the left, every picture on the right ---------- */
+
+function CategoryPage({ category }: { category: Category }) {
+  const groups: Group[] = category.subcategories.map((sub) => ({
+    slug: sub.slug,
+    name: sub.name,
+    shots: sub.projects.flatMap((project) => (project.images ?? []).map((img, i) => {
+      const { w, h } = imageSize(img.src);
+      return { src: img.src, alt: img.alt, w, h, project: project.title, slug: project.slug, n: i + 1 };
+    })),
+  }));
+  const images = groups.reduce((n, g) => n + g.shots.length, 0);
+
+  return (
+    <>
+      <Header />
+      <main id="main" className="page category">
+        <section className="section category__head">
+          <h1 className="display reveal"><Tag>Work</Tag>{category.name}</h1>
+          <p className="category__meta mono reveal" data-delay="1">
+            <span>{pad(groups.length)} collections</span>
+            <span>{pad(images)} images</span>
+            <Link href="/#work"><span aria-hidden="true">← </span>All work</Link>
+          </p>
+        </section>
+        <section className="section category__body" aria-label={`${category.name} pictures`}>
+          {images ? <CategoryGallery category={category.name} groups={groups} /> : <p className="lead">Coming soon.</p>}
+        </section>
+      </main>
+      <Footer />
+      <Effects />
+    </>
+  );
+}
+
+/* ---------- a project ---------- */
+
+function ProjectPage({ slug }: { slug: string }) {
+  const entry = findProject(slug);
   if (!entry) notFound();
   const { category, sub, project } = entry;
 
@@ -50,9 +105,9 @@ export default async function ProjectPage({ params }: Props) {
           <nav className="project__crumbs mono reveal" aria-label="Breadcrumb">
             <Link href="/#work">Work</Link>
             <span aria-hidden="true">/</span>
-            <Link href={`/?c=${category.slug}#work`}>{category.name}</Link>
+            <Link href={`/work/${category.slug}`}>{category.name}</Link>
             <span aria-hidden="true">/</span>
-            <Link href={`/?c=${category.slug}&s=${sub.slug}#work`}>{sub.name}</Link>
+            <Link href={`/work/${category.slug}?s=${sub.slug}`}>{sub.name}</Link>
           </nav>
           <h1 className="headline headline--left reveal" data-delay="1">{project.title}</h1>
           {project.summary && <p className="lead project__summary reveal" data-delay="2">{project.summary}</p>}
@@ -67,7 +122,7 @@ export default async function ProjectPage({ params }: Props) {
 
         <section className="section project__gallery" aria-label="Images">
           {project.images?.map((img, i) => (
-            <figure key={img.src} className="project__figure reveal">
+            <figure key={img.src} id={`photo-${i + 1}`} className="project__figure reveal">
               <img src={img.src} alt={img.alt} loading={i === 0 ? 'eager' : 'lazy'} />
               <figcaption className="mono">
                 <span>{pad(i + 1)}</span>{img.caption ?? img.alt}

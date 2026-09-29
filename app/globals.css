@@ -368,6 +368,72 @@ body.menu-open { overflow: hidden; }
 .project__pager-link:hover { color: var(--taupe); }
 .project__pager-link--next { grid-column: 2; text-align: right; justify-items: end; }
 
+/* ---------- category pages (/work/<category>) ---------- */
+.category__head {
+  display: grid; gap: clamp(1.75rem, 3.5vw, 2.75rem);
+  padding-top: clamp(9rem, 18vw, 14rem); padding-bottom: clamp(3rem, 6vw, 5rem);
+}
+.category__head .display { overflow-wrap: anywhere; }
+.category__meta { display: flex; flex-wrap: wrap; gap: .5rem 2rem; font-size: .75rem; letter-spacing: .06em; color: var(--taupe); }
+.category__meta a { color: var(--ink-soft); transition: color .3s; }
+.category__meta a:hover { color: var(--ink); }
+.category__body { padding-top: 0; }
+
+.cat { display: grid; grid-template-columns: minmax(11rem, 14rem) minmax(0, 1fr); gap: clamp(2rem, 4vw, 4.5rem); align-items: start; }
+/* the index: numbered names, the chosen one in ink (like a photographer's project list) */
+.cat-index { position: sticky; top: clamp(6.5rem, 10vw, 8.5rem); display: grid; gap: 1.1rem; }
+.cat-index__label { font-size: .75rem; letter-spacing: .06em; color: var(--ink); }
+.cat-index__label sup { font-size: .75em; margin-left: .3em; color: var(--taupe); }
+.cat-index ol { display: grid; gap: .1rem; }
+.cat-index button {
+  display: grid; grid-template-columns: 2.1rem minmax(0, 1fr) auto; align-items: baseline; gap: .25rem;
+  width: 100%; padding: .2rem 0; text-align: left; font-size: .9375rem; line-height: 1.3;
+  color: var(--taupe-lite); transition: color .3s var(--ease);
+}
+.cat-index button .mono { font-size: .6875rem; }
+.cat-index button small { font-size: .625rem; opacity: 0; transition: opacity .3s; }
+.cat-index button:hover, .cat-index button.is-active { color: var(--ink); }
+.cat-index button:hover small, .cat-index button.is-active small { opacity: 1; }
+.cat-index button:disabled { cursor: default; color: var(--taupe-lite); opacity: .55; }
+.cat-index button:disabled small { opacity: 1; }
+.cat-index button:focus-visible { outline: 1px solid var(--ink); outline-offset: 3px; }
+
+/* the pictures: rows of mixed sizes on 12 columns, each at its own shape, tops aligned */
+.cat-grid {
+  display: grid; grid-template-columns: repeat(12, minmax(0, 1fr));
+  gap: clamp(2.5rem, 5vw, 4.5rem) clamp(.75rem, 1.3vw, 1.25rem); align-items: start;
+}
+.cat-shot {
+  grid-column: span var(--span); display: grid; gap: .6rem; min-width: 0;
+  animation: cat-in .8s var(--ease) backwards; animation-delay: calc(min(var(--i), 14) * 45ms);
+  transition: opacity .45s var(--ease);
+}
+.cat-shot.is-dim { opacity: .16; }
+.cat-shot a { display: block; overflow: hidden; background: var(--paper-deep); }
+.cat-shot img { width: 100%; height: auto; transition: transform 1s var(--ease); }
+.cat-shot a:hover img { transform: scale(1.03); }
+.cat-shot a:focus-visible { outline: 1px solid var(--ink); outline-offset: 3px; }
+.cat-shot figcaption { display: flex; justify-content: space-between; gap: .5rem; font-size: .6875rem; letter-spacing: .06em; text-transform: uppercase; color: var(--ink); }
+.cat-shot figcaption span:first-child { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.cat-shot figcaption span:last-child { color: var(--taupe); }
+@keyframes cat-in { from { opacity: 0; transform: translateY(16px); } }
+
+@media (max-width: 1000px) {
+  .cat { grid-template-columns: minmax(0, 1fr); }
+  .cat-index { position: static; }
+  .cat-index ol { display: flex; flex-wrap: wrap; gap: .35rem 1.25rem; }
+  .cat-index button { display: inline-flex; gap: .4rem; width: auto; }
+  .cat-index button small { display: none; }
+}
+@media (max-width: 720px) {
+  .cat-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); grid-auto-flow: row dense; row-gap: 2rem; }
+  .cat-shot { grid-column: span 1; }
+  .cat-shot.is-wide { grid-column: 1 / -1; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .cat-shot { animation: none; }
+}
+
 @media (max-width: 720px) {
   .page__intro-text { margin-left: 0; }
   .discipline { grid-template-columns: 2.5rem minmax(0, 1fr); }
@@ -401,6 +467,14 @@ body.menu-open { overflow: hidden; }
 .work__filter button .mono { font-size: .75em; }
 .work__filter button:hover, .work__filter button.is-active { color: var(--ink); }
 .work__filter button:focus-visible { outline: 1px solid var(--ink); outline-offset: 3px; }
+/* "Open ↗" beside a category, and "+3 more ↗" under a long list: both go to the category's own page */
+.work__filter li { display: flex; align-items: baseline; gap: .9em; }
+.work__page { font-size: .6875rem; letter-spacing: .06em; color: var(--taupe-lite); transition: color .3s var(--ease); }
+.work__page span { margin-left: .15em; }
+.work__filter li:hover .work__page, .work__page:focus-visible { color: var(--taupe); }
+.work__page:hover { color: var(--ink) !important; }
+.work__more { color: var(--taupe); transition: color .3s var(--ease); }
+.work__more:hover { color: var(--ink); }
 
 /* category runs sit side by side; the wide gap between them is the division */
 .strips {

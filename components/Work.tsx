@@ -4,7 +4,7 @@ import { Fragment, useCallback, useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { work } from '@/lib/content';
-import { categories, countAll, countCategory, coverOf, hasPage } from '@/lib/work';
+import { FILTER_SUBS, categories, categoryHasWork, countAll, countCategory, coverOf, hasPage } from '@/lib/work';
 import Tag from './Tag';
 import Placeholder from './Placeholder';
 import MetaCol from './MetaCol';
@@ -94,6 +94,11 @@ export default function Work() {
                   <button type="button" className={g === filter.c ? 'is-active' : undefined} aria-pressed={g === filter.c} onClick={() => setFilter({ c: g, s: -1 })}>
                     {cat.name}<span className="mono">{pad(countCategory(cat))}</span>
                   </button>
+                  {categoryHasWork(cat) && (
+                    <Link className="work__page mono" href={`/work/${cat.slug}`} aria-label={`Open the ${cat.name} page`} onClick={() => track(`Open category · ${cat.name}`)}>
+                      Open<span aria-hidden="true">↗</span>
+                    </Link>
+                  )}
                 </li>
               ))}
             </ul>
@@ -106,13 +111,20 @@ export default function Work() {
                     All<span className="mono">{pad(countCategory(focused))}</span>
                   </button>
                 </li>
-                {focused.subcategories.map((sub, s) => (
+                {focused.subcategories.map((sub, s) => (s < FILTER_SUBS || s === filter.s) && (
                   <li key={sub.slug}>
                     <button type="button" className={s === filter.s ? 'is-active' : undefined} aria-pressed={s === filter.s} onClick={() => setFilter({ c: filter.c, s })}>
                       {sub.name}<span className="mono">{pad(sub.projects.length)}</span>
                     </button>
                   </li>
                 ))}
+                {focused.subcategories.length > FILTER_SUBS && (
+                  <li>
+                    <Link className="work__more" href={`/work/${focused.slug}`} onClick={() => track(`Open category · ${focused.name}`)}>
+                      +{focused.subcategories.length - FILTER_SUBS} more<span aria-hidden="true"> ↗</span>
+                    </Link>
+                  </li>
+                )}
               </ul>
             </MetaCol>
           )}
