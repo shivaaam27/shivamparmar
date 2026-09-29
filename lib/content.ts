@@ -19,7 +19,7 @@ export const site = {
 
 export const nav = [
   { label: 'Home', href: '/#top' },
-  { label: 'About', href: '/#about' },
+  { label: 'About', href: '/about' },
   { label: 'Work', href: '/work' },
   { label: 'Contact', href: '/#contact' },
 ];
@@ -56,6 +56,17 @@ export const about = {
 /** The full /about page. */
 export const aboutPage = {
   tag: 'About',
+  /** The sections, in order; they also make up the index on the left. */
+  sections: [
+    { id: 'intro', label: 'Intro' },
+    { id: 'numbers', label: 'In numbers' },
+    { id: 'services', label: 'What I do' },
+    { id: 'clients', label: 'Worked with' },
+    { id: 'experience', label: 'Experience' },
+    { id: 'say-hello', label: 'Say hello' },
+    { id: 'index', label: 'Index' },
+  ],
+  eyebrow: 'Pharmacist · Photographer · Systems builder',
   headline: ['Hi, I’m Shivam.'],
   intro: [
     'I help brands design and build custom systems that work beautifully: functional at their core and considered in every detail.',
@@ -84,6 +95,27 @@ export const aboutPage = {
       text: 'I’m a pharmacist. The precision, care and responsibility of that work carry into every system I build.',
     },
   ],
+  clients: {
+    title: ['Brands and people', 'I’ve worked with.'],
+    /** Placeholders until the real logos arrive: put files in /public/logos and set `src`. */
+    logos: Array.from({ length: 8 }, (_, i) => ({ name: `Logo ${String(i + 1).padStart(2, '0')}`, src: null as string | null })),
+  },
+  /** PLACEHOLDER: replace with your real roles and years. */
+  experience: [
+    { years: 'Year – now', role: 'Pharmacist', place: 'Add where', text: 'Add a line about this role.' },
+    { years: 'Year – now', role: 'Photographer', place: 'Independent', text: 'Brands, hotels and places across Tanzania.' },
+    { years: 'Year – now', role: 'Systems & AI', place: 'Independent', text: 'Task and file management systems, and AI workflows built with Claude Code.' },
+    { years: 'Year', role: 'Add a role', place: 'Add where', text: 'Add a line about this role.' },
+  ],
+  hello: {
+    title: ['Tell me about', 'your next project.'],
+    text: 'A system, a shoot, a design, or an idea that needs shaping. Write, call or send a WhatsApp.',
+  },
+  ending: {
+    greeting: 'Hallo, I’m Shivam.',
+    line: 'I build systems, take photographs and design, from Dar es Salaam.',
+    cta: 'Start a project',
+  },
   closing: {
     headline: ['Let’s build something', 'that lasts.'],
     link: { label: 'Get in touch', href: '/#contact' },

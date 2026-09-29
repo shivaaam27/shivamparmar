@@ -62,7 +62,7 @@ export default function Header() {
           onClick={() => setOpen((o) => !o)}
         >
           <span className="sr-only">Menu</span>
-          <span className="menu-btn__lines" aria-hidden="true" style={{ '--n': count } as React.CSSProperties}>
+          <span className="menu-btn__lines" aria-hidden="true" style={{ '--n': count, '--gap': count > 5 ? '4px' : '5px' } as React.CSSProperties}>
             {Array.from({ length: count }, (_, i) => (
               <i key={i} className={i === at ? 'is-here' : undefined} style={{ '--i': i } as React.CSSProperties} />
             ))}

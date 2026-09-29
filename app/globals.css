@@ -104,18 +104,18 @@ img { display: block; max-width: 100%; }
   letter-spacing: -.01em;
 }
 .menu-btn { width: 44px; height: 44px; display: grid; place-items: center; margin-right: -8px; }
-.menu-btn__lines { position: relative; width: 30px; height: calc((var(--n) - 1) * 5px + 1.5px); }
+.menu-btn__lines { --gap: 5px; position: relative; width: 30px; height: calc((var(--n) - 1) * var(--gap) + 1.5px); }
 /* one line per section; the long line is the section on screen, and it slides
    slowly to the next as the page moves */
 .menu-btn__lines i {
-  position: absolute; right: 0; top: calc(var(--i) * 5px); height: 1.5px; width: 14px; background: currentColor;
+  position: absolute; right: 0; top: calc(var(--i) * var(--gap)); height: 1.25px; width: 12px; background: currentColor;
   transition: transform .5s var(--ease), width .9s var(--ease), top .5s var(--ease), opacity .3s;
 }
 .menu-btn__lines i.is-here { width: 30px; }
 /* open: the first and last lines cross into an X, the rest fade */
 .menu-btn[aria-expanded="true"] i { opacity: 0; }
 .menu-btn[aria-expanded="true"] i:first-child,
-.menu-btn[aria-expanded="true"] i:last-child { opacity: 1; width: 30px; top: calc((var(--n) - 1) * 2.5px); }
+.menu-btn[aria-expanded="true"] i:last-child { opacity: 1; width: 30px; top: calc((var(--n) - 1) * var(--gap) / 2); }
 .menu-btn[aria-expanded="true"] i:first-child { transform: rotate(45deg); }
 .menu-btn[aria-expanded="true"] i:last-child { transform: rotate(-45deg); }
 
@@ -324,37 +324,7 @@ body.menu-open { overflow: hidden; }
   transition: color .3s, background-size .6s var(--ease);
 }
 .about__sign span { transition: transform .5s var(--ease); }
-/* ---------- inner pages (e.g. /about) ---------- */
-.page__intro {
-  display: grid; gap: clamp(2.5rem, 5vw, 4rem);
-  padding-top: clamp(9rem, 18vw, 14rem); padding-bottom: clamp(4rem, 8vw, 7rem);
-}
-.page__intro-text {
-  display: grid; gap: 1.25rem;
-  max-width: 40rem; margin-left: auto;   /* sits right, like the home About text */
-}
 
-.disciplines { padding-top: 0; }
-.disciplines__tag { margin-bottom: clamp(1.5rem, 3vw, 2.5rem); }
-.disciplines__tag .tag { vertical-align: baseline; }
-.discipline {
-  display: grid;
-  grid-template-columns: 4rem minmax(0, 5fr) minmax(0, 6fr);
-  gap: 1rem clamp(1.5rem, 3vw, 3rem);
-  align-items: baseline;
-  padding: clamp(1.75rem, 3.5vw, 2.75rem) 0;
-  border-top: 1px solid var(--line);
-}
-.discipline:last-child { border-bottom: 1px solid var(--line); }
-.discipline__num { color: var(--taupe); }
-.discipline__title {
-  font: 400 clamp(2rem, 4.2vw, 4rem)/.95 var(--serif);
-  text-transform: uppercase;
-  letter-spacing: -.005em;
-}
-.discipline__text { font-size: var(--fs-lead); line-height: 1.45; color: var(--ink-soft); max-width: 36rem; }
-
-.page__closing { display: grid; gap: clamp(2rem, 4vw, 3rem); }
 
 /* ---------- project pages (/work/<slug>) ---------- */
 .project__intro {
@@ -525,9 +495,6 @@ body.menu-open { overflow: hidden; }
 
 
 @media (max-width: 720px) {
-  .page__intro-text { margin-left: 0; }
-  .discipline { grid-template-columns: 2.5rem minmax(0, 1fr); }
-  .discipline__text { grid-column: 2; }
 }
 .about__sign:hover { color: var(--ink); background-size: 100% 1px; }
 .about__sign:hover span { transform: translateX(.25em); }

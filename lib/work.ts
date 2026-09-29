@@ -252,6 +252,16 @@ export const pagedProjects = () =>
 
 export const findProject = (slug: string) => pagedProjects().find((e) => e.project.slug === slug);
 
+/** Only what has pictures: empty sub-categories and categories are left out of every list on the site. */
+export const visibleCategories = (): Category[] => categories
+  .map((c) => ({
+    ...c,
+    subcategories: c.subcategories
+      .map((s) => ({ ...s, projects: s.projects.filter(hasPage) }))
+      .filter((s) => s.projects.length),
+  }))
+  .filter((c) => c.subcategories.length);
+
 /** Categories have their own page at /work/<category>, sharing the address space with projects. */
 export const findCategory = (slug: string) => categories.find((c) => c.slug === slug);
 /** A category gets a full page once any of its projects has pictures. */

@@ -1,11 +1,11 @@
 import 'server-only';
-import { categories, hasPage } from './work';
+import { hasPage, visibleCategories } from './work';
 import { imageSize } from './image-size';
 import type { Cat } from '@/components/WorkBrowser';
 
 /** Every category with its collections and pictures (with their real sizes), for the work page. */
 export function workData(): Cat[] {
-  return categories.map((c) => ({
+  return visibleCategories().map((c) => ({
     slug: c.slug,
     name: c.name,
     collections: c.subcategories.map((sub) => {

@@ -4,7 +4,11 @@ import { Fragment, useCallback, useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { work } from '@/lib/content';
-import { FILTER_SUBS, categories, categoryHasWork, countAll, countCategory, coverOf, hasPage } from '@/lib/work';
+import { FILTER_SUBS, categoryHasWork, countCategory, coverOf, hasPage, visibleCategories } from '@/lib/work';
+
+/** Only categories and sub-categories that have pictures. */
+const categories = visibleCategories();
+const countAll = () => categories.reduce((n, c) => n + countCategory(c), 0);
 import Tag from './Tag';
 import Placeholder from './Placeholder';
 import MetaCol from './MetaCol';
