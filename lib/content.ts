@@ -100,13 +100,18 @@ export const aboutPage = {
     /** Placeholders until the real logos arrive: put files in /public/logos and set `src`. */
     logos: Array.from({ length: 8 }, (_, i) => ({ name: `Logo ${String(i + 1).padStart(2, '0')}`, src: null as string | null })),
   },
-  /** PLACEHOLDER: replace with your real roles and years. */
+  /** The journey so far, newest first: a summary from the CV (the full story comes later). */
   experience: [
-    { years: 'Year – now', role: 'Pharmacist', place: 'Add where', text: 'Add a line about this role.' },
-    { years: 'Year – now', role: 'Photographer', place: 'Independent', text: 'Brands, hotels and places across Tanzania.' },
-    { years: 'Year – now', role: 'Systems & AI', place: 'Independent', text: 'Task and file management systems, and AI workflows built with Claude Code.' },
-    { years: 'Year', role: 'Add a role', place: 'Add where', text: 'Add a line about this role.' },
+    { years: '2026', role: 'Systems & AI', place: 'Dar es Salaam', text: 'Built task and file management systems for a group of companies, with AI workflows made in Claude Code.' },
+    { years: '2025 – 2026', role: 'MSc Pharmacovigilance & Pharmacoepidemiology', place: 'MUHAS', text: 'Drug safety, and how medicines behave across whole populations.' },
+    { years: '2024 – 2025', role: 'Pharmacy intern', place: 'Jakaya Kikwete Cardiac Institute', text: 'Internship training at Tanzania’s national heart hospital.' },
+    { years: '2024', role: 'Branch Manager', place: 'Mansoor Daya Chemicals', text: 'Ran a pharmacy branch: the team, the stock and the customers.' },
+    { years: '2020 – 2024', role: 'Bachelor of Pharmacy', place: 'GITAM University, India', text: 'On a full Government of India scholarship. Founded the pharmacy students’ association, led the international students’ association and co-wrote seven papers.' },
+    { years: '2019 – 2020', role: 'Pharmaceutical Technician', place: 'Regency Hospital', text: 'Dispensing and pharmacy care in a busy private hospital.' },
+    { years: '2016 – 2019', role: 'Diploma in Pharmaceutical Sciences', place: 'Kilimanjaro School of Pharmacy', text: 'Where pharmacy began, alongside volunteering at St. Joseph Hospital and the Jaffery dispensary.' },
+    { years: '2014', role: 'Graphic design', place: 'Moshi Institute of Technology', text: 'A certificate in graphics and design, and later teaching it: the start of the other half.' },
   ],
+
   hello: {
     title: ['Tell me about', 'your next project.'],
     text: 'A system, a shoot, a design, or an idea that needs shaping. Write, call or send a WhatsApp.',

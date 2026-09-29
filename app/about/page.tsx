@@ -5,6 +5,7 @@ import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import Effects from '@/components/Effects';
 import AboutShell from '@/components/about/AboutShell';
+import CountUp from '@/components/about/CountUp';
 import { aboutPage, nav, site } from '@/lib/content';
 import { pagedProjects, visibleCategories } from '@/lib/work';
 import './about.css';
@@ -24,10 +25,10 @@ export default function AboutPage() {
   const photo = visibleCategories().find((c) => c.slug === 'photography');
   const photos = projects.filter((p) => p.category.slug === 'photography').reduce((n, p) => n + (p.project.images?.length ?? 0), 0);
   const stats = [
-    { value: pad(projects.length), label: 'Projects on this site' },
-    { value: pad(photo?.subcategories.length ?? 0), label: 'Photo collections' },
-    { value: String(photos), label: 'Photographs' },
-    { value: pad(disciplines.length), label: 'Disciplines, one way of working' },
+    { value: projects.length, label: 'Projects on this site' },
+    { value: photo?.subcategories.length ?? 0, label: 'Photo collections' },
+    { value: photos, label: 'Photographs' },
+    { value: disciplines.length, label: 'Disciplines, one way of working' },
   ];
   const [phone] = site.phones;
 
@@ -36,7 +37,6 @@ export default function AboutPage() {
     <section id="index" className="ab-sec ab-end" aria-label="Index">
       <div className="ab-end__art">
         <div className="ab-end__caption">
-          <p className="ab-end__logo">{site.name}</p>
           <p><b>{ending.greeting}</b><br />{ending.line}</p>
         </div>
       </div>
@@ -89,7 +89,7 @@ export default function AboutPage() {
         <AboutShell sections={sections} end={endingPanel}>
           {/* 01 intro */}
           <section id="intro" className="ab-sec ab-intro-sec" aria-label="Intro">
-            <p className="ab-eyebrow mono">{eyebrow}</p>
+            <p className="ab-eyebrow">{eyebrow}</p>
             <h2 className="ab-hello">{headline.join(' ')}</h2>
             <p className="ab-lead">{intro[0]}</p>
             <div className="ab-actions">
@@ -100,10 +100,10 @@ export default function AboutPage() {
 
           {/* 02 numbers */}
           <section id="numbers" className="ab-sec" aria-label="In numbers">
-            <p className="ab-label mono">In numbers</p>
+            <p className="ab-label">In numbers</p>
             <ul className="ab-stats">
               {stats.map((s) => (
-                <li key={s.label}><b>{s.value}</b><span>{s.label}</span></li>
+                <li key={s.label}><b><CountUp to={s.value} /></b><span>{s.label}</span></li>
               ))}
             </ul>
             <p className="ab-text">{intro[1]}</p>
@@ -111,7 +111,7 @@ export default function AboutPage() {
 
           {/* 03 what I do */}
           <section id="services" className="ab-sec" aria-label="What I do">
-            <p className="ab-label mono">What I do</p>
+            <p className="ab-label">What I do</p>
             <h2 className="ab-h2">Five disciplines,<br />one way of working.</h2>
             <ul className="ab-cards">
               {disciplines.map((d, i) => {
@@ -134,26 +134,30 @@ export default function AboutPage() {
 
           {/* 04 worked with: logos glide past */}
           <section id="clients" className="ab-sec" aria-label="Worked with">
-            <p className="ab-label mono">Worked with</p>
+            <p className="ab-label">Worked with</p>
             <h2 className="ab-h2 ab-center">{clients.title[0]}<br />{clients.title[1]}</h2>
-            <div className="ab-marquee" aria-label="Logos of brands I’ve worked with">
-              <ul className="ab-marquee__track">
-                {[...clients.logos, ...clients.logos].map((l, i) => (
-                  <li key={i} aria-hidden={i >= clients.logos.length}>
-                    {l.src ? <img src={l.src} alt={l.name} /> : <span className="ab-logo-ph">{l.name}</span>}
-                  </li>
-                ))}
-              </ul>
+            <div className="ab-logos" aria-label="Logos of brands I’ve worked with">
+              {[0, 1].map((row) => (
+                <div key={row} className={`ab-marquee${row ? ' ab-marquee--back' : ''}`}>
+                  <ul className="ab-marquee__track">
+                    {[...clients.logos, ...clients.logos].map((l, i) => (
+                      <li key={i} aria-hidden={row > 0 || i >= clients.logos.length}>
+                        {l.src ? <img src={l.src} alt={l.name} /> : <span className="ab-logo-ph">{l.name}</span>}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              ))}
             </div>
           </section>
 
           {/* 05 experience: compact rows */}
           <section id="experience" className="ab-sec" aria-label="Experience">
-            <p className="ab-label mono">Experience</p>
+            <p className="ab-label">Experience</p>
             <ol className="ab-rows">
               {experience.map((r, i) => (
                 <li key={i}>
-                  <span className="ab-rows__years mono">{r.years}</span>
+                  <span className="ab-rows__years">{r.years}</span>
                   <span className="ab-rows__role"><b>{r.role}</b><em>{r.place}</em></span>
                   <span className="ab-rows__text">{r.text}</span>
                 </li>
@@ -163,7 +167,7 @@ export default function AboutPage() {
 
           {/* 06 say hello */}
           <section id="say-hello" className="ab-sec ab-hello-sec" aria-label="Say hello">
-            <p className="ab-label mono">Say hello</p>
+            <p className="ab-label">Say hello</p>
             <h2 className="ab-h2 ab-center">{hello.title[0]}<br />{hello.title[1]}</h2>
             <p className="ab-text ab-center">{hello.text}</p>
             <div className="ab-actions">
