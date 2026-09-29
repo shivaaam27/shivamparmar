@@ -81,7 +81,7 @@ export const aboutPage = {
     },
     {
       title: 'AI & prompt engineering',
-      image: null as string | null,   // coming: generated image
+      image: '/images/about-ai.jpg' as string | null,
       text: 'I design AI workflows and integrate them into everyday work with tools like Claude Code, with prompts engineered for reliable results. Repetitive tasks get automated so people spend their time where it matters, saving hours every week.',
     },
     {
@@ -96,7 +96,7 @@ export const aboutPage = {
     },
     {
       title: 'Pharmacy',
-      image: null as string | null,   // coming: generated image
+      image: '/images/about-pharmacy.jpg' as string | null,
       text: 'I’m a pharmacist. The precision, care and responsibility of that work carry into every system I build.',
     },
   ],
