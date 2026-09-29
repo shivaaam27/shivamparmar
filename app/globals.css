@@ -693,7 +693,25 @@ body.menu-open { overflow: hidden; }
 }
 
 @media (max-width: 720px) {
-  .hero__foot { display: grid; grid-template-columns: 1fr 1fr; row-gap: .35rem; }
+  /* phones: calmer body copy and less dead air between sections */
+  :root {
+    --fs-lead: 1rem;
+    --section: 5rem;
+  }
+
+  /* bigger tap areas without moving anything: the padding is cancelled by the margin */
+  .wordmark, .work__page, .work__back, .site-footer__bar a {
+    padding-block: .625rem; margin-block: -.625rem;
+  }
+  .work__filter button { padding-block: .5rem; margin-block: -.5rem; }
+  .work__page { font-size: .75rem; }
+  .strip-sub__label, .wheel__list button .mono { font-size: .75rem; }
+  .contact__cols { margin-top: 3rem; }
+  .contact__cols ul { gap: .5rem; }
+  .contact__cols a { padding-block: .375rem; background-origin: content-box; }
+
+  /* one line per label so the four sit on a tidy two-by-two grid */
+  .hero__foot { display: grid; grid-template-columns: 1fr 1fr; row-gap: .35rem; font-size: .75rem; }
   .hero__foot li:nth-child(even) { text-align: right; }
 
   .display .tag { vertical-align: 1.9em; }

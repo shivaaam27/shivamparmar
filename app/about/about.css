@@ -167,6 +167,15 @@
   .ab-main { padding-top: 2.5rem; }
 }
 @media (max-width: 720px) {
+  /* intro sentence: still the lead, but not shouting on a small screen */
+  .ab-lead { font-size: 1.0625rem; }
+  .ab-main { gap: 4rem; }
+  /* index strip and the closing link lists: roomier tap targets */
+  .ab-side { padding-bottom: .375rem; }
+  .ab-side__nav a { padding-block: .625rem; }
+  .ab-end__top { gap: 1rem; }
+  .ab-end__top a, .ab-end__list a { padding-block: .375rem; margin-block: -.375rem; }
+  .ab-end__list { gap: .6rem; }
   .ab-stats { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .ab-stats li { min-height: 8rem; }
   .ab-cards { grid-template-columns: minmax(0, 1fr); }
