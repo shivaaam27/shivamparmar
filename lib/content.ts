@@ -10,7 +10,7 @@ export const site = {
   description: 'Shivam Parmar is a pharmacist, photographer and systems builder in Dar es Salaam, Tanzania: custom business systems, AI workflows, photography and design.',
   jobTitle: 'Pharmacist, photographer and systems builder',
   /** Profiles that are also you: they tell search engines these all belong to one person. */
-  sameAs: ['https://www.linkedin.com/in/shivaaam', 'https://orcid.org/0009-0007-7272-2394'],
+  sameAs: ['https://www.linkedin.com/in/shivaaam', 'https://www.instagram.com/ishivamparmar', 'https://orcid.org/0009-0007-7272-2394'],
   email: 'ishivamparmar@gmail.com',
   /** Both numbers take calls and WhatsApp. `tel` / `wa` are the same number in international form, without spaces. */
   phones: [
