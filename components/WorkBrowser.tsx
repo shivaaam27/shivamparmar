@@ -4,26 +4,39 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { flushSync } from 'react-dom';
 import { useLenis } from 'lenis/react';
 import Link from 'next/link';
+import { Play } from 'lucide-react';
 import { track } from '@/lib/track';
 import Wheel, { type WheelItem } from './Wheel';
 import PhotoCarousel from './ui/PhotoCarousel';
 
-export type Shot = { src: string; alt: string; w: number; h: number; project: string; slug: string; n: number };
+/** A picture, or a video (then `src` is its poster). */
+export type Shot = { src: string; alt: string; w: number; h: number; project: string; slug: string; n: number; video?: string };
 /** A collection (sub-category); `page` and `summary` come from its project. */
 export type Collection = { slug: string; name: string; shots: Shot[]; page?: string; summary?: string };
 export type Cat = { slug: string; name: string; collections: Collection[] };
 
-type Sel = { c: string | null; s: string | null };
+type Kind = 'photos' | 'videos';
+type Sel = { c: string | null; s: string | null; t?: Kind | null };
 const ALL = '__all';
+const KINDS: { key: Kind; label: string }[] = [{ key: 'photos', label: 'Photos' }, { key: 'videos', label: 'Videos' }];
+const isKind = (k: string | null): k is Kind => k === 'photos' || k === 'videos';
+const ofKind = (t: Kind) => (p: Shot) => (t === 'videos' ? Boolean(p.video) : !p.video);
 
-/** /work → all, /work/photography → a category, ?s=mikumi → one collection. */
+/** /work → all, /work/photography → a category, ?s=mikumi → one collection, ?t=videos → just the videos. */
 function readSel(cats: Cat[]): Sel {
   const seg = window.location.pathname.replace(/\/+$/, '').split('/')[2] ?? null;
   const cat = cats.find((c) => c.slug === seg);
-  const s = new URLSearchParams(window.location.search).get('s');
-  return { c: cat?.slug ?? null, s: cat?.collections.some((x) => x.slug === s) ? s : null };
+  const q = new URLSearchParams(window.location.search);
+  const s = q.get('s'), t = q.get('t');
+  return { c: cat?.slug ?? null, s: cat?.collections.some((x) => x.slug === s) ? s : null, t: cat && isKind(t) ? t : null };
 }
-const pathOf = ({ c, s }: Sel) => `/work${c ? `/${c}` : ''}${c && s ? `?s=${s}` : ''}`;
+const pathOf = ({ c, s, t }: Sel) => {
+  const q = new URLSearchParams();
+  if (c && s) q.set('s', s);
+  if (c && t) q.set('t', t);
+  const qs = q.toString();
+  return `/work${c ? `/${c}` : ''}${qs ? `?${qs}` : ''}`;
+};
 
 /**
  * The work page: a header with the title and two picker wheels beside it
@@ -81,10 +94,14 @@ export default function WorkBrowser({ cats, initial }: { cats: Cat[]; initial: S
 
   const cat = cats.find((c) => c.slug === sel.c) ?? null;
   const col = cat?.collections.find((x) => x.slug === sel.s) ?? null;
-  const shots = useMemo(() => {
+  // what's in the chosen category and collection, then narrowed to photos or videos
+  const inCol = useMemo(() => {
     const cs = cat ? [cat] : cats;
     return cs.flatMap((c) => c.collections.filter((x) => !col || x === col).flatMap((x) => x.shots));
   }, [cats, cat, col]);
+  const shots = useMemo(() => (sel.t ? inCol.filter(ofKind(sel.t)) : inCol), [inCol, sel.t]);
+  // a category with videos gets a third wheel: all, photos, videos
+  const hasVideo = Boolean(cat?.collections.some((x) => x.shots.some((p) => p.video)));
 
   const count = (c: Cat) => c.collections.reduce((n, x) => n + x.shots.length, 0);
   const catItems: WheelItem[] = [
@@ -95,6 +112,10 @@ export default function WorkBrowser({ cats, initial }: { cats: Cat[]; initial: S
     { key: ALL, label: 'All', count: count(cat) },
     ...cat.collections.map((x) => ({ key: x.slug, label: x.name, count: x.shots.length, disabled: !x.shots.length })),
   ] : [];
+  const kindItems: WheelItem[] = [
+    { key: ALL, label: 'All', count: inCol.length },
+    ...KINDS.map((k) => { const n = inCol.filter(ofKind(k.key)).length; return { key: k.key, label: k.label, count: n, disabled: !n }; }),
+  ];
 
   const title = col?.name ?? cat?.name ?? 'Work';
   const bar = (slim: boolean) => (
@@ -108,7 +129,8 @@ export default function WorkBrowser({ cats, initial }: { cats: Cat[]; initial: S
       </div>
       <div className="wb__wheels">
         <Wheel label="Category" items={catItems} value={sel.c ?? ALL} onChange={(k) => choose({ c: k === ALL ? null : k, s: null })} />
-        {cat && <Wheel key={cat.slug} label={cat.name} items={colItems} value={sel.s ?? ALL} onChange={(k) => choose({ c: cat.slug, s: k === ALL ? null : k })} />}
+        {cat && <Wheel key={cat.slug} label={cat.name} items={colItems} value={sel.s ?? ALL} onChange={(k) => choose({ c: cat.slug, s: k === ALL ? null : k, t: sel.t })} />}
+        {cat && hasVideo && <Wheel key={`${cat.slug}-type`} label="Type" items={kindItems} value={sel.t ?? ALL} onChange={(k) => choose({ c: cat.slug, s: sel.s, t: isKind(k) ? k : null })} />}
       </div>
     </>
   );
@@ -132,9 +154,15 @@ export default function WorkBrowser({ cats, initial }: { cats: Cat[]; initial: S
       {shots.length ? (
         <div className="wb__grid">
           {shots.map((p, i) => (
-            <figure key={p.src} className="wb__shot">
-              <button type="button" onClick={() => { setViewing(i); track(`View photo · ${p.project}`); }} aria-label={`View ${p.project}, photo ${p.n}: ${p.alt}`}>
+            <figure key={p.src} className={`wb__shot${p.video ? ' wb__shot--video' : ''}`}>
+              <button type="button" onClick={() => { setViewing(i); track(`View ${p.video ? 'video' : 'photo'} · ${p.project}`); }}
+                aria-label={`View ${p.project}, ${p.video ? 'video' : 'photo'} ${p.n}: ${p.alt}`}
+                onPointerEnter={p.video ? (e) => { if (e.pointerType === 'mouse') e.currentTarget.querySelector('video')?.play().catch(() => {}); } : undefined}
+                onPointerLeave={p.video ? (e) => { const v = e.currentTarget.querySelector('video'); if (v) { v.pause(); v.currentTime = 0; } } : undefined}>
                 <img src={p.src} alt={p.alt} width={p.w} height={p.h} loading={i < 10 ? 'eager' : 'lazy'} />
+                {/* a silent preview plays while the mouse is over it */}
+                {p.video && <video src={p.video} muted loop playsInline preload="none" aria-hidden="true" tabIndex={-1} />}
+                {p.video && <span className="wb__play" aria-hidden="true"><Play size={12} fill="currentColor" strokeWidth={0} /></span>}
               </button>
             </figure>
           ))}

@@ -10,15 +10,17 @@ import 'swiper/css';
 import 'swiper/css/effect-coverflow';
 import 'swiper/css/pagination';
 
-export type CarouselShot = { src: string; alt: string; project: string; slug: string };
+/** A picture, or a video (then `src` is its poster). */
+export type CarouselShot = { src: string; alt: string; project: string; slug: string; video?: string };
 
 const pad = (n: number) => String(n).padStart(2, '0');
 
 /**
- * Full-screen photo viewer: a coverflow carousel (the picture in front, its
+ * Full-screen photo (and video) viewer: a coverflow carousel (the picture in front, its
  * neighbours turned away on either side), a strip of tiny thumbnails under it
  * to jump anywhere, and the position dots below that. Arrows, ← / → keys,
- * swipe, drag or the wheel move through it; Esc or Close leaves.
+ * swipe, drag or the wheel move through it; Esc or Close leaves. A video plays
+ * with its controls when it comes to the front, and stops when it leaves.
  * Adapted from Skiper UI's Carousel_003 (Skiper 49) and a Framer thumbnail strip.
  */
 export default function PhotoCarousel({ shots, start, onClose }: { shots: CarouselShot[]; start: number; onClose: () => void }) {
@@ -37,6 +39,15 @@ export default function PhotoCarousel({ shots, start, onClose }: { shots: Carous
     return () => { html.style.overflow = before; window.removeEventListener('keydown', onKey); };
   }, [onClose]);
 
+  // only the video in front plays
+  const root = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    root.current?.querySelectorAll<HTMLVideoElement>('.pc__slide video').forEach((v) => {
+      if (Number(v.dataset.i) === at) v.play().catch(() => {});
+      else if (!v.paused) v.pause();
+    });
+  }, [at]);
+
   // keep the chosen thumbnail in the middle of the strip
   useEffect(() => {
     const el = strip.current, t = el?.querySelectorAll('button')[at];
@@ -44,7 +55,7 @@ export default function PhotoCarousel({ shots, start, onClose }: { shots: Carous
   }, [at]);
 
   return (
-    <div className="pc" role="dialog" aria-modal="true" aria-label="Photos" data-lenis-prevent>
+    <div className="pc" ref={root} role="dialog" aria-modal="true" aria-label="Photos" data-lenis-prevent>
       <header className="pc__bar mono">
         <span aria-live="polite">{pad(at + 1)} / {pad(shots.length)}</span>
         <Link className="pc__project" href={`/work/${shot.slug}`} title="About this project">{shot.project} · About<span aria-hidden="true"> ↗</span></Link>
@@ -72,7 +83,9 @@ export default function PhotoCarousel({ shots, start, onClose }: { shots: Carous
         >
           {shots.map((s, i) => (
             <SwiperSlide key={s.src} className="pc__slide">
-              <img src={s.src} alt={s.alt} loading={Math.abs(i - start) < 4 ? 'eager' : 'lazy'} draggable={false} />
+              {s.video
+                ? <video src={s.video} poster={s.src} data-i={i} controls playsInline loop preload={Math.abs(i - start) < 2 ? 'metadata' : 'none'} aria-label={s.alt} />
+                : <img src={s.src} alt={s.alt} loading={Math.abs(i - start) < 4 ? 'eager' : 'lazy'} draggable={false} />}
             </SwiperSlide>
           ))}
         </Swiper>
@@ -84,7 +97,7 @@ export default function PhotoCarousel({ shots, start, onClose }: { shots: Carous
       <div className="pc__foot">
         <div className="pc__thumbs" ref={strip} role="tablist" aria-label="All photos">
           {shots.map((s, i) => (
-            <button key={s.src} type="button" role="tab" aria-selected={i === at} aria-label={`Photo ${i + 1}: ${s.project}`}
+            <button key={s.src} type="button" role="tab" aria-selected={i === at} aria-label={`${s.video ? 'Video' : 'Photo'} ${i + 1}: ${s.project}`}
               className={i === at ? 'is-on' : undefined} onClick={() => swiper.current?.slideTo(i)}>
               <img src={s.src} alt="" loading="lazy" draggable={false} />
             </button>

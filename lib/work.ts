@@ -10,7 +10,8 @@ import type { Tone } from './content';
  * of Photography, holding one project with that shoot's pictures.
  */
 
-export type WorkImage = { src: string; alt: string; caption?: string };
+/** A picture, or a video: then `src` is its poster (the still shown before it plays). */
+export type WorkImage = { src: string; alt: string; caption?: string; video?: string };
 
 export type Project = {
   slug: string;
@@ -24,10 +25,18 @@ export type Project = {
   images?: WorkImage[];
 };
 
-export type Subcategory = { slug: string; name: string; projects: Project[] };
+/** listed: show it on the work page as "Soon" even before it has work. */
+export type Subcategory = { slug: string; name: string; projects: Project[]; listed?: boolean };
 export type Category = { slug: string; name: string; subcategories: Subcategory[] };
 
 const soon = (slug: string, tone: Tone): Project => ({ slug, title: 'Coming soon', tone });
+
+/** Dar Distributors' unbranded posts, in posting order: a photo, or a video with its cover. */
+const DD = '/images/dar-distributors';
+const ddPhoto = (slug: string, title: string): WorkImage =>
+  ({ src: `${DD}/${slug}.jpg`, alt: `${title}: product photograph for Dar Distributors’ social media`, caption: title });
+const ddVideo = (slug: string, title: string): WorkImage =>
+  ({ src: `${DD}/${slug}-poster.jpg`, video: `${DD}/${slug}.mp4`, alt: `${title}: short product video for Dar Distributors’ social media`, caption: title });
 
 export const categories: Category[] = [
   {
@@ -214,6 +223,50 @@ export const categories: Category[] = [
           },
         ],
       },
+    ],
+  },
+  {
+    slug: 'social-media-marketing',
+    name: 'Social media marketing',
+    subcategories: [
+      {
+        slug: 'dar-distributors',
+        name: 'Dar Distributors',
+        projects: [
+          {
+            slug: 'dar-distributors',
+            title: 'Dar Distributors',
+            tone: 'olive',
+            cover: `${DD}/sliced-black-olives.jpg`,
+            summary: 'Social media for Dar Distributors, wholesale food suppliers in Dar es Salaam: product photographs and short videos for the Virginia Green Garden, Golden Royal and Royal Arm ranges, posted in English and Kiswahili.',
+            images: [
+              ddPhoto('sliced-black-olives', 'Sliced Black Olives'),
+              ddVideo('whole-green-olives', 'Whole Green Olives'),
+              ddPhoto('sliced-green-olives', 'Sliced Green Olives'),
+              ddVideo('golden-royal-fruit-cocktail', 'Golden Royal Fruit Cocktail'),
+              ddPhoto('creamy-mayonnaise', 'Creamy Mayonnaise'),
+              ddPhoto('ranch-dressing', 'Ranch Dressing'),
+              ddVideo('italian-dressing', 'Italian Dressing'),
+              ddVideo('kachi-ghani-mustard-oil', 'Kachi Ghani Mustard Oil'),
+              ddPhoto('thousand-island-dressing', 'Thousand Island Dressing'),
+              ddPhoto('yellow-mustard', 'Yellow Mustard'),
+              ddPhoto('french-dressing', 'French Dressing'),
+              ddPhoto('pizza-sauce', 'Pizza Sauce'),
+              ddVideo('classic-mayonnaise-jar', 'Classic Mayonnaise'),
+              ddVideo('custard-powder', 'Custard Powder'),
+              ddVideo('dates-syrup', 'Dates Syrup'),
+              ddPhoto('whole-peeled-tomatoes', 'Whole Peeled Tomatoes'),
+              ddVideo('australian-pure-honey', 'Australian Pure Honey'),
+              ddPhoto('tahina', 'Tahina'),
+              ddVideo('royal-arm-foul-medammes', 'Royal Arm Foul Medammes'),
+              ddVideo('peri-peri-sauce', 'Peri Peri Sauce'),
+            ],
+          },
+        ],
+      },
+      { slug: 'cocozuri-social', name: 'CocoZuri', listed: true, projects: [soon('cocozuri-social-soon', 'oxblood')] },
+      { slug: 'terragreen', name: 'TerraGreen', listed: true, projects: [soon('terragreen-soon', 'sage')] },
+      { slug: 'pamoja-plus', name: 'Pamoja Plus', listed: true, projects: [soon('pamoja-plus-soon', 'amber')] },
     ],
   },
   {

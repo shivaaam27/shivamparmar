@@ -24,9 +24,9 @@ export default function Header() {
     const update = () => {
       frame = 0;
       const mid = window.innerHeight * 0.45;
-      const list = sections();
-      let i = list.findIndex((el) => { const r = el.getBoundingClientRect(); return r.top <= mid && r.bottom > mid; });
-      if (i < 0) i = list[0].getBoundingClientRect().top > mid ? 0 : list.length - 1;
+      // the last section that has reached the middle, so gaps between sections (About) don't make it jump
+      let i = 0;
+      sections().forEach((el, k) => { if (el.getBoundingClientRect().top <= mid) i = k; });
       // the footer belongs to the last section
       setAt(Math.min(i, 6));
     };

@@ -1,12 +1,14 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
-import { ArrowUpRight, Camera, LayoutDashboard, Mail, MessageCircle, PenTool, Phone, Pill, Sparkles } from 'lucide-react';
+import { Aperture, ArrowUpRight, Camera, Images, Layers, LayoutDashboard, LayoutGrid, Mail, MessageCircle, PenTool, Phone, Pill, Sparkles } from 'lucide-react';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import Effects from '@/components/Effects';
 import AboutShell from '@/components/about/AboutShell';
-import CountUp from '@/components/about/CountUp';
 import Glow from '@/components/about/Glow';
+import Odometer from '@/components/about/Odometer';
+import Reveal from '@/components/about/Reveal';
+import ExperienceStack from '@/components/about/ExperienceStack';
 import { aboutPage, nav, site } from '@/lib/content';
 import { pagedProjects, visibleCategories } from '@/lib/work';
 import './about.css';
@@ -28,10 +30,10 @@ export default function AboutPage() {
   const photo = visibleCategories().find((c) => c.slug === 'photography');
   const photos = projects.filter((p) => p.category.slug === 'photography').reduce((n, p) => n + (p.project.images?.length ?? 0), 0);
   const stats = [
-    { value: projects.length, label: 'Projects on this site' },
-    { value: photo?.subcategories.length ?? 0, label: 'Photo collections' },
-    { value: photos, label: 'Photographs' },
-    { value: disciplines.length, label: 'Disciplines, one way of working' },
+    { value: projects.length, label: 'Projects on this site', Icon: LayoutGrid },
+    { value: photo?.subcategories.length ?? 0, label: 'Photo collections', Icon: Images },
+    { value: photos, label: 'Photographs', Icon: Aperture },
+    { value: disciplines.length, label: 'Disciplines, one way of working', Icon: Layers },
   ];
   const [phone] = site.phones;
 
@@ -104,13 +106,18 @@ export default function AboutPage() {
           {/* 02 numbers */}
           <section id="numbers" className="ab-sec" aria-label="In numbers">
             <p className="ab-label">In numbers</p>
-            <ul className="ab-stats">
-              {stats.map((s, i) => (
-                <Glow key={s.label} as="li" seed={i}>
-                  <b><CountUp to={s.value} /></b><span>{s.label}</span>
+            <Reveal as="ul" className="ab-stats">
+              {stats.map(({ value, label, Icon }, i) => (
+                <Glow key={label} as="li" seed={i} className="ab-stat">
+                  <span className="ab-stat__top">
+                    <span className="ab-stat__icon" aria-hidden="true"><Icon size={22} strokeWidth={1.4} /></span>
+                    <span className="ab-stat__n mono" aria-hidden="true">{pad(i + 1)}</span>
+                  </span>
+                  <b><Odometer value={value} /></b>
+                  <span className="ab-stat__label">{label}</span>
                 </Glow>
               ))}
-            </ul>
+            </Reveal>
             <p className="ab-text">{intro[1]}</p>
             <dl className="ab-facts" aria-label="Quick facts">
               {facts.map((f) => (
@@ -123,30 +130,31 @@ export default function AboutPage() {
           <section id="services" className="ab-sec" aria-label="What I do">
             <p className="ab-label">What I do</p>
             <h2 className="ab-h2">Five disciplines,<br />one way of working.</h2>
-            <ul className="ab-cards">
+            {/* each card deep green, lit warm from below, and each lit a little differently */}
+            <Reveal as="ul" className="ab-cards" threshold={0.15}>
               {disciplines.map((d, i) => {
                 const Icon = ICONS[i] ?? Sparkles;
                 return (
-                  <li key={d.title} className="ab-card">
-                    <div className={`ab-card__media${d.image ? '' : ' is-empty'}`}>
-                      {d.image ? <img src={d.image} alt="" loading="lazy" /> : <span>Image coming</span>}
-                      <span className="ab-card__icon" aria-hidden="true"><Icon size={16} strokeWidth={1.5} /></span>
+                  <Glow key={d.title} as="li" seed={i} tone="deep" className="ab-card" style={{ '--i': i } as React.CSSProperties}>
+                    <div className="ab-card__top">
+                      <span className="ab-card__icon" aria-hidden="true"><Icon size={20} strokeWidth={1.4} /></span>
+                      <span className="ab-card__n mono" aria-hidden="true">{pad(i + 1)}</span>
                     </div>
                     <div className="ab-card__body">
-                      <h3>{d.title}</h3>
+                      <h3 className="ab-card__title">{d.title}</h3>
                       <p>{d.text}</p>
                     </div>
-                  </li>
+                  </Glow>
                 );
               })}
-              <li className="ab-card ab-card--cta">
+              <Glow as="li" seed={5} tone="deep" className="ab-card ab-card--cta">
                 <div className="ab-card__body">
-                  <h3>Something else?</h3>
+                  <h3 className="ab-card__title">Something else?</h3>
                   <p>Most good projects mix a few of these. Tell me what you have in mind.</p>
-                  <a href="#say-hello" className="ab-link mono">Say hello<span aria-hidden="true"> ↓</span></a>
+                  <a href="#say-hello" className="ab-card__go">Say hello<span className="ab-card__icon" aria-hidden="true"><ArrowUpRight size={20} strokeWidth={1.4} /></span></a>
                 </div>
-              </li>
-            </ul>
+              </Glow>
+            </Reveal>
           </section>
 
           {/* 04 worked with: logos glide past */}
@@ -168,18 +176,10 @@ export default function AboutPage() {
             </div>
           </section>
 
-          {/* 05 experience: compact rows */}
-          <section id="experience" className="ab-sec" aria-label="Experience">
+          {/* 05 experience: cards that stack up as you scroll */}
+          <section id="experience" className="ab-sec ab-exp" aria-label="Experience">
             <p className="ab-label">Experience</p>
-            <ol className="ab-rows">
-              {experience.map((r, i) => (
-                <li key={i}>
-                  <span className="ab-rows__years">{r.years}</span>
-                  <span className="ab-rows__role"><b>{r.role}</b><em>{r.place}</em></span>
-                  <span className="ab-rows__text">{r.text}</span>
-                </li>
-              ))}
-            </ol>
+            <ExperienceStack items={experience} />
           </section>
 
           {/* 06 say hello */}
