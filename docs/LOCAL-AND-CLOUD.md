@@ -14,7 +14,19 @@ Install once:
 - **Node.js 22** (LTS): https://nodejs.org (the project needs Node 20.9 or newer)
 - An editor, e.g. **VS Code**: https://code.visualstudio.com
 
-Then, in a terminal (on Windows: PowerShell or "Git Bash"):
+**Windows, one paste**: open **PowerShell** and paste this. It puts the project in
+`Documents\shivamparmar`, installs everything and starts the site at http://localhost:3210.
+Running it again later just updates the folder and starts the site.
+
+```
+$d = Join-Path ([Environment]::GetFolderPath('MyDocuments')) 'shivamparmar'; if (Test-Path $d) { Set-Location $d; git pull } else { git clone https://github.com/shivaaam27/shivamparmar.git $d; Set-Location $d }; npm.cmd run setup; npm.cmd run dev
+```
+
+To work on it with Claude on your computer, open the **Claude** desktop app → **Code** → new
+**local** session → choose the `Documents\shivamparmar` folder. The site preview is set up in
+`.claude/launch.json`, so you can ask Claude there to "start the preview".
+
+Or step by step, in a terminal:
 
 ```
 git clone https://github.com/shivaaam27/shivamparmar.git
