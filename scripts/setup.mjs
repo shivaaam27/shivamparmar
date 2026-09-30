@@ -22,4 +22,4 @@ if (existsSync('.env.local')) {
   console.log('fill it (or run `npx vercel env pull .env.local`) only if you need /insights locally.');
 }
 
-console.log('\nReady. Start the site with:  npm run dev   → http://localhost:3000');
+console.log('\nReady. Start the site with:  npm run dev   → http://localhost:3210');

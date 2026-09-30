@@ -20,7 +20,7 @@ Then, in a terminal (on Windows: PowerShell or "Git Bash"):
 git clone https://github.com/shivaaam27/shivamparmar.git
 cd shivamparmar
 npm run setup      # installs packages and creates .env.local
-npm run dev        # open http://localhost:3000
+npm run dev        # open http://localhost:3210
 ```
 
 That's it. The whole site works locally without filling in any settings.
@@ -93,4 +93,7 @@ See `README.md` for how the site is built.
   Open the files it names, keep the version you want, remove the `<<<<<<<` / `>>>>>>>` markers,
   then `git add -A && git commit`. Or ask Claude to resolve it.
 - **The site won't start after pulling**: run `npm install`, then `npm run dev` again.
+- **localhost shows a different site**: this site always runs at **http://localhost:3210**
+  (its own port, so it never clashes with other projects on 3000). If the terminal says the port is
+  already in use, another copy is still running: close that terminal or press `Ctrl + C` in it.
 - **"Node is too old"**: install Node 22 from https://nodejs.org.

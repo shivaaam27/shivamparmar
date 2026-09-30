@@ -10,7 +10,7 @@ import the repo at vercel.com and press Deploy, with no settings to change.
 git clone https://github.com/shivaaam27/shivamparmar.git
 cd shivamparmar
 npm run setup      # installs packages, creates .env.local
-npm run dev        # http://localhost:3000
+npm run dev        # http://localhost:3210
 ```
 
 Moving between your computer and the cloud: see [docs/LOCAL-AND-CLOUD.md](docs/LOCAL-AND-CLOUD.md).

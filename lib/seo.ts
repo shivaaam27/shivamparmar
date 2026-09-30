@@ -8,7 +8,7 @@ import { categoryHasWork, categories, pagedProjects } from './work';
 
 /** The public address: a custom domain later (SITE_URL), else Vercel's production host. */
 export const siteUrl = () =>
-  (process.env.SITE_URL || (process.env.VERCEL_PROJECT_PRODUCTION_URL ? `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}` : 'http://localhost:3000')).replace(/\/$/, '');
+  (process.env.SITE_URL || (process.env.VERCEL_PROJECT_PRODUCTION_URL ? `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}` : 'http://localhost:3210')).replace(/\/$/, '');
 
 /** Every public page, most important first. Insights and the API are never listed. */
 export function publicPaths() {
