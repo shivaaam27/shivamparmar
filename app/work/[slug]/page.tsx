@@ -111,7 +111,7 @@ function ProjectPage({ slug }: { slug: string }) {
           {project.images?.map((img, i) => (
             <figure key={img.src} id={`photo-${i + 1}`} className="project__figure reveal">
               {img.video
-                ? <video src={img.video} poster={img.src} controls playsInline loop preload="none" aria-label={img.alt} />
+                ? <video src={img.video} poster={img.src} controls controlsList="nodownload noremoteplayback" disablePictureInPicture playsInline loop preload="none" aria-label={img.alt} />
                 : <img src={img.src} alt={img.alt} loading={i === 0 ? 'eager' : 'lazy'} />}
               <figcaption className="mono">
                 <span>{pad(i + 1)}</span>{img.caption ?? img.alt}

@@ -84,7 +84,7 @@ export default function PhotoCarousel({ shots, start, onClose }: { shots: Carous
           {shots.map((s, i) => (
             <SwiperSlide key={s.src} className="pc__slide">
               {s.video
-                ? <video src={s.video} poster={s.src} data-i={i} controls playsInline loop preload={Math.abs(i - start) < 2 ? 'metadata' : 'none'} aria-label={s.alt} />
+                ? <video src={s.video} poster={s.src} data-i={i} controls controlsList="nodownload noremoteplayback" disablePictureInPicture playsInline loop preload={Math.abs(i - start) < 2 ? 'metadata' : 'none'} aria-label={s.alt} />
                 : <img src={s.src} alt={s.alt} loading={Math.abs(i - start) < 4 ? 'eager' : 'lazy'} draggable={false} />}
             </SwiperSlide>
           ))}
@@ -104,6 +104,7 @@ export default function PhotoCarousel({ shots, start, onClose }: { shots: Carous
           ))}
         </div>
         <div className="pc__dots" />
+        <p className="pc__rights mono">© {new Date().getFullYear()} All rights reserved · not for reuse</p>
       </div>
     </div>
   );

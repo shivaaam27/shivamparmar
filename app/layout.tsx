@@ -4,6 +4,7 @@ import { site } from '@/lib/content';
 import { personJsonLd, siteUrl } from '@/lib/seo';
 import SmoothScroll from '@/components/SmoothScroll';
 import Analytics from '@/components/Analytics';
+import ImageGuard from '@/components/ImageGuard';
 import './globals.css';
 
 const serif = Instrument_Serif({ subsets: ['latin'], weight: '400', style: ['normal', 'italic'], variable: '--font-serif' });
@@ -51,6 +52,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <SmoothScroll>{children}</SmoothScroll>
         <div className="grain" aria-hidden="true" />
         <Analytics />
+        <ImageGuard />
       </body>
     </html>
   );
