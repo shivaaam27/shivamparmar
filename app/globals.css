@@ -499,10 +499,12 @@ body.menu-open { overflow: hidden; }
 .about { position: relative; }
 .about__text .lead { position: relative; z-index: 3; }   /* Blobby always passes behind the words */
 .about__orb {
-  --o: clamp(1.75rem, 2.6vw, 2.5rem);
+  /* it shrinks away (and fades) as the Work dome rises: --blobby-away is set by Work.tsx */
+  --o: calc(clamp(1.75rem, 2.6vw, 2.5rem) * (1 - var(--blobby-away, 0) * .85));
   position: absolute; left: 0; top: 0; z-index: 2; pointer-events: none;
   width: var(--o); height: var(--o); translate: -50% -50%;
   opacity: 0;
+  filter: opacity(calc(1 - var(--blobby-away, 0)));
   will-change: transform, opacity;
 }
 .about__orb-body {
@@ -742,25 +744,57 @@ body.menu-open { overflow: hidden; }
    Work — the title with its scroll wheels right beside it,
    then a drifting strip of 4:5 pictures
    ========================================================= */
+.work { overflow-x: clip; }   /* the dome and the strip run edge to edge */
 .work__head {
+  position: relative; isolation: isolate;
   display: flex; flex-wrap: wrap; align-items: center; gap: clamp(1.5rem, 3.5vw, 3.5rem);
   margin-bottom: clamp(2rem, 4.5vw, 3.5rem);
 }
 .work__title-link { position: relative; }
 .work__title-arrow { font-size: .28em; vertical-align: .9em; margin-left: .15em; opacity: 0; transition: opacity .3s var(--ease), transform .4s var(--ease); display: inline-block; }
 .work__title-link:hover .work__title-arrow, .work__title-link:focus-visible .work__title-arrow { opacity: 1; transform: translate(.1em, -.1em); }
+/* "Work" sits on the page's left edge (the serif's W carries a little side bearing) */
+.work__head .display { margin-left: -.04em; }
 
 /* the wheels sit beside the word, within its height; a chosen category opens its sub-categories
-   right next to it. Pointing at an item, or choosing it, draws Blobby's thin lilac highlighter */
+   right next to it. Counts ride as small superscripts at the end of each word */
 .work__wheels { display: flex; align-items: start; gap: clamp(1.5rem, 2.5vw, 2.5rem); }
 .work__wheels .wheel { --rows: 4; }
-.work__wheels .wheel__list button {
-  background: linear-gradient(180deg, rgba(227, 224, 238, 0) 0%, #E3E0EE 30%, #E3E0EE 70%, rgba(227, 224, 238, 0) 100%) 0 88% / 0% 34% no-repeat;
-  transition: background-size .5s var(--ease), opacity .35s var(--ease), filter .35s var(--ease);
-}
-.work__wheels .wheel__list button:hover,
-.work__wheels .wheel__list button[aria-pressed="true"] { background-size: 100% 34%; }
 .work__wheels .wheel__list button[aria-pressed="true"] { text-decoration: none; }
+.work__wheels .wheel__list button .mono { font-size: .55em; vertical-align: .9em; margin-left: .15em; }
+
+/* Blobby, grown into the top of a great moonstone circle behind the header. Only its cap shows,
+   resting on the picture strip like a horizon; its upper edge dissolves into the page.
+   --g (0 → 1) is the rise, driven by the scroll in Work.tsx */
+.work__dome {
+  --g: 0;
+  position: absolute; z-index: -1; pointer-events: none;
+  left: 50%; width: 100vw; translate: -50% 0;
+  top: -6rem; bottom: calc(clamp(2rem, 4.5vw, 3.5rem) * -1);
+  overflow: hidden;
+  -webkit-mask-image: linear-gradient(to bottom, transparent 0%, #000 55%);
+          mask-image: linear-gradient(to bottom, transparent 0%, #000 55%);
+}
+.work__dome-cap {
+  position: absolute; left: 50%;
+  top: calc(30% + (1 - var(--g)) * 75%);   /* rises from the strip as --g goes 0 → 1 */
+  width: 175vw; aspect-ratio: 1; border-radius: 50%;
+  translate: -50% 0;
+  opacity: calc(var(--g) * 1.4);
+  background: radial-gradient(circle at 34% 12%, #F4F3F8 0%, #E6E4EC 18%, #D7D5E0 32%, #ABA8BA 60%);
+  animation: avatar-breathe 7s ease-in-out infinite;
+}
+.work__dome-eyes {
+  position: absolute; right: 12%; bottom: 26%; display: flex; gap: 1.1rem;
+  opacity: clamp(0, calc(var(--g) * 2 - 1), 1);
+  translate: 0 calc((1 - var(--g)) * 60px);
+}
+.work__dome-eyes i {
+  display: block; width: 1.05rem; height: 1.7rem; border-radius: 50%; background: #fff;
+  box-shadow: 0 2px 8px rgba(60, 55, 90, .28);
+  translate: var(--look, 0 0); animation: orb-blink 5.2s infinite;
+}
+@media (max-width: 720px) { .work__dome-eyes { right: 8%; bottom: 14%; gap: .7rem; } .work__dome-eyes i { width: .75rem; height: 1.2rem; } }
 
 /* the strip: 4:5 pictures divided by a hairline, drifting right to left (moved by Work.tsx);
    it runs to the screen's edges so pictures slide in and out of view */

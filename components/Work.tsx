@@ -5,8 +5,7 @@ import Link from 'next/link';
 import { ArrowLeft, ArrowRight } from 'lucide-react';
 import { work } from '@/lib/content';
 import { visibleCategories, countCategory, hasPage } from '@/lib/work';
-import { prefersReducedMotion } from '@/lib/motion';
-import Tag from './Tag';
+import { gsap, ScrollTrigger, prefersReducedMotion } from '@/lib/motion';
 import Wheel, { type WheelItem } from './Wheel';
 import { track } from '@/lib/track';
 
@@ -92,6 +91,9 @@ export default function Work() {
   const reel = useRef<HTMLDivElement>(null);
   const nudge = useRef(0);          // px still to travel from an arrow press
   const hovered = useRef(false);
+  const drag = useRef<{ startX: number; lastX: number; moved: number; id: number } | null>(null);
+  const dragDx = useRef(0);         // px dragged since the last frame
+  const dragged = useRef(false);    // a drag just happened: the click that ends it opens nothing
   useEffect(() => {
     const el = strip.current; if (!el) return;
     const still = prefersReducedMotion();
@@ -102,12 +104,13 @@ export default function Work() {
       const dt = Math.min(0.05, (now - last) / 1000); last = now;
       const half = el.scrollWidth / 2;
       // ease the drift down under the pointer (or off screen), back up when it leaves
-      const target = still || hovered.current || !visible ? 0 : SPEED;
+      const target = still || hovered.current || drag.current || !visible ? 0 : SPEED;
       v += (target - v) * Math.min(1, dt * 4);
       // an arrow press glides the strip by one picture
       const step = nudge.current * Math.min(1, dt * 7);
       nudge.current -= step;
       x -= v * dt + step;
+      x += dragDx.current; dragDx.current = 0;   // follow the hand while dragging
       if (half > 0) { while (x <= -half) x += half; while (x > 0) x -= half; }
       el.style.transform = `translate3d(${x}px, 0, 0)`;
       raf = requestAnimationFrame(loop);
@@ -115,17 +118,67 @@ export default function Work() {
     raf = requestAnimationFrame(loop);
     return () => { cancelAnimationFrame(raf); io.disconnect(); };
   }, [pics]);
+  const onDown = (e: React.PointerEvent) => {
+    if (e.button !== 0) return;
+    drag.current = { startX: e.clientX, lastX: e.clientX, moved: 0, id: e.pointerId };
+    dragged.current = false;
+  };
+  const onMove = (e: React.PointerEvent) => {
+    const d = drag.current; if (!d) return;
+    const dx = e.clientX - d.lastX; d.lastX = e.clientX; d.moved += Math.abs(dx);
+    if (d.moved > 6 && !dragged.current) { dragged.current = true; (e.currentTarget as HTMLElement).setPointerCapture(d.id); }
+    if (dragged.current) dragDx.current += dx;
+  };
+  const onUp = () => { drag.current = null; };
   const stepBy = (dir: 1 | -1) => {
     const card = strip.current?.firstElementChild as HTMLElement | null;
     nudge.current += dir * (card ? card.offsetWidth + 1 : 300);
     track('Work strip · arrow');
   };
 
+  // ---- Blobby rises behind the header as you scroll into Work (and the small one by
+  // "Read more about me" shrinks away, as if it's the same Blobby coming down the page)
+  const head = useRef<HTMLDivElement>(null);
+  const dome = useRef<HTMLDivElement>(null);
+  const domeEyes = useRef<HTMLSpanElement>(null);
+  useEffect(() => {
+    const el = dome.current; if (!el || !head.current) return;
+    if (prefersReducedMotion()) { el.style.setProperty('--g', '1'); return; }
+    const st = ScrollTrigger.create({
+      trigger: head.current, start: 'top 92%', end: 'top 30%', scrub: 0.8,
+      onUpdate: (self) => {
+        const g = gsap.parseEase('power2.out')(self.progress);
+        el.style.setProperty('--g', g.toFixed(3));
+        document.documentElement.style.setProperty('--blobby-away', Math.min(1, self.progress * 1.6).toFixed(3));
+      },
+    });
+    let raf = 0, tx = 0, ty = 0, x = 0, y = 0;
+    const onMove = (e: PointerEvent) => {
+      const eyes = domeEyes.current; if (!eyes) return;
+      const r = eyes.getBoundingClientRect();
+      const dx = e.clientX - (r.left + r.width / 2), dy = e.clientY - (r.top + r.height / 2), d = Math.hypot(dx, dy) || 1;
+      const k = Math.min(1, d / 300); tx = (dx / d) * k * 9; ty = (dy / d) * k * 6;
+    };
+    const loop = () => {
+      x += (tx - x) * 0.1; y += (ty - y) * 0.1;
+      domeEyes.current?.style.setProperty('--look', `${x.toFixed(2)}px ${y.toFixed(2)}px`);
+      raf = requestAnimationFrame(loop);
+    };
+    raf = requestAnimationFrame(loop);
+    window.addEventListener('pointermove', onMove, { passive: true });
+    return () => { st.kill(); cancelAnimationFrame(raf); window.removeEventListener('pointermove', onMove); document.documentElement.style.removeProperty('--blobby-away'); };
+  }, []);
+
   return (
     <section className="work section" id="work">
-      <div className="work__head">
+      <div className="work__head" ref={head}>
+        {/* Blobby, grown into the top of a great moonstone circle rising behind the header: its upper
+            edge dissolves into the page, its eyes off to the right, watching the pointer */}
+        <div className="work__dome" ref={dome} aria-hidden="true">
+          <span className="work__dome-cap" />
+          <span className="work__dome-eyes" ref={domeEyes}><i /><i /></span>
+        </div>
         <h2 className="display reveal">
-          <Tag>{work.tag}</Tag>
           <Link className="work__title-link" href="/work" onClick={() => track('Open work page')}>{work.title}<span className="work__title-arrow" aria-hidden="true">↗</span></Link>
         </h2>
         {/* right beside the word: the category wheel, and the chosen category's sub-categories beside it.
@@ -141,7 +194,10 @@ export default function Work() {
       </div>
 
       <div className="work__reel reveal" data-delay="2" ref={reel}
-        onPointerEnter={() => { hovered.current = true; }} onPointerLeave={() => { hovered.current = false; }}>
+        onPointerEnter={() => { hovered.current = true; }} onPointerLeave={() => { hovered.current = false; drag.current = null; }}
+        onPointerDown={onDown} onPointerMove={onMove} onPointerUp={onUp} onPointerCancel={onUp}
+        onClickCapture={(e) => { if (dragged.current) { e.preventDefault(); e.stopPropagation(); dragged.current = false; } }}
+        onDragStart={(e) => e.preventDefault()}>
         <div className="work__track" ref={strip} key={`${filter.c}.${filter.s}`}>
           {[0, 1].map((copy) => pics.map((p, i) => (
             <Link key={`${copy}-${p.slug}-${i}`} className="work__card" href={`/work/${p.slug}`}
