@@ -314,7 +314,12 @@ body.menu-open { overflow: hidden; }
 .about {
   min-height: 100vh; min-height: 100svh;
   display: grid; align-content: center;
+  /* lighter than other sections so the intro fits one screen and pins dead centre */
+  padding-block: clamp(1.5rem, 6vh, 6.5rem);
 }
+/* home page: tighter breaks around Work (the intro's own centring already leaves room above it) */
+.work.section { padding-block: clamp(3.5rem, 7vw, 7rem); }
+.contact.section { padding-top: clamp(3.5rem, 7vw, 7rem); }
 .about__line { display: block; }
 .about__text {
   max-width: 40rem; margin: clamp(2.5rem, 5vw, 4.5rem) auto 0;
