@@ -46,7 +46,7 @@ export default function Hero() {
         spans[i].textContent = SETTLED[row(i)][col(i)];
         cell.classList.add(isName(i) ? 'is-locked' : 'is-settled');
       });
-      gsap.set(jumble, { scale: restScale() });
+      gsap.set(jumble, { scale: restScale(), opacity: 1 });
       finish();
     };
     // a refresh part-way down the page (or a link to #work) skips the intro, so
@@ -86,7 +86,7 @@ export default function Hero() {
       }, 85);
 
       tl = gsap.timeline();
-      tl.from(root.current!.querySelector('.jumble'), { opacity: 0, duration: 0.5, ease: 'power1.out' }, 0);
+      tl.fromTo(jumble, { opacity: 0 }, { opacity: 1, duration: 0.5, ease: 'power1.out' }, 0);
 
       // lock the name, left to right
       cells.forEach((cell, i) => {

@@ -282,6 +282,11 @@ body.menu-open { overflow: hidden; }
   .avatar__zs b { animation-duration: 8s; }
 }
 
+/* over the avatar the pale decorative letters vanish into the glow: deepen them, keep the name in full ink */
+.hero:has(.avatar) .jumble__cell { color: rgba(69, 53, 42, .5); }
+.hero:has(.avatar) .jumble__cell.is-settled { color: rgba(69, 53, 42, .42); }
+.hero:has(.avatar) .jumble__cell.is-locked { color: var(--ink); }
+
 .hero__atmosphere { position: absolute; inset: 0; }
 .hero__atmosphere canvas { display: block; }
 .hero--image { color: var(--paper); }
