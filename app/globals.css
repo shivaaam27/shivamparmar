@@ -337,6 +337,7 @@ body.menu-open { overflow: hidden; }
   position: absolute; z-index: 1;
   left: var(--gutter); right: var(--gutter); bottom: clamp(1rem, 2.2vw, 1.75rem);
   display: flex; justify-content: space-between; gap: 1rem;
+  filter: opacity(var(--hero-vis, 1));   /* fades with the avatar as you scroll away */
 }
 
 /* the wordmark waits for the name to land (JS only); the menu is there from the start */

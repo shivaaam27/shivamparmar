@@ -43,6 +43,8 @@ export default function HeroAvatar() {
       el.style.setProperty('--fade', `${Math.min(y * 1.6, h)}px`);
       el.style.setProperty('--vis', String(1 - p));
       el.style.setProperty('--sink', `${p * h * 0.12}px`);
+      // the words along the bottom of the hero leave with it
+      el.closest<HTMLElement>('.hero')?.style.setProperty('--hero-vis', String(Math.max(0, 1 - p * 1.6)));
     };
     const onScroll = () => { if (!raf) raf = requestAnimationFrame(update); };
     update();
