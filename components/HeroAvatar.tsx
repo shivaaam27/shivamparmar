@@ -53,9 +53,9 @@ export default function HeroAvatar() {
       if (t - lastMove > 2500) { tx = Math.sin(t / 2300) * 0.55; ty = Math.sin(t / 3100) * 0.3; }
       x += (tx - x) * 0.09; y += (ty - y) * 0.09;
       const D = orb.offsetWidth;
-      face.style.transform = `translate(${x * D * 0.085}px, ${y * D * 0.07}px)`;
-      orb.style.setProperty('--lean-x', `${x * D * 0.012}px`);
-      orb.style.setProperty('--lean-y', `${y * D * 0.012}px`);
+      face.style.transform = `translate(${x * D * 0.05}px, ${y * D * 0.04}px)`;
+      orb.style.setProperty('--lean-x', `${x * D * 0.008}px`);
+      orb.style.setProperty('--lean-y', `${y * D * 0.008}px`);
       if (visible) raf = requestAnimationFrame(frame);
     };
 

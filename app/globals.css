@@ -174,102 +174,103 @@ body.menu-open { overflow: hidden; }
 }
 /* ---------- avatar: the light behind the name (awake by day, asleep off hours) ---------- */
 .avatar {
-  /* orb size: a little over half the screen's height, never wider than the screen */
-  --d: min(58svh, 86vw);
-  --core: #F7941D; --mid: #FBB040; --rim: #FFD98A; --halo: 255, 214, 120;
+  /* a big orb rising from the bottom edge: a little more than its top half shows,
+     reaching just above the middle of the screen */
+  --d: min(97svh, 190vw);
+  --core: #F58A12; --mid: #F9A93A; --rim: #FFD27A; --halo: 255, 206, 110;
   position: absolute; inset: 0; pointer-events: none;
   opacity: 0; transition: opacity 1.2s var(--ease);
 }
 .avatar.is-awake, .avatar.is-asleep { opacity: 1; }
-.avatar.is-asleep { --core: #9A97A3; --mid: #B9B7C0; --rim: #DCDBE1; --halo: 196, 194, 206; }
-/* the orb sits low: its top edge just above the middle, the name floating over its upper part */
+.avatar.is-asleep { --core: #8F8C99; --mid: #ABA9B4; --rim: #D6D5DC; --halo: 198, 196, 210; }
+/* every layer shares the orb's centre, which sits just above the bottom edge */
 .avatar__orb, .avatar__halo, .avatar__ripple {
-  position: absolute; left: 50%; top: calc(36% + var(--d) / 2);
+  position: absolute; left: 50%; top: calc(100% - var(--d) * .1);
   border-radius: 50%; translate: -50% -50%;
 }
 .avatar__orb {
   width: var(--d); aspect-ratio: 1;
   transform: translate(var(--lean-x, 0), var(--lean-y, 0));
-  background:
-    radial-gradient(circle at 46% 58%, var(--core) 0%, var(--mid) 38%, var(--rim) 72%, rgba(var(--halo), .35) 100%);
-  box-shadow: 0 0 calc(var(--d) * .12) rgba(var(--halo), .55);
-  transition: background .1s, box-shadow 1.5s;
+  background: radial-gradient(circle at 50% 60%, var(--core) 0%, var(--mid) 34%, var(--rim) 68%, rgba(var(--halo), .6) 100%);
+  box-shadow: inset 0 calc(var(--d) * .02) calc(var(--d) * .05) rgba(255, 255, 255, .35);
+  /* a soft, slightly diffuse edge rather than a hard disc */
+  mask: radial-gradient(circle closest-side, #000 95%, transparent 100%);
   animation: avatar-breathe 6s ease-in-out infinite;
 }
-/* soft glow beyond the orb; fades out well below the header */
+/* the radiance beyond the orb; fades out well below the header */
 .avatar__halo {
-  width: calc(var(--d) * 1.95); aspect-ratio: 1;
-  background: radial-gradient(circle, rgba(var(--halo), .55) 0%, rgba(var(--halo), .28) 34%, rgba(var(--halo), .08) 56%, rgba(var(--halo), 0) 70%);
+  width: calc(var(--d) * 1.78); aspect-ratio: 1;
+  background: radial-gradient(circle, rgba(var(--halo), .55) 0%, rgba(var(--halo), .3) 50%, rgba(var(--halo), .1) 60%, rgba(var(--halo), .03) 66%, rgba(var(--halo), 0) 71%);
   animation: avatar-glow 7s ease-in-out infinite;
 }
 /* a slow sheen turning inside the orb */
 .avatar__shine {
-  position: absolute; inset: 0; border-radius: 50%; overflow: hidden; opacity: .5;
-  background: conic-gradient(from 0deg, rgba(255,255,255,0), rgba(255,255,255,.45) 12%, rgba(255,255,255,0) 30%, rgba(255,255,255,0) 60%, rgba(255,255,255,.3) 72%, rgba(255,255,255,0) 88%);
-  filter: blur(calc(var(--d) * .05));
-  mask: radial-gradient(circle, transparent 38%, #000 70%);
-  animation: avatar-turn 26s linear infinite;
+  position: absolute; inset: 0; border-radius: 50%; overflow: hidden; opacity: .45;
+  background: conic-gradient(from 0deg, rgba(255,255,255,0), rgba(255,255,255,.5) 10%, rgba(255,255,255,0) 26%, rgba(255,255,255,0) 58%, rgba(255,255,255,.35) 70%, rgba(255,255,255,0) 86%);
+  filter: blur(calc(var(--d) * .04));
+  mask: radial-gradient(circle, transparent 42%, #000 72%);
+  animation: avatar-turn 30s linear infinite;
 }
 /* fine paper grain so it reads as light, not a flat disc */
 .avatar__grain {
-  position: absolute; inset: 0; border-radius: 50%; opacity: .16; mix-blend-mode: overlay;
+  position: absolute; inset: 0; border-radius: 50%; opacity: .18; mix-blend-mode: overlay;
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
 }
-/* light rings drift outward now and then (awake only) */
+/* light rings rise off the rim now and then (awake only) */
 .avatar__ripple {
   width: var(--d); aspect-ratio: 1;
-  border: 1px solid rgba(var(--halo), .9); opacity: 0;
+  border: 1px solid rgba(var(--halo), .95); opacity: 0;
 }
-.avatar.is-awake .avatar__ripple { animation: avatar-ripple 7s cubic-bezier(.2,.6,.3,1) infinite; }
-.avatar.is-awake .avatar__ripple--late { animation-delay: 3.5s; }
+.avatar.is-awake .avatar__ripple { animation: avatar-ripple 8s cubic-bezier(.2,.6,.3,1) infinite; }
+.avatar.is-awake .avatar__ripple--late { animation-delay: 4s; }
 
-/* the face: two white eyes a little below the orb's centre */
+/* the face: two white eyes in the middle of the part that shows */
 .avatar__face {
-  position: absolute; left: 50%; top: 63%;
-  display: flex; gap: calc(var(--d) * .07);
+  position: absolute; left: 50%; top: 33%;
+  display: flex; gap: calc(var(--d) * .045);
   translate: -50% -50%;
   will-change: transform;
 }
 .avatar__eye {
-  display: block; width: calc(var(--d) * .07); height: calc(var(--d) * .115);
+  display: block; width: calc(var(--d) * .046); height: calc(var(--d) * .074);
   background: #fff; border-radius: 50%;
   rotate: 8deg;
-  box-shadow: 0 calc(var(--d) * .01) calc(var(--d) * .03) rgba(150, 70, 0, .18);
+  box-shadow: 0 calc(var(--d) * .006) calc(var(--d) * .02) rgba(160, 70, 0, .2);
   transition: height .32s var(--ease), border-radius .32s var(--ease), rotate .5s var(--ease), box-shadow .5s;
 }
-.avatar__face.is-blinking .avatar__eye { height: calc(var(--d) * .016); transition-duration: .07s; }
+.avatar__face.is-blinking .avatar__eye { height: calc(var(--d) * .01); transition-duration: .07s; }
 /* asleep: eyes become two closed lines, the face rests still */
-.avatar.is-asleep .avatar__face { transform: none !important; top: 66%; gap: calc(var(--d) * .05); }
+.avatar.is-asleep .avatar__face { transform: none !important; top: 35%; gap: calc(var(--d) * .032); }
 .avatar.is-asleep .avatar__eye {
-  width: calc(var(--d) * .1); height: calc(var(--d) * .022); border-radius: 99px;
+  width: calc(var(--d) * .064); height: calc(var(--d) * .014); border-radius: 99px;
   rotate: -14deg; box-shadow: none;
 }
 .avatar.is-asleep .avatar__orb { animation-duration: 9s; }
-.avatar.is-asleep .avatar__halo { animation-duration: 10s; }
+.avatar.is-asleep .avatar__halo { animation-duration: 10s; filter: opacity(.6); }
 
-/* z's float up and to the right, one after another */
-.avatar__zs { position: absolute; left: 67%; top: 57%; display: none; }
+/* z's float off to the right, one after another */
+.avatar__zs { position: absolute; left: 59%; top: 30%; display: none; }
 .avatar.is-asleep .avatar__zs { display: block; }
 .avatar__zs b {
   position: absolute; left: 0; top: 0;
-  font: 700 calc(var(--d) * .09)/1 var(--sans); color: #fff;
+  font: 700 calc(var(--d) * .05)/1 var(--sans); color: #fff;
   opacity: 0; rotate: -12deg;
-  text-shadow: 0 2px 10px rgba(80, 78, 92, .18);
+  text-shadow: 0 2px 10px rgba(80, 78, 92, .2);
   animation: avatar-z 4.2s ease-in-out infinite;
 }
-.avatar__zs b:nth-child(1) { font-size: calc(var(--d) * .055); }
-.avatar__zs b:nth-child(2) { font-size: calc(var(--d) * .07); animation-delay: 1.4s; }
-.avatar__zs b:nth-child(3) { font-size: calc(var(--d) * .095); animation-delay: 2.8s; }
+.avatar__zs b:nth-child(1) { font-size: calc(var(--d) * .034); }
+.avatar__zs b:nth-child(2) { font-size: calc(var(--d) * .044); animation-delay: 1.4s; }
+.avatar__zs b:nth-child(3) { font-size: calc(var(--d) * .058); animation-delay: 2.8s; }
 
-@keyframes avatar-breathe { 50% { scale: 1.018; } }
-@keyframes avatar-glow { 0%, 100% { opacity: .85; scale: 1; } 50% { opacity: 1; scale: 1.04; } }
+@keyframes avatar-breathe { 50% { scale: 1.012; } }
+@keyframes avatar-glow { 0%, 100% { opacity: .85; scale: 1; } 50% { opacity: 1; scale: 1.03; } }
 @keyframes avatar-turn { to { rotate: 360deg; } }
-@keyframes avatar-ripple { 0% { opacity: 0; scale: 1; } 12% { opacity: .55; } 100% { opacity: 0; scale: 1.7; } }
+@keyframes avatar-ripple { 0% { opacity: 0; scale: 1; } 12% { opacity: .5; } 100% { opacity: 0; scale: 1.32; } }
 @keyframes avatar-z {
   0%   { opacity: 0; translate: 0 0; scale: .7; }
   20%  { opacity: 1; }
   75%  { opacity: .9; }
-  100% { opacity: 0; translate: calc(var(--d) * .22) calc(var(--d) * -.07); scale: 1.1; }
+  100% { opacity: 0; translate: calc(var(--d) * .15) calc(var(--d) * -.05); scale: 1.1; }
 }
 @media (prefers-reduced-motion: reduce) {
   .avatar__orb, .avatar__halo, .avatar__shine, .avatar__ripple { animation: none !important; }
