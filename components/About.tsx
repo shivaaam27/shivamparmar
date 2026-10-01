@@ -230,7 +230,41 @@ export default function About() {
       }
       zone = z;
     });
+    // ---- stage 4: by "Read more about me" it reacts to the link (only when it's actually there)
+    const linkEl = link[0];
+    const bodyEl = orb.querySelector<HTMLElement>('.about__orb-body');
+    let hopLoop: gsap.core.Timeline | null = null;
+    const atLink = () => zone === marks.length - 1 && !seq.isActive();
+    const enter = () => {
+      if (!atLink() || hopLoop) return;
+      gsap.to(face, { xPercent: 30, yPercent: -12, duration: 0.25 });   // eyes up at the arrow
+      // a small springy hop: crouch, stretch up, land, wobble — then again while it's hovered
+      hopLoop = gsap.timeline({ repeat: -1, repeatDelay: 0.9 })
+        .to(bodyEl, { scaleX: 1.14, scaleY: 0.86, duration: 0.12, ease: 'power1.out' })
+        .to(bodyEl, { y: () => -size() * 0.32, scaleX: 0.9, scaleY: 1.12, duration: 0.22, ease: 'power2.out' })
+        .to(bodyEl, { y: 0, scaleX: 1.12, scaleY: 0.88, duration: 0.2, ease: 'power2.in' })
+        .to(bodyEl, { scaleX: 1, scaleY: 1, duration: 0.4, ease: 'elastic.out(1, 0.45)' });
+    };
+    const leave = () => {
+      hopLoop?.kill(); hopLoop = null;
+      gsap.to(bodyEl, { x: 0, y: 0, scaleX: 1, scaleY: 1, duration: 0.35, ease: 'power2.out' });
+      gsap.to(face, { xPercent: 16, yPercent: 0, duration: 0.3 });
+    };
+    // on the way out it leans toward the arrow, as if leading the way
+    const go = () => { if (atLink()) { hopLoop?.kill(); hopLoop = null; gsap.to(bodyEl, { x: () => size() * 0.6, y: 0, scaleX: 1.2, scaleY: 0.85, duration: 0.25, ease: 'power2.out' }); } };
+    linkEl.addEventListener('mouseenter', enter);
+    linkEl.addEventListener('focus', enter);
+    linkEl.addEventListener('mouseleave', leave);
+    linkEl.addEventListener('blur', leave);
+    linkEl.addEventListener('click', go);
+
     return () => {
+      linkEl.removeEventListener('mouseenter', enter);
+      linkEl.removeEventListener('focus', enter);
+      linkEl.removeEventListener('mouseleave', leave);
+      linkEl.removeEventListener('blur', leave);
+      linkEl.removeEventListener('click', go);
+      hopLoop?.kill();
       ScrollTrigger.removeEventListener('refreshInit', onInit);
       ScrollTrigger.removeEventListener('refresh', onDone);
       seq.kill();
