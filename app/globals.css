@@ -701,7 +701,7 @@ body.menu-open { overflow: hidden; }
 
 /* list on the left, the frame on the right (it stays in view while the list scrolls past) */
 .work__body {
-  display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+  display: grid; grid-template-columns: minmax(0, 4fr) minmax(0, 8fr);
   gap: clamp(1.5rem, 4vw, 4.5rem); align-items: start;
 }
 .work__list { border-top: 1px solid var(--ink); counter-reset: none; animation: work-in .6s var(--ease) both; }
@@ -731,7 +731,7 @@ body.menu-open { overflow: hidden; }
 
 .work__frame {
   position: sticky; top: clamp(5.5rem, 12vh, 7.5rem);
-  display: block; aspect-ratio: 5 / 4; max-height: 72vh; width: 100%;
+  display: block; aspect-ratio: 5 / 4; max-height: 82vh; width: 100%;
   overflow: hidden; border-radius: 3px; background: var(--paper-deep);
   color: #fff;
 }
