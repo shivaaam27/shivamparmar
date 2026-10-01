@@ -945,10 +945,14 @@ body.menu-open { overflow: hidden; }
 
 /* Blobby's page transition layer (lib/blobTransit.ts): a full-screen moonstone revealed through a growing circle */
 .blob-transit {
+  /* the shading sits on the circle (--cx, --cy, --r), lit from its upper left like Blobby itself:
+     the light spot is 34% across and 16% down the circle's box, fading out to its far corner */
+  --c1: #F4F3F8; --c2: #D7D5E0; --c3: #ABA8BA;
   position: fixed; inset: 0; z-index: 200; pointer-events: none;
-  background: radial-gradient(circle at 34% 16%, #F4F3F8 0%, #D7D5E0 38%, #ABA8BA 100%);
+  background: radial-gradient(circle calc(var(--r, 50vmax) * 2.14) at calc(var(--cx, 50vw) - var(--r, 50vmax) * .32) calc(var(--cy, 50vh) - var(--r, 50vmax) * .68),
+    var(--c1) 0%, var(--c2) 34%, var(--c3) 100%);
 }
-.blob-transit.is-night { background: radial-gradient(circle at 34% 16%, #ABA8BA 0%, #8E8BA0 38%, #6E6B82 100%); }
+.blob-transit.is-night { --c1: #ABA8BA; --c2: #8E8BA0; --c3: #6E6B82; }
 .blob-transit__face { position: absolute; left: 0; top: 0; display: flex; gap: 40px; translate: -50% -50%; }
 .blob-transit__face i {
   display: block; width: 40px; height: 64px; border-radius: 50%; background: #fff;
