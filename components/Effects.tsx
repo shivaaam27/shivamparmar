@@ -11,7 +11,7 @@ import { gsap, ScrollTrigger, useGSAP, scramble } from '@/lib/motion';
 export default function Effects() {
   useGSAP(() => {
     // the header name steps aside while the work list and frame pass beneath it
-    const strips = document.querySelector('.work__body');
+    const strips = document.querySelector('.work__reel');
     const header = document.querySelector('.site-header');
     if (strips && header) {
       ScrollTrigger.create({
