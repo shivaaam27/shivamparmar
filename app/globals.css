@@ -185,7 +185,8 @@ body.menu-open { overflow: hidden; }
   /* a big orb rising from the bottom edge: a little more than its top half shows,
      reaching just above the middle of the screen */
   --d: min(97svh, 190vw);
-  --core: #F58A12; --mid: #F9A93A; --rim: #FFD27A; --halo: 255, 206, 110;
+  /* moonstone: a cool silver with a hint of lilac, lit from above */
+  --core: #F4F3F8; --mid: #D7D5E0; --rim: #ABA8BA; --halo: 196, 192, 214;
   position: absolute; inset: 0; pointer-events: none;
   opacity: 0; transition: opacity 1.2s var(--ease);
   /* set by scroll (HeroAvatar): sink, fade, and a soft lower edge so the section break never cuts the orb */
@@ -195,7 +196,8 @@ body.menu-open { overflow: hidden; }
   -webkit-mask-image: linear-gradient(to top, transparent var(--sink, 0px), #000 calc(var(--sink, 0px) + var(--fade, 0px)));
 }
 .avatar.is-awake, .avatar.is-asleep { opacity: 1; }
-.avatar.is-asleep { --core: #8F8C99; --mid: #ABA9B4; --rim: #D6D5DC; --halo: 198, 196, 210; }
+/* asleep: the same stone at dusk, deeper and slate */
+.avatar.is-asleep { --core: #ABA8BA; --mid: #8E8BA0; --rim: #6E6B82; --halo: 170, 167, 192; }
 /* every layer shares the orb's centre, which sits just above the bottom edge */
 .avatar__orb, .avatar__halo, .avatar__ripple {
   position: absolute; left: 50%; top: calc(100% - var(--d) * .1);
@@ -204,11 +206,10 @@ body.menu-open { overflow: hidden; }
 .avatar__orb {
   width: var(--d); aspect-ratio: 1;
   transform: translate(var(--lean-x, 0), var(--lean-y, 0));
-  background: radial-gradient(circle at 50% 60%, var(--core) 0%, var(--mid) 34%, var(--rim) 68%, rgba(var(--halo), .6) 100%);
-  box-shadow: inset 0 calc(var(--d) * .02) calc(var(--d) * .05) rgba(255, 255, 255, .35);
-  /* a soft, slightly diffuse edge rather than a hard disc */
-  mask: radial-gradient(circle closest-side, #000 95%, transparent 100%);
-  animation: avatar-breathe 6s ease-in-out infinite;
+  background: radial-gradient(circle at 34% 16%, var(--core) 0%, var(--mid) 34%, var(--rim) 100%);
+  box-shadow: inset 0 calc(var(--d) * -.04) calc(var(--d) * .08) rgba(70, 64, 100, .18), inset 0 calc(var(--d) * .02) calc(var(--d) * .04) rgba(255, 255, 255, .5);
+  /* a soft living blob rather than a perfect circle: its outline slowly shifts */
+  animation: avatar-breathe 6s ease-in-out infinite, avatar-morph 13s ease-in-out infinite;
 }
 /* the radiance beyond the orb; fades out well below the header */
 .avatar__halo {
@@ -218,7 +219,7 @@ body.menu-open { overflow: hidden; }
 }
 /* a slow sheen turning inside the orb */
 .avatar__shine {
-  position: absolute; inset: 0; border-radius: 50%; overflow: hidden; opacity: .45;
+  position: absolute; inset: 0; border-radius: inherit; overflow: hidden; opacity: .5;
   background: conic-gradient(from 0deg, rgba(255,255,255,0), rgba(255,255,255,.5) 10%, rgba(255,255,255,0) 26%, rgba(255,255,255,0) 58%, rgba(255,255,255,.35) 70%, rgba(255,255,255,0) 86%);
   filter: blur(calc(var(--d) * .04));
   mask: radial-gradient(circle, transparent 42%, #000 72%);
@@ -226,7 +227,7 @@ body.menu-open { overflow: hidden; }
 }
 /* fine paper grain so it reads as light, not a flat disc */
 .avatar__grain {
-  position: absolute; inset: 0; border-radius: 50%; opacity: .18; mix-blend-mode: overlay;
+  position: absolute; inset: 0; border-radius: inherit; opacity: .14; mix-blend-mode: overlay;
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
 }
 /* light rings rise off the rim now and then (awake only) */
@@ -248,7 +249,7 @@ body.menu-open { overflow: hidden; }
   display: block; width: calc(var(--d) * .046); height: calc(var(--d) * .074);
   background: #fff; border-radius: 50%;
   rotate: 8deg;
-  box-shadow: 0 calc(var(--d) * .006) calc(var(--d) * .02) rgba(160, 70, 0, .2);
+  box-shadow: 0 calc(var(--d) * .006) calc(var(--d) * .02) rgba(60, 55, 90, .28);
   transition: height .32s var(--ease), border-radius .32s var(--ease), rotate .5s var(--ease), box-shadow .5s;
 }
 .avatar.is-setting .avatar__eye { height: calc(var(--d) * .012); border-radius: 99px; rotate: 0deg; transition-duration: .7s; }
@@ -277,6 +278,11 @@ body.menu-open { overflow: hidden; }
 .avatar__zs b:nth-child(3) { font-size: calc(var(--d) * .058); animation-delay: 2.8s; }
 
 @keyframes avatar-breathe { 50% { scale: 1.012; } }
+@keyframes avatar-morph {
+  0%, 100% { border-radius: 52% 48% 46% 54% / 48% 55% 45% 52%; }
+  33%      { border-radius: 46% 54% 55% 45% / 55% 46% 54% 45%; }
+  66%      { border-radius: 55% 45% 50% 50% / 45% 52% 48% 55%; }
+}
 @keyframes avatar-glow { 0%, 100% { opacity: .85; scale: 1; } 50% { opacity: 1; scale: 1.03; } }
 @keyframes avatar-turn { to { rotate: 360deg; } }
 @keyframes avatar-ripple { 0% { opacity: 0; scale: 1; } 12% { opacity: .5; } 100% { opacity: 0; scale: 1.32; } }
@@ -290,6 +296,25 @@ body.menu-open { overflow: hidden; }
   .avatar__orb, .avatar__halo, .avatar__shine, .avatar__ripple { animation: none !important; }
   .avatar__zs b { animation-duration: 8s; }
 }
+
+/* About page: version A's size, peeking from the bottom-left corner of the screen, tilted 45°
+   so it looks up toward the index; no outer glow here */
+.avatar--side {
+  --d: min(36vh, 24vw, 23rem);
+  position: fixed; inset: auto; z-index: 0;
+  width: var(--d); height: var(--d);
+  left: calc(var(--d) * -.26); bottom: calc(var(--d) * -.4);
+  rotate: 45deg;
+  mask-image: none; -webkit-mask-image: none;
+  transition: opacity .8s var(--ease);
+}
+.avatar--side.is-away { opacity: 0 !important; }
+.avatar--side .avatar__orb { left: 50%; top: 50%; }
+.avatar--side .avatar__halo, .avatar--side .avatar__ripple { display: none; }
+.avatar--side .avatar__face { left: 50%; top: 27%; }
+.avatar.avatar--side.is-asleep .avatar__face { top: 29%; }
+.avatar--side .avatar__zs { left: 62%; top: 16%; }
+@media (max-width: 1000px) { .avatar--side { display: none; } }
 
 /* over the avatar the pale decorative letters vanish into the glow: deepen them, keep the name in full ink */
 .hero:has(.avatar) .jumble__cell { color: rgba(69, 53, 42, .5); }

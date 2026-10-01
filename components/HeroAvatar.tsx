@@ -17,7 +17,7 @@ function awakeNow() {
  * The light behind the name: a glowing orb with two eyes that follow the pointer
  * by day, and by night (off hours in Dar es Salaam) a grey orb asleep, breathing, with drifting z's.
  */
-export default function HeroAvatar() {
+export default function HeroAvatar({ side = false }: { side?: boolean }) {
   const root = useRef<HTMLDivElement>(null);
   const [awake, setAwake] = useState<boolean | null>(null);
 
@@ -33,7 +33,7 @@ export default function HeroAvatar() {
   // hero's bottom comes into view, so the orb is never seen cut off by the next section
   useEffect(() => {
     const el = root.current;
-    if (!el) return;
+    if (!el || side) return;   // beside the About index it simply stays
     let raf = 0;
     const update = () => {
       raf = 0;
@@ -61,7 +61,17 @@ export default function HeroAvatar() {
     window.addEventListener('scroll', onScroll, { passive: true });
     window.addEventListener('resize', onScroll);
     return () => { cancelAnimationFrame(raf); window.removeEventListener('scroll', onScroll); window.removeEventListener('resize', onScroll); };
-  }, []);
+  }, [side]);
+
+  // beside the About index it's fixed in the corner: step aside when the page's end arrives
+  useEffect(() => {
+    const el = root.current;
+    const end = side ? document.querySelector('.ab-end') ?? document.querySelector('.site-footer') : null;
+    if (!el || !end) return;
+    const io = new IntersectionObserver(([e]) => el.classList.toggle('is-away', e.isIntersecting));
+    io.observe(end);
+    return () => io.disconnect();
+  }, [side]);
 
   // eyes follow the pointer (eased), blink now and then; idle glances when the pointer is away
   useEffect(() => {
@@ -87,7 +97,9 @@ export default function HeroAvatar() {
       if (t - lastMove > 2500) { tx = Math.sin(t / 2300) * 0.55; ty = Math.sin(t / 3100) * 0.3; }
       x += (tx - x) * 0.09; y += (ty - y) * 0.09;
       const D = orb.offsetWidth;
-      face.style.transform = `translate(${x * D * 0.05}px, ${y * D * 0.04}px)`;
+      // the About blob is turned 45°: turn the look back so the eyes still point at the pointer
+      const [lx, ly] = side ? [(x + y) * Math.SQRT1_2, (y - x) * Math.SQRT1_2] : [x, y];
+      face.style.transform = `translate(${lx * D * 0.05}px, ${ly * D * 0.04}px)`;
       orb.style.setProperty('--lean-x', `${x * D * 0.008}px`);
       orb.style.setProperty('--lean-y', `${y * D * 0.008}px`);
       if (visible && !el.dataset.gone) raf = requestAnimationFrame(frame); else raf = 0;
@@ -120,10 +132,10 @@ export default function HeroAvatar() {
       window.removeEventListener('avatar:back', back);
       document.documentElement.removeEventListener('pointerleave', onLeave);
     };
-  }, [awake]);
+  }, [awake, side]);
 
   return (
-    <div ref={root} className={`avatar${awake === null ? '' : awake ? ' is-awake' : ' is-asleep'}`} aria-hidden="true">
+    <div ref={root} className={`avatar${side ? ' avatar--side' : ''}${awake === null ? '' : awake ? ' is-awake' : ' is-asleep'}`} aria-hidden="true">
       <div className="avatar__halo" />
       <div className="avatar__ripple" />
       <div className="avatar__ripple avatar__ripple--late" />

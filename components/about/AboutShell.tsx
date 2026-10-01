@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { useLenis } from 'lenis/react';
+import HeroAvatar from '../HeroAvatar';
 
 type Section = { id: string; label: string };
 const pad = (n: number) => String(n).padStart(2, '0');
@@ -99,6 +100,8 @@ export default function AboutShell({ sections, children, end }: { sections: Sect
                 ))}
               </ol>
             </nav>
+            {/* the home page's light, smaller, rising from the left edge under the index */}
+            <HeroAvatar side />
           </aside>
           <div className="ab-main">{children}</div>
         </div>
