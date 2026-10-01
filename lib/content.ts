@@ -32,7 +32,7 @@ export const hero = {
   word: 'SHIVAM',
   footer: ['Pharmacist', 'Photographer', 'Claude Code & AI expert', 'Building systems'],
   /** Put a photo in /public and set e.g. '/hero.jpg'. Set to null for the Three.js light instead. */
-  image: '/images/hero-dashboard.jpg' as string | null,
+  image: null as string | null,
   /** Optional portrait crop used on phones (screens up to 720px wide). */
   imageMobile: '/images/hero-dashboard-portrait.jpg' as string | null,
   /** Which part of the photo stays in view when the screen crops it (CSS object-position). */
@@ -41,6 +41,8 @@ export const hero = {
   imageTone: 'dark' as 'light' | 'dark',
   /** Where the name sits on desktop: 'left' keeps it in open water beside the boat; 'center' is the Rowan layout. */
   align: 'center' as 'left' | 'center',
+  /** With no photo: the avatar light behind the name. Awake (eyes follow the pointer) from `wake` to `sleep` o'clock, asleep otherwise. */
+  avatar: { timeZone: 'Africa/Dar_es_Salaam', wake: 8, sleep: 21 },
   /** Replay the intro when scrolling back to the top. */
   replayOnReturn: false,
 };

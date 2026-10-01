@@ -172,6 +172,110 @@ body.menu-open { overflow: hidden; }
   content: ""; position: absolute; inset: 0;
   background: linear-gradient(180deg, rgba(238,234,227,.55), rgba(238,234,227,0) 22%, rgba(238,234,227,0) 78%, rgba(238,234,227,.6));
 }
+/* ---------- avatar: the light behind the name (awake by day, asleep off hours) ---------- */
+.avatar {
+  /* orb size: a little over half the screen's height, never wider than the screen */
+  --d: min(58svh, 86vw);
+  --core: #F7941D; --mid: #FBB040; --rim: #FFD98A; --halo: 255, 214, 120;
+  position: absolute; inset: 0; pointer-events: none;
+  opacity: 0; transition: opacity 1.2s var(--ease);
+}
+.avatar.is-awake, .avatar.is-asleep { opacity: 1; }
+.avatar.is-asleep { --core: #9A97A3; --mid: #B9B7C0; --rim: #DCDBE1; --halo: 196, 194, 206; }
+/* the orb sits low: its top edge just above the middle, the name floating over its upper part */
+.avatar__orb, .avatar__halo, .avatar__ripple {
+  position: absolute; left: 50%; top: calc(36% + var(--d) / 2);
+  border-radius: 50%; translate: -50% -50%;
+}
+.avatar__orb {
+  width: var(--d); aspect-ratio: 1;
+  transform: translate(var(--lean-x, 0), var(--lean-y, 0));
+  background:
+    radial-gradient(circle at 46% 58%, var(--core) 0%, var(--mid) 38%, var(--rim) 72%, rgba(var(--halo), .35) 100%);
+  box-shadow: 0 0 calc(var(--d) * .12) rgba(var(--halo), .55);
+  transition: background .1s, box-shadow 1.5s;
+  animation: avatar-breathe 6s ease-in-out infinite;
+}
+/* soft glow beyond the orb; fades out well below the header */
+.avatar__halo {
+  width: calc(var(--d) * 1.95); aspect-ratio: 1;
+  background: radial-gradient(circle, rgba(var(--halo), .55) 0%, rgba(var(--halo), .28) 34%, rgba(var(--halo), .08) 56%, rgba(var(--halo), 0) 70%);
+  animation: avatar-glow 7s ease-in-out infinite;
+}
+/* a slow sheen turning inside the orb */
+.avatar__shine {
+  position: absolute; inset: 0; border-radius: 50%; overflow: hidden; opacity: .5;
+  background: conic-gradient(from 0deg, rgba(255,255,255,0), rgba(255,255,255,.45) 12%, rgba(255,255,255,0) 30%, rgba(255,255,255,0) 60%, rgba(255,255,255,.3) 72%, rgba(255,255,255,0) 88%);
+  filter: blur(calc(var(--d) * .05));
+  mask: radial-gradient(circle, transparent 38%, #000 70%);
+  animation: avatar-turn 26s linear infinite;
+}
+/* fine paper grain so it reads as light, not a flat disc */
+.avatar__grain {
+  position: absolute; inset: 0; border-radius: 50%; opacity: .16; mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+/* light rings drift outward now and then (awake only) */
+.avatar__ripple {
+  width: var(--d); aspect-ratio: 1;
+  border: 1px solid rgba(var(--halo), .9); opacity: 0;
+}
+.avatar.is-awake .avatar__ripple { animation: avatar-ripple 7s cubic-bezier(.2,.6,.3,1) infinite; }
+.avatar.is-awake .avatar__ripple--late { animation-delay: 3.5s; }
+
+/* the face: two white eyes a little below the orb's centre */
+.avatar__face {
+  position: absolute; left: 50%; top: 63%;
+  display: flex; gap: calc(var(--d) * .07);
+  translate: -50% -50%;
+  will-change: transform;
+}
+.avatar__eye {
+  display: block; width: calc(var(--d) * .07); height: calc(var(--d) * .115);
+  background: #fff; border-radius: 50%;
+  rotate: 8deg;
+  box-shadow: 0 calc(var(--d) * .01) calc(var(--d) * .03) rgba(150, 70, 0, .18);
+  transition: height .32s var(--ease), border-radius .32s var(--ease), rotate .5s var(--ease), box-shadow .5s;
+}
+.avatar__face.is-blinking .avatar__eye { height: calc(var(--d) * .016); transition-duration: .07s; }
+/* asleep: eyes become two closed lines, the face rests still */
+.avatar.is-asleep .avatar__face { transform: none !important; top: 66%; gap: calc(var(--d) * .05); }
+.avatar.is-asleep .avatar__eye {
+  width: calc(var(--d) * .1); height: calc(var(--d) * .022); border-radius: 99px;
+  rotate: -14deg; box-shadow: none;
+}
+.avatar.is-asleep .avatar__orb { animation-duration: 9s; }
+.avatar.is-asleep .avatar__halo { animation-duration: 10s; }
+
+/* z's float up and to the right, one after another */
+.avatar__zs { position: absolute; left: 67%; top: 57%; display: none; }
+.avatar.is-asleep .avatar__zs { display: block; }
+.avatar__zs b {
+  position: absolute; left: 0; top: 0;
+  font: 700 calc(var(--d) * .09)/1 var(--sans); color: #fff;
+  opacity: 0; rotate: -12deg;
+  text-shadow: 0 2px 10px rgba(80, 78, 92, .18);
+  animation: avatar-z 4.2s ease-in-out infinite;
+}
+.avatar__zs b:nth-child(1) { font-size: calc(var(--d) * .055); }
+.avatar__zs b:nth-child(2) { font-size: calc(var(--d) * .07); animation-delay: 1.4s; }
+.avatar__zs b:nth-child(3) { font-size: calc(var(--d) * .095); animation-delay: 2.8s; }
+
+@keyframes avatar-breathe { 50% { scale: 1.018; } }
+@keyframes avatar-glow { 0%, 100% { opacity: .85; scale: 1; } 50% { opacity: 1; scale: 1.04; } }
+@keyframes avatar-turn { to { rotate: 360deg; } }
+@keyframes avatar-ripple { 0% { opacity: 0; scale: 1; } 12% { opacity: .55; } 100% { opacity: 0; scale: 1.7; } }
+@keyframes avatar-z {
+  0%   { opacity: 0; translate: 0 0; scale: .7; }
+  20%  { opacity: 1; }
+  75%  { opacity: .9; }
+  100% { opacity: 0; translate: calc(var(--d) * .22) calc(var(--d) * -.07); scale: 1.1; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .avatar__orb, .avatar__halo, .avatar__shine, .avatar__ripple { animation: none !important; }
+  .avatar__zs b { animation-duration: 8s; }
+}
+
 .hero__atmosphere { position: absolute; inset: 0; }
 .hero__atmosphere canvas { display: block; }
 .hero--image { color: var(--paper); }

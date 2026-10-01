@@ -1,12 +1,10 @@
 'use client';
 
 import { useRef } from 'react';
-import dynamic from 'next/dynamic';
 import { hero } from '@/lib/content';
 import { gsap, useGSAP, POOL, rand, prefersReducedMotion, ScrollTrigger } from '@/lib/motion';
 
-// Three.js light behind the name — loaded after the page, browser only
-const HeroAtmosphere = dynamic(() => import('./HeroAtmosphere'), { ssr: false });
+import HeroAvatar from './HeroAvatar';
 
 const ROWS = 5;
 const NAME_ROW = 2; // zero-based centre row
@@ -152,7 +150,7 @@ export default function Hero() {
             {hero.imageMobile && <source media="(max-width: 720px)" srcSet={hero.imageMobile} />}
             <img src={hero.image} alt="" fetchPriority="high" style={{ '--hero-pos': hero.imagePosition } as React.CSSProperties} />
           </picture>
-        ) : <HeroAtmosphere />}
+        ) : <HeroAvatar />}
       </div>
 
       <h1 className="sr-only">{hero.word}</h1>
