@@ -45,7 +45,7 @@ export default function About() {
       scrollTrigger: {
         trigger: root.current,
         start: () => (tall() ? 'bottom bottom' : 'top top'),
-        end: () => `+=${window.innerHeight * (overHero ? 2.6 : 2.2)}`,
+        end: () => `+=${window.innerHeight * (overHero ? 3 : 2.2)}`,
         pin: true,
         scrub: 0.6,
         invalidateOnRefresh: true,
@@ -55,7 +55,7 @@ export default function About() {
     });
     if (overHero) {
       // a beat for the light to start setting, then "Hi, I'm Shivam" rises where the name was
-      tl.to({}, { duration: 0.5 })
+      tl.to({}, { duration: 0.6 })
         .fromTo(first, { opacity: 0, y: 60 }, { opacity: 1, y: 0, duration: 0.9, ease: 'power2.out' });
     }
     tl.fromTo(rest, { opacity: 0, y: 60 }, { opacity: 1, y: 0, duration: 1, stagger: 0.35, ease: 'power2.out' })

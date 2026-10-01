@@ -39,7 +39,7 @@ export default function HeroAvatar() {
       raf = 0;
       const h = el.offsetHeight || window.innerHeight;
       const y = Math.max(0, window.scrollY);
-      const p = Math.min(y / (h * 0.55), 1);
+      const p = Math.min(y / (h * 0.7), 1);
       el.style.setProperty('--fade', `${Math.min(y * 1.6, h)}px`);
       el.style.setProperty('--vis', String(1 - p));
       el.style.setProperty('--sink', `${p * h * 0.12}px`);
