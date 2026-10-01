@@ -741,7 +741,10 @@ body.menu-open { overflow: hidden; }
   opacity: 0; transform: scale(1.06);
   transition: opacity .7s var(--ease), transform 2.4s var(--ease);
 }
-.work__pics img.is-on { opacity: 1; transform: scale(1); }
+.work__pics img.is-on { opacity: 1; transform: scale(1); animation: work-pic-in .8s var(--ease) both; }
+/* the previous project's picture, held underneath while the next one fades in */
+.work__pics img.work__under { opacity: 1; transform: none; transition: none; }
+@keyframes work-pic-in { from { opacity: 0; } }
 /* a soft shade at the foot so the caption reads on any picture */
 .work__frame::after {
   content: ""; position: absolute; inset: auto 0 0; height: 30%;

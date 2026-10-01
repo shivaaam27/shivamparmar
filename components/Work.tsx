@@ -69,7 +69,27 @@ export default function Work() {
     return () => clearInterval(id);
   }, [onScreen, pics.length, current?.project.slug]);
 
-  const choose = (i: number) => { if (i !== active) { setActive(i); setFrame(0); } };
+  // switching project: the picture on show stays underneath while the new one fades in over it
+  const [under, setUnder] = useState<string | null>(null);
+  const choose = (i: number) => {
+    if (i === active) return;
+    setUnder(pics[frame]?.src ?? null);
+    setActive(i); setFrame(0);
+  };
+
+  useEffect(() => {
+    if (!under) return;
+    const id = setTimeout(() => setUnder(null), 900);
+    return () => clearTimeout(id);
+  }, [under, active]);
+
+  // once the section is near, fetch every project's first two pictures so a hover never waits
+  const preloaded = useRef(false);
+  useEffect(() => {
+    if (!onScreen || preloaded.current) return;
+    preloaded.current = true;
+    entries.forEach(({ project }) => project.images?.slice(0, 2).forEach(({ src }) => { const im = new Image(); im.src = src; }));
+  }, [onScreen]);
 
   return (
     <section ref={section} className="work section" id="work">
@@ -129,9 +149,10 @@ export default function Work() {
           <Link className="work__frame" href={`/work/${current.project.slug}`} aria-label={`Open ${current.project.title}`}
             onClick={() => track(`Open project · ${current.project.title}`)}>
             <span className="work__pics">
+              {under && <img className="work__under" src={under} alt="" aria-hidden="true" />}
               {pics.map((pic, k) => (
                 <img key={`${current.project.slug}-${pic.src}`} src={pic.src} alt={k === frame ? pic.alt : ''}
-                  className={k === frame ? 'is-on' : undefined} loading={k < 2 ? 'eager' : 'lazy'} />
+                  className={k === frame ? 'is-on' : undefined} loading="eager" />
               ))}
             </span>
             <span className="work__caption mono">
