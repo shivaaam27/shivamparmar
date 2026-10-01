@@ -1,11 +1,12 @@
 'use client';
 
-import { Fragment, useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import Link from 'next/link';
 import { work } from '@/lib/content';
 import { visibleCategories, countCategory, hasPage, coverOf } from '@/lib/work';
 import { prefersReducedMotion } from '@/lib/motion';
 import Tag from './Tag';
+import Wheel, { type WheelItem } from './Wheel';
 import { track } from '@/lib/track';
 
 /** Only categories and sub-categories that have pictures. */
@@ -22,11 +23,21 @@ const entries = categories.flatMap((cat, g) =>
 const HOLD = 1700;
 
 /** ?c=photography  <->  category index (-1 = all) */
-const readFilter = () => categories.findIndex((cat) => cat.slug === new URLSearchParams(window.location.search).get('c'));
-function writeFilter(c: number) {
-  const q = c >= 0 ? `?c=${categories[c].slug}` : '';
-  window.history.pushState(null, '', `${window.location.pathname}${q}#work`);
+type Filter = { c: number; s: number };   // category / sub-category index, -1 = all
+function readFilter(): Filter {
+  const q = new URLSearchParams(window.location.search);
+  const c = categories.findIndex((cat) => cat.slug === q.get('c'));
+  const s = c < 0 ? -1 : categories[c].subcategories.findIndex((sub) => sub.slug === q.get('s'));
+  return { c, s };
 }
+function writeFilter({ c, s }: Filter) {
+  const q = new URLSearchParams();
+  if (c >= 0) q.set('c', categories[c].slug);
+  if (c >= 0 && s >= 0) q.set('s', categories[c].subcategories[s].slug);
+  const qs = q.toString();
+  window.history.pushState(null, '', `${window.location.pathname}${qs ? `?${qs}` : ''}#work`);
+}
+const ALL = '__all';
 
 /** A small spring: `x` chases `t`, overshooting a little and settling (the site's "springs, not easings"). */
 const spring = (k = 0.15, damp = 0.7) => ({
@@ -42,7 +53,7 @@ const spring = (k = 0.15, damp = 0.7) => ({
  * slightly toward it, and opens each picture as an iris from where the pointer is.
  */
 export default function Work() {
-  const [filter, setFilterState] = useState(-1);
+  const [filter, setFilterState] = useState<Filter>({ c: -1, s: -1 });
   const [active, setActive] = useState(0);        // index into `shown`
   const [frame, setFrame] = useState(0);          // which picture of the active project
   const section = useRef<HTMLElement>(null);
@@ -55,13 +66,25 @@ export default function Work() {
     return () => window.removeEventListener('popstate', sync);
   }, []);
 
-  const setFilter = useCallback((c: number) => {
-    track(c >= 0 ? `Filter · ${categories[c].name}` : 'Filter · All work');
-    setFilterState(c); setActive(0); setFrame(0);
-    writeFilter(c);
+  const setFilter = useCallback((f: Filter) => {
+    const cat = categories[f.c];
+    track(cat ? `Filter · ${cat.name}${f.s >= 0 ? ` › ${cat.subcategories[f.s].name}` : ''}` : 'Filter · All work');
+    setFilterState(f); setActive(0); setFrame(0);
+    writeFilter(f);
   }, []);
 
-  const shown = useMemo(() => entries.filter((e) => filter < 0 || e.g === filter), [filter]);
+  const shown = useMemo(() => entries.filter((e) =>
+    (filter.c < 0 || e.g === filter.c) && (filter.s < 0 || e.sub === categories[filter.c].subcategories[filter.s])), [filter]);
+  // the two scroll wheels, as on the work page: categories, then the chosen one's sub-categories
+  const focused = filter.c >= 0 ? categories[filter.c] : null;
+  const catItems: WheelItem[] = [
+    { key: ALL, label: 'All', count: entries.length },
+    ...categories.map((cat) => ({ key: cat.slug, label: cat.name, count: countCategory(cat) })),
+  ];
+  const subItems: WheelItem[] = focused ? [
+    { key: ALL, label: 'All', count: countCategory(focused) },
+    ...focused.subcategories.map((sub) => ({ key: sub.slug, label: sub.name, count: sub.projects.length })),
+  ] : [];
   const current = shown[Math.min(active, shown.length - 1)];
   const pics = current?.project.images ?? [];
 
@@ -101,14 +124,14 @@ export default function Work() {
     entries.forEach(({ project }) => project.images?.slice(0, 2).forEach(({ src }) => { const im = new Image(); im.src = src; }));
   }, [onScreen]);
 
-  // ---- Blobby peeks up from the bottom line of the row you're on, sliding along with the pointer
-  // and watching it; it sinks away when you leave the list
+  // ---- Blobby rises under the row you're on: a thin outlined curve from 15% to 85% of the row's
+  // bottom line, its eyes peeking out from beneath and watching the pointer; it sinks when you leave
   const list = useRef<HTMLOListElement>(null);
   const peek = useRef<HTMLLIElement>(null);
   useLayoutEffect(() => {
     const ol = list.current, el = peek.current; if (!ol || !el) return;
     const eyes = el.querySelector<HTMLElement>('.work__peek-eyes');
-    const px = spring(0.12, 0.72), py = spring(0.17, 0.68), up = spring(0.14, 0.66);
+    const py = spring(0.17, 0.68), up = spring(0.13, 0.66), ex = spring(0.1, 0.75);
     const still = prefersReducedMotion();
     let pointer: { x: number; y: number } | null = null, inside = false, raf = 0, first = true;
     const move = (e: PointerEvent) => { pointer = { x: e.clientX, y: e.clientY }; inside = true; };
@@ -117,20 +140,23 @@ export default function Work() {
     ol.addEventListener('pointerleave', leave);
     const loop = () => {
       const row = ol.querySelector<HTMLElement>('.work__row.is-active');
-      const box = ol.getBoundingClientRect();
       if (row) py.t = row.offsetTop + row.offsetHeight;                       // sits on the row's bottom line
-      if (pointer) px.t = Math.max(24, Math.min(box.width - 24, pointer.x - box.left));
       up.t = inside ? 1 : 0;
-      if (first || still) { px.jump(px.t || box.width * 0.6); py.jump(py.t); first = false; }
-      const x = px.step(), y = py.step(), u = up.step();
-      el.style.transform = `translate(${x}px, ${y}px)`;
+      const box = el.getBoundingClientRect();
+      // the eyes drift a little toward the pointer along the curve
+      if (pointer && box.width) ex.t = Math.max(-0.22, Math.min(0.22, (pointer.x - (box.left + box.width / 2)) / box.width));
+      if (first || still) { py.jump(py.t); first = false; }
+      const y = py.step(), u = up.step(), e = ex.step();
+      el.style.transform = `translateY(${y}px)`;
       el.style.setProperty('--up', String(Math.max(0, Math.min(1.15, u))));
-      // eyes look at the pointer
-      if (eyes && pointer) {
-        const r = eyes.getBoundingClientRect();
-        const dx = pointer.x - (r.left + r.width / 2), dy = pointer.y - (r.top + r.height / 2), d = Math.hypot(dx, dy) || 1;
-        const k = Math.min(1, d / 160);
-        eyes.style.transform = `translate(${(dx / d) * k * 3.5}px, ${(dy / d) * k * 2.5}px)`;
+      if (eyes) {
+        el.style.setProperty('--ex', `${e * 100}%`);
+        if (pointer) {
+          const r = eyes.getBoundingClientRect();
+          const dx = pointer.x - (r.left + r.width / 2), dy = pointer.y - (r.top + r.height / 2), d = Math.hypot(dx, dy) || 1;
+          const k = Math.min(1, d / 160);
+          eyes.style.setProperty('--look', `${(dx / d) * k * 3}px ${(dy / d) * k * 2}px`);
+        }
       }
       raf = requestAnimationFrame(loop);
     };
@@ -155,32 +181,24 @@ export default function Work() {
           <Tag>{work.tag}</Tag>
           <Link className="work__title-link" href="/work" onClick={() => track('Open work page')}>{work.title}<span className="work__title-arrow" aria-hidden="true">↗</span></Link>
         </h2>
-        {/* the categories as one sentence; each word filters (again: all). The one chosen, or pointed
-            at, gets Blobby's highlighter stroke */}
-        <p className="work__index reveal" data-delay="1">
-          {categories.map((cat, g) => (
-            <Fragment key={cat.slug}>
-              <span>
-                <em>{g === 0 ? 'From' : 'to'}</em>{' '}
-                <button type="button" className={g === filter ? 'is-active' : undefined} aria-pressed={g === filter}
-                  onClick={() => setFilter(g === filter ? -1 : g)}>
-                  {cat.name}<sup className="mono">{pad(countCategory(cat))}</sup>
-                </button>
-                {g < categories.length - 1 ? ',' : '.'}
-              </span>{' '}
-            </Fragment>
-          ))}
-          {filter >= 0 && (
-            <button type="button" className="work__back mono" onClick={() => setFilter(-1)}>
-              <span aria-hidden="true">← </span>All work
-            </button>
+        {/* the work page's scroll wheels: pick a category, and its sub-categories open beside it.
+            Pointing at an item, or choosing it, draws Blobby's thin highlighter */}
+        <div className="work__wheels reveal" data-delay="1">
+          <Wheel label="Category" items={catItems} value={focused?.slug ?? ALL}
+            onChange={(k) => setFilter({ c: k === ALL ? -1 : categories.findIndex((cat) => cat.slug === k), s: -1 })} />
+          {focused && (
+            <Wheel key={focused.slug} label={focused.name} items={subItems} value={filter.s >= 0 ? focused.subcategories[filter.s].slug : ALL}
+              onChange={(k) => setFilter({ c: filter.c, s: k === ALL ? -1 : focused.subcategories.findIndex((sub) => sub.slug === k) })} />
           )}
-        </p>
+        </div>
       </div>
 
       <div className="work__body reveal" data-delay="2">
         <ol className="work__list" ref={list} style={{ '--rows': Math.max(shown.length, 6) } as React.CSSProperties}>
-          <li className="work__peek" ref={peek} aria-hidden="true"><span className="work__peek-body"><span className="work__peek-eyes"><i /><i /></span></span></li>
+          <li className="work__peek" ref={peek} aria-hidden="true">
+            <svg className="work__peek-arc" viewBox="0 0 100 30" preserveAspectRatio="none"><path d="M0 30 C 22 -2, 78 -2, 100 30" /></svg>
+            <span className="work__peek-eyes"><i /><i /></span>
+          </li>
           {shown.map((e, i) => {
             const on = e === current;
             const where = e.sub.name === e.project.title ? e.cat.name : `${e.cat.name} · ${e.sub.name}`;
