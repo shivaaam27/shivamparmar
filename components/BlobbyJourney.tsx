@@ -46,7 +46,7 @@ export default function BlobbyJourney() {
       const cR = contact.getBoundingClientRect(), fR = foot.getBoundingClientRect();
 
       const a = along(headR.top, H, 0.95, 0.3);          // read more → Work
-      const b = along(reelR.top, H, 0.5, 0);             // past Work
+      const b = along(reelR.top, H, 0.62, -0.25);        // past Work: a long, gentle exit
       const c = along(cR.top, H, 0.92, 0.55);            // Contact
       // footer: it finishes as you reach the very end of the page, however short the screen
       const left = document.documentElement.scrollHeight - (window.scrollY + H);
@@ -62,12 +62,14 @@ export default function BlobbyJourney() {
       const lines = contact.querySelectorAll('span');
       const last = lines[lines.length - 1];
       const range = document.createRange(); if (last) range.selectNodeContents(last);
-      const lr = last ? range.getBoundingClientRect() : cR;
+      const boxes = last ? range.getClientRects() : null;
+      const lr = boxes && boxes.length ? boxes[boxes.length - 1] : cR;   // the line "worth making?" itself
       const cr = Math.max(22, Math.min(38, W * 0.026));
       // (kept on screen: on a narrow phone the headline runs nearly edge to edge, so it tucks just inside)
-      const small: Circle = { cx: Math.min(lr.right + cr * 1.7, W - cr - 10), cy: lr.top + lr.height * 0.52, r: cr };
+      const small: Circle = { cx: Math.min(lr.right + cr * 2.1, W - cr - 10), cy: lr.top + lr.height * 0.5, r: cr };
       // the footer dome: a hero-like rise behind the name
-      const footR = Math.max(W * 0.9, 520), footTop = fR.top - Math.max(70, fR.height * 0.42);
+      // a dome sized to the name, its top a little above the letters
+      const nameH = fR.height, footR = Math.max(nameH * 2.3, 150), footTop = fR.top - Math.max(48, nameH * 0.55);
 
       let circ: Circle | null = null, phase = '';
       let light = { x: 0, y: 0, s: 0 }, cut = 0, fadeA = -H * 2, fadeB = -H * 2 + 1, alpha = 1, eyeA = 1;
@@ -81,25 +83,30 @@ export default function BlobbyJourney() {
         const r = logLerp(small.r, footR, e);
         circ = { cx: lerp(small.cx, W / 2, e), cy: top + r, r };
         const sl = smallLight(small);
-        light = { x: lerp(sl.x, W * 0.4, e), y: lerp(sl.y, footTop + 40, e), s: lerp(sl.s, W * 0.9, e) };
+        light = { x: lerp(sl.x, W / 2 - footR * 0.3, e), y: lerp(sl.y, footTop + footR * 0.15, e), s: lerp(sl.s, footR * 1.9, e) };
         alpha = lerp(1, 0.55, e);                                         // light enough to read SHIVAM through
-        eye = { x: lerp(small.cx, W / 2, e), y: lerp(small.cy - small.r * 0.12, (footTop + fR.top) / 2 + 6, e), w: lerp(small.r * 0.26, 17, e) };
+        eye = { x: lerp(small.cx, W / 2, e), y: lerp(small.cy - small.r * 0.12, footTop + (fR.top - footTop) * 0.55, e), w: lerp(small.r * 0.26, Math.max(10, nameH * 0.09), e) };
       } else if (c > 0) {
         phase = 'contact';
-        const k = backOut(c);
-        circ = { cx: small.cx, cy: small.cy, r: small.r * Math.max(0.01, k) };
+        // it glides in from the right edge of the screen, slowing as it arrives, and stays
+        const e = 1 - (1 - c) ** 3;
+        const x = lerp(W + small.r * 1.6, small.cx, e);
+        const squash = 1 + Math.sin(Math.min(1, c) * Math.PI) * 0.06;            // a little stretch on the move
+        circ = { cx: x, cy: small.cy, r: small.r * squash };
         light = smallLight(circ);
-        eye = { x: small.cx, y: small.cy - circ.r * 0.12, w: circ.r * 0.26 };
-        eyeA = clamp01(c * 2);
+        eye = { x: x - small.r * 0.18 * (1 - e), y: small.cy - small.r * 0.12, w: small.r * 0.26 };   // looking where it's going
       } else if (b > 0) {
         phase = 'away';
         const e = inOut(b);
-        const r = domeR * (1 + e * 2.5);                                    // flattening out…
-        const bottom = lerp(domeBottom, reelR.top + 160, e);                // …and down behind the strip
+        const r = domeR * (1 + e * 2);                                      // flattening out…
+        const bottom = lerp(domeBottom, reelR.top + 70, e);                 // …and lowering behind the strip
         circ = { cx: W / 2, cy: bottom - r, r };
         light = { x: W * 0.42, y: bottom - 30, s: W * 0.95 };
-        cut = Math.max(0, H - reelR.top); fadeA = headR.top - 170; fadeB = headR.top + 20;
-        eye = { x: W * 0.72, y: bottom - 64, w: 17 }; eyeA = 1 - clamp01(b * 2.5);
+        cut = Math.max(0, H - reelR.top);
+        // its soft top stays a fixed depth above its lowest point, so it fades away gradually
+        fadeA = bottom - 300; fadeB = bottom - 110;
+        alpha = 1 - e * 0.9;
+        eye = { x: W * 0.72, y: bottom - 64, w: 17 }; eyeA = 1 - clamp01(b * 1.8);
       } else if (a > 0) {
         phase = 'arrive';
         const e = inOut(a);

@@ -103,7 +103,7 @@ img { pointer-events: none; }
 }
 .site-header--on-image { mix-blend-mode: normal; }
 .wordmark { transition: opacity .4s var(--ease); }
-.site-header--over-work .wordmark { opacity: 0; pointer-events: none; }
+.site-header--over-work .wordmark { opacity: 0 !important; pointer-events: none; }   /* wins over the intro's reveal */
 .wordmark {
   font: 400 clamp(1.5rem, 2vw, 1.875rem)/1 var(--serif);
   letter-spacing: -.01em;
@@ -827,7 +827,7 @@ body.menu-open { overflow: hidden; }
 
 .site-footer { padding: 0 var(--gutter) clamp(1rem, 2.2vw, 1.75rem); overflow: hidden; }
 .site-footer__name {
-  font: 400 24vw/.78 var(--serif);   /* most of the width, with Blobby's dome rising behind it */
+  font: 400 clamp(4.5rem, 14vw, 13rem)/.78 var(--serif);   /* a signature, with Blobby's dome rising behind it */
   text-transform: uppercase;
   text-align: center;
   letter-spacing: -.01em;
