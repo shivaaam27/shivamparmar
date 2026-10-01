@@ -136,7 +136,8 @@ export default function Work() {
     track('Work strip · arrow');
   };
 
-  // ---- Blobby rises behind the header as you scroll into Work (and the small one by
+  // ---- Blobby hangs down behind the header as you scroll into Work, and sinks behind the strip
+  // as you leave (and the small one by
   // "Read more about me" shrinks away, as if it's the same Blobby coming down the page)
   const head = useRef<HTMLDivElement>(null);
   const dome = useRef<HTMLDivElement>(null);
@@ -166,17 +167,21 @@ export default function Work() {
     };
     raf = requestAnimationFrame(loop);
     window.addEventListener('pointermove', onMove, { passive: true });
-    return () => { st.kill(); cancelAnimationFrame(raf); window.removeEventListener('pointermove', onMove); document.documentElement.style.removeProperty('--blobby-away'); };
+    // leaving: as the strip rises up the screen, Blobby sinks on and slips behind it
+    const out = ScrollTrigger.create({
+      trigger: reel.current, start: 'top 55%', end: 'top 2%', scrub: 0.8,
+      onUpdate: (self) => el.style.setProperty('--x', gsap.parseEase('power2.in')(self.progress).toFixed(3)),
+    });
+    return () => { st.kill(); out.kill(); cancelAnimationFrame(raf); window.removeEventListener('pointermove', onMove); document.documentElement.style.removeProperty('--blobby-away'); };
   }, []);
 
   return (
     <section className="work section" id="work">
       <div className="work__head" ref={head}>
-        {/* Blobby, grown into the top of a great moonstone circle rising behind the header: its upper
-            edge dissolves into the page, its eyes off to the right, watching the pointer */}
+        {/* Blobby hanging down behind the header: the bottom of a great moonstone circle, its upper part
+            dissolving into the page above, its eyes near the lower edge on the right, watching the pointer */}
         <div className="work__dome" ref={dome} aria-hidden="true">
-          <span className="work__dome-cap" />
-          <span className="work__dome-eyes" ref={domeEyes}><i /><i /></span>
+          <span className="work__dome-cap"><span className="work__dome-eyes" ref={domeEyes}><i /><i /></span></span>
         </div>
         <h2 className="display reveal">
           <Link className="work__title-link" href="/work" onClick={() => track('Open work page')}>{work.title}<span className="work__title-arrow" aria-hidden="true">↗</span></Link>
