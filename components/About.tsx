@@ -59,7 +59,7 @@ export default function About() {
       scrollTrigger: {
         trigger: root.current,
         start: () => (tall() ? 'bottom bottom' : 'top top'),
-        end: () => `+=${window.innerHeight * (overHero ? 3 : 2.2)}`,
+        end: () => `+=${window.innerHeight * (overHero ? 3.6 : 2.2)}`,
         pin: true,
         scrub: 0.6,
         invalidateOnRefresh: true,
@@ -84,30 +84,37 @@ export default function About() {
         // it comes into view on the way up, just as the old mark finishes fading
         .fromTo(first, { opacity: 0 }, { opacity: 1, duration: 1, ease: 'power1.out' }, 'rise+=0.15');
     }
+    const STEP = 0.11; // how fast the description fills, word by word (room for Blobby to rest between phrases)
     tl.fromTo(rest, { opacity: 0, y: 60 }, { opacity: 1, y: 0, duration: 1, stagger: 0.35, ease: 'power2.out' }, overHero ? '-=0.35' : undefined)
       // the description arrives in full, in grey, as the headline finishes…
       .fromTo(body, { opacity: 0, y: 24 }, { opacity: 1, y: 0, duration: 0.7, ease: 'power2.out' }, '-=0.5')
       // …then fills to ink word by word
       .addLabel('fill', '+=0.1')
-      .fromTo(bodyWords, { opacity: 0.22 }, { opacity: 1, duration: 0.3, stagger: 0.06, ease: 'none' }, 'fill')
+      .fromTo(bodyWords, { opacity: 0.22 }, { opacity: 1, duration: 0.3, stagger: STEP, ease: 'none' }, 'fill')
       .fromTo(link, { opacity: 0, y: 20 }, { opacity: 1, y: 0, duration: 0.8, ease: 'power2.out' }, '-=0.2')
       .addLabel('linked')
       .to({}, { duration: 0.6 }); // a short beat of stillness before the pin releases
 
-    // the key phrases get a soft highlighter stroke as the fill reaches them
     const hlWords = q('.about__word[data-hl]');
-    hlWords.forEach((w) => {
-      const i = bodyWords.indexOf(w);
-      tl.fromTo(w, { backgroundSize: '0% 42%' }, { backgroundSize: '100% 42%', duration: 0.22, ease: 'none' }, `fill+=${i * 0.06 + 0.05}`);
-    });
+    const phrases = KEY_PHRASES.map((_, k) => hlWords.filter((w) => w.dataset.hl === String(k))).filter((ws) => ws.length);
+    const F = tl.labels.fill;   // when the word-by-word fill starts, in timeline seconds
+    const startOf = (ws: HTMLElement[]) => F + bodyWords.indexOf(ws[0]) * STEP;
+    const wipe = (w: HTMLElement, at: number, d = 0.22) =>
+      tl.fromTo(w, { backgroundSize: '0% 42%' }, { backgroundSize: '100% 42%', duration: d, ease: 'none' }, at);
 
-    // ---- the companion: the hero's light condensed into a small orb that reads along
+    // ---- Blobby: the hero's light condensed into a small companion that reads along
     const orb = root.current?.querySelector<HTMLElement>('.about__orb');
-    if (!overHero || !orb || !root.current) return;
+    if (!overHero || !orb || !root.current) {
+      // no companion: the phrases simply get their stroke as the fill reaches them
+      hlWords.forEach((w) => wipe(w, F + bodyWords.indexOf(w) * STEP + 0.05));
+      return;
+    }
     orb.classList.toggle('is-asleep', !awakeNow());
     const face = orb.querySelector('.about__orb-face');
+    const ink = orb.querySelector('.about__orb-ink');
     const R = () => root.current!.getBoundingClientRect();
     const size = () => orb.offsetWidth;
+    const bodyY = () => Number(gsap.getProperty(body[0], 'y'));
     // beside the end of "Hi, I'm Shivam," (measured without the line's own motion)
     const besideName = () => {
       const r = R(), h = first.parentElement!.getBoundingClientRect();
@@ -116,20 +123,21 @@ export default function About() {
       // offsetTop is already measured from this section (it's the line's positioned ancestor)
       return { x: h.left - r.left + h.width / 2 + textW / 2 + size() * 1.15, y: first.offsetTop + first.offsetHeight * 0.45 };
     };
-    // in the margin left of the paragraph, level with a given word
-    const margin = (w: HTMLElement) => {
-      const r = R(), p = body[0].getBoundingClientRect(), wr = w.getBoundingClientRect();
-      const dy = Number(gsap.getProperty(body[0], 'y'));
-      return { x: Math.max(size() * 0.6 + 4, p.left - r.left - size() * 1.1), y: wr.top - dy - r.top + wr.height / 2 };
+    // where a phrase's highlighter stroke runs: along its first line, through the middle of the stroke
+    const stroke = (ws: HTMLElement[]) => {
+      const r = R(), dy = bodyY();
+      const rects = ws.map((w) => w.getBoundingClientRect());
+      const line = rects.filter((rc) => Math.abs(rc.top - rects[0].top) < 4);
+      const x0 = line[0].left - r.left, x1 = line[line.length - 1].right - r.left;
+      return { x0, x1, y: rects[0].top - dy - r.top + rects[0].height * 0.72, h: rects[0].height * 0.42, onLine: line.length };
     };
-    const firstOf = KEY_PHRASES.map((_, k) => hlWords.find((w) => w.dataset.hl === String(k))!).filter(Boolean);
     const linkSpot = () => {
       const r = R(), l = link[0].getBoundingClientRect();
       const dy = Number(gsap.getProperty(link[0], 'y'));
       return { x: l.left - r.left - size() * 1.1, y: l.top - dy - r.top + l.height / 2 };
     };
 
-    // stage 2: it grows out of the setting dome (big, faint, low) and condenses up beside the name
+    // stage 2: it grows out of the setting dome and condenses up beside the name;
     // it starts exactly over the dome's face, the same size, so the dome's eyes become its eyes
     const dome = () => {
       const H = window.innerHeight, D = Math.min(H * 0.97, window.innerWidth * 1.9);
@@ -141,27 +149,55 @@ export default function About() {
       { x: () => besideName().x, y: () => besideName().y, scale: 1, duration: 2.4, ease: 'power2.inOut', immediateRender: true }, 'rise')
       .fromTo(orb, { opacity: 0 }, { opacity: 1, duration: 0.7, ease: 'power1.out', immediateRender: true }, 'rise')
       .to(face, { xPercent: -16, duration: 0.6 }, 'rise+=1.8');
-    // stage 3: down the margin, pausing level with each key phrase as it fills, eyes on the line
-    // to cross the text it never glides over words: it shrinks away and pops up at the new spot
-    const hop = (to: () => { x: number; y: number }, at: string) => {
-      tl.to(orb, { opacity: 0, scale: 0.4, duration: 0.18, ease: 'power1.in' }, at)
+
+    // to get somewhere across the text it never glides over words: it shrinks away and pops up there
+    const hop = (to: () => { x: number; y: number }, at: number) => {
+      tl.to(orb, { opacity: 0, scale: 0.4, duration: 0.15, ease: 'power1.in' }, at)
         .set(orb, { x: () => to().x, y: () => to().y }, '>')
-        .to(orb, { opacity: 1, scale: 1, duration: 0.25, ease: 'back.out(2)' }, '>');
+        .to(orb, { opacity: 1, scale: 1, duration: 0.25, ease: 'back.out(2.2)' }, '>');
     };
-    firstOf.forEach((w, k) => {
-      const at = `fill+=${Math.max(0, bodyWords.indexOf(w) * 0.06 - 0.5)}`;
-      if (k === 0) hop(() => margin(w), at);
-      else tl.to(orb, { x: () => margin(w).x, y: () => margin(w).y, duration: 0.55, ease: 'power2.inOut' }, at);
-      tl.to(face, { xPercent: 16, duration: 0.3 }, '<');
+
+    // stage 3: for each key phrase it becomes the highlighter — pops up at the phrase, squashes flat
+    // into a lilac stroke, sweeps along the words (leaving the stroke on them), then pulls itself
+    // back into a blob at the end of the phrase and looks back at what it marked
+    phrases.forEach((ws) => {
+      const t0 = startOf(ws);
+      const sweep = ws.length * STEP + 0.2;
+      hop(() => ({ x: stroke(ws).x0 + size() * 0.5, y: stroke(ws).y }), t0 - 0.42);
+      tl.to(face, { xPercent: 16, duration: 0.15 }, '<')
+        // squash: it gets small and flat, its face tucks away, it turns highlighter-lilac
+        .to(orb, { scaleX: 0.7, scaleY: 0.42, duration: 0.12, ease: 'power2.in' }, t0)
+        .to(face, { opacity: 0, duration: 0.1 }, '<')
+        .to(ink, { opacity: 1, duration: 0.12 }, '<')
+        // sweep: it stretches along the phrase as the stroke
+        .to(orb, {
+          x: () => (stroke(ws).x0 + stroke(ws).x1) / 2,
+          scaleX: () => (stroke(ws).x1 - stroke(ws).x0) / size(),
+          scaleY: () => stroke(ws).h / size(),
+          duration: sweep, ease: 'power1.inOut',
+        }, '>');
+      // the stroke it leaves behind, word by word, in step with the sweep
+      const n = ws.length;
+      ws.forEach((w, i) => wipe(w, t0 + 0.12 + (sweep * i) / n, sweep / n));
+      // pop: back into a blob just past the phrase, with a little overshoot, eyes on the phrase
+      tl.to(orb, {
+        x: () => stroke(ws).x1 + size() * 0.75,
+        scaleX: 1, scaleY: 1, duration: 0.32, ease: 'back.out(2)',
+      }, t0 + 0.12 + sweep)
+        .to(ink, { opacity: 0, duration: 0.2 }, '<')
+        .to(face, { opacity: 1, xPercent: -16, duration: 0.2 }, '<+=0.08');
     });
-    // then it hops beside "Read more about me"
-    hop(linkSpot, 'linked-=0.6');
+    // then it hops beside "Read more about me" and looks at it
+    hop(linkSpot, tl.labels.linked - 0.6);
+    tl.to(face, { xPercent: 16, duration: 0.2 }, '<');
   }, { scope: root });
 
   return (
     <section ref={root} className="about section" id="about">
       {/* the home page's light, condensed into a small companion that reads along */}
-      <span className="about__orb" aria-hidden="true"><span className="about__orb-face"><i /><i /></span></span>
+      <span className="about__orb" aria-hidden="true">
+        <span className="about__orb-body"><span className="about__orb-ink" /><span className="about__orb-face"><i /><i /></span></span>
+      </span>
       <div className="about__inner">
         <h2 className="headline">
           {about.headline.map((line) => <span key={line} className="about__line">{line}</span>)}

@@ -494,19 +494,26 @@ body.menu-open { overflow: hidden; }
 }
 .about__sign span { transition: transform .5s var(--ease); }
 
-/* the companion: the hero's moonstone, small, reading along beside the intro (home page only) */
+/* Blobby: the hero's moonstone, small, reading along beside the intro (home page only).
+   The outer box is moved and squashed by the intro timeline; the body inside it bobs and breathes. */
 .about { position: relative; }
+.about__text .lead { position: relative; z-index: 3; }   /* Blobby always passes behind the words */
 .about__orb {
   --o: clamp(1.75rem, 2.6vw, 2.5rem);
   position: absolute; left: 0; top: 0; z-index: 2; pointer-events: none;
   width: var(--o); height: var(--o); translate: -50% -50%;
   opacity: 0;
-  background: radial-gradient(circle at 34% 16%, #F4F3F8 0%, #D7D5E0 34%, #ABA8BA 100%);
-  box-shadow: inset 0 calc(var(--o) * -.08) calc(var(--o) * .2) rgba(70, 64, 100, .2), 0 calc(var(--o) * .15) calc(var(--o) * .4) rgba(70, 64, 100, .12);
-  animation: avatar-morph 9s ease-in-out infinite;
   will-change: transform, opacity;
 }
-.about__orb.is-asleep { background: radial-gradient(circle at 34% 16%, #ABA8BA 0%, #8E8BA0 34%, #6E6B82 100%); }
+.about__orb-body {
+  position: absolute; inset: 0;
+  background: radial-gradient(circle at 34% 16%, #F4F3F8 0%, #D7D5E0 34%, #ABA8BA 100%);
+  box-shadow: inset 0 calc(var(--o) * -.08) calc(var(--o) * .2) rgba(70, 64, 100, .2);
+  animation: avatar-morph 9s ease-in-out infinite, orb-bob 2.6s ease-in-out infinite;
+}
+.about__orb.is-asleep .about__orb-body { background: radial-gradient(circle at 34% 16%, #ABA8BA 0%, #8E8BA0 34%, #6E6B82 100%); }
+/* the highlighter it turns into */
+.about__orb-ink { position: absolute; inset: 0; border-radius: inherit; background: #E3E0EE; opacity: 0; }
 .about__orb-face { position: absolute; left: 50%; top: 40%; display: flex; gap: calc(var(--o) * .13); translate: -50% -50%; }
 .about__orb-face i {
   display: block; width: calc(var(--o) * .13); height: calc(var(--o) * .21); border-radius: 50%; background: #fff;
@@ -516,6 +523,12 @@ body.menu-open { overflow: hidden; }
 /* at night it reads along half-asleep */
 .about__orb.is-asleep .about__orb-face i { height: calc(var(--o) * .1); }
 @keyframes orb-blink { 0%, 94%, 100% { transform: none; } 96.5% { transform: scaleY(.12); } }
+/* a gentle float while it waits, with a hint of squash at the bottom of each bob */
+@keyframes orb-bob {
+  0%, 100% { translate: 0 0; scale: 1 1; }
+  45%      { translate: 0 calc(var(--o) * -.09); scale: .97 1.03; }
+  90%      { translate: 0 calc(var(--o) * .02); scale: 1.04 .96; }
+}
 /* the highlighter stroke behind key phrases (wiped in by the intro timeline) */
 .about__word[data-hl] {
   background: linear-gradient(#E3E0EE, #E3E0EE) 0 88% / 0% 42% no-repeat;
