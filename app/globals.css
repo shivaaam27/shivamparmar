@@ -180,6 +180,11 @@ body.menu-open { overflow: hidden; }
   --core: #F58A12; --mid: #F9A93A; --rim: #FFD27A; --halo: 255, 206, 110;
   position: absolute; inset: 0; pointer-events: none;
   opacity: 0; transition: opacity 1.2s var(--ease);
+  /* set by scroll (HeroAvatar): sink, fade, and a soft lower edge so the section break never cuts the orb */
+  translate: 0 var(--sink, 0px);
+  filter: opacity(var(--vis, 1));
+  mask-image: linear-gradient(to top, transparent var(--sink, 0px), #000 calc(var(--sink, 0px) + var(--fade, 0px)));
+  -webkit-mask-image: linear-gradient(to top, transparent var(--sink, 0px), #000 calc(var(--sink, 0px) + var(--fade, 0px)));
 }
 .avatar.is-awake, .avatar.is-asleep { opacity: 1; }
 .avatar.is-asleep { --core: #8F8C99; --mid: #ABA9B4; --rim: #D6D5DC; --halo: 198, 196, 210; }

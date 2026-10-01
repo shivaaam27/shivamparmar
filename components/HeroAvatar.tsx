@@ -29,6 +29,28 @@ export default function HeroAvatar() {
     return () => clearInterval(id);
   }, []);
 
+  // scrolling away, the light sets: it sinks and fades, and its lower edge dissolves as the
+  // hero's bottom comes into view, so the orb is never seen cut off by the next section
+  useEffect(() => {
+    const el = root.current;
+    if (!el) return;
+    let raf = 0;
+    const update = () => {
+      raf = 0;
+      const h = el.offsetHeight || window.innerHeight;
+      const y = Math.max(0, window.scrollY);
+      const p = Math.min(y / (h * 0.55), 1);
+      el.style.setProperty('--fade', `${Math.min(y * 1.6, h)}px`);
+      el.style.setProperty('--vis', String(1 - p));
+      el.style.setProperty('--sink', `${p * h * 0.12}px`);
+    };
+    const onScroll = () => { if (!raf) raf = requestAnimationFrame(update); };
+    update();
+    window.addEventListener('scroll', onScroll, { passive: true });
+    window.addEventListener('resize', onScroll);
+    return () => { cancelAnimationFrame(raf); window.removeEventListener('scroll', onScroll); window.removeEventListener('resize', onScroll); };
+  }, []);
+
   // eyes follow the pointer (eased), blink now and then; idle glances when the pointer is away
   useEffect(() => {
     const el = root.current;
