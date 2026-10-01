@@ -5,13 +5,13 @@ import { gsap, ScrollTrigger, useGSAP, scramble } from '@/lib/motion';
 /**
  * Page-wide scroll motion:
  *  - `[data-scramble]` text (the footer name) decodes from SHIVAM letters
- *  - the header name hides while the work strips pass under it
+ *  - the header name hides while the work index passes under it
  * Section content doesn't fade in on scroll any more: it simply shows.
  */
 export default function Effects() {
   useGSAP(() => {
-    // the header name steps aside while the work images pass beneath it
-    const strips = document.querySelector('.strips');
+    // the header name steps aside while the work list and frame pass beneath it
+    const strips = document.querySelector('.work__body');
     const header = document.querySelector('.site-header');
     if (strips && header) {
       ScrollTrigger.create({
