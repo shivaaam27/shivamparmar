@@ -13,7 +13,7 @@ import { awakeNow } from './HeroAvatar';
  *   C  it pops up again, small, just after "Got something worth making?"
  *   D  into the footer it swells into a light dome rising behind SHIVAM, eyes just above the name
  */
-type Circle = { cx: number; cy: number; r: number };
+type Circle = { cx: number; cy: number; r: number; ry?: number };   // ry: an ellipse's height radius
 const clamp01 = (v: number) => Math.max(0, Math.min(1, v));
 const lerp = (a: number, b: number, t: number) => a + (b - a) * t;
 const logLerp = (a: number, b: number, t: number) => Math.exp(lerp(Math.log(Math.max(a, 1)), Math.log(Math.max(b, 1)), t));
@@ -58,18 +58,13 @@ export default function BlobbyJourney() {
       const o = orbBody.getBoundingClientRect();
       const orb: Circle = { cx: o.left + o.width / 2, cy: o.top + o.height / 2, r: Math.max(o.width / 2, 6) };
       const domeR = W * 1.6, domeBottom = reelR.top - 18;               // broad and gentle, resting on the strip
-      // small, just after the last line of the contact headline
-      const lines = contact.querySelectorAll('span');
-      const last = lines[lines.length - 1];
-      const range = document.createRange(); if (last) range.selectNodeContents(last);
-      const boxes = last ? range.getClientRects() : null;
-      const lr = boxes && boxes.length ? boxes[boxes.length - 1] : cR;   // the line "worth making?" itself
-      const cr = Math.max(22, Math.min(38, W * 0.026));
-      // (kept on screen: on a narrow phone the headline runs nearly edge to edge, so it tucks just inside)
-      const small: Circle = { cx: Math.min(lr.right + cr * 2.1, W - cr - 10), cy: lr.top + lr.height * 0.5, r: cr };
+      // Contact: Blobby attached to the right edge of the screen (like the corner Blobby on the About page),
+      // a little more than half of it showing, level with the section
+      const edgeR = Math.max(64, Math.min(W * 0.085, H * 0.16, 132));
+      const small: Circle = { cx: W + edgeR * 0.12, cy: Math.min(Math.max(cR.top + cR.height * 0.55, H * 0.3), H * 0.62), r: edgeR };
       // the footer dome: a hero-like rise behind the name
-      // a dome sized to the name, its top a little above the letters
-      const nameH = fR.height, footR = Math.max(nameH * 2.3, 150), footTop = fR.top - Math.max(48, nameH * 0.55);
+      // a wide soft blob behind the name, its top a little above the letters
+      const nameH = fR.height, footRx = W * 0.62, footRy = Math.max(nameH * 1.7, 140), footTop = fR.top - Math.max(48, nameH * 0.55);
 
       let circ: Circle | null = null, phase = '';
       let light = { x: 0, y: 0, s: 0 }, cut = 0, fadeA = -H * 2, fadeB = -H * 2 + 1, alpha = 1, eyeA = 1;
@@ -79,22 +74,24 @@ export default function BlobbyJourney() {
       if (d > 0) {
         phase = 'footer';
         const e = inOut(d);
+        // a wide, soft blob: much broader than it is tall, spreading out to the left and right
+        const rx = logLerp(small.r, footRx, e), ry = logLerp(small.r, footRy, e);
         const top = lerp(small.cy - small.r, footTop, e);
-        const r = logLerp(small.r, footR, e);
-        circ = { cx: lerp(small.cx, W / 2, e), cy: top + r, r };
+        circ = { cx: lerp(small.cx, W / 2, e), cy: top + ry, r: rx, ry };
         const sl = smallLight(small);
-        light = { x: lerp(sl.x, W / 2 - footR * 0.3, e), y: lerp(sl.y, footTop + footR * 0.15, e), s: lerp(sl.s, footR * 1.9, e) };
-        alpha = lerp(1, 0.55, e);                                         // light enough to read SHIVAM through
-        eye = { x: lerp(small.cx, W / 2, e), y: lerp(small.cy - small.r * 0.12, footTop + (fR.top - footTop) * 0.55, e), w: lerp(small.r * 0.26, Math.max(10, nameH * 0.09), e) };
+        light = { x: lerp(sl.x, W * 0.42, e), y: lerp(sl.y, footTop + footRy * 0.2, e), s: lerp(sl.s, footRx * 1.3, e) };
+        alpha = lerp(1, 0.6, e);                                          // light enough to read SHIVAM through
+        eye = { x: lerp(small.cx - small.r * 0.5, W / 2, e), y: lerp(small.cy - small.r * 0.2, footTop + (fR.top - footTop) * 0.55, e), w: lerp(small.r * 0.13, Math.max(10, nameH * 0.09), e) };
       } else if (c > 0) {
         phase = 'contact';
-        // it glides in from the right edge of the screen, slowing as it arrives, and stays
+        // it slowly grows out of the edge as you arrive, then stays put while you read
         const e = 1 - (1 - c) ** 3;
-        const x = lerp(W + small.r * 1.6, small.cx, e);
-        const squash = 1 + Math.sin(Math.min(1, c) * Math.PI) * 0.06;            // a little stretch on the move
-        circ = { cx: x, cy: small.cy, r: small.r * squash };
+        const r = small.r * Math.max(0.02, e);
+        circ = { cx: W + r * 0.12 + (1 - e) * small.r * 0.4, cy: small.cy, r };
         light = smallLight(circ);
-        eye = { x: x - small.r * 0.18 * (1 - e), y: small.cy - small.r * 0.12, w: small.r * 0.26 };   // looking where it's going
+        // its face sits in the part that shows, looking into the page
+        eye = { x: circ.cx - r * 0.5, y: small.cy - r * 0.2, w: r * 0.13 };
+        eyeA = clamp01(c * 1.6);
       } else if (b > 0) {
         phase = 'away';
         const e = inOut(b);
@@ -128,7 +125,7 @@ export default function BlobbyJourney() {
       root.style.setProperty('--blobby-away', phase ? '1' : '0');
       el.style.opacity = phase ? '1' : '0';
       if (!circ) return;
-      el.style.setProperty('--cx', `${circ.cx}px`); el.style.setProperty('--cy', `${circ.cy}px`); el.style.setProperty('--r', `${circ.r}px`);
+      el.style.setProperty('--cx', `${circ.cx}px`); el.style.setProperty('--cy', `${circ.cy}px`); el.style.setProperty('--r', `${circ.r}px`); el.style.setProperty('--ry', `${circ.ry ?? circ.r}px`);
       el.style.setProperty('--lx', `${light.x}px`); el.style.setProperty('--ly', `${light.y}px`); el.style.setProperty('--ls', `${light.s}px`);
       el.style.setProperty('--m0', `${fadeA}px`); el.style.setProperty('--m1', `${fadeB}px`);
       el.style.setProperty('--cut', `${cut}px`); el.style.setProperty('--alpha', String(alpha));
