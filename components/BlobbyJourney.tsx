@@ -76,12 +76,17 @@ export default function BlobbyJourney() {
         const e = inOut(d);
         // a wide, soft blob: much broader than it is tall, spreading out to the left and right
         const rx = logLerp(small.r, footRx, e), ry = logLerp(small.r, footRy, e);
-        const top = lerp(small.cy - small.r, footTop, e);
+        // it never rises over the contact details: as the morph begins it slips down below the last line
+        // of text (sliding along the edge), and only then spreads out into the footer blob
+        const textEnd = Math.max(q('.contact__cols')?.getBoundingClientRect().bottom ?? 0, q('.contact__mail')?.getBoundingClientRect().bottom ?? 0) + 14;
+        const free = Math.max(lerp(small.cy - small.r, footTop, e), textEnd);
+        const top = lerp(small.cy - small.r, free, clamp01(d * 4));
         circ = { cx: lerp(small.cx, W / 2, e), cy: top + ry, r: rx, ry };
         const sl = smallLight(small);
         light = { x: lerp(sl.x, W * 0.42, e), y: lerp(sl.y, footTop + footRy * 0.2, e), s: lerp(sl.s, footRx * 1.3, e) };
         alpha = lerp(1, 0.6, e);                                          // light enough to read SHIVAM through
         eye = { x: lerp(small.cx - small.r * 0.5, W / 2, e), y: lerp(small.cy - small.r * 0.2, footTop + (fR.top - footTop) * 0.55, e), w: lerp(small.r * 0.13, Math.max(10, nameH * 0.09), e) };
+        eye.y = Math.max(eye.y, top + Math.min(ry * 0.4, 44));                 // the eyes stay inside it as it slides down
       } else if (c > 0) {
         phase = 'contact';
         // it slowly grows out of the edge as you arrive, then stays put while you read
