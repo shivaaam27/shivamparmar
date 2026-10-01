@@ -251,6 +251,7 @@ body.menu-open { overflow: hidden; }
   box-shadow: 0 calc(var(--d) * .006) calc(var(--d) * .02) rgba(160, 70, 0, .2);
   transition: height .32s var(--ease), border-radius .32s var(--ease), rotate .5s var(--ease), box-shadow .5s;
 }
+.avatar.is-setting .avatar__eye { height: calc(var(--d) * .012); border-radius: 99px; rotate: 0deg; transition-duration: .7s; }
 .avatar__face.is-blinking .avatar__eye { height: calc(var(--d) * .01); transition-duration: .07s; }
 /* asleep: eyes become two closed lines, the face rests still */
 .avatar.is-asleep .avatar__face { transform: none !important; top: 35%; gap: calc(var(--d) * .032); }

@@ -54,11 +54,23 @@ export default function About() {
       },
     });
     if (overHero) {
-      // a beat for the light to start setting, then "Hi, I'm Shivam" rises where the name was
-      tl.to({}, { duration: 0.6 })
-        .fromTo(first, { opacity: 0, y: 60 }, { opacity: 1, y: 0, duration: 0.9, ease: 'power2.out' });
+      // "Hi, I'm Shivam" rises out of the setting light: it starts where the SHIVAM mark sits,
+      // small, soft and faint, and travels up into place, sharpening as it goes
+      const fromMark = () => {
+        const mark = document.querySelector('.hero .jumble');
+        if (!mark || !root.current) return 120;
+        const m = mark.getBoundingClientRect();
+        const f = first.getBoundingClientRect();
+        const lineMid = f.top + f.height / 2 - Number(gsap.getProperty(first, 'y')) - root.current.getBoundingClientRect().top;
+        return Math.max(60, m.top + m.height / 2 - lineMid);
+      };
+      tl.to({}, { duration: 0.5 })
+        .fromTo(first, { y: fromMark, scale: 0.9, filter: 'blur(10px)' },
+          { y: 0, scale: 1, filter: 'blur(0px)', duration: 2.2, ease: 'sine.inOut' }, 'rise')
+        // it comes into view on the way up, just as the old mark finishes fading
+        .fromTo(first, { opacity: 0 }, { opacity: 1, duration: 1, ease: 'power1.out' }, 'rise+=0.15');
     }
-    tl.fromTo(rest, { opacity: 0, y: 60 }, { opacity: 1, y: 0, duration: 1, stagger: 0.35, ease: 'power2.out' })
+    tl.fromTo(rest, { opacity: 0, y: 60 }, { opacity: 1, y: 0, duration: 1, stagger: 0.35, ease: 'power2.out' }, overHero ? '-=0.35' : undefined)
       // the description arrives in full, in grey, as the headline finishes…
       .fromTo(body, { opacity: 0, y: 24 }, { opacity: 1, y: 0, duration: 0.7, ease: 'power2.out' }, '-=0.5')
       // …then fills to ink word by word

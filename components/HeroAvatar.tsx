@@ -44,10 +44,12 @@ export default function HeroAvatar() {
       el.style.setProperty('--vis', String(1 - p));
       el.style.setProperty('--sink', `${p * h * 0.12}px`);
       // the words along the bottom of the hero leave with it
-      el.closest<HTMLElement>('.hero')?.style.setProperty('--hero-vis', String(Math.max(0, 1 - p * 2.4)));
+      el.closest<HTMLElement>('.hero')?.style.setProperty('--hero-vis', String(Math.max(0, 1 - p * 3)));
       // fully set: stop drawing the intro (it stays behind the page now); wake the eyes when back
       const hero = el.closest<HTMLElement>('.hero');
       const gone = p >= 1;
+      // as the light sets, the eyes close gently (open again when you scroll back)
+      el.classList.toggle('is-setting', p > 0.12);
       if (hero) hero.style.visibility = gone ? 'hidden' : '';
       if (gone !== (el.dataset.gone === '1')) {
         el.dataset.gone = gone ? '1' : '';
