@@ -730,138 +730,165 @@ body.menu-open { overflow: hidden; }
 .about__sign:hover span { transform: translateX(.25em); }
 
 /* =========================================================
-   Work — an index: the categories as a sentence beside the title,
-   a numbered list of projects, and a frame that plays the hovered one
+   Moonstone: Blobby's material, used only on things you can touch
    ========================================================= */
+.stone {
+  position: relative;
+  background: radial-gradient(circle at 34% 16%, #F4F3F8 0%, #D7D5E0 42%, #ABA8BA 100%);
+  box-shadow: inset 0 -10px 24px rgba(70, 64, 100, .16), inset 0 2px 6px rgba(255, 255, 255, .6);
+}
+
+/* =========================================================
+   Work — the moonstone index: a capsule track of categories, a compact
+   list sized to the 4:5 frame, a stone lens behind the row you point at
+   ========================================================= */
+.work { --frame-h: min(78vh, 52rem); }
 .work__head {
   display: grid; grid-template-columns: auto minmax(0, 1fr);
   align-items: end; gap: clamp(1.5rem, 5vw, 6rem);
-  margin-bottom: clamp(2.5rem, 6vw, 5rem);
+  margin-bottom: clamp(2rem, 5vw, 3.75rem);
 }
 .work__title-link { position: relative; }
 .work__title-arrow { font-size: .28em; vertical-align: .9em; margin-left: .15em; opacity: 0; transition: opacity .3s var(--ease), transform .4s var(--ease); display: inline-block; }
 .work__title-link:hover .work__title-arrow, .work__title-link:focus-visible .work__title-arrow { opacity: 1; transform: translate(.1em, -.1em); }
 
-/* the category sentence: each category filters; its count rides as a small superscript */
-.work__index {
-  justify-self: end; max-width: 34rem; text-align: right;
-  padding-bottom: .55em;
-  font: 400 clamp(1.375rem, 2.3vw, 2.125rem)/1.18 var(--serif);
-  color: var(--ink); text-wrap: balance;
+/* categories: a quiet capsule track; the chosen one sits on a stone lozenge that springs across */
+.work__pills {
+  justify-self: end; position: relative; isolation: isolate;
+  display: flex; flex-wrap: wrap; gap: .25rem; padding: .3rem; margin-bottom: .6em;
+  border-radius: 999px; background: rgba(21, 20, 18, .035); box-shadow: inset 0 0 0 1px var(--line);
 }
-.work__index em { font-style: italic; }
-.work__index > span { white-space: nowrap; }
-.work__index button {
-  font: inherit; color: inherit; text-transform: uppercase; letter-spacing: -.005em;
-  transition: opacity .3s var(--ease);
+.work__pill-mark { position: absolute; z-index: -1; left: 0; top: .3rem; height: 2.2rem; border-radius: 999px; pointer-events: none; transition: top .4s var(--ease); }
+.work__pill {
+  padding: .6rem 1.05rem; border-radius: 999px; white-space: nowrap;
+  font: 400 .9375rem/1 var(--sans); color: var(--ink); transition: opacity .3s var(--ease);
 }
-.work__index sup { font-size: .36em; letter-spacing: .04em; vertical-align: 1.5em; margin-left: .2em; }
-.work__index button.is-active { text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: .14em; }
-/* while one is chosen, the others step back */
-.work__index:has(.is-active) button:not(.is-active):not(.work__back) { opacity: .35; }
-.work__index button:hover { opacity: .65 !important; }
-.work__index button:focus-visible { outline: 1px solid var(--ink); outline-offset: 4px; }
-.work__back {
-  display: block; margin: .9rem 0 0 auto;
-  font-size: .75rem; letter-spacing: .06em; text-transform: uppercase; color: var(--ink);
-}
+.work__pill sup { font: 500 .5625rem var(--mono); letter-spacing: .04em; margin-left: .3em; opacity: .6; vertical-align: .8em; }
+.work__pill:hover { opacity: .65; }
+.work__pill:focus-visible { outline: 1px solid var(--ink); outline-offset: 2px; }
 
-/* list on the left, the frame on the right (it stays in view while the list scrolls past) */
+/* list on the left, sized so all the rows sit within the frame's height; the frame on the right */
 .work__body {
   display: grid; grid-template-columns: minmax(0, 1fr) auto;
-  gap: clamp(1.5rem, 4vw, 4.5rem); align-items: start;
+  gap: clamp(1.5rem, 4vw, 4rem); align-items: start;
 }
-.work__list { border-top: 1px solid var(--ink); counter-reset: none; animation: work-in .6s var(--ease) both; }
+.work__list {
+  --rowh: calc((var(--frame-h) - 1px) / var(--rows, 12));   /* each row plus its 1px divider; the list matches the frame exactly */
+  position: relative; border-top: 1px solid var(--ink);
+  animation: work-in .6s var(--ease) both;
+}
 @keyframes work-in { from { opacity: 0; transform: translateY(10px); } }
-.work__row { border-bottom: 1px solid var(--line); }
-.work__row > a {
-  display: grid; grid-template-columns: 2.4rem minmax(0, 1fr) auto; grid-template-rows: auto auto;
-  column-gap: 1rem; row-gap: .3rem; align-items: baseline;
-  padding: clamp(.85rem, 1.4vw, 1.2rem) 0;
-  color: var(--ink);
+/* the lens: Blobby's highlighter grown into a soft stone capsule, gliding behind the row you point at */
+.work__lens {
+  position: absolute; z-index: 0; left: -.75rem; right: -.75rem; top: 0; height: 0;
+  border-radius: 999px; pointer-events: none; transform-origin: 50% 50%;
+  opacity: 0; transition: opacity .4s var(--ease);
 }
-.work__num { grid-column: 1; grid-row: 1 / 3; font-size: .75rem; letter-spacing: .06em; padding-top: .55em; transition: opacity .4s var(--ease); }
+.work__list:hover .work__lens, .work__list:focus-within .work__lens { opacity: 1; }
+.work__row { position: relative; z-index: 1; border-bottom: 1px solid var(--line); }
+.work__row > a {
+  display: grid; grid-template-columns: 2.25rem minmax(0, 1fr) auto 1.75rem;
+  column-gap: .9rem; align-items: center;
+  height: calc(var(--rowh) - 1px); padding: 0 .25rem; color: var(--ink);
+}
+.work__num { font-size: .6875rem; letter-spacing: .06em; transition: opacity .4s var(--ease); }
 .work__name {
-  grid-column: 2; grid-row: 1;
-  font: 400 clamp(1.5rem, 2.5vw, 2.375rem)/1.05 var(--serif);
+  font: 400 clamp(1.1rem, 1.6vw, 1.6rem)/1 var(--serif);
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis; padding-block: .1em;
   transition: transform .5s var(--ease), opacity .4s var(--ease);
 }
-.work__count { grid-column: 3; grid-row: 1; font-size: .75rem; letter-spacing: .06em; transition: opacity .4s var(--ease); }
-.work__where { grid-column: 2 / 4; grid-row: 2; font-size: .6875rem; letter-spacing: .06em; text-transform: uppercase; opacity: .55; }
+.work__where { font-size: .625rem; letter-spacing: .07em; text-transform: uppercase; opacity: .5; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 16rem; }
+.work__count { font-size: .6875rem; letter-spacing: .06em; text-align: right; transition: opacity .4s var(--ease); }
 .work__thumb { display: none; }
 /* the list dims around the project in the frame; it nudges forward */
-.work__list:has(.is-active) .work__row:not(.is-active) .work__name { opacity: .3; }
+.work__list:has(.is-active) .work__row:not(.is-active) .work__name { opacity: .32; }
 .work__list:has(.is-active) .work__row:not(.is-active) .work__num,
 .work__list:has(.is-active) .work__row:not(.is-active) .work__count { opacity: .4; }
 .work__row.is-active .work__name { transform: translateX(.35rem); }
 .work__row > a:focus-visible { outline: 1px solid var(--ink); outline-offset: 2px; }
 
+/* the frame: a fixed 4:5 window with a stone rim that catches the pointer's light and tilts toward it */
 .work__frame {
   position: sticky; top: clamp(5.5rem, 12vh, 7.5rem);
-  /* a fixed 4:5 portrait for every project, as tall as the screen allows */
-  display: block; aspect-ratio: 4 / 5; height: min(78vh, 52rem); width: auto;
-  overflow: hidden; border-radius: 3px; background: var(--paper-deep);
-  color: #fff;
+  display: block; height: var(--frame-h); aspect-ratio: 4 / 5; width: auto;
+  border-radius: 26px; color: #fff;
+  transform: perspective(900px) var(--tilt, none);
+  transition: transform .7s var(--ease);
 }
-.work__pics img {
-  position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover;
-  opacity: 0; transform: scale(1.06);
-  transition: opacity .7s var(--ease), transform 2.4s var(--ease);
+/* light on the rim, following the pointer */
+.work__frame::before {
+  content: ""; position: absolute; inset: 0; border-radius: inherit; pointer-events: none; z-index: 4;
+  padding: 6px;
+  background: radial-gradient(220px circle at var(--mx, 50%) var(--my, 0%), rgba(255, 255, 255, .7), rgba(255, 255, 255, 0) 60%);
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask: linear-gradient(#000 0 0) content-box exclude, linear-gradient(#000 0 0);
+  opacity: 0; transition: opacity .4s var(--ease);
 }
-.work__pics img.is-on { opacity: 1; transform: scale(1); animation: work-pic-in .8s var(--ease) both; }
-/* the previous project's picture, held underneath while the next one fades in */
-.work__pics img.work__under { opacity: 1; transform: none; transition: none; }
-@keyframes work-pic-in { from { opacity: 0; } }
+.work__frame:hover::before { opacity: 1; }
+.work__pics { position: absolute; inset: 6px; border-radius: 20px; overflow: hidden; background: var(--paper-deep); }
+.work__pics img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; opacity: 0; }
+/* what was on show waits underneath… */
+.work__pics img.work__under { opacity: 1; z-index: 1; }
+/* …while the next picture opens over it as an iris from where the pointer is, then settles */
+.work__pics img.is-on {
+  opacity: 1; z-index: 2;
+  animation: work-iris .85s var(--ease) both, work-settle 2.6s var(--ease) both;
+}
+@keyframes work-iris { from { clip-path: circle(0% at var(--ix, 50%) var(--iy, 50%)); } to { clip-path: circle(150% at var(--ix, 50%) var(--iy, 50%)); } }
+@keyframes work-settle { from { scale: 1.06; } to { scale: 1; } }
 /* a soft shade at the foot so the caption reads on any picture */
-.work__frame::after {
-  content: ""; position: absolute; inset: auto 0 0; height: 30%;
-  background: linear-gradient(to top, rgba(0,0,0,.42), rgba(0,0,0,0));
-  pointer-events: none;
+.work__pics::after {
+  content: ""; position: absolute; z-index: 3; inset: auto 0 0; height: 30%;
+  background: linear-gradient(to top, rgba(0,0,0,.42), rgba(0,0,0,0)); pointer-events: none;
 }
 .work__caption {
-  position: absolute; z-index: 1; left: clamp(1rem, 1.6vw, 1.4rem); right: clamp(1rem, 1.6vw, 1.4rem); bottom: clamp(1rem, 1.6vw, 1.4rem);
+  position: absolute; z-index: 4; left: 1.1rem; right: 1.1rem; bottom: 1.1rem;
   display: flex; justify-content: space-between; gap: 1rem;
   font-size: .75rem; letter-spacing: .06em; text-transform: uppercase;
 }
 .work__tick {
-  position: absolute; z-index: 1; left: 0; bottom: 0; height: 2px; width: 100%;
+  position: absolute; z-index: 4; left: 0; bottom: 0; height: 2px; width: 100%;
   background: rgba(255,255,255,.85); transform-origin: left; transform: scaleX(0);
   animation: work-tick linear both;
 }
 @keyframes work-tick { to { transform: scaleX(1); } }
 .work__open {
-  position: absolute; z-index: 1; top: clamp(1rem, 1.6vw, 1.4rem); right: clamp(1rem, 1.6vw, 1.4rem);
+  position: absolute; z-index: 4; top: 1rem; right: 1rem;
   font-size: .75rem; letter-spacing: .06em; text-transform: uppercase;
-  padding: .55em .8em; border-radius: 99px; background: rgba(255,255,255,.92); color: var(--ink);
+  padding: .55em .85em; border-radius: 99px; color: var(--ink);
+  background: rgba(255,255,255,.75); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+  box-shadow: inset 0 0 0 1px rgba(255,255,255,.85);
   opacity: 0; transform: translateY(-.4rem); transition: opacity .35s var(--ease), transform .35s var(--ease);
 }
 .work__frame:hover .work__open, .work__frame:focus-visible .work__open { opacity: 1; transform: none; }
 
 @media (prefers-reduced-motion: reduce) {
-  .work__pics img { transition: opacity .3s; transform: none !important; }
+  .work__pics img.is-on { animation: none; }
   .work__tick { display: none; }
+  .work__frame { transform: none; }
 }
 
-/* tablets and phones: the sentence under the title, a plain list with a picture per row, no frame */
+/* tablets and phones: the capsules under the title, a plain list with a picture per row, no frame */
 @media (max-width: 860px) {
   .work__head { grid-template-columns: 1fr; align-items: start; }
-  .work__index { justify-self: start; text-align: left; padding-bottom: 0; }
-  .work__back { margin-left: 0; }
+  .work__pills { justify-self: start; margin-bottom: 0; border-radius: 1.4rem; }
   .work__body { grid-template-columns: 1fr; }
-  .work__frame { display: none; }
-  .work__row > a { grid-template-columns: 2rem minmax(0, 1fr) auto; }
+  .work__frame, .work__lens { display: none; }
+  .work__row > a { grid-template-columns: 2rem minmax(0, 1fr) auto; grid-template-rows: auto auto; height: auto; padding: .85rem 0; row-gap: .3rem; }
+  .work__name { grid-column: 2; grid-row: 1; white-space: normal; font-size: 1.5rem; }
+  .work__where { grid-column: 2; grid-row: 2; max-width: none; }
+  .work__num { grid-row: 1 / 3; align-self: start; padding-top: .45em; }
   .work__count { display: none; }
   .work__thumb {
     display: block; grid-column: 3; grid-row: 1 / 3; align-self: center;
-    width: clamp(4rem, 18vw, 5.5rem); aspect-ratio: 4 / 5; overflow: hidden; border-radius: 3px; background: var(--paper-deep);
+    width: clamp(4rem, 18vw, 5.5rem); aspect-ratio: 4 / 5; overflow: hidden; border-radius: 12px; background: var(--paper-deep);
   }
   .work__thumb img { width: 100%; height: 100%; object-fit: cover; }
-  .work__where { grid-column: 2 / 3; }
   .work__list:has(.is-active) .work__row:not(.is-active) .work__name,
   .work__list:has(.is-active) .work__row:not(.is-active) .work__num { opacity: 1; }
   .work__row.is-active .work__name { transform: none; }
 }
-
 
 /* =========================================================
    Contact + footer
@@ -918,7 +945,7 @@ body.menu-open { overflow: hidden; }
   }
 
   /* bigger tap areas without moving anything: the padding is cancelled by the margin */
-  .wordmark, .work__back, .site-footer__bar a {
+  .wordmark, .site-footer__bar a {
     padding-block: .625rem; margin-block: -.625rem;
   }
   .wheel__list button .mono { font-size: .75rem; }
@@ -932,7 +959,6 @@ body.menu-open { overflow: hidden; }
 
   .display .tag { vertical-align: 1.9em; }
 
-  .work__index { font-size: 1.5rem; }
 
   .contact__cols { grid-template-columns: 1fr; }
   .site-footer__mid { display: none; }
