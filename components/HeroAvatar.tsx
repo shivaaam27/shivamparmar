@@ -5,7 +5,7 @@ import { hero } from '@/lib/content';
 import { prefersReducedMotion } from '@/lib/motion';
 
 /** Is it waking hours where Shivam is? (?avatar=awake / ?avatar=asleep overrides, for checking both looks.) */
-function awakeNow() {
+export function awakeNow() {
   const force = new URLSearchParams(window.location.search).get('avatar');
   if (force === 'awake') return true;
   if (force === 'asleep') return false;
