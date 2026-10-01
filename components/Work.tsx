@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
+import { Fragment, useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import Link from 'next/link';
 import { work } from '@/lib/content';
 import { visibleCategories, countCategory, hasPage, coverOf } from '@/lib/work';
@@ -17,7 +17,6 @@ const entries = categories.flatMap((cat, g) =>
   cat.subcategories.flatMap((sub) =>
     sub.projects.filter(hasPage).map((project) => ({ cat, g, sub, project }))))
   .map((e, i) => ({ ...e, n: i + 1 }));
-const total = entries.length;
 
 /** How long each picture holds in the preview before the next one. */
 const HOLD = 1700;
@@ -102,52 +101,51 @@ export default function Work() {
     entries.forEach(({ project }) => project.images?.slice(0, 2).forEach(({ src }) => { const im = new Image(); im.src = src; }));
   }, [onScreen]);
 
-  // ---- the moving stone: category marker and row lens, both on springs
-  const pills = useRef<HTMLDivElement>(null);
-  const mark = useRef<HTMLSpanElement>(null);
+  // ---- Blobby peeks up from the bottom line of the row you're on, sliding along with the pointer
+  // and watching it; it sinks away when you leave the list
   const list = useRef<HTMLOListElement>(null);
-  const lens = useRef<HTMLLIElement>(null);
+  const peek = useRef<HTMLLIElement>(null);
   useLayoutEffect(() => {
-    const mx = spring(0.15, 0.7), mw = spring(0.15, 0.7), ly = spring(0.17, 0.68), lh = spring(0.2, 0.68);
+    const ol = list.current, el = peek.current; if (!ol || !el) return;
+    const eyes = el.querySelector<HTMLElement>('.work__peek-eyes');
+    const px = spring(0.12, 0.72), py = spring(0.17, 0.68), up = spring(0.14, 0.66);
     const still = prefersReducedMotion();
-    let raf = 0, first = true;
+    let pointer: { x: number; y: number } | null = null, inside = false, raf = 0, first = true;
+    const move = (e: PointerEvent) => { pointer = { x: e.clientX, y: e.clientY }; inside = true; };
+    const leave = () => { inside = false; };
+    ol.addEventListener('pointermove', move);
+    ol.addEventListener('pointerleave', leave);
     const loop = () => {
-      const on = pills.current?.querySelector<HTMLElement>('[aria-pressed="true"]');
-      const row = list.current?.querySelector<HTMLElement>('.work__row.is-active');
-      if (on) { mx.t = on.offsetLeft; mw.t = on.offsetWidth; }
-      if (row) { ly.t = row.offsetTop; lh.t = row.offsetHeight; }
-      if (first || still) { mx.jump(mx.t); mw.jump(mw.t); ly.jump(ly.t); lh.jump(lh.t); first = false; }
-      const x = mx.step(), w = mw.step(), y = ly.step(), h = lh.step();
-      // it stretches with its speed, like Blobby moving
-      const sx = Math.min(0.25, Math.abs(mx.v) / 40), sy = Math.min(0.2, Math.abs(ly.v) / 50);
-      if (mark.current) {
-        mark.current.style.transform = `translateX(${x}px)`; mark.current.style.width = `${w * (1 + sx)}px`;
-        if (on) { mark.current.style.top = `${on.offsetTop}px`; mark.current.style.height = `${on.offsetHeight}px`; }   // follows a wrapped row too
+      const row = ol.querySelector<HTMLElement>('.work__row.is-active');
+      const box = ol.getBoundingClientRect();
+      if (row) py.t = row.offsetTop + row.offsetHeight;                       // sits on the row's bottom line
+      if (pointer) px.t = Math.max(24, Math.min(box.width - 24, pointer.x - box.left));
+      up.t = inside ? 1 : 0;
+      if (first || still) { px.jump(px.t || box.width * 0.6); py.jump(py.t); first = false; }
+      const x = px.step(), y = py.step(), u = up.step();
+      el.style.transform = `translate(${x}px, ${y}px)`;
+      el.style.setProperty('--up', String(Math.max(0, Math.min(1.15, u))));
+      // eyes look at the pointer
+      if (eyes && pointer) {
+        const r = eyes.getBoundingClientRect();
+        const dx = pointer.x - (r.left + r.width / 2), dy = pointer.y - (r.top + r.height / 2), d = Math.hypot(dx, dy) || 1;
+        const k = Math.min(1, d / 160);
+        eyes.style.transform = `translate(${(dx / d) * k * 3.5}px, ${(dy / d) * k * 2.5}px)`;
       }
-      if (lens.current) { lens.current.style.transform = `translateY(${y}px) scaleY(${1 + sy}) scaleX(${1 - sy * 0.3})`; lens.current.style.height = `${h}px`; }
       raf = requestAnimationFrame(loop);
     };
     raf = requestAnimationFrame(loop);
-    return () => cancelAnimationFrame(raf);
+    return () => { cancelAnimationFrame(raf); ol.removeEventListener('pointermove', move); ol.removeEventListener('pointerleave', leave); };
   }, []);
 
-  // ---- the frame: light on its rim, a little tilt, and where the next iris opens from
+  // ---- where the next picture's iris opens from
   const frameEl = useRef<HTMLAnchorElement>(null);
   const origin = useRef<{ x: number; y: number } | null>(null);
   const aimFrom = (clientX: number, clientY: number) => {
     const f = frameEl.current; if (!f) return;
     const r = f.getBoundingClientRect();
-    const px = (clientX - r.left) / r.width, py = (clientY - r.top) / r.height;
-    origin.current = { x: Math.max(0, Math.min(1, px)) * 100, y: Math.max(0, Math.min(1, py)) * 100 };
-    return { px, py, r };
+    origin.current = { x: Math.max(0, Math.min(1, (clientX - r.left) / r.width)) * 100, y: Math.max(0, Math.min(1, (clientY - r.top) / r.height)) * 100 };
   };
-  const onFrameMove = (e: React.PointerEvent) => {
-    const a = aimFrom(e.clientX, e.clientY); const f = frameEl.current; if (!a || !f) return;
-    f.style.setProperty('--mx', `${e.clientX - a.r.left}px`);
-    f.style.setProperty('--my', `${e.clientY - a.r.top}px`);
-    if (!prefersReducedMotion()) f.style.setProperty('--tilt', `rotateY(${(a.px - 0.5) * 7}deg) rotateX(${(0.5 - a.py) * 7}deg)`);
-  };
-  const onFrameLeave = () => frameEl.current?.style.setProperty('--tilt', 'none');
   const iris = origin.current ?? { x: 50, y: 50 };
 
   return (
@@ -157,23 +155,32 @@ export default function Work() {
           <Tag>{work.tag}</Tag>
           <Link className="work__title-link" href="/work" onClick={() => track('Open work page')}>{work.title}<span className="work__title-arrow" aria-hidden="true">↗</span></Link>
         </h2>
-        {/* categories: a capsule track; the stone marker springs to the one chosen */}
-        <div className="work__pills reveal" data-delay="1" ref={pills} role="group" aria-label="Filter work by category">
-          <span className="work__pill-mark stone" ref={mark} aria-hidden="true" />
-          <button type="button" className="work__pill" aria-pressed={filter < 0} onClick={() => setFilter(-1)}>
-            All<sup>{pad(total)}</sup>
-          </button>
+        {/* the categories as one sentence; each word filters (again: all). The one chosen, or pointed
+            at, gets Blobby's highlighter stroke */}
+        <p className="work__index reveal" data-delay="1">
           {categories.map((cat, g) => (
-            <button key={cat.slug} type="button" className="work__pill" aria-pressed={g === filter} onClick={() => setFilter(g === filter ? -1 : g)}>
-              {cat.name}<sup>{pad(countCategory(cat))}</sup>
-            </button>
+            <Fragment key={cat.slug}>
+              <span>
+                <em>{g === 0 ? 'From' : 'to'}</em>{' '}
+                <button type="button" className={g === filter ? 'is-active' : undefined} aria-pressed={g === filter}
+                  onClick={() => setFilter(g === filter ? -1 : g)}>
+                  {cat.name}<sup className="mono">{pad(countCategory(cat))}</sup>
+                </button>
+                {g < categories.length - 1 ? ',' : '.'}
+              </span>{' '}
+            </Fragment>
           ))}
-        </div>
+          {filter >= 0 && (
+            <button type="button" className="work__back mono" onClick={() => setFilter(-1)}>
+              <span aria-hidden="true">← </span>All work
+            </button>
+          )}
+        </p>
       </div>
 
       <div className="work__body reveal" data-delay="2">
         <ol className="work__list" ref={list} style={{ '--rows': Math.max(shown.length, 6) } as React.CSSProperties}>
-          <li className="work__lens stone" ref={lens} aria-hidden="true" />
+          <li className="work__peek" ref={peek} aria-hidden="true"><span className="work__peek-body"><span className="work__peek-eyes"><i /><i /></span></span></li>
           {shown.map((e, i) => {
             const on = e === current;
             const where = e.sub.name === e.project.title ? e.cat.name : `${e.cat.name} · ${e.sub.name}`;
@@ -198,8 +205,8 @@ export default function Work() {
         </ol>
 
         {current && (
-          <Link className="work__frame stone" ref={frameEl} href={`/work/${current.project.slug}`} aria-label={`Open ${current.project.title}`}
-            onClick={() => track(`Open project · ${current.project.title}`)} onPointerMove={onFrameMove} onPointerLeave={onFrameLeave}>
+          <Link className="work__frame" ref={frameEl} href={`/work/${current.project.slug}`} aria-label={`Open ${current.project.title}`}
+            onClick={() => track(`Open project · ${current.project.title}`)} onPointerMove={(ev) => aimFrom(ev.clientX, ev.clientY)}>
             <span className="work__pics" style={{ '--ix': `${iris.x}%`, '--iy': `${iris.y}%` } as React.CSSProperties}>
               {under && <img className="work__under" src={under} alt="" aria-hidden="true" />}
               {pics.map((pic, k) => (
