@@ -18,6 +18,7 @@ const clamp01 = (v: number) => Math.max(0, Math.min(1, v));
 const lerp = (a: number, b: number, t: number) => a + (b - a) * t;
 const logLerp = (a: number, b: number, t: number) => Math.exp(lerp(Math.log(Math.max(a, 1)), Math.log(Math.max(b, 1)), t));
 const inOut = (t: number) => (t < 0.5 ? 2 * t * t : 1 - (-2 * t + 2) ** 2 / 2);
+const smooth = (t: number) => t * t * (3 - 2 * t);
 const backOut = (t: number) => { const c = 1.6; return 1 + (c + 1) * (t - 1) ** 3 + c * (t - 1) ** 2; };
 /** where along the scroll a section is: 0 when its top is at `from` (fraction of the screen), 1 at `to` */
 const along = (top: number, H: number, from: number, to: number) => clamp01((H * from - top) / (H * from - H * to));
@@ -47,12 +48,20 @@ export default function BlobbyJourney() {
 
       const a = along(headR.top, H, 0.95, 0.3);          // read more → Work
       const b = along(reelR.top, H, 0.62, -0.25);        // past Work: a long, gentle exit
-      const c = along(cR.top, H, 0.92, 0.55);            // Contact
-      // footer: it finishes as you reach the very end of the page, however short the screen
+      // Contact, then the footer:
+      //   grow    as the headline comes up, it grows out of the right edge of the screen, and stays there
+      //           beside the details while you read them
+      //   slide   only once the last line of the contact details is on screen does it drift down the edge,
+      //           the same size, to just below that line
+      //   spread  then, clear of the text, it spreads out into a wide, soft blob behind the name (done at the
+      //           very end of the page)
+      const c = along(cR.top, H, 0.92, 0.45);
       const left = document.documentElement.scrollHeight - (window.scrollY + H);
-      const endFrac = (fR.top - left) / H;                // where the name will sit at the bottom of the page
-      const dTo = Math.max(0.42, endFrac - 0.01), dFrom = Math.max(1, dTo + 0.45);
-      const d = along(fR.top, H, dFrom, dTo);
+      const textEnd = Math.max(q('.contact__cols')?.getBoundingClientRect().bottom ?? 0, q('.contact__mail')?.getBoundingClientRect().bottom ?? 0) + 14;
+      const tSpan = H - (textEnd - left);                // scroll from that last line coming into view to the end
+      const Q = tSpan > 1 ? clamp01((H - textEnd) / tSpan) : (textEnd < H ? 1 : 0);
+      const SPREAD = 0.65;
+      const s1 = smooth(clamp01(Q / SPREAD)), d = clamp01((Q - SPREAD) / (1 - SPREAD));
 
       // ---- the circles it travels between
       const o = orbBody.getBoundingClientRect();
@@ -60,11 +69,16 @@ export default function BlobbyJourney() {
       const domeR = W * 1.6, domeBottom = reelR.top - 18;               // broad and gentle, resting on the strip
       // Contact: Blobby attached to the right edge of the screen (like the corner Blobby on the About page),
       // a little more than half of it showing, level with the section
-      const edgeR = Math.max(64, Math.min(W * 0.085, H * 0.16, 132));
-      const small: Circle = { cx: W + edgeR * 0.12, cy: Math.min(Math.max(cR.top + cR.height * 0.55, H * 0.3), H * 0.62), r: edgeR };
+      const edgeR = Math.max(64, Math.min(W * 0.12, H * 0.2, 180));
+      const small: Circle = { cx: W + edgeR * 0.12, cy: H * 0.7, r: edgeR };   // it holds still on screen, low on the right
       // the footer dome: a hero-like rise behind the name
       // a wide soft blob behind the name, its top a little above the letters
       const nameH = fR.height, footRx = W * 0.62, footRy = Math.max(nameH * 1.7, 140), footTop = fR.top - Math.max(48, nameH * 0.55);
+      // how far it has grown, and where it slides to: its top just below the contact details
+      const grown = 1 - (1 - c) ** 2;
+      const sr = small.r * Math.max(0.02, grown);
+      const slideY = lerp(small.cy, Math.max(textEnd, footTop) + sr, s1);
+      const edgeX = W + sr * 0.12 + (1 - grown) * small.r * 0.4;      // its centre, just past the right edge
 
       let circ: Circle | null = null, phase = '';
       let light = { x: 0, y: 0, s: 0 }, cut = 0, fadeA = -H * 2, fadeB = -H * 2 + 1, alpha = 1, eyeA = 1;
@@ -74,29 +88,24 @@ export default function BlobbyJourney() {
       if (d > 0) {
         phase = 'footer';
         const e = inOut(d);
-        // a wide, soft blob: much broader than it is tall, spreading out to the left and right
-        const rx = logLerp(small.r, footRx, e), ry = logLerp(small.r, footRy, e);
-        // it never rises over the contact details: as the morph begins it slips down below the last line
-        // of text (sliding along the edge), and only then spreads out into the footer blob
-        const textEnd = Math.max(q('.contact__cols')?.getBoundingClientRect().bottom ?? 0, q('.contact__mail')?.getBoundingClientRect().bottom ?? 0) + 14;
-        const free = Math.max(lerp(small.cy - small.r, footTop, e), textEnd);
-        const top = lerp(small.cy - small.r, free, clamp01(d * 4));
-        circ = { cx: lerp(small.cx, W / 2, e), cy: top + ry, r: rx, ry };
-        const sl = smallLight(small);
-        light = { x: lerp(sl.x, W * 0.42, e), y: lerp(sl.y, footTop + footRy * 0.2, e), s: lerp(sl.s, footRx * 1.3, e) };
+        const top = slideY - sr;
+        const rx = logLerp(sr, footRx, e), ry = logLerp(sr, footRy, e);
+        const cx = lerp(edgeX, W / 2, e);
+        circ = { cx, cy: top + ry, r: rx, ry };
+        const sl = smallLight({ cx: edgeX, cy: slideY, r: sr });
+        light = { x: lerp(sl.x, W * 0.42, e), y: lerp(sl.y, top + footRy * 0.2, e), s: lerp(sl.s, footRx * 1.3, e) };
         alpha = lerp(1, 0.6, e);                                          // light enough to read SHIVAM through
-        eye = { x: lerp(small.cx - small.r * 0.5, W / 2, e), y: lerp(small.cy - small.r * 0.2, footTop + (fR.top - footTop) * 0.55, e), w: lerp(small.r * 0.13, Math.max(10, nameH * 0.09), e) };
-        eye.y = Math.max(eye.y, top + Math.min(ry * 0.4, 44));                 // the eyes stay inside it as it slides down
+        // the eyes ride along, then settle just above the name
+        eye = { x: lerp(edgeX - sr * 0.5, W / 2, e), y: lerp(slideY - sr * 0.2, Math.max(top + Math.min(ry * 0.4, 44), footTop + (fR.top - footTop) * 0.55), e), w: lerp(sr * 0.13, Math.max(10, nameH * 0.09), e) };
       } else if (c > 0) {
         phase = 'contact';
-        // it slowly grows out of the edge as you arrive, then stays put while you read
-        const e = 1 - (1 - c) ** 3;
-        const r = small.r * Math.max(0.02, e);
-        circ = { cx: W + r * 0.12 + (1 - e) * small.r * 0.4, cy: small.cy, r };
+        // it slowly grows out of the edge as you arrive, and stays beside the details while you read
+        const r = sr;
+        circ = { cx: edgeX, cy: slideY, r };
         light = smallLight(circ);
         // its face sits in the part that shows, looking into the page
-        eye = { x: circ.cx - r * 0.5, y: small.cy - r * 0.2, w: r * 0.13 };
-        eyeA = clamp01(c * 1.6);
+        eye = { x: circ.cx - r * 0.5, y: slideY - r * 0.2, w: r * 0.13 };
+        eyeA = clamp01(c * 3);
       } else if (b > 0) {
         phase = 'away';
         const e = inOut(b);
