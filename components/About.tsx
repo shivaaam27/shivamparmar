@@ -2,7 +2,7 @@
 
 import { Fragment, useRef } from 'react';
 import { about } from '@/lib/content';
-import { gsap, useGSAP, prefersReducedMotion } from '@/lib/motion';
+import { gsap, useGSAP, prefersReducedMotion, ScrollTrigger } from '@/lib/motion';
 import { track } from '@/lib/track';
 import { awakeNow } from './HeroAvatar';
 
@@ -150,46 +150,91 @@ export default function About() {
       .fromTo(orb, { opacity: 0 }, { opacity: 1, duration: 0.7, ease: 'power1.out', immediateRender: true }, 'rise')
       .to(face, { xPercent: -16, duration: 0.6 }, 'rise+=1.8');
 
+    // ---- stage 3 runs on its own clock. The scroll decides WHEN Blobby acts (as the fill reaches
+    // each key phrase); real time decides HOW FAST, so a quick scroll never squeezes its
+    // transformation into a few frames. If the reader races ahead, the queued moves catch up faster.
+    const seq = gsap.timeline({ paused: true, onComplete: () => { seq.timeScale(1); } });
+    const restAfter = (ws: HTMLElement[]) => ({ x: stroke(ws).x1 + size() * 0.75, y: stroke(ws).y });
     // to get somewhere across the text it never glides over words: it shrinks away and pops up there
-    const hop = (to: () => { x: number; y: number }, at: number) => {
-      tl.to(orb, { opacity: 0, scale: 0.4, duration: 0.15, ease: 'power1.in' }, at)
-        .set(orb, { x: () => to().x, y: () => to().y }, '>')
-        .to(orb, { opacity: 1, scale: 1, duration: 0.25, ease: 'back.out(2.2)' }, '>');
-    };
-
-    // stage 3: for each key phrase it becomes the highlighter — pops up at the phrase, squashes flat
-    // into a lilac stroke, sweeps along the words (leaving the stroke on them), then pulls itself
-    // back into a blob at the end of the phrase and looks back at what it marked
-    phrases.forEach((ws) => {
-      const t0 = startOf(ws);
-      const sweep = ws.length * STEP + 0.2;
-      hop(() => ({ x: stroke(ws).x0 + size() * 0.5, y: stroke(ws).y }), t0 - 0.42);
-      tl.to(face, { xPercent: 16, duration: 0.15 }, '<')
-        // squash: it gets small and flat, its face tucks away, it turns highlighter-lilac
-        .to(orb, { scaleX: 0.7, scaleY: 0.42, duration: 0.12, ease: 'power2.in' }, t0)
-        .to(face, { opacity: 0, duration: 0.1 }, '<')
-        .to(ink, { opacity: 1, duration: 0.12 }, '<')
-        // sweep: it stretches along the phrase as the stroke
+    const hopTo = (t: gsap.core.Timeline, to: () => { x: number; y: number }) =>
+      t.to(orb, { opacity: 0, scale: 0.4, duration: 0.22, ease: 'power1.in' })
+        .set(orb, { x: () => to().x, y: () => to().y })
+        .to(orb, { opacity: 1, scale: 1, duration: 0.42, ease: 'back.out(2.2)' });
+    // one key phrase: pop up at it, squash into the highlighter, sweep, re-form, look back
+    const phraseAnim = (ws: HTMLElement[]) => {
+      const t = gsap.timeline();
+      const sweep = 0.4 + ws.length * 0.16;
+      t.set(ws, { backgroundSize: '0% 42%' });
+      hopTo(t, () => ({ x: stroke(ws).x0 + size() * 0.5, y: stroke(ws).y }));
+      t.to(face, { xPercent: 16, duration: 0.2 }, '<')
+        .to(orb, { scaleX: 0.7, scaleY: 0.42, duration: 0.24, ease: 'power2.in' }, '+=0.08')
+        .to(face, { opacity: 0, duration: 0.16 }, '<')
+        .to(ink, { opacity: 1, duration: 0.2 }, '<')
+        .addLabel('sweep')
         .to(orb, {
           x: () => (stroke(ws).x0 + stroke(ws).x1) / 2,
           scaleX: () => (stroke(ws).x1 - stroke(ws).x0) / size(),
           scaleY: () => stroke(ws).h / size(),
-          duration: sweep, ease: 'power1.inOut',
-        }, '>');
-      // the stroke it leaves behind, word by word, in step with the sweep
-      const n = ws.length;
-      ws.forEach((w, i) => wipe(w, t0 + 0.12 + (sweep * i) / n, sweep / n));
-      // pop: back into a blob just past the phrase, with a little overshoot, eyes on the phrase
-      tl.to(orb, {
-        x: () => stroke(ws).x1 + size() * 0.75,
-        scaleX: 1, scaleY: 1, duration: 0.32, ease: 'back.out(2)',
-      }, t0 + 0.12 + sweep)
-        .to(ink, { opacity: 0, duration: 0.2 }, '<')
-        .to(face, { opacity: 1, xPercent: -16, duration: 0.2 }, '<+=0.08');
+          duration: sweep, ease: 'sine.inOut',
+        }, 'sweep');
+      ws.forEach((w, i) => t.to(w, { backgroundSize: '100% 42%', duration: sweep / ws.length, ease: 'none' }, `sweep+=${(sweep * i) / ws.length}`));
+      t.to(orb, { x: () => restAfter(ws).x, scaleX: 1, scaleY: 1, duration: 0.55, ease: 'back.out(1.8)' }, '>')
+        .to(ink, { opacity: 0, duration: 0.3 }, '<')
+        .to(face, { opacity: 1, xPercent: -16, duration: 0.3 }, '<+=0.12');
+      return t;
+    };
+    const linkAnim = () => {
+      const t = gsap.timeline();
+      hopTo(t, linkSpot);
+      return t.to(face, { xPercent: 16, duration: 0.25 }, '<');
+    };
+
+    // the moments in the scroll where each step begins
+    const S2 = tl.labels.rise + 2.4;                                   // stage 2 (scroll-linked) ends
+    const marks = [...phrases.map((ws) => startOf(ws) - 0.3), tl.labels.linked - 0.6];
+    let zone = -2;                                                      // -2: stage 2 in charge of Blobby
+    const restore = (z: number) => {
+      // scrolling back: strokes it hasn't reached yet clear away, and it hops back to where it was
+      phrases.forEach((ws, k) => { gsap.killTweensOf(ws, 'backgroundSize'); gsap.to(ws, { backgroundSize: k <= z ? '100% 42%' : '0% 42%', duration: 0.3 }); });
+      gsap.set(ink, { opacity: 0 }); gsap.set(face, { opacity: 1 });
+      if (z < -1) return;
+      const t = gsap.timeline();
+      hopTo(t, () => (z >= 0 && z < phrases.length ? restAfter(phrases[z]) : besideName()));
+      t.to(face, { xPercent: -16, duration: 0.2 }, '<');
+      seq.add(t, seq.time()).play();
+    };
+    let refreshing = false;
+    const onInit = () => { refreshing = true; };
+    const onDone = () => { refreshing = false; };
+    ScrollTrigger.addEventListener('refreshInit', onInit);
+    ScrollTrigger.addEventListener('refresh', onDone);
+    tl.eventCallback('onUpdate', () => {
+      if (refreshing) return;   // the page re-measuring itself isn't the reader moving
+      const t = tl.time();
+      let z = t < S2 ? -2 : -1;
+      if (z === -1) marks.forEach((m, i) => { if (t >= m) z = i; });
+      // going back only counts once clearly past the mark, so tiny wobbles in the scroll don't flip it
+      if (z < zone && t > (zone === -1 ? S2 : marks[zone]) - 0.15) return;
+      if (z === zone) return;
+      if (z > zone && zone >= -1) {
+        // forward: queue each step it passed, in order; catch up faster if more than one is waiting
+        for (let i = zone + 1; i <= z; i++) if (i >= 0) seq.add(i < phrases.length ? phraseAnim(phrases[i]) : linkAnim(), '>');
+        seq.timeScale(z - zone > 1 || seq.isActive() ? 1.8 : 1).play();
+      } else if (z > zone) {
+        // from stage 2 straight past a phrase (a fast scroll)
+        for (let i = 0; i <= z; i++) seq.add(i < phrases.length ? phraseAnim(phrases[i]) : linkAnim(), '>');
+        seq.timeScale(z > 0 ? 1.8 : 1).play();
+      } else {
+        seq.clear(); seq.seek(0); seq.timeScale(1);
+        restore(z);
+      }
+      zone = z;
     });
-    // then it hops beside "Read more about me" and looks at it
-    hop(linkSpot, tl.labels.linked - 0.6);
-    tl.to(face, { xPercent: 16, duration: 0.2 }, '<');
+    return () => {
+      ScrollTrigger.removeEventListener('refreshInit', onInit);
+      ScrollTrigger.removeEventListener('refresh', onDone);
+      seq.kill();
+    };
   }, { scope: root });
 
   return (
