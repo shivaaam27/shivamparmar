@@ -499,8 +499,8 @@ body.menu-open { overflow: hidden; }
 .about { position: relative; }
 .about__text .lead { position: relative; z-index: 3; }   /* Blobby always passes behind the words */
 .about__orb {
-  /* it shrinks away (and fades) as the Work dome rises: --blobby-away is set by Work.tsx */
-  --o: calc(clamp(1.75rem, 2.6vw, 2.5rem) * (1 - var(--blobby-away, 0) * .85));
+  /* it hands over to the travelling Blobby (BlobbyJourney) the moment that one takes over */
+  --o: clamp(1.75rem, 2.6vw, 2.5rem);
   position: absolute; left: 0; top: 0; z-index: 2; pointer-events: none;
   width: var(--o); height: var(--o); translate: -50% -50%;
   opacity: 0;
@@ -744,7 +744,7 @@ body.menu-open { overflow: hidden; }
    Work — the title with its scroll wheels right beside it,
    then a drifting strip of 4:5 pictures
    ========================================================= */
-.work { overflow-x: clip; }   /* the dome and the strip run edge to edge */
+.work { overflow-x: clip; }   /* the strip runs edge to edge */
 .work__head {
   position: relative; isolation: isolate;
   display: flex; flex-wrap: wrap; align-items: center; gap: clamp(1.5rem, 3.5vw, 3.5rem);
@@ -763,42 +763,6 @@ body.menu-open { overflow: hidden; }
 .work__wheels .wheel__list button[aria-pressed="true"] { text-decoration: none; }
 .work__wheels .wheel__list button .mono { font-size: .55em; vertical-align: .9em; margin-left: .15em; }
 
-/* Blobby hangs down behind the header: the bottom of a great moonstone circle, its curve resting just
-   above the picture strip, its upper part dissolving into the page above through a long soft fade.
-   --g (0 → 1): it descends as you scroll into Work; --x (0 → 1): it sinks on, behind the strip, as
-   you scroll past. Both are driven by the scroll in Work.tsx */
-.work__dome {
-  --g: 0; --x: 0;
-  position: absolute; z-index: -1; pointer-events: none;
-  left: 50%; width: 100vw; translate: -50% 0;
-  top: -9rem; bottom: calc(clamp(2rem, 4.5vw, 3.5rem) * -1);
-  overflow: hidden;   /* its lower edge slips behind the strip when it sinks */
-  -webkit-mask-image: linear-gradient(to bottom, transparent 0%, rgba(0, 0, 0, .35) 30%, #000 62%);
-          mask-image: linear-gradient(to bottom, transparent 0%, rgba(0, 0, 0, .35) 30%, #000 62%);
-}
-.work__dome-cap {
-  position: absolute; left: 50%;
-  /* where its lowest point sits, measured up from the strip: high above while arriving, just above
-     the strip once it's in, then down behind the strip as you leave */
-  bottom: calc(10% + (1 - var(--g)) * 95% - var(--x) * 90%);
-  width: 175vw; aspect-ratio: 1; border-radius: 50%;
-  translate: -50% 0;
-  opacity: calc(var(--g) * 1.4);
-  background: radial-gradient(circle at 42% 90%, #F4F3F8 0%, #E6E4EC 12%, #D7D5E0 24%, #ABA8BA 52%);
-  animation: avatar-breathe 7s ease-in-out infinite;
-}
-/* the eyes sit near its lower edge, off to the right, looking at the pointer */
-.work__dome-eyes {
-  /* about 22% of the screen right of centre, a little above the curve's lowest edge there */
-  position: absolute; left: 62.5%; top: 93.4%; display: flex; gap: 1.1rem; translate: -50% -50%;
-  opacity: clamp(0, calc(var(--g) * 2 - 1), 1);
-}
-.work__dome-eyes i {
-  display: block; width: 1.05rem; height: 1.7rem; border-radius: 50%; background: #fff;
-  box-shadow: 0 2px 8px rgba(60, 55, 90, .28);
-  translate: var(--look, 0 0); animation: orb-blink 5.2s infinite;
-}
-@media (max-width: 720px) { .work__dome-eyes { left: 60%; top: 94.5%; gap: .7rem; } .work__dome-eyes i { width: .75rem; height: 1.2rem; } }
 
 /* the strip: 4:5 pictures divided by a hairline, drifting right to left (moved by Work.tsx);
    it runs to the screen's edges so pictures slide in and out of view */
@@ -863,7 +827,7 @@ body.menu-open { overflow: hidden; }
 
 .site-footer { padding: 0 var(--gutter) clamp(1rem, 2.2vw, 1.75rem); overflow: hidden; }
 .site-footer__name {
-  font: 400 34vw/.78 var(--serif);   /* spans the full width */
+  font: 400 24vw/.78 var(--serif);   /* most of the width, with Blobby's dome rising behind it */
   text-transform: uppercase;
   text-align: center;
   letter-spacing: -.01em;
@@ -935,3 +899,35 @@ body.menu-open { overflow: hidden; }
   box-shadow: 0 4px 14px rgba(60, 55, 90, .28);
   animation: orb-blink 3.2s infinite;
 }
+
+/* =========================================================
+   Blobby's journey down the home page (components/BlobbyJourney.tsx): one moonstone circle on a
+   fixed layer behind the content. --cx/--cy/--r place the circle, --lx/--ly/--ls its light,
+   --m0/--m1 a soft fade at its top (in Work), --cut clips it at the picture strip
+   ========================================================= */
+.journey {
+  --cx: 50vw; --cy: 50vh; --r: 0px; --lx: 50vw; --ly: 50vh; --ls: 100px; --m0: -200vh; --m1: -199vh; --cut: 0px; --alpha: 1;
+  --c1: #F4F3F8; --c2: #D7D5E0; --c3: #ABA8BA;
+  position: fixed; inset: 0; z-index: -1; pointer-events: none; opacity: 0;
+  background: radial-gradient(circle var(--ls) at var(--lx) var(--ly), var(--c1) 0%, var(--c2) 34%, var(--c3) 100%);
+  -webkit-mask-image: radial-gradient(circle var(--r) at var(--cx) var(--cy), #000 calc(var(--r) - 1px), transparent var(--r)),
+                      linear-gradient(to bottom, transparent var(--m0), #000 var(--m1));
+  -webkit-mask-composite: source-in;
+          mask-image: radial-gradient(circle var(--r) at var(--cx) var(--cy), #000 calc(var(--r) - 1px), transparent var(--r)),
+                      linear-gradient(to bottom, transparent var(--m0), #000 var(--m1));
+          mask-composite: intersect;
+  clip-path: inset(0 0 var(--cut) 0);
+  filter: opacity(var(--alpha));
+}
+.journey.is-night { --c1: #ABA8BA; --c2: #8E8BA0; --c3: #6E6B82; }
+.journey__eyes {
+  --ex: 50vw; --ey: 50vh; --ew: 12px;
+  position: absolute; left: var(--ex); top: var(--ey); translate: -50% -50%;
+  display: flex; gap: var(--ew);
+}
+.journey__eyes i {
+  display: block; width: var(--ew); height: calc(var(--ew) * 1.62); border-radius: 50%; background: #fff;
+  box-shadow: 0 1px 4px rgba(60, 55, 90, .28);
+  translate: var(--look, 0 0); animation: orb-blink 5.2s infinite;
+}
+@media (prefers-reduced-motion: reduce) { .journey { display: none; } }

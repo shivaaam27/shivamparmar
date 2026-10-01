@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { ArrowLeft, ArrowRight } from 'lucide-react';
 import { work } from '@/lib/content';
 import { visibleCategories, countCategory, hasPage } from '@/lib/work';
-import { gsap, ScrollTrigger, prefersReducedMotion } from '@/lib/motion';
+import { prefersReducedMotion } from '@/lib/motion';
 import Wheel, { type WheelItem } from './Wheel';
 import { track } from '@/lib/track';
 
@@ -136,53 +136,9 @@ export default function Work() {
     track('Work strip · arrow');
   };
 
-  // ---- Blobby hangs down behind the header as you scroll into Work, and sinks behind the strip
-  // as you leave (and the small one by
-  // "Read more about me" shrinks away, as if it's the same Blobby coming down the page)
-  const head = useRef<HTMLDivElement>(null);
-  const dome = useRef<HTMLDivElement>(null);
-  const domeEyes = useRef<HTMLSpanElement>(null);
-  useEffect(() => {
-    const el = dome.current; if (!el || !head.current) return;
-    if (prefersReducedMotion()) { el.style.setProperty('--g', '1'); return; }
-    const st = ScrollTrigger.create({
-      trigger: head.current, start: 'top 92%', end: 'top 30%', scrub: 0.8,
-      onUpdate: (self) => {
-        const g = gsap.parseEase('power2.out')(self.progress);
-        el.style.setProperty('--g', g.toFixed(3));
-        document.documentElement.style.setProperty('--blobby-away', Math.min(1, self.progress * 1.6).toFixed(3));
-      },
-    });
-    let raf = 0, tx = 0, ty = 0, x = 0, y = 0;
-    const onMove = (e: PointerEvent) => {
-      const eyes = domeEyes.current; if (!eyes) return;
-      const r = eyes.getBoundingClientRect();
-      const dx = e.clientX - (r.left + r.width / 2), dy = e.clientY - (r.top + r.height / 2), d = Math.hypot(dx, dy) || 1;
-      const k = Math.min(1, d / 300); tx = (dx / d) * k * 9; ty = (dy / d) * k * 6;
-    };
-    const loop = () => {
-      x += (tx - x) * 0.1; y += (ty - y) * 0.1;
-      domeEyes.current?.style.setProperty('--look', `${x.toFixed(2)}px ${y.toFixed(2)}px`);
-      raf = requestAnimationFrame(loop);
-    };
-    raf = requestAnimationFrame(loop);
-    window.addEventListener('pointermove', onMove, { passive: true });
-    // leaving: as the strip rises up the screen, Blobby sinks on and slips behind it
-    const out = ScrollTrigger.create({
-      trigger: reel.current, start: 'top 55%', end: 'top 2%', scrub: 0.8,
-      onUpdate: (self) => el.style.setProperty('--x', gsap.parseEase('power2.in')(self.progress).toFixed(3)),
-    });
-    return () => { st.kill(); out.kill(); cancelAnimationFrame(raf); window.removeEventListener('pointermove', onMove); document.documentElement.style.removeProperty('--blobby-away'); };
-  }, []);
-
   return (
     <section className="work section" id="work">
-      <div className="work__head" ref={head}>
-        {/* Blobby hanging down behind the header: the bottom of a great moonstone circle, its upper part
-            dissolving into the page above, its eyes near the lower edge on the right, watching the pointer */}
-        <div className="work__dome" ref={dome} aria-hidden="true">
-          <span className="work__dome-cap"><span className="work__dome-eyes" ref={domeEyes}><i /><i /></span></span>
-        </div>
+      <div className="work__head">
         <h2 className="display reveal">
           <Link className="work__title-link" href="/work" onClick={() => track('Open work page')}>{work.title}<span className="work__title-arrow" aria-hidden="true">↗</span></Link>
         </h2>

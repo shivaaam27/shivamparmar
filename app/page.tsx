@@ -5,6 +5,7 @@ import Work from '@/components/Work';
 import Contact from '@/components/Contact';
 import Footer from '@/components/Footer';
 import Effects from '@/components/Effects';
+import BlobbyJourney from '@/components/BlobbyJourney';
 
 export default function Home() {
   return (
@@ -18,6 +19,7 @@ export default function Home() {
       </main>
       <Footer />
       <Effects />
+      <BlobbyJourney />
     </>
   );
 }
