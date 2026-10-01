@@ -300,7 +300,7 @@ body.menu-open { overflow: hidden; }
 /* About page: version A's size, peeking from the bottom-left corner of the screen, tilted 45°
    so it looks up toward the index; no outer glow here */
 .avatar--side {
-  --d: min(36vh, 24vw, 23rem);
+  --d: min(42vh, 28vw, 27rem);
   position: fixed; inset: auto; z-index: 0;
   width: var(--d); height: var(--d);
   left: calc(var(--d) * -.26); bottom: calc(var(--d) * -.4);
