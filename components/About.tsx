@@ -1,6 +1,8 @@
 'use client';
 
 import { Fragment, useRef } from 'react';
+import { useRouter } from 'next/navigation';
+import { blobGrow } from '@/lib/blobTransit';
 import { about } from '@/lib/content';
 import { gsap, useGSAP, prefersReducedMotion, ScrollTrigger } from '@/lib/motion';
 import { track } from '@/lib/track';
@@ -17,6 +19,7 @@ const bare = (w: string) => w.toLowerCase().replace(/[^a-z0-9]/g, '');
  */
 export default function About() {
   const root = useRef<HTMLElement>(null);
+  const router = useRouter();
   const words = about.body.split(' ');
   // which phrase (if any) each word belongs to
   const phraseOf = words.map(() => -1);
@@ -208,9 +211,25 @@ export default function About() {
     const onDone = () => { refreshing = false; };
     ScrollTrigger.addEventListener('refreshInit', onInit);
     ScrollTrigger.addEventListener('refresh', onDone);
+    // pace: how fast the reader is moving through the intro (timeline seconds per real second)
+    let lastT = 0, lastNow = performance.now(), pace = 0;
+    const keepUp = (t: number) => {
+      const now = performance.now(), dt = (now - lastNow) / 1000;
+      if (dt > 0) pace = pace * 0.7 + (Math.max(0, t - lastT) / dt) * 0.3;
+      lastT = t; lastNow = now;
+      if (!seq.isActive()) return;
+      // still highlighting while the intro is ending: finish now, so nothing is left behind
+      if (tl.progress() > 0.985) { seq.timeScale(5); return; }
+      // otherwise go just fast enough to finish before the link arrives, never slower than normal
+      const pending = seq.duration() - seq.time();                          // seconds of moves still to play
+      const left = (tl.labels.linked - 0.6 - t) / Math.max(pace, 0.05);   // real seconds until the link
+      const need = pending / Math.max(left, 0.35);
+      seq.timeScale(Math.min(4, Math.max(seq.timeScale() > 1 ? 1.4 : 1, need)));
+    };
     tl.eventCallback('onUpdate', () => {
       if (refreshing) return;   // the page re-measuring itself isn't the reader moving
       const t = tl.time();
+      keepUp(t);
       let z = t < S2 ? -2 : -1;
       if (z === -1) marks.forEach((m, i) => { if (t >= m) z = i; });
       // going back only counts once clearly past the mark, so tiny wobbles in the scroll don't flip it
@@ -231,7 +250,7 @@ export default function About() {
       zone = z;
     });
     // ---- stage 4: by "Read more about me" it reacts to the link (only when it's actually there)
-    const linkEl = link[0];
+    const linkEl = link[0] as HTMLElement;
     const bodyEl = orb.querySelector<HTMLElement>('.about__orb-body');
     let hopLoop: gsap.core.Timeline | null = null;
     const atLink = () => zone === marks.length - 1 && !seq.isActive();
@@ -250,8 +269,17 @@ export default function About() {
       gsap.to(bodyEl, { x: 0, y: 0, scaleX: 1, scaleY: 1, duration: 0.35, ease: 'power2.out' });
       gsap.to(face, { xPercent: 16, yPercent: 0, duration: 0.3 });
     };
-    // on the way out it leans toward the arrow, as if leading the way
-    const go = () => { if (atLink()) { hopLoop?.kill(); hopLoop = null; gsap.to(bodyEl, { x: () => size() * 0.6, y: 0, scaleX: 1.2, scaleY: 0.85, duration: 0.25, ease: 'power2.out' }); } };
+    // click: Blobby swells to fill the screen, face and all, and the About page opens underneath
+    // (it lands in its corner there: see HeroAvatar). Without Blobby by the link, a plain page change.
+    const go = (e: MouseEvent) => {
+      if (e.metaKey || e.ctrlKey || e.shiftKey || e.button !== 0) return;   // new tab etc.: leave it
+      e.preventDefault();
+      hopLoop?.kill(); hopLoop = null;
+      if (!atLink()) { router.push(about.link.href); return; }
+      track('Open about · Blobby');
+      gsap.set(orb, { opacity: 0 });
+      blobGrow(bodyEl!, orb.classList.contains('is-asleep'), () => router.push(about.link.href));
+    };
     linkEl.addEventListener('mouseenter', enter);
     linkEl.addEventListener('focus', enter);
     linkEl.addEventListener('mouseleave', leave);

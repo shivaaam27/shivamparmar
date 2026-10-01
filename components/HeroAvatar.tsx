@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { hero } from '@/lib/content';
 import { prefersReducedMotion } from '@/lib/motion';
+import { blobLand } from '@/lib/blobTransit';
 
 /** Is it waking hours where Shivam is? (?avatar=awake / ?avatar=asleep overrides, for checking both looks.) */
 export function awakeNow() {
@@ -62,6 +63,19 @@ export default function HeroAvatar({ side = false }: { side?: boolean }) {
     window.addEventListener('resize', onScroll);
     return () => { cancelAnimationFrame(raf); window.removeEventListener('scroll', onScroll); window.removeEventListener('resize', onScroll); };
   }, [side]);
+
+  // arriving from the home page's "Read more about me": Blobby fills the screen; shrink it into this spot
+  useEffect(() => {
+    const el = root.current;
+    if (!el || !side || awake === null) return;
+    const orb = el.querySelector<HTMLElement>('.avatar__orb'), face = el.querySelector<HTMLElement>('.avatar__face');
+    if (!orb || !face || !document.querySelector('.blob-transit')) return;
+    el.style.visibility = 'hidden';
+    const id = requestAnimationFrame(() => {
+      if (!blobLand(orb, face, 45, () => { el.style.visibility = ''; })) el.style.visibility = '';
+    });
+    return () => cancelAnimationFrame(id);
+  }, [side, awake]);
 
   // beside the About index it's fixed in the corner: step aside when the page's end arrives
   useEffect(() => {

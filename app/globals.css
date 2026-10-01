@@ -942,3 +942,16 @@ body.menu-open { overflow: hidden; }
   *, *::before, *::after { transition-duration: .01ms !important; animation-duration: .01ms !important; }
 }
 
+
+/* Blobby's page transition layer (lib/blobTransit.ts): a full-screen moonstone revealed through a growing circle */
+.blob-transit {
+  position: fixed; inset: 0; z-index: 200; pointer-events: none;
+  background: radial-gradient(circle at 34% 16%, #F4F3F8 0%, #D7D5E0 38%, #ABA8BA 100%);
+}
+.blob-transit.is-night { background: radial-gradient(circle at 34% 16%, #ABA8BA 0%, #8E8BA0 38%, #6E6B82 100%); }
+.blob-transit__face { position: absolute; left: 0; top: 0; display: flex; gap: 40px; translate: -50% -50%; }
+.blob-transit__face i {
+  display: block; width: 40px; height: 64px; border-radius: 50%; background: #fff;
+  box-shadow: 0 4px 14px rgba(60, 55, 90, .28);
+  animation: orb-blink 3.2s infinite;
+}
