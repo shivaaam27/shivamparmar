@@ -319,6 +319,7 @@ body.menu-open { overflow: hidden; }
 .hero__stage {
   --cell: clamp(2.5rem, min(6.8vw, 8.5vh), 5.25rem);
   position: relative; z-index: 1;
+  filter: opacity(var(--hero-vis, 1));   /* the mark leaves with the avatar as you scroll away */
 }
 
 .jumble {
