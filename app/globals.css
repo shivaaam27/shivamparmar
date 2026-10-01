@@ -162,6 +162,14 @@ body.menu-open { overflow: hidden; }
   padding: 6rem var(--gutter) 5rem;
   overflow: hidden;
 }
+/* home: the intro screen stays put behind the page; the about headline rises over it in the same
+   place as the light sets (see HeroAvatar + About), so the scroll reads as one scene, not two pages */
+.hero:has(.avatar) {
+  position: sticky; top: 0; z-index: -1;
+  height: 100vh; height: 100svh;
+  margin-bottom: -100vh; margin-bottom: -100svh;
+  pointer-events: none;
+}
 
 /* optional photo slot — add an <img> and the hero goes light-on-dark */
 .hero__media { position: absolute; inset: 0; z-index: 0; }
@@ -438,6 +446,8 @@ body.menu-open { overflow: hidden; }
 .work.section { padding-block: clamp(3.5rem, 7vw, 7rem); }
 .contact.section { padding-top: clamp(3.5rem, 7vw, 7rem); }
 .about__line { display: block; }
+/* hidden until the intro timeline brings them in (no flash over the hero before scripts run) */
+.js .about__line, .js .about__text .lead, .js .about__sign { opacity: 0; }
 .about__text {
   max-width: 40rem; margin: clamp(2.5rem, 5vw, 4.5rem) auto 0;
   display: grid; gap: clamp(1.5rem, 3vw, 2.75rem);

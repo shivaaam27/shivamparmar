@@ -22,15 +22,21 @@ export default function About() {
     const link = q('.about__sign');
 
     if (prefersReducedMotion()) {
-      gsap.set([body, bodyWords], { opacity: 1 });
+      gsap.set([first, ...rest, body, bodyWords, link], { opacity: 1 });
       return;
     }
 
-    // first line rises in as the section scrolls into view
-    gsap.fromTo(first, { opacity: 0, y: 60 }, {
-      opacity: 1, y: 0, ease: 'none',
-      scrollTrigger: { trigger: root.current, start: 'top 85%', end: 'top 20%', scrub: true },
-    });
+    // on the home page the intro screen stays put underneath (sticky hero): this section starts
+    // over it, so its timeline begins at the very top and the first line rises as the light sets
+    const overHero = !!document.querySelector('.hero:has(.avatar)');
+
+    if (!overHero) {
+      // first line rises in as the section scrolls into view
+      gsap.fromTo(first, { opacity: 0, y: 60 }, {
+        opacity: 1, y: 0, ease: 'none',
+        scrollTrigger: { trigger: root.current, start: 'top 85%', end: 'top 20%', scrub: true },
+      });
+    }
 
     let readSent = false;
     // then the section holds while the rest plays out with the scroll
@@ -39,7 +45,7 @@ export default function About() {
       scrollTrigger: {
         trigger: root.current,
         start: () => (tall() ? 'bottom bottom' : 'top top'),
-        end: () => `+=${window.innerHeight * 2.2}`,
+        end: () => `+=${window.innerHeight * (overHero ? 2.6 : 2.2)}`,
         pin: true,
         scrub: 0.6,
         invalidateOnRefresh: true,
@@ -47,6 +53,11 @@ export default function About() {
         onLeave: () => { if (!readSent) { readSent = true; track('Read about to the end'); } },
       },
     });
+    if (overHero) {
+      // a beat for the light to start setting, then "Hi, I'm Shivam" rises where the name was
+      tl.to({}, { duration: 0.5 })
+        .fromTo(first, { opacity: 0, y: 60 }, { opacity: 1, y: 0, duration: 0.9, ease: 'power2.out' });
+    }
     tl.fromTo(rest, { opacity: 0, y: 60 }, { opacity: 1, y: 0, duration: 1, stagger: 0.35, ease: 'power2.out' })
       // the description arrives in full, in grey, as the headline finishes…
       .fromTo(body, { opacity: 0, y: 24 }, { opacity: 1, y: 0, duration: 0.7, ease: 'power2.out' }, '-=0.5')

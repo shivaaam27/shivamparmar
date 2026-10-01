@@ -44,7 +44,15 @@ export default function HeroAvatar() {
       el.style.setProperty('--vis', String(1 - p));
       el.style.setProperty('--sink', `${p * h * 0.12}px`);
       // the words along the bottom of the hero leave with it
-      el.closest<HTMLElement>('.hero')?.style.setProperty('--hero-vis', String(Math.max(0, 1 - p * 1.6)));
+      el.closest<HTMLElement>('.hero')?.style.setProperty('--hero-vis', String(Math.max(0, 1 - p * 2.4)));
+      // fully set: stop drawing the intro (it stays behind the page now); wake the eyes when back
+      const hero = el.closest<HTMLElement>('.hero');
+      const gone = p >= 1;
+      if (hero) hero.style.visibility = gone ? 'hidden' : '';
+      if (gone !== (el.dataset.gone === '1')) {
+        el.dataset.gone = gone ? '1' : '';
+        if (!gone) window.dispatchEvent(new Event('avatar:back'));
+      }
     };
     const onScroll = () => { if (!raf) raf = requestAnimationFrame(update); };
     update();
@@ -80,8 +88,9 @@ export default function HeroAvatar() {
       face.style.transform = `translate(${x * D * 0.05}px, ${y * D * 0.04}px)`;
       orb.style.setProperty('--lean-x', `${x * D * 0.008}px`);
       orb.style.setProperty('--lean-y', `${y * D * 0.008}px`);
-      if (visible) raf = requestAnimationFrame(frame);
+      if (visible && !el.dataset.gone) raf = requestAnimationFrame(frame); else raf = 0;
     };
+    const back = () => { if (!raf && visible) raf = requestAnimationFrame(frame); };
 
     // blink: a quick close, sometimes twice
     let blinkT: ReturnType<typeof setTimeout>;
@@ -101,10 +110,12 @@ export default function HeroAvatar() {
     });
     io.observe(el);
     window.addEventListener('pointermove', onPointer, { passive: true });
+    window.addEventListener('avatar:back', back);
     document.documentElement.addEventListener('pointerleave', onLeave);
     return () => {
       cancelAnimationFrame(raf); clearTimeout(blinkT); io.disconnect();
       window.removeEventListener('pointermove', onPointer);
+      window.removeEventListener('avatar:back', back);
       document.documentElement.removeEventListener('pointerleave', onLeave);
     };
   }, [awake]);
