@@ -100,6 +100,37 @@ export const categories: Category[] = [
     ],
   },
   {
+    slug: 'tools',
+    name: 'Tools',
+    subcategories: [
+      {
+        slug: 'fabra-labs',
+        name: 'Fabra Labs',
+        projects: [
+          {
+            slug: 'fabra-labs',
+            title: 'Fabra Labs',
+            tone: 'sage',
+            cover: '/images/fabra-labs/home.jpg',
+            summary: 'A Windows app that puts your own iPhone and iPad apps on your devices, no Mac needed. It installs in a few clicks, sets up everything the PC needs by itself, finds the apps already on the computer, and renews them every week with one button. It also has a guide built in, and updates itself.',
+            images: [
+              { src: '/images/fabra-labs/splash.jpg', alt: 'The Fabra Labs logo, a six-tile F with one sage tile, and the words Fabra Labs, X Tools', caption: 'Opening', screen: true },
+              { src: '/images/fabra-labs/installer-welcome.jpg', alt: 'The Fabra Labs installer: Install Fabra Labs, where it installs, and an Install button', caption: 'Installer', screen: true },
+              { src: '/images/fabra-labs/installer-working.jpg', alt: 'The Fabra Labs installer copying files, with a progress bar', caption: 'Installing', screen: true },
+              { src: '/images/fabra-labs/installer-finished.jpg', alt: 'The Fabra Labs installer finished: Fabra Labs is ready, with an Open Fabra Labs button', caption: 'Ready', screen: true },
+              { src: '/images/fabra-labs/setup.jpg', alt: 'Set up this PC: Linux for Windows ready, the Fabra Labs engine installing, Apple iPhone drivers ready', caption: 'Setting up the PC', screen: true },
+              { src: '/images/fabra-labs/connected.jpg', alt: 'An iPhone outline with the Fabra Labs mark, the phone’s name and Connected', caption: 'iPhone connected', screen: true },
+              { src: '/images/fabra-labs/home.jpg', alt: 'Your apps: two installed apps with days left and Renew buttons, and two .ipa files found on the PC', caption: 'Your apps', screen: true },
+              { src: '/images/fabra-labs/install.jpg', alt: 'An app installing, signing with Apple, 58 percent', caption: 'Installing an app', screen: true },
+              { src: '/images/fabra-labs/done.jpg', alt: 'App installed, with the two one-time iPhone settings: Developer Mode and trusting the Apple ID', caption: 'Installed', screen: true },
+              { src: '/images/fabra-labs/guide.jpg', alt: 'The built-in guide, its sections from Before you start to Limits of a free Apple ID', caption: 'Guide', screen: true },
+            ],
+          },
+        ],
+      },
+    ],
+  },
+  {
     slug: 'websites',
     name: 'Websites',
     subcategories: [
