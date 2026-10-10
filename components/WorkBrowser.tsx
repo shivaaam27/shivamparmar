@@ -152,7 +152,8 @@ export default function WorkBrowser({ cats, initial }: { cats: Cat[]; initial: S
       )}
 
       {shots.length ? (
-        <div className="wb__grid">
+        // every shot a landscape screen (the websites): wide tiles, three across
+        <div className={`wb__grid${shots.every((p) => p.screen && p.w > p.h) ? ' wb__grid--wide' : ''}`}>
           {shots.map((p, i) => (
             <figure key={p.src} className={`wb__shot${p.video ? ' wb__shot--video' : ''}${p.screen ? ' wb__shot--screen' : ''}`} style={p.screen ? { '--ar': (p.w / p.h).toFixed(4) } as React.CSSProperties : undefined}>
               <button type="button" onClick={() => { setViewing(i); track(`View ${p.video ? 'video' : 'photo'} · ${p.project}`); }}

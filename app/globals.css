@@ -718,6 +718,15 @@ body.menu-open .site-header--over-work .wordmark { opacity: 1 !important; pointe
 .wb__shot--screen img { object-fit: contain; }
 .wb__shot--screen button:hover img { transform: none; }
 .wb__shot--screen button:hover .wb__media { transform: scale(1.03); }
+/* all landscape screens (the websites): three wide tiles across, each recording filling its tile, a touch zoomed */
+.wb__grid--wide { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: clamp(.75rem, 1.4vw, 1.25rem); }
+.wb__grid--wide .wb__shot--screen button { aspect-ratio: 16 / 10; display: block; container-type: normal; }
+.wb__grid--wide .wb__shot--screen .wb__media { width: 100%; height: 100%; aspect-ratio: auto; border-radius: 0; box-shadow: none; }
+.wb__grid--wide .wb__shot--screen img, .wb__grid--wide .wb__shot--screen video { object-fit: cover; transform: scale(1.04); }
+.wb__grid--wide .wb__shot--screen button:hover .wb__media { transform: none; }
+.wb__grid--wide .wb__shot--screen button:hover img { transform: scale(1.08); }
+@media (max-width: 1000px) { .wb__grid--wide { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 720px) { .wb__grid--wide { grid-template-columns: minmax(0, 1fr); } }
 /* systems and websites: the project's name under the tile, never wider than it */
 .wb__shot-link {
   display: flex; align-items: baseline; justify-content: space-between; gap: .5rem; max-width: 100%;
