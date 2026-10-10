@@ -114,8 +114,14 @@ export default function WorkBrowser({ cats, initial }: { cats: Cat[]; initial: S
       stacks.set(p.slug, fresh);
       out.push({ kind: 'stack', ps: fresh });
     });
-    // a "stack" of one is just a tile
-    return out.map((it) => (it.kind === 'stack' && it.ps.length === 1 ? { kind: 'shot' as const, p: it.ps[0], i: shots.indexOf(it.ps[0]) } : it));
+    // A stack leads with landscape screens (the system itself), then other landscape
+    // pictures, so its cards share one shape; a "stack" of one is just a tile.
+    const rank = (p: Shot) => (p.w > p.h ? (p.screen ? 0 : 1) : 2);
+    return out.map((it) => {
+      if (it.kind !== 'stack') return it;
+      if (it.ps.length === 1) return { kind: 'shot' as const, p: it.ps[0], i: shots.indexOf(it.ps[0]) };
+      return { kind: 'stack' as const, ps: [...it.ps].sort((a, b) => rank(a) - rank(b)) };
+    });
   }, [shots, col]);
   // a category with videos gets a third wheel: all, photos, videos
   const hasVideo = Boolean(cat?.collections.some((x) => x.shots.some((p) => p.video)));
