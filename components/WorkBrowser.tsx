@@ -100,6 +100,23 @@ export default function WorkBrowser({ cats, initial }: { cats: Cat[]; initial: S
     return cs.flatMap((c) => c.collections.filter((x) => !col || x === col).flatMap((x) => x.shots));
   }, [cats, cat, col]);
   const shots = useMemo(() => (sel.t ? inCol.filter(ofKind(sel.t)) : inCol), [inCol, sel.t]);
+  // Systems, tools, websites: when the view mixes projects, each project's screens
+  // become ONE stacked tile (its first screen on top) that opens the project page,
+  // so a project with many screens doesn't fill the page. One project chosen: every screen.
+  const items = useMemo(() => {
+    const out: ({ kind: 'shot'; p: Shot; i: number } | { kind: 'stack'; ps: Shot[] })[] = [];
+    const stacks = new Map<string, Shot[]>();
+    shots.forEach((p, i) => {
+      if (col || !p.linked) return void out.push({ kind: 'shot', p, i });
+      const ps = stacks.get(p.slug);
+      if (ps) return void ps.push(p);
+      const fresh = [p];
+      stacks.set(p.slug, fresh);
+      out.push({ kind: 'stack', ps: fresh });
+    });
+    // a "stack" of one is just a tile
+    return out.map((it) => (it.kind === 'stack' && it.ps.length === 1 ? { kind: 'shot' as const, p: it.ps[0], i: shots.indexOf(it.ps[0]) } : it));
+  }, [shots, col]);
   // a category with videos gets a third wheel: all, photos, videos
   const hasVideo = Boolean(cat?.collections.some((x) => x.shots.some((p) => p.video)));
 
@@ -154,7 +171,24 @@ export default function WorkBrowser({ cats, initial }: { cats: Cat[]; initial: S
       {shots.length ? (
         // every shot a landscape screen (the websites): wide tiles, three across
         <div className={`wb__grid${shots.every((p) => p.screen && p.w > p.h) ? ' wb__grid--wide' : ''}`}>
-          {shots.map((p, i) => (
+          {items.map((it) => it.kind === 'stack' ? (
+            <figure key={`stack-${it.ps[0].slug}`} className={`wb__shot wb__shot--screen wb__shot--stack${it.ps[0].w < it.ps[0].h ? ' is-tall' : ''}`}
+              style={{ '--ar': (it.ps[0].w / it.ps[0].h).toFixed(4) } as React.CSSProperties}>
+              <Link className="wb__stack" href={`/work/${it.ps[0].slug}`} onClick={() => track(`Open project · ${it.ps[0].project}`)}
+                aria-label={`${it.ps[0].project}: ${it.ps.length} screens. Open the project`}>
+                {/* the next two screens peek out behind the first, like a stack of cards */}
+                {it.ps.slice(1, 3).reverse().map((p, k, back) => (
+                  <span key={p.src} className={`wb__stack-card wb__stack-card--${back.length - k}`} aria-hidden="true">
+                    <img src={p.src} alt="" width={p.w} height={p.h} loading="lazy" />
+                  </span>
+                ))}
+                <span className="wb__media"><img src={it.ps[0].src} alt={it.ps[0].alt} width={it.ps[0].w} height={it.ps[0].h} loading="eager" /></span>
+              </Link>
+              <Link className="wb__shot-link mono" href={`/work/${it.ps[0].slug}`} onClick={() => track(`Open project · ${it.ps[0].project}`)}>
+                <span>{it.ps[0].project}</span><span className="wb__stack-count">{it.ps.length} screens <span aria-hidden="true">↗</span></span>
+              </Link>
+            </figure>
+          ) : (({ p, i }) => (
             <figure key={p.src} className={`wb__shot${p.video ? ' wb__shot--video' : ''}${p.screen ? ' wb__shot--screen' : ''}`} style={p.screen ? { '--ar': (p.w / p.h).toFixed(4) } as React.CSSProperties : undefined}>
               <button type="button" onClick={() => { setViewing(i); track(`View ${p.video ? 'video' : 'photo'} · ${p.project}`); }}
                 aria-label={`View ${p.project}, ${p.video ? 'video' : 'photo'} ${p.n}: ${p.alt}`}
@@ -174,7 +208,7 @@ export default function WorkBrowser({ cats, initial }: { cats: Cat[]; initial: S
                 </Link>
               )}
             </figure>
-          ))}
+          ))(it))}
         </div>
       ) : (
         <p className="wb__empty lead">Coming soon.</p>

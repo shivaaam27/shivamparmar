@@ -727,6 +727,37 @@ body.menu-open .site-header--over-work .wordmark { opacity: 1 !important; pointe
 .wb__grid--wide .wb__shot--screen button:hover img { transform: scale(1.08); }
 @media (max-width: 1000px) { .wb__grid--wide { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
 @media (max-width: 720px) { .wb__grid--wide { grid-template-columns: minmax(0, 1fr); } }
+/* a project's screens as one stack: the first on top, the next two peeking out
+   behind it (to the right for landscape screens, above for tall ones); on hover
+   they fan out a little further, and a click opens the project page */
+.wb__stack {
+  display: grid; place-items: center; width: 100%; aspect-ratio: 4 / 5; container-type: size;
+  background: var(--paper-deep); overflow: hidden; cursor: pointer;
+}
+.wb__stack:focus-visible { outline: 1px solid var(--ink); outline-offset: 3px; }
+.wb__shot--stack .wb__media, .wb__stack-card {
+  grid-area: 1 / 1; width: min(76cqw, calc(76cqh * var(--ar))); aspect-ratio: var(--ar); height: auto;
+  overflow: hidden; border-radius: 6px; box-shadow: 0 1px 2px rgba(21, 20, 18, .08), 0 10px 28px rgba(21, 20, 18, .12);
+  transition: transform .7s var(--ease), filter .7s var(--ease);
+}
+.wb__stack-card img { width: 100%; height: 100%; object-fit: cover; }
+.wb__shot--stack .wb__media { transform: translateX(-8cqw); }
+.wb__stack-card--1 { transform: translateX(2cqw) scale(.9); filter: brightness(.9); }
+.wb__stack-card--2 { transform: translateX(11cqw) scale(.8); filter: brightness(.8); }
+.wb__stack:hover .wb__media { transform: translateX(-10cqw) scale(1.02); }
+.wb__stack:hover .wb__stack-card--1 { transform: translateX(5cqw) scale(.91) rotate(1.5deg); }
+.wb__stack:hover .wb__stack-card--2 { transform: translateX(15cqw) scale(.81) rotate(3deg); }
+/* tall screens (phones) stack upwards instead */
+.wb__shot--stack.is-tall .wb__media { width: min(64cqw, calc(64cqh * var(--ar))); transform: translateY(5cqh); }
+.wb__shot--stack.is-tall .wb__stack-card { width: min(64cqw, calc(64cqh * var(--ar))); }
+.wb__shot--stack.is-tall .wb__stack-card--1 { transform: translateY(-2cqh) scale(.9); }
+.wb__shot--stack.is-tall .wb__stack-card--2 { transform: translateY(-9cqh) scale(.8); }
+.wb__shot--stack.is-tall .wb__stack:hover .wb__media { transform: translateY(6cqh) scale(1.02); }
+.wb__shot--stack.is-tall .wb__stack:hover .wb__stack-card--1 { transform: translateY(-3cqh) scale(.93) rotate(-1.5deg); }
+.wb__shot--stack.is-tall .wb__stack:hover .wb__stack-card--2 { transform: translateY(-10cqh) scale(.85) rotate(1.5deg); }
+.wb__shot--stack .wb__media img { transform: none !important; }
+.wb__stack-count { flex: none; color: var(--muted, inherit); }
+@media (prefers-reduced-motion: reduce) { .wb__shot--stack .wb__media, .wb__stack-card { transition: none; } }
 /* systems and websites: the project's name under the tile, never wider than it */
 .wb__shot-link {
   display: flex; align-items: baseline; justify-content: space-between; gap: .5rem; max-width: 100%;
