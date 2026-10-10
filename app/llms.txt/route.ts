@@ -18,15 +18,16 @@ export function GET() {
 
 > ${site.description}
 
-${aboutPage.intro.join(' ')}
+## Founder
+${site.founder.name}: ${aboutPage.intro.join(' ')}
 
 ## Quick facts
 ${facts}
 
-## What I do
+## Founder’s disciplines
 ${aboutPage.disciplines.map((d) => `- ${d.title}: ${d.text}`).join('\n')}
 
-## Journey
+## Founder’s journey
 ${journey}
 
 ## Work

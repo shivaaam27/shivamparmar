@@ -4,7 +4,7 @@ import { gsap, ScrollTrigger, useGSAP, scramble } from '@/lib/motion';
 
 /**
  * Page-wide scroll motion:
- *  - `[data-scramble]` text (the footer name) decodes from SHIVAM letters
+ *  - `[data-scramble]` text (the footer name) decodes from brand letters
  *  - the header name hides while the work index passes under it
  * Section content doesn't fade in on scroll any more: it simply shows.
  */

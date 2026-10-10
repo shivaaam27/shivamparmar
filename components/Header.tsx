@@ -38,6 +38,9 @@ export default function Header() {
   }, []);
 
   useEffect(() => {
+    // page scrollbar width: while the menu is open the scrollbar goes away, so the page (and the header)
+    // are padded by the same amount and nothing jumps sideways
+    if (open) document.documentElement.style.setProperty('--sbw', `${window.innerWidth - document.documentElement.clientWidth}px`);
     document.body.classList.toggle('menu-open', open);
     if (open) lenis?.stop(); else lenis?.start();
     if (open) firstLink.current?.focus({ preventScroll: true });
@@ -54,10 +57,9 @@ export default function Header() {
       <header className="site-header">
         <a className="wordmark" href="/#top" aria-label="Fabra Labs — home">
           <svg className="wordmark__mark" viewBox="0 0 64 64" aria-hidden="true">
-            <rect x="0" y="0" width="18" height="18" rx="4.5" /><rect x="23" y="0" width="18" height="18" rx="4.5" />
-            <rect className="is-lit" x="46" y="0" width="18" height="18" rx="4.5" />
-            <rect x="0" y="23" width="18" height="18" rx="4.5" /><rect x="23" y="23" width="18" height="18" rx="4.5" />
-            <rect x="0" y="46" width="18" height="18" rx="4.5" />
+            {[[0, 0], [23, 0], [46, 0], [0, 23], [23, 23], [0, 46]].map(([x, y], i) => (
+              <rect key={i} className={i === 2 ? 'is-lit' : undefined} style={{ '--i': i } as React.CSSProperties} x={x} y={y} width="18" height="18" rx="4.5" />
+            ))}
           </svg>
           <span className="wordmark__text">fabra<span>labs</span></span>
         </a>
@@ -89,7 +91,7 @@ export default function Header() {
             </li>
           ))}
         </ol>
-        <p className="menu__foot mono">Lorem ipsum — dolor sit amet</p>
+        <p className="menu__foot mono">Dar es Salaam · {site.email}</p>
       </nav>
     </>
   );

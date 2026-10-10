@@ -5,16 +5,18 @@
  */
 
 export const site = {
-  name: 'Shivam',
-  fullName: 'Shivam Parmar',
-  description: 'Shivam Parmar is a pharmacist, photographer and systems builder in Dar es Salaam, Tanzania: custom business systems, AI workflows, photography and design.',
+  name: 'Fabra Labs',
+  fullName: 'Fabra Labs',
+  tagline: 'Digital solutions company',
+  description: 'Fabra Labs is a digital solutions company in Dar es Salaam, Tanzania: websites and apps, custom software, automation and AI workflows, branding, content and social media, and digital strategy.',
+  /** The person behind the company. */
+  founder: { name: 'Shivam Parmar', jobTitle: 'Founder of Fabra Labs; pharmacist, photographer and systems builder' },
   jobTitle: 'Pharmacist, photographer and systems builder',
   /** Profiles that are also you: they tell search engines these all belong to one person. */
   sameAs: ['https://www.linkedin.com/in/shivaaam', 'https://www.instagram.com/ishivamparmar', 'https://orcid.org/0009-0007-7272-2394'],
-  email: 'ishivamparmar@gmail.com',
-  /** Both numbers take calls and WhatsApp. `tel` / `wa` are the same number in international form, without spaces. */
+  email: 'info@fabralabs.co.tz',
+  /** Takes calls and WhatsApp. `tel` / `wa` are the same number in international form, without spaces. */
   phones: [
-    { label: '+255 686 450 999', tel: '+255686450999', wa: '255686450999' },
     { label: '+255 795 334 455', tel: '+255795334455', wa: '255795334455' },
   ],
   location: 'Dar es Salaam, Tanzania',
@@ -30,7 +32,7 @@ export const nav = [
 export const hero = {
   /** Letters that jumble; the centre row resolves into this word. */
   word: 'SHIVAM',
-  footer: ['Pharmacist', 'Photographer', 'Claude Code & AI expert', 'Building systems'],
+  footer: ['Websites & apps', 'Custom software', 'AI workflows', 'Branding & content'],
   /** Put a photo in /public and set e.g. '/hero.jpg'. Set to null for the Three.js light instead. */
   image: null as string | null,
   /** Optional portrait crop used on phones (screens up to 720px wide). */
@@ -53,8 +55,10 @@ export type Tone =
 
 export const about = {
   tag: 'About',
-  headline: ['Hi, I’m Shivam,', 'pharmacist, photographer', 'and systems builder.'],
-  body: 'I help brands design and build custom systems that work beautifully: functional at their core and considered in every detail. Alongside photography and design, from posters and websites to social posts and video, I build AI workflows that save hours of work. I pair technical precision with emotional depth, so what I make resonates with customers, teams and communities, and builds lasting growth.',
+  headline: ['A digital solutions', 'company in Tanzania.'],
+  /** Part of the headline whose letters jumble, then land (like the hero). */
+  scramble: 'digital solutions',
+  body: 'We help businesses design and build digital products that work beautifully: websites and apps, custom software and AI workflows that save hours of work. Alongside branding, content and social media, we shape a clear digital strategy, pairing technical precision with a considered eye so that what we make resonates with customers, teams and communities, and builds lasting growth.',
   link: { label: 'Read more about me', href: '/about' },
 };
 
@@ -71,10 +75,11 @@ export const aboutPage = {
     { id: 'say-hello', label: 'Say hello' },
     { id: 'index', label: 'Index' },
   ],
-  eyebrow: 'Pharmacist · Photographer · Systems builder',
+  eyebrow: 'Founder of Fabra Labs · Pharmacist · Photographer',
   /** Plain facts, written the way people search and AI assistants quote. Also used in /llms.txt. */
   facts: [
     { label: 'Name', value: 'Shivam Parmar' },
+    { label: 'Founder of', value: 'Fabra Labs, a digital solutions company in Dar es Salaam' },
     { label: 'Based in', value: 'Dar es Salaam, Tanzania' },
     { label: 'Profession', value: 'Pharmacist, photographer and systems builder' },
     { label: 'Education', value: 'BPharm (GITAM, India), MSc Pharmacovigilance & Pharmacoepidemiology (MUHAS)' },
@@ -83,7 +88,7 @@ export const aboutPage = {
   ],
   headline: ['Hi, I’m Shivam.'],
   intro: [
-    'I help brands design and build custom systems that work beautifully: functional at their core and considered in every detail.',
+    'I’m the founder of Fabra Labs, a digital solutions company in Dar es Salaam. I help brands design and build custom systems that work beautifully: functional at their core and considered in every detail.',
     'I believe the most lasting work pairs technical precision with emotional depth. It creates systems that resonate with the people they serve, from customers to teams and communities, and builds strong connections and long-term growth in business and in life.',
   ],
   disciplinesTag: 'What I do',
@@ -147,7 +152,7 @@ export const aboutPage = {
   },
   ending: {
     greeting: 'Hallo, I’m Shivam.',
-    line: 'I build systems, take photographs and design, from Dar es Salaam.',
+    line: 'I founded Fabra Labs to build systems, websites and brands, from Dar es Salaam.',
     cta: 'Start a project',
   },
   closing: {
