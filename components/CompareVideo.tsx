@@ -9,8 +9,10 @@ import { ChevronLeft, ChevronRight, Pause, Play } from 'lucide-react';
  * anywhere on the video (or use the arrow keys on the handle) to move it. The second video
  * follows the first's clock, so they never drift apart.
  */
-export default function CompareVideo({ a, b, posterA, posterB, labelA, labelB, alt }: {
+export default function CompareVideo({ a, b, posterA, posterB, labelA, labelB, alt, active, className }: {
   a: string; b: string; posterA: string; posterB: string; labelA: string; labelB: string; alt: string;
+  /** in the carousel: play only while it's the slide in front (otherwise it plays while on screen) */
+  active?: boolean; className?: string;
 }) {
   const box = useRef<HTMLDivElement>(null);
   const va = useRef<HTMLVideoElement>(null);
@@ -30,13 +32,22 @@ export default function CompareVideo({ a, b, posterA, posterB, labelA, labelB, a
       if (A.paused !== B.paused) (A.paused ? B.pause() : B.play().catch(() => {}));
     };
     raf = requestAnimationFrame(follow);
+    if (active !== undefined) return () => cancelAnimationFrame(raf);
     const io = new IntersectionObserver(([e]) => {
       if (e.isIntersecting) A.play().then(() => setPlaying(true)).catch(() => {});
       else { A.pause(); setPlaying(false); }
     }, { threshold: 0.4 });
     io.observe(el);
     return () => { cancelAnimationFrame(raf); io.disconnect(); };
-  }, []);
+  }, [active]);
+
+  // in the carousel: the slide in front plays, the others wait
+  useEffect(() => {
+    const A = va.current;
+    if (!A || active === undefined) return;
+    if (active) A.play().then(() => setPlaying(true)).catch(() => {});
+    else { A.pause(); setPlaying(false); }
+  }, [active]);
 
   const moveTo = (clientX: number) => {
     const r = box.current!.getBoundingClientRect();
@@ -51,9 +62,9 @@ export default function CompareVideo({ a, b, posterA, posterB, labelA, labelB, a
   return (
     <div
       ref={box}
-      className="cv"
+      className={`cv${className ? ` ${className}` : ''}`}
       style={{ '--pos': `${pos}%` } as React.CSSProperties}
-      onPointerDown={(e) => { if ((e.target as HTMLElement).closest('.cv__play')) return; dragging.current = true; e.currentTarget.setPointerCapture(e.pointerId); moveTo(e.clientX); }}
+      onPointerDown={(e) => { if ((e.target as HTMLElement).closest('.cv__play')) return; dragging.current = true; try { e.currentTarget.setPointerCapture(e.pointerId); } catch { /* not a live pointer */ } moveTo(e.clientX); }}
       onPointerMove={(e) => { if (dragging.current) moveTo(e.clientX); }}
       onPointerUp={() => { dragging.current = false; }}
       onPointerCancel={() => { dragging.current = false; }}

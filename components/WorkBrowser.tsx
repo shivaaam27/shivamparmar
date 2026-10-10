@@ -10,7 +10,7 @@ import Wheel, { type WheelItem } from './Wheel';
 import PhotoCarousel from './ui/PhotoCarousel';
 
 /** A picture, or a video (then `src` is its poster). */
-export type Shot = { src: string; alt: string; w: number; h: number; project: string; slug: string; n: number; video?: string; screen?: boolean; linked?: boolean };
+export type Shot = { src: string; alt: string; w: number; h: number; project: string; slug: string; n: number; video?: string; screen?: boolean; linked?: boolean; compare?: { video: string; poster: string; label: string; otherLabel: string } };
 /** A collection (sub-category); `page` and `summary` come from its project. */
 export type Collection = { slug: string; name: string; shots: Shot[]; page?: string; summary?: string };
 export type Cat = { slug: string; name: string; collections: Collection[] };

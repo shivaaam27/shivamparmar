@@ -23,7 +23,7 @@ export function workData(): Cat[] {
         summary: main?.summary,
         shots: sub.projects.filter(hasPage).flatMap((project) => (project.images ?? []).map((img, i) => {
           const { w, h } = imageSize(img.src);
-          return { src: img.src, alt: img.alt, w, h, project: project.title, slug: project.slug, n: i + 1, ...(img.video ? { video: img.video } : {}), ...(img.screen ? { screen: true } : {}), ...(LINKED.has(c.slug) ? { linked: true } : {}) };
+          return { src: img.src, alt: img.alt, w, h, project: project.title, slug: project.slug, n: i + 1, ...(img.video ? { video: img.video } : {}), ...(img.screen ? { screen: true } : {}), ...(img.compare ? { compare: img.compare } : {}), ...(LINKED.has(c.slug) ? { linked: true } : {}) };
         })),
       };
     }),

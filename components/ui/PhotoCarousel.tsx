@@ -6,12 +6,13 @@ import { ChevronLeft, ChevronRight, X } from 'lucide-react';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import type { Swiper as SwiperType } from 'swiper';
 import { EffectCoverflow, Keyboard, Mousewheel, Pagination } from 'swiper/modules';
+import CompareVideo from '../CompareVideo';
 import 'swiper/css';
 import 'swiper/css/effect-coverflow';
 import 'swiper/css/pagination';
 
 /** A picture, or a video (then `src` is its poster). */
-export type CarouselShot = { src: string; alt: string; project: string; slug: string; video?: string; w?: number; h?: number; screen?: boolean };
+export type CarouselShot = { src: string; alt: string; project: string; slug: string; video?: string; w?: number; h?: number; screen?: boolean; compare?: { video: string; poster: string; label: string; otherLabel: string } };
 
 const pad = (n: number) => String(n).padStart(2, '0');
 
@@ -42,7 +43,7 @@ export default function PhotoCarousel({ shots, start, onClose }: { shots: Carous
   // only the video in front plays
   const root = useRef<HTMLDivElement>(null);
   useEffect(() => {
-    root.current?.querySelectorAll<HTMLVideoElement>('.pc__slide video').forEach((v) => {
+    root.current?.querySelectorAll<HTMLVideoElement>('.pc__slide video[data-i]').forEach((v) => {
       if (Number(v.dataset.i) === at) v.play().catch(() => {});
       else if (!v.paused) v.pause();
     });
@@ -83,7 +84,10 @@ export default function PhotoCarousel({ shots, start, onClose }: { shots: Carous
         >
           {shots.map((s, i) => (
             <SwiperSlide key={s.src} className={`pc__slide${s.screen ? ' pc__slide--screen' : ''}`} style={s.screen && s.w && s.h ? { '--ar': (s.w / s.h).toFixed(4) } as React.CSSProperties : undefined}>
-              {s.video
+              {/* day and night with the divider: dragging it doesn't swipe the carousel (swiper-no-swiping) */}
+              {s.compare && s.video
+                ? <CompareVideo a={s.video} b={s.compare.video} posterA={s.src} posterB={s.compare.poster} labelA={s.compare.label} labelB={s.compare.otherLabel} alt={s.alt} active={i === at} className="swiper-no-swiping" />
+                : s.video
                 ? <video src={s.video} poster={s.src} data-i={i} controls controlsList="nodownload noremoteplayback" disablePictureInPicture playsInline loop preload={Math.abs(i - start) < 2 ? 'metadata' : 'none'} aria-label={s.alt} />
                 : <img src={s.src} alt={s.alt} loading={Math.abs(i - start) < 4 ? 'eager' : 'lazy'} draggable={false} />}
             </SwiperSlide>
