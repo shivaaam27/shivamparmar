@@ -108,7 +108,7 @@ img { pointer-events: none; }
 .wordmark {
   display: inline-flex; align-items: center; gap: .42em;
   font: 600 clamp(1.25rem, 1.6vw, 1.5rem)/1 var(--serif);
-  letter-spacing: -.03em;
+  letter-spacing: .015em;
 }
 .wordmark__mark { width: 1.05em; height: 1.05em; flex: none; fill: currentColor; }
 /* The header blends with mix-blend-mode: difference, so a colour is drawn as |page - colour|.
@@ -125,7 +125,12 @@ body.menu-open .wordmark__mark { --hot: #638F71; }
   14%, 38%      { fill: var(--hot); }
 }
 @media (prefers-reduced-motion: reduce) { .wordmark__mark rect:not(.is-lit) { animation: none; } }
-.wordmark__text span { font-weight: 300; margin-left: .18em; }   /* as in the brand wordmark: "labs" is Sora Light, same colour */
+/* as in the brand wordmark and the hero lockup: capitals, FABRA in SemiBold, LABS in Light slate.
+   Under the difference blend, #817F7D draws as slate #7E8082 on the white page; over the menu it stays light. */
+.wordmark__text { text-transform: uppercase; letter-spacing: .015em; }
+.wordmark__text span { font-weight: 300; margin-left: .28em; color: #817F7D; }
+body.menu-open .wordmark__text span { color: #fff; }
+.site-header--on-image .wordmark__text span { color: #7E8082; }
 .menu-btn { width: 44px; height: 44px; display: grid; place-items: center; margin-right: -8px; }
 .menu-btn__lines { --gap: 5px; position: relative; width: 30px; height: calc((var(--n) - 1) * var(--gap) + 1.5px); }
 /* one line per section; the long line is the section on screen, and it slides
