@@ -1,7 +1,7 @@
 'use client';
 
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { flushSync } from 'react-dom';
+import { createPortal, flushSync } from 'react-dom';
 import { useLenis } from 'lenis/react';
 import Link from 'next/link';
 import { Play } from 'lucide-react';
@@ -10,7 +10,7 @@ import Wheel, { type WheelItem } from './Wheel';
 import PhotoCarousel from './ui/PhotoCarousel';
 
 /** A picture, or a video (then `src` is its poster). */
-export type Shot = { src: string; alt: string; w: number; h: number; project: string; slug: string; n: number; video?: string };
+export type Shot = { src: string; alt: string; w: number; h: number; project: string; slug: string; n: number; video?: string; screen?: boolean; linked?: boolean };
 /** A collection (sub-category); `page` and `summary` come from its project. */
 export type Collection = { slug: string; name: string; shots: Shot[]; page?: string; summary?: string };
 export type Cat = { slug: string; name: string; collections: Collection[] };
@@ -154,16 +154,24 @@ export default function WorkBrowser({ cats, initial }: { cats: Cat[]; initial: S
       {shots.length ? (
         <div className="wb__grid">
           {shots.map((p, i) => (
-            <figure key={p.src} className={`wb__shot${p.video ? ' wb__shot--video' : ''}`}>
+            <figure key={p.src} className={`wb__shot${p.video ? ' wb__shot--video' : ''}${p.screen ? ' wb__shot--screen' : ''}`} style={p.screen ? { '--ar': (p.w / p.h).toFixed(4) } as React.CSSProperties : undefined}>
               <button type="button" onClick={() => { setViewing(i); track(`View ${p.video ? 'video' : 'photo'} · ${p.project}`); }}
                 aria-label={`View ${p.project}, ${p.video ? 'video' : 'photo'} ${p.n}: ${p.alt}`}
                 onPointerEnter={p.video ? (e) => { if (e.pointerType === 'mouse') e.currentTarget.querySelector('video')?.play().catch(() => {}); } : undefined}
                 onPointerLeave={p.video ? (e) => { const v = e.currentTarget.querySelector('video'); if (v) { v.pause(); v.currentTime = 0; } } : undefined}>
-                <img src={p.src} alt={p.alt} width={p.w} height={p.h} loading={i < 10 ? 'eager' : 'lazy'} />
-                {/* a silent preview plays while the mouse is over it */}
-                {p.video && <video src={p.video} muted loop playsInline preload="none" aria-hidden="true" tabIndex={-1} />}
+                {/* a screen is shown whole, framed inside the tile; a photo fills it */}
+                <span className="wb__media">
+                  <img src={p.src} alt={p.alt} width={p.w} height={p.h} loading={i < 10 ? 'eager' : 'lazy'} />
+                  {/* a silent preview plays while the mouse is over it */}
+                  {p.video && <video src={p.video} muted loop playsInline preload="none" aria-hidden="true" tabIndex={-1} />}
+                </span>
                 {p.video && <span className="wb__play" aria-hidden="true"><Play size={12} fill="currentColor" strokeWidth={0} /></span>}
               </button>
+              {p.linked && (
+                <Link className="wb__shot-link mono" href={`/work/${p.slug}`} onClick={() => track(`Open project · ${p.project}`)}>
+                  <span>{p.project}</span><span aria-hidden="true">↗</span>
+                </Link>
+              )}
             </figure>
           ))}
         </div>
@@ -171,7 +179,8 @@ export default function WorkBrowser({ cats, initial }: { cats: Cat[]; initial: S
         <p className="wb__empty lead">Coming soon.</p>
       )}
 
-      {viewing !== null && <PhotoCarousel shots={shots} start={viewing} onClose={closeViewer} />}
+      {/* on <body>, above the site header (inside <main> it would sit under it: main's fade-in makes its own layer) */}
+      {viewing !== null && createPortal(<PhotoCarousel shots={shots} start={viewing} onClose={closeViewer} />, document.body)}
     </div>
   );
 }

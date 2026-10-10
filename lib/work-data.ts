@@ -3,6 +3,9 @@ import { categories, categoryHasWork, hasPage } from './work';
 import { imageSize } from './image-size';
 import type { Cat } from '@/components/WorkBrowser';
 
+/** Work that isn't pictures (systems, websites): each tile gets a link to its project page under it. */
+const LINKED = new Set(['systems', 'websites']);
+
 /**
  * Every category with its collections and pictures (with their real sizes), for the work page.
  * Collections without work are left out, unless they're `listed` (shown as "Soon").
@@ -20,7 +23,7 @@ export function workData(): Cat[] {
         summary: main?.summary,
         shots: sub.projects.filter(hasPage).flatMap((project) => (project.images ?? []).map((img, i) => {
           const { w, h } = imageSize(img.src);
-          return { src: img.src, alt: img.alt, w, h, project: project.title, slug: project.slug, n: i + 1, ...(img.video ? { video: img.video } : {}) };
+          return { src: img.src, alt: img.alt, w, h, project: project.title, slug: project.slug, n: i + 1, ...(img.video ? { video: img.video } : {}), ...(img.screen ? { screen: true } : {}), ...(LINKED.has(c.slug) ? { linked: true } : {}) };
         })),
       };
     }),

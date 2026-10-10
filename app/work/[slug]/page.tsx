@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
+import CompareVideo from '@/components/CompareVideo';
 import { notFound } from 'next/navigation';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
@@ -98,7 +99,7 @@ function ProjectPage({ slug }: { slug: string }) {
           </nav>
           <h1 className="headline headline--left reveal" data-delay="1">{project.title}</h1>
           {project.summary && <p className="lead project__summary reveal" data-delay="2">{project.summary}</p>}
-          {project.link && <a className="project__link mono reveal" data-delay="2" href={project.link.href} target="_blank" rel="noopener">{project.link.label}<span aria-hidden="true"> ↗</span></a>}
+          {project.link && <a className="project__link mono reveal" data-delay="2" href={project.link.href} title={project.link.title} target="_blank" rel="noopener">{project.link.label}<span aria-hidden="true"> ↗</span></a>}
           {details.length > 0 && (
             <dl className="project__details reveal" data-delay="3">
               {details.map((d) => (
@@ -111,7 +112,9 @@ function ProjectPage({ slug }: { slug: string }) {
         <section className="section project__gallery" aria-label="Images">
           {project.images?.map((img, i) => (
             <figure key={img.src} id={`photo-${i + 1}`} className="project__figure reveal">
-              {img.video
+              {img.compare && img.video
+                ? <CompareVideo a={img.video} b={img.compare.video} posterA={img.src} posterB={img.compare.poster} labelA={img.compare.label} labelB={img.compare.otherLabel} alt={img.alt} />
+                : img.video
                 ? <video src={img.video} poster={img.src} controls controlsList="nodownload noremoteplayback" disablePictureInPicture playsInline loop preload="none" aria-label={img.alt} />
                 : <img src={img.src} alt={img.alt} loading={i === 0 ? 'eager' : 'lazy'} />}
               <figcaption className="mono">
@@ -125,12 +128,12 @@ function ProjectPage({ slug }: { slug: string }) {
           <nav className="section project__pager" aria-label="More work">
             {prev && (
               <Link href={`/work/${prev.project.slug}`} className="project__pager-link">
-                <span className="mono">← Previous</span>{prev.project.title}
+                <span className="mono">← Previous · {prev.category.name}</span>{prev.project.title}
               </Link>
             )}
             {next && (
               <Link href={`/work/${next.project.slug}`} className="project__pager-link project__pager-link--next">
-                <span className="mono">Next →</span>{next.project.title}
+                <span className="mono">{next.category.name} · Next →</span>{next.project.title}
               </Link>
             )}
           </nav>

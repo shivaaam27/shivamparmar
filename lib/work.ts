@@ -11,7 +11,13 @@ import type { Tone } from './content';
  */
 
 /** A picture, or a video: then `src` is its poster (the still shown before it plays). */
-export type WorkImage = { src: string; alt: string; caption?: string; video?: string };
+export type WorkImage = {
+  src: string; alt: string; caption?: string; video?: string;
+  /** a screen (recording or screenshot): shown whole in the tiles and the viewer, never cropped */
+  screen?: boolean;
+  /** a second, frame-matched recording of the same video: the project page shows both with a slider between them */
+  compare?: { video: string; poster: string; label: string; otherLabel: string };
+};
 
 export type Project = {
   slug: string;
@@ -24,7 +30,7 @@ export type Project = {
   summary?: string;
   images?: WorkImage[];
   /** a live address, shown as a link under the summary */
-  link?: { label: string; href: string };
+  link?: { label: string; href: string; title?: string };
 };
 
 /** listed: show it on the work page as "Soon" even before it has work. */
@@ -52,9 +58,17 @@ const site = (slug: string, name: string, file: string, tone: Tone, summary: str
   slug, name,
   projects: [{
     slug, title: name, tone, cover: `${WEB}/${file}-poster.jpg`, summary,
-    link: { label, href: `https://oracleconsultancygroup.vercel.app${path}` },
-    images: [{ src: `${WEB}/${file}-poster.jpg`, video: `${WEB}/${file}.mp4`, alt: `${name} website: a walkthrough recording`, caption: 'Website walkthrough' }],
+    link: { label: 'Visit the website', href: `https://oracleconsultancygroup.vercel.app${path}`, title: label },
+    images: [{ src: `${WEB}/${file}-poster.jpg`, video: `${WEB}/${file}.mp4`, alt: `${name} website: a walkthrough recording`, caption: 'Website walkthrough', screen: true }],
   }],
+});
+/** V1 was recorded twice, by day and by night, frame for frame: the day run plays, with the night run beside it to compare. */
+const withCompare = (sub: Subcategory, compare: NonNullable<WorkImage['compare']>, video: string): Subcategory => ({
+  ...sub,
+  projects: sub.projects.map((p) => ({
+    ...p,
+    images: p.images?.map((img) => ({ ...img, video, compare, caption: 'Website walkthrough · day and night' })),
+  })),
 });
 
 export const categories: Category[] = [
@@ -70,26 +84,15 @@ export const categories: Category[] = [
             slug: 'task-management',
             title: 'Task Management',
             tone: 'ink',
-            summary: 'Built in-house, and the first in Tanzania: an advanced task management system for a group of companies. One place for every task, across every company.',
+            summary: 'Built in-house, and the first in Tanzania: an advanced task management system for a group of companies. One place for every task and every company file, across every company, with permits and certificates flagged before they need renewing.',
+            link: { label: 'Open the sign-in page', href: 'https://oracleconsultancy.vercel.app/login', title: 'oracleconsultancy.vercel.app' },
             images: [
               { src: '/images/work-signin.jpg', alt: 'Two people at a monitor showing the Task Management sign-in screen', caption: 'Sign in' },
               { src: '/images/work-dashboard.jpg', alt: 'Someone at a laptop surrounded by floating panels of the Task Management dashboard', caption: 'Dashboard' },
               { src: '/images/work-dashboard-ipad.jpg', alt: 'A hand with a stylus over an iPad showing the Task Management dashboard', caption: 'Dashboard on iPad' },
-            ],
-          },
-        ],
-      },
-      {
-        slug: 'files-management-system',
-        name: 'Files management',
-        projects: [
-          {
-            slug: 'files-management',
-            title: 'Files Management',
-            tone: 'stone',
-            summary: 'Every company file in one place, filed by hand and found in a second, with permits and certificates flagged before they need renewing.',
-            images: [
-              { src: '/images/work-files.jpg', alt: 'Two people at a monitor showing the Files Management app', caption: 'All files' },
+              { src: '/images/work-files.jpg', alt: 'Two people at a monitor showing the files section of the Task Management system', caption: 'Files' },
+              { src: '/images/task-management/sign-in-desktop.jpg', alt: 'The Task Management sign-in page on a desktop screen: sign in on the left, the Task Management title and a bar pattern on the right', caption: 'Sign in · desktop', screen: true },
+              { src: '/images/task-management/sign-in-mobile.jpg', alt: 'The Task Management sign-in page on a phone', caption: 'Sign in · mobile', screen: true },
             ],
           },
         ],
@@ -109,9 +112,10 @@ export const categories: Category[] = [
       site('cocozuri-website', 'CocoZuri', 'cocozuri', 'oxblood',
         'CocoZuri Chocolat makes artisanal chocolate in small batches in Dar es Salaam: Belgian couverture with Tanzanian fruit, spice and nuts, tempered, filled and finished by hand in Masaki.',
         'oracleconsultancygroup.vercel.app/cocozuri', '/cocozuri/'),
-      site('v1-supermarket-website', 'V1 Supermarket', 'v1', 'stone',
+      withCompare(site('v1-supermarket-website', 'V1 Supermarket', 'v1', 'stone',
         'V1 Supermarket, a neighbourhood supermarket in Kisutu, Dar es Salaam, as a 3D store: the site opens on a landing page, then moves into the shop itself, where customers can explore and search the products on its shelves.',
         'oracleconsultancygroup.vercel.app/v1supermarket', '/v1supermarket/'),
+        { video: `${WEB}/v1-night.mp4`, poster: `${WEB}/v1-night-poster.jpg`, label: 'Day', otherLabel: 'Night' }, `${WEB}/v1-day.mp4`),
     ],
   },
   {

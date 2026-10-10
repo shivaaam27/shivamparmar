@@ -11,7 +11,7 @@ import 'swiper/css/effect-coverflow';
 import 'swiper/css/pagination';
 
 /** A picture, or a video (then `src` is its poster). */
-export type CarouselShot = { src: string; alt: string; project: string; slug: string; video?: string };
+export type CarouselShot = { src: string; alt: string; project: string; slug: string; video?: string; w?: number; h?: number; screen?: boolean };
 
 const pad = (n: number) => String(n).padStart(2, '0');
 
@@ -58,7 +58,7 @@ export default function PhotoCarousel({ shots, start, onClose }: { shots: Carous
     <div className="pc" ref={root} role="dialog" aria-modal="true" aria-label="Photos" data-lenis-prevent>
       <header className="pc__bar mono">
         <span aria-live="polite">{pad(at + 1)} / {pad(shots.length)}</span>
-        <Link className="pc__project" href={`/work/${shot.slug}`} title="About this project">{shot.project} · About<span aria-hidden="true"> ↗</span></Link>
+        <Link className="pc__project" href={`/work/${shot.slug}`}>View project · {shot.project}<span aria-hidden="true"> ↗</span></Link>
         <button type="button" className="pc__close" onClick={onClose} autoFocus>Close<X size={14} aria-hidden="true" /></button>
       </header>
 
@@ -82,7 +82,7 @@ export default function PhotoCarousel({ shots, start, onClose }: { shots: Carous
           onSlideChange={(s) => setAt(s.activeIndex)}
         >
           {shots.map((s, i) => (
-            <SwiperSlide key={s.src} className="pc__slide">
+            <SwiperSlide key={s.src} className={`pc__slide${s.screen ? ' pc__slide--screen' : ''}`} style={s.screen && s.w && s.h ? { '--ar': (s.w / s.h).toFixed(4) } as React.CSSProperties : undefined}>
               {s.video
                 ? <video src={s.video} poster={s.src} data-i={i} controls controlsList="nodownload noremoteplayback" disablePictureInPicture playsInline loop preload={Math.abs(i - start) < 2 ? 'metadata' : 'none'} aria-label={s.alt} />
                 : <img src={s.src} alt={s.alt} loading={Math.abs(i - start) < 4 ? 'eager' : 'lazy'} draggable={false} />}
