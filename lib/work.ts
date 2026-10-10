@@ -23,6 +23,8 @@ export type Project = {
   tools?: string[];
   summary?: string;
   images?: WorkImage[];
+  /** a live address, shown as a link under the summary */
+  link?: { label: string; href: string };
 };
 
 /** listed: show it on the work page as "Soon" even before it has work. */
@@ -43,14 +45,26 @@ const CZ = '/images/cocozuri-social';
 const czPhoto = (slug: string, title: string): WorkImage =>
   ({ src: `${CZ}/${slug}.jpg`, alt: `${title}: chocolate photograph for CocoZuri’s social media`, caption: title });
 
+
+/** A website: one project holding its landscape walkthrough video, with a link to the live site. */
+const WEB = '/images/websites';
+const site = (slug: string, name: string, file: string, tone: Tone, summary: string, label: string, path: string): Subcategory => ({
+  slug, name,
+  projects: [{
+    slug, title: name, tone, cover: `${WEB}/${file}-poster.jpg`, summary,
+    link: { label, href: `https://oracleconsultancygroup.vercel.app${path}` },
+    images: [{ src: `${WEB}/${file}-poster.jpg`, video: `${WEB}/${file}.mp4`, alt: `${name} website: a walkthrough recording`, caption: 'Website walkthrough' }],
+  }],
+});
+
 export const categories: Category[] = [
   {
     slug: 'systems',
     name: 'Systems',
     subcategories: [
       {
-        slug: 'dashboards',
-        name: 'Dashboards',
+        slug: 'task-management-system',
+        name: 'Task management system',
         projects: [
           {
             slug: 'task-management',
@@ -63,6 +77,12 @@ export const categories: Category[] = [
               { src: '/images/work-dashboard-ipad.jpg', alt: 'A hand with a stylus over an iPad showing the Task Management dashboard', caption: 'Dashboard on iPad' },
             ],
           },
+        ],
+      },
+      {
+        slug: 'files-management-system',
+        name: 'Files management',
+        projects: [
           {
             slug: 'files-management',
             title: 'Files Management',
@@ -74,7 +94,24 @@ export const categories: Category[] = [
           },
         ],
       },
-      { slug: 'websites', name: 'Websites', projects: [soon('websites-soon', 'taupe')] },
+    ],
+  },
+  {
+    slug: 'websites',
+    name: 'Websites',
+    subcategories: [
+      site('oracle-consultancy-group', 'Oracle Consultancy Group', 'group', 'ink',
+        'The website for Oracle Consultancy Group of Companies: ten companies across FMCG, manufacturing, supply chain and mining services in Tanzania, India and the UAE, supported by one team for operations, HR, accounting and recruitment.',
+        'oracleconsultancygroup.vercel.app', '/'),
+      site('terragreen-website', 'TerraGreen', 'terragreen', 'sage',
+        'Terra Green imports, distributes and markets premium fresh fruit and produce from growing regions around the world, supplying supermarkets, hotels, restaurants and wholesalers across Tanzania.',
+        'oracleconsultancygroup.vercel.app/terragreen', '/terragreen/'),
+      site('cocozuri-website', 'CocoZuri', 'cocozuri', 'oxblood',
+        'CocoZuri Chocolat makes artisanal chocolate in small batches in Dar es Salaam: Belgian couverture with Tanzanian fruit, spice and nuts, tempered, filled and finished by hand in Masaki.',
+        'oracleconsultancygroup.vercel.app/cocozuri', '/cocozuri/'),
+      site('v1-supermarket-website', 'V1 Supermarket', 'v1', 'stone',
+        'V1 Supermarket, a neighbourhood supermarket in Kisutu, Dar es Salaam, as a 3D store: the site opens on a landing page, then moves into the shop itself, where customers can explore and search the products on its shelves.',
+        'oracleconsultancygroup.vercel.app/v1supermarket', '/v1supermarket/'),
     ],
   },
   {
@@ -265,6 +302,29 @@ export const categories: Category[] = [
               ddPhoto('tahina', 'Tahina'),
               ddVideo('royal-arm-foul-medammes', 'Royal Arm Foul Medammes'),
               ddVideo('peri-peri-sauce', 'Peri Peri Sauce'),
+              ddPhoto('bbq-sauce-hickory', 'BBQ Sauce Hickory'),
+              ddPhoto('cream-style-sweet-corn', 'Cream Style Sweet Corn'),
+              ddPhoto('whole-kernel-sweet-corn', 'Whole Kernel Sweet Corn'),
+              ddPhoto('halawa-pistachio', 'Halawa Pistachio'),
+              ddPhoto('eggless-mayonnaise', 'Eggless Mayonnaise'),
+              ddPhoto('caesar-dressing', 'Caesar Dressing'),
+              ddPhoto('peri-peri-mayonnaise', 'Peri-Peri Mayonnaise'),
+              ddPhoto('semolina', 'Semolina'),
+              ddPhoto('khushi-sliced-mushrooms', 'Khushi Sliced Mushrooms'),
+              ddPhoto('seasons-harvest-whole-mushroom', 'Seasons Harvest Whole Mushroom'),
+              ddPhoto('zahara-rose-syrup', 'Zahara Rose Syrup'),
+              ddPhoto('oreo', 'Oreo'),
+              ddPhoto('gopal-apple-vinegar', 'Gopal Apple Vinegar'),
+              ddPhoto('gopal-tamarind-sauce', 'Gopal Tamarind Sauce'),
+              ddPhoto('gopal-habanero-hot-sauce', 'Gopal Habanero Hot Sauce'),
+              ddPhoto('gopal-peri-peri-sauce', 'Gopal Peri Peri Sauce'),
+              ddPhoto('gopal-ginger-garlic-paste', 'Gopal Ginger Garlic Paste'),
+              ddPhoto('gopal-mustard-paste', 'Gopal Mustard Paste'),
+              ddVideo('gopal-pizza-and-pasta-sauce', 'Gopal Pizza & Pasta Sauce'),
+              ddVideo('gopal-chilli-garlic-sauce', 'Gopal Chilli Garlic Sauce'),
+              ddPhoto('gopal-sriracha-sauce', 'Gopal Sriracha Sauce'),
+              ddPhoto('gopal-mayonnaise', 'Gopal Mayonnaise'),
+              ddPhoto('gopal-mint-mayonnaise', 'Gopal Mint Mayonnaise'),
             ],
           },
         ],

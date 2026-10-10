@@ -161,6 +161,19 @@ export const aboutPage = {
   },
 };
 
+/** The logo strip on the home page, between Work and Contact. */
+export const clients = {
+  tag: 'Worked with',
+  logos: [
+    { name: 'Oracle Consultancy Group', src: '/logos/oracle.png' },
+    { name: 'Terra Green', src: '/logos/terragreen.png' },
+    { name: 'CocoZuri Chocolat', src: '/logos/cocozuri.png' },
+    { name: 'Dar Spice Centre', src: '/logos/dar-spice-centre.png' },
+    { name: 'Dar Distributors', src: '/logos/dar-distributors.png' },
+    { name: 'V1 Supermarket', src: '/logos/v1-supermarket.png' },
+  ],
+};
+
 /** Heading for the Work section; the work itself lives in lib/work.ts. */
 export const work = {
   tag: 'Selected',
