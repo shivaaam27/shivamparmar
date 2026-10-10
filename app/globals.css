@@ -744,9 +744,9 @@ body.menu-open .site-header--over-work .wordmark { opacity: 1 !important; pointe
 .wb__shot--stack .wb__media { transform: translateX(-8cqw); }
 .wb__stack-card--1 { transform: translateX(2cqw) scale(.9); filter: brightness(.9); }
 .wb__stack-card--2 { transform: translateX(11cqw) scale(.8); filter: brightness(.8); }
-.wb__stack:hover .wb__media { transform: translateX(-10cqw) scale(1.02); }
-.wb__stack:hover .wb__stack-card--1 { transform: translateX(5cqw) scale(.91) rotate(1.5deg); }
-.wb__stack:hover .wb__stack-card--2 { transform: translateX(15cqw) scale(.81) rotate(3deg); }
+.wb__stack:hover .wb__media { transform: translateX(-8.5cqw) scale(1.01); }
+.wb__stack:hover .wb__stack-card--1 { transform: translateX(4cqw) scale(.9) rotate(1deg); }
+.wb__stack:hover .wb__stack-card--2 { transform: translateX(14cqw) scale(.8) rotate(2deg); }
 /* tall screens (phones) stack upwards instead */
 .wb__shot--stack.is-tall .wb__media { width: min(64cqw, calc(64cqh * var(--ar))); transform: translateY(5cqh); }
 .wb__shot--stack.is-tall .wb__stack-card { width: min(64cqw, calc(64cqh * var(--ar))); }
@@ -755,7 +755,22 @@ body.menu-open .site-header--over-work .wordmark { opacity: 1 !important; pointe
 .wb__shot--stack.is-tall .wb__stack:hover .wb__media { transform: translateY(6cqh) scale(1.02); }
 .wb__shot--stack.is-tall .wb__stack:hover .wb__stack-card--1 { transform: translateY(-3cqh) scale(.93) rotate(-1.5deg); }
 .wb__shot--stack.is-tall .wb__stack:hover .wb__stack-card--2 { transform: translateY(-10cqh) scale(.85) rotate(1.5deg); }
-.wb__shot--stack .wb__media img { transform: none !important; }
+.wb__shot--stack .wb__media img, .wb__stack-card img { transform: none !important; object-fit: cover; }
+/* in the wide row: no tile behind it, just the windows, bigger; on hover the
+   cards behind slide out a touch and the top window barely moves */
+.wb__grid--wide .wb__stack { aspect-ratio: 16 / 10; background: transparent; }
+.wb__grid--wide .wb__shot--stack .wb__media, .wb__grid--wide .wb__stack-card {
+  width: min(78cqw, calc(90cqh * var(--ar))); height: auto; aspect-ratio: var(--ar);
+  border-radius: 6px; box-shadow: 0 1px 2px rgba(21, 20, 18, .08), 0 10px 28px rgba(21, 20, 18, .12);
+}
+.wb__grid--wide .wb__shot--stack .wb__media { transform: translateX(-9cqw); }
+.wb__grid--wide .wb__stack-card--1 { transform: translateX(-1cqw) scale(.92); }
+.wb__grid--wide .wb__stack-card--2 { transform: translateX(7cqw) scale(.84); }
+.wb__grid--wide .wb__stack:hover .wb__media { transform: translateX(-9.5cqw) scale(1.01); }
+.wb__grid--wide .wb__stack:hover .wb__stack-card--1 { transform: translateX(1.5cqw) scale(.92) rotate(1deg); }
+.wb__grid--wide .wb__stack:hover .wb__stack-card--2 { transform: translateX(10cqw) scale(.84) rotate(2deg); }
+/* the photos after the screens row */
+.wb__grid--after { margin-top: clamp(2.5rem, 5vw, 4rem); }
 .wb__stack-count { flex: none; color: var(--muted, inherit); }
 @media (prefers-reduced-motion: reduce) { .wb__shot--stack .wb__media, .wb__stack-card { transition: none; } }
 /* systems and websites: the project's name under the tile, never wider than it */
