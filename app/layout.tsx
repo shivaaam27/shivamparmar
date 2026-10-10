@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from 'next';
-import { Instrument_Serif, Inter_Tight, IBM_Plex_Mono } from 'next/font/google';
+import { Sora, Hanken_Grotesk } from 'next/font/google';
 import { site } from '@/lib/content';
 import { personJsonLd, siteUrl } from '@/lib/seo';
 import SmoothScroll from '@/components/SmoothScroll';
@@ -7,9 +7,10 @@ import Analytics from '@/components/Analytics';
 import ImageGuard from '@/components/ImageGuard';
 import './globals.css';
 
-const serif = Instrument_Serif({ subsets: ['latin'], weight: '400', style: ['normal', 'italic'], variable: '--font-serif' });
-const sans = Inter_Tight({ subsets: ['latin'], weight: ['300', '400', '500'], variable: '--font-sans' });
-const mono = IBM_Plex_Mono({ subsets: ['latin'], weight: ['400', '500'], variable: '--font-mono' });
+// brand type: Sora for display, headings and the logo; Hanken Grotesk for body text and every small label
+const serif = Sora({ subsets: ['latin'], weight: ['300', '400', '600'], variable: '--font-serif' });
+const sans = Hanken_Grotesk({ subsets: ['latin'], weight: ['300', '400', '500', '600'], variable: '--font-sans' });
+const mono = Hanken_Grotesk({ subsets: ['latin'], weight: ['400', '500', '600'], variable: '--font-mono' });
 
 export const metadata: Metadata = {
   // absolute links for search engines and share previews

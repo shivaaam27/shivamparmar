@@ -52,7 +52,15 @@ export default function Header() {
   return (
     <>
       <header className="site-header">
-        <a className="wordmark" href="/#top" aria-label={`${site.name} — home`}>{site.name}</a>
+        <a className="wordmark" href="/#top" aria-label="Fabra Labs — home">
+          <svg className="wordmark__mark" viewBox="0 0 64 64" aria-hidden="true">
+            <rect x="0" y="0" width="18" height="18" rx="4.5" /><rect x="23" y="0" width="18" height="18" rx="4.5" />
+            <rect className="is-lit" x="46" y="0" width="18" height="18" rx="4.5" />
+            <rect x="0" y="23" width="18" height="18" rx="4.5" /><rect x="23" y="23" width="18" height="18" rx="4.5" />
+            <rect x="0" y="46" width="18" height="18" rx="4.5" />
+          </svg>
+          <span className="wordmark__text">fabra<span>labs</span></span>
+        </a>
         <button
           ref={btn}
           className="menu-btn"

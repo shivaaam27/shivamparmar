@@ -79,7 +79,8 @@ img { pointer-events: none; }
 .mono {
   font-family: var(--mono);
   font-size: var(--fs-label);
-  letter-spacing: .02em;
+  font-weight: 500;
+  letter-spacing: .06em;
   text-transform: uppercase;
   line-height: 1.35;
 }
@@ -105,9 +106,15 @@ img { pointer-events: none; }
 .wordmark { transition: opacity .4s var(--ease); }
 .site-header--over-work .wordmark { opacity: 0 !important; pointer-events: none; }   /* wins over the intro's reveal */
 .wordmark {
-  font: 400 clamp(1.5rem, 2vw, 1.875rem)/1 var(--serif);
-  letter-spacing: -.01em;
+  display: inline-flex; align-items: center; gap: .42em;
+  font: 600 clamp(1.25rem, 1.6vw, 1.5rem)/1 var(--serif);
+  letter-spacing: -.03em;
 }
+.wordmark__mark { width: 1.05em; height: 1.05em; flex: none; fill: currentColor; }
+/* the header blends with mix-blend-mode: difference, so the lit tile is the inverse of sage: it reads as sage on paper */
+.wordmark__mark .is-lit { fill: #B0855A; }
+.site-header--on-image .wordmark__mark .is-lit { fill: #4F7A5A; }
+.wordmark__text span { font-weight: 300; opacity: .55; margin-left: .18em; }
 .menu-btn { width: 44px; height: 44px; display: grid; place-items: center; margin-right: -8px; }
 .menu-btn__lines { --gap: 5px; position: relative; width: 30px; height: calc((var(--n) - 1) * var(--gap) + 1.5px); }
 /* one line per section; the long line is the section on screen, and it slides
@@ -364,13 +371,34 @@ body.menu-open { overflow: hidden; }
 .jumble__cell {
   position: relative; overflow: hidden;
   display: grid; place-items: center;
-  font: 400 calc(var(--cell) * .82)/1 var(--serif);
+  font: 600 calc(var(--cell) * .74)/1 var(--serif);
+  letter-spacing: -.02em;
   color: var(--taupe-lite);
   transition: color .45s var(--ease);
 }
-.jumble__cell > span { display: block; padding-top: .08em; will-change: transform; }
+.jumble__cell > span { display: block; will-change: transform; }
 .jumble__cell.is-locked { color: var(--ink); }
+.jumble__cell.is-labs { color: #7E8082; font-weight: 300; }
+.jumble__cell.is-name { color: #A9AAA5; }
 .jumble__cell.is-settled { color: var(--taupe-lite); }
+
+/* the logo the grid turns into */
+.hero__lock {
+  position: absolute; inset: 0; z-index: 2;
+  display: flex; align-items: center; justify-content: center; gap: .34em;
+  font: 600 calc(var(--cell) * .62)/1 var(--serif); letter-spacing: -.02em;
+  color: var(--ink); pointer-events: none; visibility: hidden; opacity: 0;
+}
+.hero__mark { width: 1.1em; height: 1.1em; flex: none; overflow: visible; fill: currentColor; }
+.hero__mark rect { opacity: 0; }
+.hero__mark .is-lit { fill: #4F7A5A; }
+.hero__lock-word { white-space: nowrap; visibility: hidden; }
+.hero__lock-word i { font-style: normal; }
+.hero__lock-word span { font-weight: 300; color: #7E8082; margin-left: .28em; }
+.hero__fly { position: absolute; line-height: 1; pointer-events: none; white-space: pre; transform-origin: 50% 50%; z-index: 3; }
+.hero--image .hero__lock { color: #fff; }
+.hero--image .hero__lock-word span { color: rgba(255,255,255,.62); }
+.hero--image .jumble__cell.is-labs { color: rgba(255,255,255,.7); }
 
 
 .hero__foot {
