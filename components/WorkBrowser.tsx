@@ -76,7 +76,7 @@ export default function WorkBrowser({ cats, initial }: { cats: Cat[]; initial: S
     const s = c?.collections.find((x) => x.slug === next.s);
     track(c ? `Work · ${c.name}${s ? ` › ${s.name}` : ''}` : 'Work · All');
     window.history.pushState(null, '', pathOf(next));
-    document.title = `${s?.name ?? c?.name ?? 'Work'} — Fabra Labs`;
+    document.title = `${s?.name ?? c?.name ?? 'Work'} — Shivo Labs`;
 
     const apply = () => {
       flushSync(() => setSel(next));

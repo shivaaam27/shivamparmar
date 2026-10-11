@@ -110,7 +110,7 @@ img { pointer-events: none; }
   font: 600 clamp(1.25rem, 1.6vw, 1.5rem)/1 var(--serif);
   letter-spacing: .015em;
 }
-.wordmark__mark { width: 1.05em; height: 1.05em; flex: none; fill: currentColor; }
+.wordmark__mark { width: 1.05em; height: 1.05em; flex: none; fill: currentColor; overflow: visible; } /* the 15° tilt pokes slightly past the square */
 /* The header blends with mix-blend-mode: difference, so a colour is drawn as |page - colour|.
    --hot is what draws as sage (#4F7A5A): over the white page that's #B085A5, over the dark menu #638F71,
    and with no blending (header on a photo) sage itself. The mark runs the slow sage loader all the time. */
@@ -125,7 +125,7 @@ body.menu-open .wordmark__mark { --hot: #638F71; }
   14%, 38%      { fill: var(--hot); }
 }
 @media (prefers-reduced-motion: reduce) { .wordmark__mark rect:not(.is-lit) { animation: none; } }
-/* as in the brand wordmark and the hero lockup: capitals, FABRA in SemiBold, LABS in Light slate.
+/* as in the brand wordmark and the hero lockup: capitals, SHIVO in SemiBold, LABS in Light slate.
    Under the difference blend, #817F7D draws as slate #7E8082 on the white page; over the menu it stays light. */
 .wordmark__text { text-transform: uppercase; letter-spacing: .015em; }
 .wordmark__text span { font-weight: 300; margin-left: .28em; color: #817F7D; }

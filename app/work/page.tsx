@@ -8,7 +8,7 @@ import { workData } from '@/lib/work-data';
 
 export const metadata: Metadata = {
   title: `Work — ${site.fullName}`,
-  description: 'Selected work by Fabra Labs and its founder Shivam Parmar: websites, business systems, social media and photography from Tanzania: hotels, brands, wildlife and places.',
+  description: 'Selected work by Shivo Labs and its founder Shivam Parmar: websites, business systems, social media and photography from Tanzania: hotels, brands, wildlife and places.',
   alternates: { canonical: '/work' },
   openGraph: { url: '/work', title: `Work — ${site.fullName}` },
 };

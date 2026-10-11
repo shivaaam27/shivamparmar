@@ -20,7 +20,7 @@ export const metadata: Metadata = {
   applicationName: site.fullName,
   authors: [{ name: site.fullName, url: siteUrl() }, { name: site.founder.name }],
   creator: site.founder.name,
-  keywords: ['Fabra Labs', 'digital solutions', 'websites and apps', 'custom software', 'AI workflows', 'automation', 'branding', 'social media', 'digital strategy', 'Dar es Salaam', 'Tanzania', 'Shivam Parmar'],
+  keywords: ['Shivo Labs', 'digital solutions', 'websites and apps', 'custom software', 'AI workflows', 'automation', 'branding', 'social media', 'digital strategy', 'Dar es Salaam', 'Tanzania', 'Shivam Parmar'],
   alternates: { canonical: '/' },
   openGraph: {
     type: 'website',
@@ -29,7 +29,7 @@ export const metadata: Metadata = {
     url: '/',
     title: `${site.fullName} — ${site.tagline}`,
     description: site.description,
-    images: [{ url: '/og.png', width: 1200, height: 630, alt: 'Fabra Labs logo mark' }],
+    images: [{ url: '/og.png', width: 1200, height: 630, alt: 'Shivo Labs logo mark' }],
   },
   twitter: { card: 'summary_large_image', title: site.fullName, description: site.description, images: ['/og.png'] },
   robots: { index: true, follow: true, googleBot: { index: true, follow: true, 'max-image-preview': 'large', 'max-snippet': -1 } },

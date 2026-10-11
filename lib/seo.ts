@@ -56,7 +56,7 @@ export function personJsonLd() {
         telephone: site.phones[0].tel,
         jobTitle: site.founder.jobTitle,
         worksFor: { '@id': `${url}/#organization` },
-        description: 'Founder of Fabra Labs; pharmacist, photographer and systems builder in Dar es Salaam, Tanzania.',
+        description: 'Founder of Shivo Labs; pharmacist, photographer and systems builder in Dar es Salaam, Tanzania.',
         address: { '@type': 'PostalAddress', addressLocality: 'Dar es Salaam', addressCountry: 'TZ' },
         knowsAbout: ['Pharmacy', 'Pharmacovigilance', 'Photography', 'Graphic design', 'Business systems', 'AI workflows', 'Prompt engineering'],
         alumniOf: [

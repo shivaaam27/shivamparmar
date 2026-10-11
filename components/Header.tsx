@@ -55,13 +55,16 @@ export default function Header() {
   return (
     <>
       <header className="site-header">
-        <a className="wordmark" href="/#top" aria-label="Fabra Labs — home">
+        <a className="wordmark" href="/#top" aria-label="Shivo Labs — home">
+          {/* The mark leans 15° like an arrow; the accent tile is the tip (first). The loader shimmer runs from the tails towards the tip. */}
           <svg className="wordmark__mark" viewBox="0 0 64 64" aria-hidden="true">
-            {[[0, 0], [23, 0], [46, 0], [0, 23], [23, 23], [0, 46]].map(([x, y], i) => (
-              <rect key={i} className={i === 2 ? 'is-lit' : undefined} style={{ '--i': i } as React.CSSProperties} x={x} y={y} width="18" height="18" rx="4.5" />
-            ))}
+            <g transform="rotate(15 32 32)">
+              {[[0, 0], [46, 0], [0, 46], [23, 23], [23, 0], [0, 23]].map(([x, y], i) => (
+                <rect key={i} className={i === 0 ? 'is-lit' : undefined} style={{ '--i': i } as React.CSSProperties} x={x} y={y} width="18" height="18" rx="4.5" />
+              ))}
+            </g>
           </svg>
-          <span className="wordmark__text">fabra<span>labs</span></span>
+          <span className="wordmark__text">shivo<span>labs</span></span>
         </a>
         <button
           ref={btn}

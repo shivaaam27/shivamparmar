@@ -12,7 +12,7 @@ export { gsap, ScrollTrigger, useGSAP };
 export const POOL = 'SHIVAM';
 
 /** Letters the footer name decodes from. */
-const SCRAMBLE_POOL = 'FABRLS';
+const SCRAMBLE_POOL = 'SHIVOLAB';
 
 export const rand = (s: string) => s[Math.floor(Math.random() * s.length)];
 

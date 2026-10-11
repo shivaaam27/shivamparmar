@@ -26,7 +26,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const category = findCategory(slug);
   if (category) return {
     title: `${category.name} — ${site.fullName}`,
-    description: `${category.name} by Fabra Labs: ${category.subcategories.filter((s) => s.projects.some((p) => p.images?.length)).map((s) => s.name).join(", ")}.`,
+    description: `${category.name} by Shivo Labs: ${category.subcategories.filter((s) => s.projects.some((p) => p.images?.length)).map((s) => s.name).join(", ")}.`,
     alternates: { canonical: `/work/${category.slug}` },
     openGraph: { url: `/work/${category.slug}`, title: `${category.name} — ${site.fullName}` },
   };

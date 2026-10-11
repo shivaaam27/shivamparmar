@@ -10,19 +10,22 @@ const ROWS = 5;
 const NAME_ROW = 2; // zero-based centre row
 const COLS = hero.word.length;
 
-/** Where every letter comes to rest: EST on top, FABRA on row 2, LABS where "IVAM" sat, the year along the bottom. */
-const SETTLED = ['ESTLRB', 'FABRAS', 'BRLABS', 'SLAFBR', 'AB2026'];
-const FABRA = [6, 7, 8, 9, 10];
+/**
+ * Where every letter comes to rest: EST on top, SHIVO on row 2 (right above the SHIV of SHIVAM),
+ * LABS where "IVAM" sat, the year along the bottom. Filler letters come from S H I V O L A B.
+ */
+const SETTLED = ['ESTOHI', 'SHIVOL', 'IHLABS', 'SLOHVI', 'VO2026'];
+const SHIVO = [6, 7, 8, 9, 10];
 const LABS = [14, 15, 16, 17];
-const BRAND = [...FABRA, ...LABS];
+const BRAND = [...SHIVO, ...LABS];
 /** How small the grid shrinks while it turns into the logo. */
 const REST_SCALE = { desktop: 0.62, phone: 0.8 };
-/** Tile order for the build and the loader: up the stem, across the top, the middle arm, the sage tile last. */
+/** Tile order for the build and the loader: from the arrow's two tails towards its tip; the sage tip last. */
 const TILE_ORDER = [0, 1, 2, 3, 4, 5];
 
 /**
- * The letter grid rolls; the name flashes in faintly, then FABRA and LABS lock and the rest settle.
- * As the grid shrinks, the grey letters fade, FABRA and LABS glide into one line, the mark builds
+ * The letter grid rolls; the name flashes in faintly, then SHIVO and LABS lock and the rest settle.
+ * As the grid shrinks, the grey letters fade, SHIVO and LABS glide into one line, the mark builds
  * on their left, and the mark then becomes a slow loader.
  */
 export default function Hero() {
@@ -104,10 +107,11 @@ export default function Hero() {
       // the grid shrinks as it always has, and the grey letters fade out during the shrink
       gsap.to(jumble, { scale: restScale(), duration: 1.3, ease: 'power3.inOut' });
       gsap.to(cells.filter((_, i) => !BRAND.includes(i)), { opacity: 0, filter: 'blur(4px)', duration: 0.85, delay: 0.45, ease: 'power2.inOut', stagger: { each: 0.02, from: 'center' } });
-      // the mark builds on the left while the letters travel; the sage tile arrives last
+      // the mark builds on the left while the letters travel; the sage tip arrives last, flying in
+      // from the direction it points (up and to the left in the mark's own, untilted drawing)
       tiles.forEach((t, n) => {
         const lit = t.classList.contains('is-lit');
-        gsap.fromTo(t, lit ? { opacity: 0, x: 9, y: -9, scale: 0.5 } : { opacity: 0, y: 6, scale: 0.4 },
+        gsap.fromTo(t, lit ? { opacity: 0, x: -9, y: -9, scale: 0.5 } : { opacity: 0, y: 6, scale: 0.4 },
           { opacity: 1, x: 0, y: 0, scale: 1, duration: lit ? 0.75 : 0.5, delay: 0.7 + n * 0.09, ease: lit ? 'back.out(2.2)' : 'power3.out', transformOrigin: '50% 50%' });
       });
       gsap.delayedCall(1.7, () => {
@@ -164,8 +168,8 @@ export default function Hero() {
       nameRow.forEach((i) => tl!.call(() => lockAt(i, name[col(i)], 'is-name'), undefined, 0.8 + col(i) * 0.055));
       tl.call(() => nameRow.forEach((i) => { locked.delete(i); cells[i].classList.remove('is-name'); }), undefined, 1.8);
 
-      // the brand: FABRA on row 2, LABS where "IVAM" sat
-      FABRA.forEach((i, n) => tl!.call(() => lockAt(i, 'FABRA'[n], 'is-locked'), undefined, 2.25 + n * 0.13));
+      // the brand: SHIVO on row 2, LABS where "IVAM" sat
+      SHIVO.forEach((i, n) => tl!.call(() => lockAt(i, 'SHIVO'[n], 'is-locked'), undefined, 2.25 + n * 0.13));
       LABS.forEach((i, n) => tl!.call(() => lockAt(i, 'LABS'[n], 'is-labs'), undefined, 2.25 + (5 + n) * 0.13));
 
       // everything else settles quietly, rippling out from the brand
@@ -221,7 +225,7 @@ export default function Hero() {
         ) : <HeroAvatar />}
       </div>
 
-      <h1 className="sr-only">Fabra Labs</h1>
+      <h1 className="sr-only">Shivo Labs</h1>
 
       <div className="hero__stage" style={{ '--name-row': NAME_ROW } as React.CSSProperties}>
         <div className="jumble" aria-hidden="true">
@@ -230,16 +234,19 @@ export default function Hero() {
           ))}
         </div>
         <div className="hero__lock" aria-hidden="true">
+          {/* tilted 15° like an arrow; tiles in build order, from the two tails towards the sage tip */}
           <svg className="hero__mark" viewBox="0 0 64 64">
-            <rect x="0" y="46" width="18" height="18" rx="4.5" />
-            <rect x="0" y="23" width="18" height="18" rx="4.5" />
-            <rect x="0" y="0" width="18" height="18" rx="4.5" />
-            <rect x="23" y="0" width="18" height="18" rx="4.5" />
-            <rect x="23" y="23" width="18" height="18" rx="4.5" />
-            <rect className="is-lit" x="46" y="0" width="18" height="18" rx="4.5" />
+            <g transform="rotate(15 32 32)">
+              <rect x="0" y="46" width="18" height="18" rx="4.5" />
+              <rect x="46" y="0" width="18" height="18" rx="4.5" />
+              <rect x="23" y="23" width="18" height="18" rx="4.5" />
+              <rect x="23" y="0" width="18" height="18" rx="4.5" />
+              <rect x="0" y="23" width="18" height="18" rx="4.5" />
+              <rect className="is-lit" x="0" y="0" width="18" height="18" rx="4.5" />
+            </g>
           </svg>
           <div className="hero__lock-word">
-            <b>{[...'FABRA'].map((l, i) => <i key={i}>{l}</i>)}</b>
+            <b>{[...'SHIVO'].map((l, i) => <i key={i}>{l}</i>)}</b>
             <span>{[...'LABS'].map((l, i) => <i key={i}>{l}</i>)}</span>
           </div>
         </div>

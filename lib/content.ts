@@ -5,16 +5,16 @@
  */
 
 export const site = {
-  name: 'Fabra Labs',
-  fullName: 'Fabra Labs',
+  name: 'Shivo Labs',
+  fullName: 'Shivo Labs',
   tagline: 'Digital solutions company',
-  description: 'Fabra Labs is a digital solutions company in Dar es Salaam, Tanzania: websites and apps, custom software, automation and AI workflows, branding, content and social media, and digital strategy.',
+  description: 'Shivo Labs is a digital solutions company in Dar es Salaam, Tanzania: websites and apps, custom software, automation and AI workflows, branding, content and social media, and digital strategy.',
   /** The person behind the company. */
-  founder: { name: 'Shivam Parmar', jobTitle: 'Founder of Fabra Labs; pharmacist, photographer and systems builder' },
+  founder: { name: 'Shivam Parmar', jobTitle: 'Founder of Shivo Labs; pharmacist, photographer and systems builder' },
   jobTitle: 'Pharmacist, photographer and systems builder',
   /** Profiles that are also you: they tell search engines these all belong to one person. */
   sameAs: ['https://www.linkedin.com/in/shivaaam', 'https://www.instagram.com/ishivamparmar', 'https://orcid.org/0009-0007-7272-2394'],
-  email: 'info@fabralabs.co.tz',
+  email: 'info@shivolabs.co.tz',
   /** Takes calls and WhatsApp. `tel` / `wa` are the same number in international form, without spaces. */
   phones: [
     { label: '+255 795 334 455', tel: '+255795334455', wa: '255795334455' },
@@ -75,11 +75,11 @@ export const aboutPage = {
     { id: 'say-hello', label: 'Say hello' },
     { id: 'index', label: 'Index' },
   ],
-  eyebrow: 'Founder of Fabra Labs · Pharmacist · Photographer',
+  eyebrow: 'Founder of Shivo Labs · Pharmacist · Photographer',
   /** Plain facts, written the way people search and AI assistants quote. Also used in /llms.txt. */
   facts: [
     { label: 'Name', value: 'Shivam Parmar' },
-    { label: 'Founder of', value: 'Fabra Labs, a digital solutions company in Dar es Salaam' },
+    { label: 'Founder of', value: 'Shivo Labs, a digital solutions company in Dar es Salaam' },
     { label: 'Based in', value: 'Dar es Salaam, Tanzania' },
     { label: 'Profession', value: 'Pharmacist, photographer and systems builder' },
     { label: 'Education', value: 'BPharm (GITAM, India), MSc Pharmacovigilance & Pharmacoepidemiology (MUHAS)' },
@@ -88,7 +88,7 @@ export const aboutPage = {
   ],
   headline: ['Hi, I’m Shivam.'],
   intro: [
-    'I’m the founder of Fabra Labs, a digital solutions company in Dar es Salaam. I help brands design and build custom systems that work beautifully: functional at their core and considered in every detail.',
+    'I’m the founder of Shivo Labs, a digital solutions company in Dar es Salaam. I help brands design and build custom systems that work beautifully: functional at their core and considered in every detail.',
     'I believe the most lasting work pairs technical precision with emotional depth. It creates systems that resonate with the people they serve, from customers to teams and communities, and builds strong connections and long-term growth in business and in life.',
   ],
   disciplinesTag: 'What I do',
@@ -152,7 +152,7 @@ export const aboutPage = {
   },
   ending: {
     greeting: 'Hallo, I’m Shivam.',
-    line: 'I founded Fabra Labs to build systems, websites and brands, from Dar es Salaam.',
+    line: 'I founded Shivo Labs to build systems, websites and brands, from Dar es Salaam.',
     cta: 'Start a project',
   },
   closing: {
