@@ -10,3 +10,6 @@ next-env.d.ts
 .open-next/
 .wrangler/
 .dev.vars
+
+# insights map data, made by scripts/build-geo.mjs at build time
+public/geo/

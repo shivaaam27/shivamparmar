@@ -24,7 +24,10 @@ const githubConfigured = () =>
  */
 const accessConfigured = () => Boolean(process.env.ACCESS_TEAM_DOMAIN && process.env.ACCESS_AUD && process.env.INSIGHTS_EMAIL);
 
-export const authConfigured = () => accessConfigured() || githubConfigured();
+/** Only in `next dev` on your own computer: INSIGHTS_DEV_USER opens /insights without signing in. Never active on the live site. */
+const devUser = () => (process.env.NODE_ENV === 'development' ? process.env.INSIGHTS_DEV_USER || '' : '');
+
+export const authConfigured = () => Boolean(devUser()) || accessConfigured() || githubConfigured();
 export const usesAccess = accessConfigured;
 
 /**
@@ -83,6 +86,7 @@ async function accessUser(): Promise<string | null> {
 
 /** The signed-in owner (their email with Cloudflare Access, else their GitHub login), or null. */
 export async function currentUser(): Promise<string | null> {
+  if (devUser()) return devUser();
   if (accessConfigured()) return accessUser();
   if (!githubConfigured() || !secretStrong()) return null;
   const raw = (await cookies()).get(SESSION_COOKIE)?.value;

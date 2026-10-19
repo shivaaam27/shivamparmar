@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { ArrowLeft, Maximize2, Minimize2, Minus, Plus, RotateCcw } from 'lucide-react';
-import type { CityPoint, CountryPoint, GeoModel, Place } from '@/lib/geo';
+import { countryOutline, type CityPoint, type CountryPoint, type GeoModel, type Place } from '@/lib/geo-client';
 
 const W = 1000, H = 520;
 const MAX_K = 40;
@@ -96,8 +96,8 @@ export default function FlatMap({ model, rangeLabel }: { model: GeoModel; rangeL
     go(fit(c.box));
     if (!outline[c.code]) {
       try {
-        const res = await fetch(`/api/insights/geo?code=${c.code}`);
-        if (res.ok) { const { d } = await res.json(); setOutline((o) => ({ ...o, [c.code]: d })); }
+        const d = await countryOutline(c.code);
+        setOutline((o) => ({ ...o, [c.code]: d }));
       } catch { /* the coarse outline is fine */ }
     }
   };
@@ -155,6 +155,8 @@ export default function FlatMap({ model, rangeLabel }: { model: GeoModel; rangeL
 
   const sx = (x: number) => x * view.k + view.x;
   const sy = (y: number) => y * view.k + view.y;
+  // a spike's height, never taller than the room above it (so the tallest isn't cut off at the top edge)
+  const spikeH = (s: { y: number; value: number }) => Math.max(6, Math.min((s.value / max) * SPIKE_MAX, sy(s.y) - 18));
   const onScreen = (s: { x: number; y: number }) => sx(s.x) > -10 && sx(s.x) < W + 10 && sy(s.y) > -10 && sy(s.y) < H + 10;
 
   const ordered = [...spikes].filter(onScreen).sort((a, b) => a.y - b.y);
@@ -162,7 +164,7 @@ export default function FlatMap({ model, rangeLabel }: { model: GeoModel; rangeL
   const labelled: string[] = [];
   const placed: [number, number][] = [];
   [...ordered].sort((a, b) => b.value - a.value).slice(0, 6).forEach((s) => {
-    const x = sx(s.x), y = sy(s.y) - (s.value / max) * SPIKE_MAX;
+    const x = sx(s.x), y = sy(s.y) - spikeH(s);
     if (placed.every(([px, py]) => Math.abs(px - x) > 90 || Math.abs(py - y) > 22)) { labelled.push(idOf(s)); placed.push([x, y]); }
   });
 
@@ -212,7 +214,7 @@ export default function FlatMap({ model, rangeLabel }: { model: GeoModel; rangeL
 
           {ordered.map((s, i) => {
             const id = idOf(s);
-            const h = Math.max(6, (s.value / max) * SPIKE_MAX);
+            const h = spikeH(s);
             const pick = 'code' in s && !country ? () => open(s as CountryPoint) : undefined;
             return (
               <g key={id} transform={`translate(${sx(s.x).toFixed(1)} ${sy(s.y).toFixed(1)})`}
@@ -228,7 +230,7 @@ export default function FlatMap({ model, rangeLabel }: { model: GeoModel; rangeL
           })}
 
           {risen && ordered.filter((s) => labelled.includes(idOf(s))).map((s) => {
-            const h = Math.max(6, (s.value / max) * SPIKE_MAX);
+            const h = spikeH(s);
             return (
               <text key={`l-${idOf(s)}`} x={sx(s.x) + 7} y={sy(s.y) - h + 4} className="map__label">
                 <tspan className="map__label-num">{fmt(s.value)}</tspan> {s.name}
@@ -239,8 +241,8 @@ export default function FlatMap({ model, rangeLabel }: { model: GeoModel; rangeL
 
         {hovered && (
           <div className="map__tip" role="status"
-            style={{ left: `${(sx(hovered.x) / W) * 100}%`, top: `${((sy(hovered.y) - Math.max(6, (hovered.value / max) * SPIKE_MAX)) / H) * 100}%` }}>
-            <b>{fmt(hovered.value)}</b> visitors<span>{hovered.name}{'code' in hovered && !country ? ' · click to zoom in' : ''}</span>
+            style={{ left: `${(sx(hovered.x) / W) * 100}%`, top: `${((sy(hovered.y) - spikeH(hovered)) / H) * 100}%` }}>
+            <p><b>{fmt(hovered.value)}</b> {hovered.value === 1 ? 'visitor' : 'visitors'}</p><span>{hovered.name}{'code' in hovered && !country ? ' · click to zoom in' : ''}</span>
           </div>
         )}
 

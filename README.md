@@ -82,10 +82,11 @@ Add a folder, for example `app/work/page.tsx` for `/work`.
 | Nightly jobs | Cloudflare cron triggers (01:30 and 03:15 UTC) call `/api/cron/umami-backup` and `/api/cron/indexnow`; they need the `CRON_SECRET` secret |
 | Secrets | `DATABASE_URL`, `AUTH_SECRET`, `CRON_SECRET`, `GITHUB_CLIENT_ID`, `GITHUB_CLIENT_SECRET`, `INSIGHTS_GITHUB_USER`, `UMAMI_SHARE_ID`: set with `npx wrangler secret put NAME`, never in git |
 | Visitor location | `lib/location.ts` reads Cloudflare's country, region and city |
+| Free-plan speed | Ready-made pages are served as plain files by `worker.ts` (copied by `scripts/static-pages.mjs`), so they use no computer time. `/insights` is drawn in the browser (`components/insights/Dashboard.tsx`); the server only checks the sign-in and returns numbers (`/api/insights/data`). The map's shapes and city places are made once at build time (`scripts/build-geo.mjs` → `public/geo`, not in git). |
+| Insights sign-in | Cloudflare Access (Zero Trust, free): an emailed code, only for `INSIGHTS_EMAIL`. `lib/auth.ts` checks Access's signed token. Local preview: `INSIGHTS_DEV_USER` in `.env.local` (only works in `next dev`). |
 
-Notes: the free Workers plan allows about 3 MB (compressed) per Worker; the build is about 2.4 MB, so watch it when adding
-big packages (the 6 MB city list for /insights is bundled in). On Windows the OpenNext build can't make symlinks, which is why
-`all-the-cities` is bundled instead of being an external package (`next.config.ts`).
+Notes: the free Workers plan allows about 3 MB (compressed) per Worker and 10 ms of computer time per request. The Worker is about
+1.6 MB. Keep heavy work out of requests: do it at build time or in the browser, and check with `npx wrangler tail` (cpuTime).
 
 ## Visitor insights (private)
 

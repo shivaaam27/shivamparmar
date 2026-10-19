@@ -1,8 +1,12 @@
-import iso3166 from 'iso-3166-2';
-import { findProject } from './work';
-import type { ListKey, Row } from './umami';
+import { findCategory, findProject } from './work';
+import type { ListKey, Row } from './insights-shared';
 
-/** Human labels for the raw values Umami reports. Shared by the page and the CSV export. */
+/** Human labels for the raw values Umami reports. Shared by the dashboard (in the browser) and the CSV export. */
+
+/** Region names (TZ-02 -> Dar es Salaam), from public/geo/regions.json; set once they are loaded. */
+let REGIONS: Record<string, string> = {};
+export const setRegionNames = (names: Record<string, string>) => { REGIONS = names; };
+export const regionName = (code: string) => REGIONS[code.toUpperCase()] || code.split('-')[1] || code;
 
 const regionNames = new Intl.DisplayNames(['en'], { type: 'region' });
 const languageNames = new Intl.DisplayNames(['en'], { type: 'language' });
@@ -19,12 +23,22 @@ const BROWSERS: Record<string, string> = {
 const cap = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);
 
 export function pageLabel(path: string) {
-  if (path === '/' || path === '') return 'Home';
-  const m = path.match(/^\/work\/([^/?#]+)/);
-  if (m) return `Work · ${findProject(m[1])?.project.title ?? m[1]}`;
-  if (path.startsWith('/about')) return 'About';
-  return path;
+  const clean = path.replace(/[?#].*$/, '').replace(/\/+$/, '') || '/';
+  if (clean === '/') return 'Home';
+  if (clean === '/work') return 'Work';
+  if (clean.startsWith('/about')) return 'About';
+  const m = clean.match(/^\/work\/([^/]+)/);
+  if (m) {
+    const slug = m[1];
+    const name = findProject(slug)?.project.title ?? findCategory(slug)?.name ?? OLD_SLUGS[slug] ?? titleCase(slug);
+    return `Work · ${name}`;
+  }
+  return clean;
 }
+
+/** Pages that were renamed; visits from before still show under the old address. */
+const OLD_SLUGS: Record<string, string> = { 'fabra-labs': 'Shivo Labs (old address)' };
+const titleCase = (slug: string) => slug.split('-').map(cap).join(' ');
 
 export function label(list: ListKey, raw: string): string {
   switch (list) {
@@ -35,8 +49,7 @@ export function label(list: ListKey, raw: string): string {
     case 'regions': {
       const [c, r] = raw.split('-');
       if (!r) return raw || 'Unknown';
-      const sub = iso3166.subdivision(raw.toUpperCase());
-      return `${(sub && 'name' in sub && sub.name) || r} · ${countryName(c)}`;
+      return `${REGIONS[raw.toUpperCase()] || r} · ${countryName(c)}`;
     }
     case 'cities': return raw || 'Unknown';
     case 'devices': return raw ? cap(raw) : 'Unknown';

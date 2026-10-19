@@ -3,8 +3,8 @@ import type { Day } from '@/lib/umami';
 
 /* Daily visitors for a year, as GitHub's isometric contribution skyline plus the flat calendar. */
 
-const RAMP = ['#b7ebc8', '#7fd6a0', '#3fb971', '#1e9453', '#11693a'];
-const EMPTY = '#eceef1';
+const RAMP = ['#DCE8DF', '#B4CFBB', '#7FB08B', '#4F7A5A', '#2F4F37'];
+const EMPTY = '#ECECE8';
 const C = 11;                                   // plane size of one day
 const A = Math.PI / 6;                          // true isometric: 30°
 const iso = (x: number, y: number): [number, number] => [(x - y) * Math.cos(A), (x + y) * Math.sin(A)];

@@ -10,8 +10,8 @@ import HoverTip from './HoverTip';
 const fmt = (n: number) => n.toLocaleString('en');
 const pct = (v: number, t: number) => (t ? `${Math.round((v / t) * 100)}%` : '');
 
-/** Green, darkest to brightest, for the dark cards. */
-const GLOW = ['#1b1e22', '#123826', '#155f37', '#1c8a4c', '#35b56d', '#8fe3b3'];
+/** Sage, darkest to brightest, for the Ink cards. */
+const GLOW = ['#1E2120', '#1F3426', '#2B4F35', '#3E6B4A', '#5E9A6C', '#A8D3B2'];
 
 /**
  * Hour by hour as a strip of thin lines, brighter where it was busier: the
