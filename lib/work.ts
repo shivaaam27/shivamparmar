@@ -52,6 +52,12 @@ const czPhoto = (slug: string, title: string): WorkImage =>
   ({ src: `${CZ}/${slug}.jpg`, alt: `${title}: chocolate photograph for CocoZuri’s social media`, caption: title });
 
 
+/**
+ * Links from a project page to the live site or system. Off for now (Shivam, 20 Oct 2026): the sites and the task system
+ * are still being finished. The addresses stay below; set this to true to show the links again.
+ */
+export const SHOW_PROJECT_LINKS = false;
+
 /** A website: one project holding its landscape walkthrough video, with a link to the live site. */
 const WEB = '/images/websites';
 const site = (slug: string, name: string, file: string, tone: Tone, summary: string, label: string, path: string): Subcategory => ({

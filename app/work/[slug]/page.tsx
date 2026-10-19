@@ -7,7 +7,7 @@ import Footer from '@/components/Footer';
 import Effects from '@/components/Effects';
 import WorkBrowser from '@/components/WorkBrowser';
 import { site } from '@/lib/content';
-import { categories, findCategory, findProject, pagedProjects, type Category } from '@/lib/work';
+import { SHOW_PROJECT_LINKS, categories, findCategory, findProject, pagedProjects, type Category } from '@/lib/work';
 import { workData } from '@/lib/work-data';
 
 type Props = { params: Promise<{ slug: string }> };
@@ -99,7 +99,7 @@ function ProjectPage({ slug }: { slug: string }) {
           </nav>
           <h1 className="headline headline--left reveal" data-delay="1">{project.title}</h1>
           {project.summary && <p className="lead project__summary reveal" data-delay="2">{project.summary}</p>}
-          {project.link && <a className="project__link mono reveal" data-delay="2" href={project.link.href} title={project.link.title} target="_blank" rel="noopener">{project.link.label}<span aria-hidden="true"> ↗</span></a>}
+          {SHOW_PROJECT_LINKS && project.link && <a className="project__link mono reveal" data-delay="2" href={project.link.href} title={project.link.title} target="_blank" rel="noopener">{project.link.label}<span aria-hidden="true"> ↗</span></a>}
           {details.length > 0 && (
             <dl className="project__details reveal" data-delay="3">
               {details.map((d) => (
