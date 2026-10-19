@@ -4,7 +4,7 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import {
   Activity, CalendarDays, Compass, Database, Download, FileText, Globe2, Hourglass, Images, LineChart, LogOut, MonitorSmartphone, RefreshCw, Radio, Route,
 } from 'lucide-react';
-import { RANGES, type Insights, type ListKey, type RangeKey, type Row, type Source } from '@/lib/insights-shared';
+import { RANGES, toRange, type Insights, type ListKey, type RangeKey, type Row, type Source } from '@/lib/insights-shared';
 import { buildGeo, loadRegionNames, type GeoModel } from '@/lib/geo-client';
 import { countryName, duration, label } from '@/lib/insights-format';
 import { coverOf, pagedProjects } from '@/lib/work';
@@ -28,12 +28,12 @@ const ICON = 15;
 /** Times on the page are in this zone (INSIGHTS_TIMEZONE on the server); set from the data before drawing. */
 let TIMEZONE = 'Africa/Dar_es_Salaam';
 
-type Payload = { data: Insights; timeZone: string; defaultSource: Source };
-type Props = { range: RangeKey; source: Source | null; user: string; signOut: string };
+type Payload = { data: Insights; timeZone: string; defaultSource: Source; user: string };
+const SIGN_OUT = '/cdn-cgi/access/logout';   // Cloudflare Access ends the sign-in
 
-export default function Dashboard(props: Props) {
-  const [range, setRange] = useState<RangeKey>(props.range);
-  const [source, setSource] = useState<Source | null>(props.source);
+export default function Dashboard() {
+  const [range, setRange] = useState<RangeKey | null>(null);   // read from the address once the page is open
+  const [source, setSource] = useState<Source | null>(null);
   const [payload, setPayload] = useState<Payload | null>(null);
   const [error, setError] = useState('');
   const [busy, setBusy] = useState(false);
@@ -62,8 +62,16 @@ export default function Dashboard(props: Props) {
   // region names for the labels, once
   useEffect(() => { loadRegionNames().then(() => setNamesReady((n) => n + 1)).catch(() => undefined); }, []);
 
+  // the choice in the address bar (/insights?range=7d&source=umami), once
+  useEffect(() => {
+    const q = new URLSearchParams(window.location.search);
+    setRange(toRange(q.get('range') ?? undefined));
+    setSource(q.get('source') === 'own' || q.get('source') === 'umami' ? (q.get('source') as Source) : null);
+  }, []);
+
   // first load and every switch of range or source; the address bar keeps the choice
   useEffect(() => {
+    if (!range) return;
     load(range, source);
     const q = new URLSearchParams({ range });
     if (source) q.set('source', source);
@@ -72,13 +80,15 @@ export default function Dashboard(props: Props) {
 
   // fresh numbers every minute while the tab is visible
   useEffect(() => {
+    if (!range) return;
     const id = setInterval(() => { if (document.visibilityState === 'visible') load(range, source); }, 60_000);
     return () => clearInterval(id);
   }, [range, source, load]);
 
   const data = payload?.data;
   const shown = source ?? payload?.defaultSource ?? 'own';
-  const csv = (list: ListKey) => `/api/insights/export?list=${list}&range=${range}&source=${shown}`;
+  const r = range ?? '30d';
+  const csv = (list: ListKey) => `/api/insights/export?list=${list}&range=${r}&source=${shown}`;
   const short = (k: RangeKey) => RANGES[k].short.replace(' hours', 'h').replace(' days', 'd').replace(' months', 'm');
 
   return (
@@ -87,12 +97,12 @@ export default function Dashboard(props: Props) {
         <div>
           <p className="dash__eyebrow"><a href="/">shivolabs.com</a><span aria-hidden="true">/</span>Private</p>
           <h1 className="dash__title">Insights</h1>
-          <p className="dash__sub">{RANGES[range].label}, compared with the {RANGES[range].short} before</p>
+          <p className="dash__sub">{RANGES[r].label}, compared with the {RANGES[r].short} before</p>
         </div>
         <div className="dash__controls">
           <nav className="seg" aria-label="Date range">
             {(Object.keys(RANGES) as RangeKey[]).map((k) => (
-              <button key={k} type="button" onClick={() => setRange(k)} aria-pressed={k === range} title={RANGES[k].label}>{short(k)}</button>
+              <button key={k} type="button" onClick={() => setRange(k)} aria-pressed={k === r} title={RANGES[k].label}>{short(k)}</button>
             ))}
           </nav>
           <nav className="seg" aria-label="Data source">
@@ -102,10 +112,10 @@ export default function Dashboard(props: Props) {
               </button>
             ))}
           </nav>
-          <button type="button" className="dash__icon" onClick={() => load(range, source)} aria-label="Refresh now" title="Refresh now">
+          <button type="button" className="dash__icon" onClick={() => load(r, source)} aria-label="Refresh now" title="Refresh now">
             <RefreshCw size={15} aria-hidden="true" className={busy ? 'spin' : undefined} />
           </button>
-          <a className="dash__icon" href={props.signOut} aria-label={`Sign out ${props.user}`} title={`Signed in as ${props.user}. Sign out`}><LogOut size={15} aria-hidden="true" /></a>
+          <a className="dash__icon" href={SIGN_OUT} aria-label="Sign out" title={payload?.user ? `Signed in as ${payload.user}. Sign out` : 'Sign out'}><LogOut size={15} aria-hidden="true" /></a>
         </div>
       </header>
 

@@ -2,24 +2,31 @@
 //  1. Pages Next made ahead of time (all of the public site) are handed out as plain files from the Worker's static
 //     files (scripts/static-pages.mjs puts them there). That costs about no computer time, which keeps the site inside
 //     Cloudflare's free plan (10 ms per request); running Next for the same page costs 20–200 ms.
-//  2. Everything else (/insights, /api, the nightly jobs) goes to Next through OpenNext's worker. It is loaded only
-//     when such a request comes, so serving a file never pays for starting Next.
-// @ts-expect-error .open-next/static-pages.json is created by scripts/static-pages.mjs
+//  2. The requests that come all the time are answered here directly, without Next: the visit tracker (/api/collect),
+//     the dashboard's numbers (/api/insights/data, after checking the Cloudflare Access sign-in) and the nightly jobs.
+//  3. Everything else (CSV export, sign-in callbacks, unknown pages) goes to Next through OpenNext's worker. It is
+//     loaded only when such a request comes, so the paths above never pay for starting Next (20–200 ms).
+// @ts-ignore .open-next/static-pages.json is created after `next build`, by scripts/static-pages.mjs
 import STATIC from './.open-next/static-pages.json';
+import { collect } from './lib/collect';
+import { accessUser } from './lib/access';
+import { insightsJson } from './lib/insights-api';
+import { indexNow, umamiBackup } from './lib/jobs';
 
 type Page = { kind: 'page' | 'file'; headers: Record<string, string>; segments?: string[]; status?: number };
 type Env = { ASSETS: { fetch(req: Request | URL): Promise<Response> }; CRON_SECRET?: string; SITE_URL?: string };
+type CfRequest = Request & { cf?: { country?: string; regionCode?: string; city?: string } };
 type Ctx = { waitUntil(p: Promise<unknown>): void; passThroughOnException?(): void };
 type Next = { fetch(req: Request, env: Env, ctx: Ctx): Promise<Response> };
 
 const pages = STATIC as Record<string, Page>;
-// @ts-expect-error .open-next/worker.js is created by `opennextjs-cloudflare build`
+// @ts-ignore .open-next/worker.js is created by `opennextjs-cloudflare build`
 const next = (): Promise<Next> => import('./.open-next/worker.js').then((m) => m.default);
 
 // Same schedule as wrangler.jsonc "triggers.crons" -> which page it runs
-const JOBS: Record<string, string> = {
-  '30 1 * * *': '/api/cron/umami-backup',
-  '15 3 * * *': '/api/cron/indexnow',
+const JOBS: Record<string, () => Promise<unknown>> = {
+  '30 1 * * *': umamiBackup,
+  '15 3 * * *': indexNow,
 };
 
 // the site-wide headers from next.config.ts, which Next would have added
@@ -63,16 +70,24 @@ async function fromFile(req: Request, env: Env): Promise<Response | null> {
 }
 
 export default {
-  async fetch(req: Request, env: Env, ctx: Ctx) {
+  async fetch(req: CfRequest, env: Env, ctx: Ctx) {
     const file = await fromFile(req, env).catch(() => null);
     if (file) return file;
+    const url = new URL(req.url);
+    if (url.pathname === '/api/collect' && req.method === 'POST') return collect(req, req.cf);
+    if (url.pathname === '/api/insights/data' && req.method === 'GET') {
+      const user = await accessUser(req.headers);
+      return user ? insightsJson(url, user) : new Response('Not found', { status: 404 });
+    }
+    if (!url.pathname.startsWith('/api/') && (req.method === 'GET' || req.method === 'HEAD') && !req.headers.get('rsc')) {
+      // an address that isn't a page (bots try many): the ready-made 'not found' page, without starting Next
+      const res = await env.ASSETS.fetch(new URL('/__static/_404/page.html', url)).catch(() => null);
+      if (res?.ok) return new Response(req.method === 'HEAD' ? null : res.body, { status: 404, headers: { 'content-type': 'text/html; charset=utf-8', ...SITE_HEADERS } });
+    }
     return (await next()).fetch(req, env, ctx);
   },
-  async scheduled(event: { cron: string }, env: Env, ctx: Ctx) {
-    const path = JOBS[event.cron];
-    if (!path || !env.CRON_SECRET) return; // the routes only answer a request that carries CRON_SECRET
-    const base = env.SITE_URL || 'https://shivolabs.com';
-    const handler = await next();
-    ctx.waitUntil(handler.fetch(new Request(`${base}${path}`, { headers: { authorization: `Bearer ${env.CRON_SECRET}` } }), env, ctx));
+  async scheduled(event: { cron: string }, _env: Env, ctx: Ctx) {
+    const job = JOBS[event.cron];
+    if (job) ctx.waitUntil(job().then((r) => console.log(event.cron, JSON.stringify(r))));
   },
 };

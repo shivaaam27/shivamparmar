@@ -16,8 +16,9 @@ const app = join(root, '.next', 'server', 'app');
 const out = join(root, '.open-next', 'assets', '__static');
 const manifest = JSON.parse(readFileSync(join(root, '.next', 'prerender-manifest.json'), 'utf8'));
 
-// pages that must always run live (sign-in, private data) or are Next's own error pages
-const LIVE = [/^\/insights/, /^\/api\//, /^\/_/];
+// pages that must always run live (data, sign-in) or are Next's own error pages. /insights is a file too: it holds no
+// numbers, Cloudflare Access guards it, and its data comes from /api/insights/data.
+const LIVE = [/^\/api\//, /^\/_/];
 
 const pages = {};
 const copy = (from, to) => { mkdirSync(dirname(to), { recursive: true }); copyFileSync(from, to); };
@@ -39,5 +40,7 @@ for (const [route, info] of Object.entries(manifest.routes)) {
     pages[route] = { kind: 'file', headers, status: meta.status ?? 200 };
   }
 }
+// the 'not found' page, for every unknown address (bots try many), so those never start Next either
+if (existsSync(join(app, '_not-found.html'))) copy(join(app, '_not-found.html'), join(out, '_404', 'page.html'));
 writeFileSync(join(root, '.open-next', 'static-pages.json'), JSON.stringify(pages));
 console.log(`static pages: ${Object.values(pages).filter((p) => p.kind === 'page').length} pages, ${Object.values(pages).filter((p) => p.kind === 'file').length} files`);
