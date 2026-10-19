@@ -189,6 +189,14 @@
 .ab-rows__role em { font-style: normal; font-size: .875rem; color: var(--ink-soft); }
 .ab-rows__text { font-size: .9063rem; line-height: 1.5; color: var(--ink-soft); }
 
+/* ---- highlights from the CV: a two-column numbered list */
+.ab-high { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0 2rem; border-top: 1px solid var(--line); }
+.ab-high li { display: grid; grid-template-columns: 2.25rem minmax(0, 1fr); gap: .3rem .75rem; padding: 1.1rem 0; border-bottom: 1px solid var(--line); align-content: start; }
+.ab-high__n { grid-row: span 2; font-size: .8125rem; line-height: 1.6; color: var(--brown); }
+.ab-high b { font-weight: 500; font-size: 1.0625rem; line-height: 1.3; }
+.ab-high p { margin: 0; font-size: .9375rem; line-height: 1.5; color: var(--ink-soft); }
+@media (max-width: 720px) { .ab-high { grid-template-columns: minmax(0, 1fr); } }
+
 /* ---- 06 say hello */
 .ab-hello-sec { justify-items: center; text-align: center; padding: clamp(2.5rem, 5vw, 4rem) 1.5rem; background: var(--card); border-radius: var(--r-card); box-shadow: inset 0 0 0 1px var(--card-edge); }
 .ab-hello-sec .ab-label { justify-self: center; }

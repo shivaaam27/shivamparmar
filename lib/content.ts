@@ -7,8 +7,8 @@
 export const site = {
   name: 'Shivo Labs',
   fullName: 'Shivo Labs',
-  tagline: 'Digital solutions company',
-  description: 'Shivo Labs is a digital solutions company in Dar es Salaam, Tanzania: websites and apps, custom software, automation and AI workflows, branding, content and social media, and digital strategy.',
+  tagline: 'Software and digital solutions',
+  description: 'Shivo Labs is the freelance software and digital solutions business of Shivam Parmar in Dar es Salaam, Tanzania: websites, iPhone, Android and Windows apps, custom business systems, AI workflows and MCP integrations, branding and social media.',
   /** The person behind the company. */
   founder: { name: 'Shivam Parmar', jobTitle: 'Founder of Shivo Labs; pharmacist, photographer and systems builder' },
   jobTitle: 'Pharmacist, photographer and systems builder',
@@ -34,7 +34,7 @@ export const nav = [
 export const hero = {
   /** Letters that jumble; the centre row resolves into this word. */
   word: 'SHIVAM',
-  footer: ['Websites & apps', 'Custom software', 'AI workflows', 'Branding & content'],
+  footer: ['Websites & apps', 'Custom systems', 'AI & MCP', 'Branding & content'],
   /** Put a photo in /public and set e.g. '/hero.jpg'. Set to null for the Three.js light instead. */
   image: null as string | null,
   /** Optional portrait crop used on phones (screens up to 720px wide). */
@@ -57,10 +57,10 @@ export type Tone =
 
 export const about = {
   tag: 'About',
-  headline: ['A digital solutions', 'company in Tanzania.'],
+  headline: ['Freelance digital solutions,', 'from Dar es Salaam.'],
   /** Part of the headline whose letters jumble, then land (like the hero). */
   scramble: 'digital solutions',
-  body: 'We help businesses design and build digital products that work beautifully: websites and apps, custom software and AI workflows that save hours of work. Alongside branding, content and social media, we shape a clear digital strategy, pairing technical precision with a considered eye so that what we make resonates with customers, teams and communities, and builds lasting growth.',
+  body: 'I design and build websites, iPhone, Android and Windows apps, and custom systems for task and document management, dashboards and internal tools. I set up AI workflows and automation, including MCP connections that let assistants like Claude work with your own systems, so repetitive work stops taking hours. I also do branding, photography and social media. In English or Kiswahili, for businesses in Tanzania, East Africa and beyond.',
   link: { label: 'Read more about me', href: '/about' },
 };
 
@@ -72,38 +72,39 @@ export const aboutPage = {
     { id: 'intro', label: 'Intro' },
     { id: 'numbers', label: 'In numbers' },
     { id: 'services', label: 'What I do' },
+    { id: 'highlights', label: 'Highlights' },
     { id: 'clients', label: 'Worked with' },
     { id: 'experience', label: 'Experience' },
     { id: 'say-hello', label: 'Say hello' },
     { id: 'index', label: 'Index' },
   ],
-  eyebrow: 'Founder of Shivo Labs · Pharmacist · Photographer',
+  eyebrow: 'Freelance software & digital solutions · Pharmacist · Photographer',
   /** Plain facts, written the way people search and AI assistants quote. Also used in /llms.txt. */
   facts: [
     { label: 'Name', value: 'Shivam Parmar' },
-    { label: 'Founder of', value: 'Shivo Labs, a digital solutions company in Dar es Salaam' },
+    { label: 'Runs', value: 'Shivo Labs, a freelance software and digital solutions business in Dar es Salaam' },
     { label: 'Based in', value: 'Dar es Salaam, Tanzania' },
     { label: 'Profession', value: 'Pharmacist, photographer and systems builder' },
     { label: 'Education', value: 'BPharm (GITAM, India), MSc Pharmacovigilance & Pharmacoepidemiology (MUHAS)' },
-    { label: 'Works on', value: 'Custom business systems, AI workflows with Claude Code, photography, graphic design' },
+    { label: 'Works on', value: 'Websites, iPhone, Android and Windows apps, custom business systems, AI workflows and MCP servers, photography, graphic design' },
     { label: 'Languages', value: 'English, Kiswahili, Hindi, Gujarati' },
   ],
   headline: ['Hi, I’m Shivam.'],
   intro: [
-    'I’m the founder of Shivo Labs, a digital solutions company in Dar es Salaam. I help brands design and build custom systems that work beautifully: functional at their core and considered in every detail.',
+    'I run Shivo Labs, my freelance software and digital solutions business in Dar es Salaam. I design and build websites, apps and custom systems for businesses, and set up the AI workflows that run inside them: functional at their core and considered in every detail.',
     'I believe the most lasting work pairs technical precision with emotional depth. It creates systems that resonate with the people they serve, from customers to teams and communities, and builds strong connections and long-term growth in business and in life.',
   ],
   disciplinesTag: 'What I do',
   disciplines: [
     {
-      title: 'Systems',
+      title: 'Systems & apps',
       image: '/images/work-dashboard-ipad.jpg' as string | null,
-      text: 'Custom systems built around how a brand actually works. They are functional first, easy to use, and designed to grow with the business.',
+      text: 'Custom systems and apps built around how a business actually works, on the web, iPhone, Android and Windows. They are functional first, easy to use, and designed to grow with the business.',
     },
     {
       title: 'AI & prompt engineering',
       image: '/images/about-ai.jpg' as string | null,
-      text: 'I design AI workflows and integrate them into everyday work with tools like Claude Code, with prompts engineered for reliable results. Repetitive tasks get automated so people spend their time where it matters, saving hours every week.',
+      text: 'I design AI workflows and build them into everyday work with tools like Claude Code, including AI agents and MCP servers that let an assistant work with a business’s own systems. Repetitive tasks get automated so people spend their time where it matters, saving hours every week.',
     },
     {
       title: 'Design',
@@ -121,6 +122,20 @@ export const aboutPage = {
       text: 'I’m a pharmacist. The precision, care and responsibility of that work carry into every system I build.',
     },
   ],
+  /** Highlights from the CV: things I've built, in plain words (no employer named). */
+  highlights: {
+    title: ['Things I’ve built', 'and shipped.'],
+    items: [
+      { title: 'Task management platform', text: 'For a group of companies, on the web, Android and iPhone: user portals, live progress updates and admin workflows, from version 1 to 3 in five months.' },
+      { title: 'AI document agent', text: 'Reads, renames, tags and files company documents into a linked master register, with a quarantine step and no deletions.' },
+      { title: 'Compliance alert engine', text: 'Tracks permits, visas, contracts and payments, with tiered reminders and weekly and monthly digests.' },
+      { title: 'Custom MCP server', text: 'Runs the whole platform from a chat with Claude, packaged with Docker for self-hosting.' },
+      { title: 'AI image pipeline', text: 'Makes natural, on-brand product images in batches of 120 to 200, saving about six hours per batch.' },
+      { title: 'Shivo Labs apps', text: 'My own apps for iPhone, Android, Windows and Android TV: an AI assistant, file sharing, a camera and a TV home screen.' },
+      { title: '3D supermarket website', text: 'A game-style store you can walk through, aisle by aisle, by day and by night.' },
+      { title: 'Seven research papers', text: 'Co-written in pharmacy and pharmacology, from a lozenge formulation to reviews on heart disease.' },
+    ],
+  },
   clients: {
     title: ['Brands and people', 'I’ve worked with.'],
     /** Companies I've worked with (backgrounds removed, in /public/logos). */
@@ -138,7 +153,8 @@ export const aboutPage = {
   },
   /** The journey so far, newest first: a summary from the CV (the full story comes later). */
   experience: [
-    { years: '2026', role: 'Systems & AI', place: 'Dar es Salaam', text: 'Built task and file management systems for a group of companies, with AI workflows made in Claude Code.' },
+    { years: '2026', role: 'Shivo Labs', place: 'Dar es Salaam', text: 'Freelance software and digital solutions: websites, apps for iPhone, Android, Windows and TV, and AI tools, built and shipped from Dar es Salaam.' },
+    { years: '2026', role: 'Systems & AI', place: 'Dar es Salaam', text: 'In five months, went from spreadsheets to building a group of companies’ task management platform, an AI document agent and a compliance alert engine, with AI workflows made in Claude Code.' },
     { years: '2025 – 2026', role: 'MSc Pharmacovigilance & Pharmacoepidemiology', place: 'MUHAS', text: 'Drug safety, and how medicines behave across whole populations.' },
     { years: '2024 – 2025', role: 'Pharmacy intern', place: 'Jakaya Kikwete Cardiac Institute', text: 'Internship training at Tanzania’s national heart hospital.' },
     { years: '2024', role: 'Branch Manager', place: 'Mansoor Daya Chemicals', text: 'Ran a pharmacy branch: the team, the stock and the customers.' },
@@ -154,7 +170,7 @@ export const aboutPage = {
   },
   ending: {
     greeting: 'Hallo, I’m Shivam.',
-    line: 'I founded Shivo Labs to build systems, websites and brands, from Dar es Salaam.',
+    line: 'Through Shivo Labs I build systems, apps, websites and brands, from Dar es Salaam.',
     cta: 'Start a project',
   },
   closing: {

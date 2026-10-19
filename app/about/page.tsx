@@ -15,7 +15,7 @@ import './about.css';
 
 export const metadata: Metadata = {
   title: `About — ${site.fullName}`,
-  description: 'About Shivam Parmar, founder of Shivo Labs: pharmacist (BPharm, MSc Pharmacovigilance), photographer and systems builder in Dar es Salaam. From pharmacy to AI workflows and custom business systems.',
+  description: 'About Shivam Parmar, who runs Shivo Labs, a freelance software and digital solutions business in Dar es Salaam: pharmacist (BPharm, MSc Pharmacovigilance), photographer and systems builder. Websites, apps, custom business systems, AI workflows and MCP servers.',
   alternates: { canonical: '/about' },
   openGraph: { url: '/about', title: `About — ${site.fullName}` },
 };
@@ -25,7 +25,7 @@ const ICONS = [LayoutDashboard, Sparkles, PenTool, Camera, Pill];
 const wa = (n: string) => `https://wa.me/${n}`;
 
 export default function AboutPage() {
-  const { sections, headline, eyebrow, intro, facts, disciplines, clients, experience, hello, ending } = aboutPage;
+  const { sections, headline, eyebrow, intro, facts, disciplines, highlights, clients, experience, hello, ending } = aboutPage;
   const projects = pagedProjects();
   const photo = visibleCategories().find((c) => c.slug === 'photography');
   const photos = projects.filter((p) => p.category.slug === 'photography').reduce((n, p) => n + (p.project.images?.length ?? 0), 0);
@@ -37,7 +37,7 @@ export default function AboutPage() {
   ];
   const [phone] = site.phones;
 
-  // 07 index: the whole site on one page, full width at the end
+  // 08 index: the whole site on one page, full width at the end
   const endingPanel = (
     <section id="index" className="ab-sec ab-end" aria-label="Index">
       <div className="ab-end__art">
@@ -157,7 +157,22 @@ export default function AboutPage() {
             </Reveal>
           </section>
 
-          {/* 04 worked with: logos glide past */}
+          {/* 04 highlights from the CV */}
+          <section id="highlights" className="ab-sec" aria-label="Highlights">
+            <p className="ab-label">Highlights</p>
+            <h2 className="ab-h2">{highlights.title[0]}<br />{highlights.title[1]}</h2>
+            <Reveal as="ol" className="ab-high">
+              {highlights.items.map((h, i) => (
+                <li key={h.title} style={{ '--i': i } as React.CSSProperties}>
+                  <span className="ab-high__n mono" aria-hidden="true">{pad(i + 1)}</span>
+                  <b>{h.title}</b>
+                  <p>{h.text}</p>
+                </li>
+              ))}
+            </Reveal>
+          </section>
+
+          {/* 05 worked with: logos glide past */}
           <section id="clients" className="ab-sec" aria-label="Worked with">
             <p className="ab-label">Worked with</p>
             <h2 className="ab-h2 ab-center">{clients.title[0]}<br />{clients.title[1]}</h2>
@@ -176,13 +191,13 @@ export default function AboutPage() {
             </div>
           </section>
 
-          {/* 05 experience: cards that stack up as you scroll */}
+          {/* 06 experience: cards that stack up as you scroll */}
           <section id="experience" className="ab-sec ab-exp" aria-label="Experience">
             <p className="ab-label">Experience</p>
             <ExperienceStack items={experience} />
           </section>
 
-          {/* 06 say hello */}
+          {/* 07 say hello */}
           <section id="say-hello" className="ab-sec ab-hello-sec" aria-label="Say hello">
             <p className="ab-label">Say hello</p>
             <h2 className="ab-h2 ab-center">{hello.title[0]}<br />{hello.title[1]}</h2>

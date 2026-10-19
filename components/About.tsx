@@ -9,11 +9,11 @@ import { track } from '@/lib/track';
 import { awakeNow } from './HeroAvatar';
 
 /** Phrases that get the highlighter stroke as the description fills in. */
-const KEY_PHRASES = ['websites and apps', 'custom software', 'AI workflows'];
+const KEY_PHRASES = ['iPhone, Android and Windows apps', 'custom systems', 'MCP connections'];
 const bare = (w: string) => w.toLowerCase().replace(/[^a-z0-9]/g, '');
 
 /**
- * Scroll-told intro: the section pins, "A digital solutions company in Tanzania" rises in (its first words jumbling until they land), then the
+ * Scroll-told intro: the section pins, "Freelance digital solutions, from Dar es Salaam" rises in (its first words jumbling until they land), then the
  * rest of the headline, then the description fills word by word from grey
  * to ink as you keep scrolling, and the link arrives last (with Blobby beside it).
  */
