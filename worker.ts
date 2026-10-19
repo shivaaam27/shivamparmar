@@ -26,11 +26,11 @@ const next = (): Promise<Next> => import('./.open-next/worker.js').then((m) => m
 // Same schedule as wrangler.jsonc "triggers.crons" -> which page it runs
 const JOBS: Record<string, () => Promise<unknown>> = {
   '30 1 * * *': umamiBackup,
-  '15 3 * * *': indexNow,
+  '15 3 * * *': () => indexNow(Object.entries(pages).filter(([p, v]) => v.kind === 'page' && !p.startsWith('/insights')).map(([p]) => p)),
 };
 
 // the site-wide headers from next.config.ts, which Next would have added
-const SITE_HEADERS: Record<string, string> = { 'X-Robots-Tag': 'noai, noimageai' };
+const SITE_HEADERS: Record<string, string> = { 'X-Robots-Tag': 'noimageai' };
 
 /** The ready-made answer for this request, or null when Next has to answer it. */
 async function fromFile(req: Request, env: Env): Promise<Response | null> {

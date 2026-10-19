@@ -1,5 +1,6 @@
 import { site } from './content';
 import { categoryHasWork, categories, pagedProjects } from './work';
+import { areas, services } from './services';
 
 /**
  * Search-engine basics in one place: the site's public address, every page
@@ -17,6 +18,13 @@ export function publicPaths() {
     { path: '/', priority: 1 },
     { path: '/about', priority: 0.9 },
     { path: '/work', priority: 0.9 },
+    { path: '/services', priority: 0.95 },
+    ...services.map((s) => ({ path: `/services/${s.slug}`, priority: 0.9 })),
+    { path: '/sw/huduma', priority: 0.85 },
+    ...services.map((s) => ({ path: `/sw/huduma/${s.swSlug}`, priority: 0.8 })),
+    { path: '/faq', priority: 0.8 },
+    { path: '/sw/maswali', priority: 0.75 },
+    { path: '/journal', priority: 0.8 },
     ...categories.filter(categoryHasWork).map((c) => ({ path: `/work/${c.slug}`, priority: 0.7 })),
     ...pagedProjects().map(({ project }) => ({ path: `/work/${project.slug}`, priority: 0.6 })),
   ];
@@ -32,8 +40,14 @@ export function personJsonLd() {
     '@context': 'https://schema.org',
     '@graph': [
       {
-        '@type': 'Organization',
+        '@type': ['Organization', 'ProfessionalService'],
         '@id': `${url}/#organization`,
+        alternateName: 'Shivo Labs Tanzania',
+        areaServed: areas.schema.map((name) => ({ '@type': 'Place', name })),
+        availableLanguage: ['English', 'Swahili'],
+        priceRange: 'Quote on request',
+        makesOffer: services.map((s) => ({ '@type': 'Offer', itemOffered: { '@type': 'Service', name: s.en.title, url: `${url}/services/${s.slug}` } })),
+        contactPoint: { '@type': 'ContactPoint', contactType: 'sales', telephone: site.phones[0].tel, email: site.email, availableLanguage: ['English', 'Swahili'], areaServed: 'TZ' },
         name: site.fullName,
         url,
         logo: `${url}/og.png`,

@@ -64,7 +64,7 @@ export async function umamiBackup() {
  * use IndexNow; it finds the site through links and the sitemap.
  * Only a request that carries CRON_SECRET may run it (the Cloudflare scheduler sends it).
  */
-export async function indexNow() {
+export async function indexNow(paths: string[] = publicPaths().map((p) => p.path)) {
   const url = siteUrl();
   if (url.startsWith('http://localhost')) return { skipped: 'no public address' };
   const res = await fetch('https://api.indexnow.org/indexnow', {
@@ -74,8 +74,8 @@ export async function indexNow() {
       host: new URL(url).host,
       key: INDEXNOW_KEY,
       keyLocation: `${url}/${INDEXNOW_KEY}.txt`,
-      urlList: publicPaths().map(({ path }) => `${url}${path === '/' ? '' : path}`),
+      urlList: paths.map((path) => `${url}${path === '/' ? '' : path}`),
     }),
   });
-  return { status: res.status, sent: publicPaths().length };
+  return { status: res.status, sent: paths.length };
 }
