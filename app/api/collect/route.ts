@@ -2,21 +2,17 @@ import { createHmac } from 'node:crypto';
 import { NextResponse, type NextRequest } from 'next/server';
 import { db, dbConfigured } from '@/lib/db';
 import { isBot, parseUA } from '@/lib/ua';
+import { visitorPlace } from '@/lib/location';
 
 /**
  * Records a page view or an action from the site's own tracker into your
  * database. No cookies, and no IP address is stored: a visitor is an
  * anonymous id made from IP + browser + today's date, so the same person
- * can't be followed from one day to the next. Location comes from Vercel.
+ * can't be followed from one day to the next. Location comes from Cloudflare (lib/location.ts).
  */
 
 const ok = () => new NextResponse(null, { status: 204 });
 const clip = (v: unknown, n: number) => (typeof v === 'string' && v ? v.slice(0, n) : null);
-const header = (req: NextRequest, k: string) => {
-  const v = req.headers.get(k);
-  if (!v) return null;
-  try { return decodeURIComponent(v); } catch { return v; }
-};
 
 export async function POST(req: NextRequest) {
   if (!dbConfigured()) return ok();
@@ -45,13 +41,12 @@ export async function POST(req: NextRequest) {
   try { referrer = referrer ? new URL(referrer).host.replace(/^www\./, '') : null; } catch { referrer = null; }
   if (referrer === req.nextUrl.host.replace(/^www\./, '')) referrer = null;
 
-  const ip = (req.headers.get('x-forwarded-for') ?? '').split(',')[0].trim() || req.headers.get('x-real-ip') || '';
+  const ip = req.headers.get('cf-connecting-ip') || (req.headers.get('x-forwarded-for') ?? '').split(',')[0].trim() || req.headers.get('x-real-ip') || '';
   const day = new Date().toISOString().slice(0, 10);
   const salt = process.env.ANALYTICS_SALT || process.env.AUTH_SECRET || 'visits';
   const visitor = createHmac('sha256', salt).update(`${day}|${ip}|${ua}`).digest('base64url').slice(0, 22);
 
-  const country = header(req, 'x-vercel-ip-country');
-  const regionCode = header(req, 'x-vercel-ip-country-region');
+  const place = visitorPlace(req.headers);
   const { device, browser, os } = parseUA(ua);
 
   try {
@@ -63,7 +58,7 @@ export async function POST(req: NextRequest) {
          select 1 from visits_events
          where session = $14 and path = $3 and kind = 'pageview' and ts > now() - interval '30 minutes'
        )`,
-      [kind, name, path, referrer, country, country && regionCode ? `${country}-${regionCode}` : null, header(req, 'x-vercel-ip-city'),
+      [kind, name, path, referrer, place.country, place.region, place.city,
         device, browser, os, clip(body.screen, 20), clip(body.language, 20), visitor, session],
     );
   } catch {

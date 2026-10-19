@@ -3,9 +3,9 @@ import { INDEXNOW_KEY, publicPaths, siteUrl } from '@/lib/seo';
 
 /**
  * Tells Bing and the other IndexNow search engines about every public page,
- * once a day (Vercel cron), so new work shows up there quickly. Google doesn't
+ * once a day (Cloudflare cron trigger, see wrangler.jsonc and worker.ts), so new work shows up there quickly. Google doesn't
  * use IndexNow; it finds the site through links and the sitemap.
- * Only Vercel's scheduler (or a request with CRON_SECRET) may run it.
+ * Only a request that carries CRON_SECRET may run it (the Cloudflare scheduler sends it).
  */
 function allowed(req: NextRequest) {
   const secret = process.env.CRON_SECRET;

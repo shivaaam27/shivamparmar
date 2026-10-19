@@ -6,7 +6,7 @@ import { categoryHasWork, categories, pagedProjects } from './work';
  * worth listing, and the "who is this" card search engines read.
  */
 
-/** The public address: a custom domain later (SITE_URL), else Vercel's production host. */
+/** The public address: the custom domain (SITE_URL, set in wrangler.jsonc), else Vercel's production host if still there. */
 export const siteUrl = () =>
   (process.env.SITE_URL || (process.env.VERCEL_PROJECT_PRODUCTION_URL ? `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}` : 'http://localhost:3210')).replace(/\/$/, '');
 

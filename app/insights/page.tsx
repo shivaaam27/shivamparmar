@@ -48,7 +48,7 @@ export default async function InsightsPage({ searchParams }: Props) {
       <AutoRefresh />
       <header className="dash__top">
         <div>
-          <p className="dash__eyebrow"><a href="/">shivamparmar.com</a></p>
+          <p className="dash__eyebrow"><a href="/">shivolabs.com</a></p>
           <h1 className="dash__title">Insights</h1>
           <p className="dash__sub">{RANGES[range].label}, compared with the {RANGES[range].short} before</p>
         </div>
@@ -371,7 +371,7 @@ function SignIn() {
           </>
         ) : (
           <p className="dash__note" role="alert">
-            Sign-in is paused: AUTH_SECRET in Vercel is too short to keep this page private. Set it to a random value of at
+            Sign-in is paused: AUTH_SECRET in Cloudflare is too short to keep this page private. Set it to a random value of at
             least {MIN_SECRET} characters and redeploy.
           </p>
         )}

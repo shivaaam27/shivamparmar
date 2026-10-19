@@ -7,7 +7,7 @@ import { collect } from '@/lib/track';
 
 /** Umami website ID (public: it's in every page's source). An env var can override it. */
 const WEBSITE_ID = process.env.NEXT_PUBLIC_UMAMI_WEBSITE_ID || 'c8e39f81-6be1-4b1b-a492-801b885b6347';
-/** Optional: only count visits on these hosts (e.g. "shivamparmar.com"), so previews don't. */
+/** Optional: only count visits on these hosts (e.g. "shivolabs.com"), so test addresses don't. */
 const DOMAINS = process.env.NEXT_PUBLIC_UMAMI_DOMAINS;
 
 /**

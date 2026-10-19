@@ -3,13 +3,13 @@ import { db, dbConfigured } from '@/lib/db';
 import { TIMEZONE, umamiConnected, umamiDay } from '@/lib/umami';
 
 /**
- * Every night (see vercel.json), copy Umami's numbers for recent days into
+ * Every night (Cloudflare cron trigger: wrangler.jsonc and worker.ts), copy Umami's numbers for recent days into
  * your database, so Umami's history survives even if Umami deletes it or the
  * account is lost. Re-running a day just overwrites it. The first run fills
  * in the last week.
  *
- * Only Vercel's scheduler may run it: with CRON_SECRET set in Vercel it must
- * send that secret; without it, the request must come from Vercel's cron.
+ * Only the scheduler may run it: it must send CRON_SECRET (a Cloudflare secret).
+ * Without CRON_SECRET only Vercel's cron is accepted, so on Cloudflare always set it.
  */
 export const maxDuration = 60;
 

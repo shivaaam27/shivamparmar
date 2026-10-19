@@ -14,7 +14,7 @@ const problem = (text: string) =>
 export async function GET(req: NextRequest) {
   if (!authConfigured()) return notFound();
   if (!secretStrong()) {
-    return problem(`AUTH_SECRET in Vercel is too weak to protect your sign-in. Set it to a random value of at least ${MIN_SECRET} characters `
+    return problem(`AUTH_SECRET in Cloudflare is too weak to protect your sign-in. Set it to a random value of at least ${MIN_SECRET} characters `
       + '(a password manager can generate one), then redeploy.');
   }
   const code = req.nextUrl.searchParams.get('code');
@@ -41,7 +41,7 @@ export async function GET(req: NextRequest) {
   const token = tokenJson?.access_token as string | undefined;
   if (!token) {
     return problem(`GitHub didn't accept the sign-in (${tokenJson?.error_description ?? tokenJson?.error ?? tokenRes.status}). `
-      + 'Check GITHUB_CLIENT_ID and GITHUB_CLIENT_SECRET in Vercel, and that the app\'s callback URL is '
+      + 'Check GITHUB_CLIENT_ID and GITHUB_CLIENT_SECRET in Cloudflare, and that the app\'s callback URL is '
       + new URL('/api/auth/github/callback', req.nextUrl.origin).toString());
   }
 

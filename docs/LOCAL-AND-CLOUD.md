@@ -1,7 +1,7 @@
 # Working locally and in the cloud
 
 The code lives in one place: GitHub, repo `shivaaam27/shivamparmar`, branch **`main`**.
-Your computer and the cloud (Claude Code on the web, Vercel) both work from that same copy,
+Your computer and the cloud (Claude Code on the web, Cloudflare) both work from that same copy,
 so you can switch between them at any time. The rule is simple:
 
 > **Pull before you start, push when you're done.**
@@ -41,12 +41,11 @@ That's it. The whole site works locally without filling in any settings.
 
 `npm run setup` copies `.env.example` to `.env.local`. It is ignored by git, so your keys never
 end up on GitHub. You only need to fill it in to use **/insights** (visitor numbers) locally.
-The quickest way is to copy the real values from Vercel:
+The values live in Cloudflare (Workers & Pages → shivo-labs-site → Settings). Secrets can't be read back, so keep your own copy and put
+them in `.env.local` (and in `.dev.vars` for `npm run cf:preview`).
 
 ```
-npx vercel login
-npx vercel link          # pick the shivamparmar project
-npx vercel env pull .env.local
+npx wrangler login       # Shivo Labs account
 ```
 
 ## 2. Every time you sit down to work locally
@@ -66,7 +65,8 @@ git commit -m "What I changed"
 git push
 ```
 
-Pushing to `main` updates GitHub, and Vercel redeploys the live site from it automatically.
+Pushing to `main` updates GitHub only. To send the site live run `npm run cf:deploy` on your computer
+(nothing builds on GitHub).
 The next cloud session will start from your changes.
 
 ## 4. Working in the cloud (Claude Code)

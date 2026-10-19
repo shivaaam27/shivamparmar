@@ -2,8 +2,8 @@ import 'server-only';
 import { neon } from '@neondatabase/serverless';
 
 /**
- * Your own copy of the visit data, in the Neon Postgres database Vercel
- * connected to this project (DATABASE_URL). Tables are created on first use.
+ * Your own copy of the visit data, in the Neon Postgres database
+ * (DATABASE_URL, a Cloudflare secret). Tables are created on first use.
  *
  *  visits_events  one row per page view or action, recorded by /api/collect
  *  umami_daily    Umami's daily totals, copied every night by /api/cron/umami-backup

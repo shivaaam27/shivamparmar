@@ -19,7 +19,7 @@ if (existsSync('.env.local')) {
 } else {
   copyFileSync('.env.example', '.env.local');
   console.log('Created .env.local from .env.example. The site runs without filling it in;');
-  console.log('fill it (or run `npx vercel env pull .env.local`) only if you need /insights locally.');
+  console.log('fill it (copy the values from Cloudflare → Workers → shivo-labs-site → Settings) only if you need /insights locally.');
 }
 
 console.log('\nReady. Start the site with:  npm run dev   → http://localhost:3210');

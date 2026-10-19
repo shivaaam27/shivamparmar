@@ -1,0 +1,17 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "shivo-labs-site",
+  "main": "worker.ts",
+  "compatibility_date": "2026-10-01",
+  "compatibility_flags": ["nodejs_compat", "global_fetch_strictly_public"],
+  "assets": { "directory": ".open-next/assets", "binding": "ASSETS" },
+  "observability": { "enabled": true },
+  // The two nightly jobs that used to be Vercel crons in vercel.json (UTC times)
+  "triggers": { "crons": ["30 1 * * *", "15 3 * * *"] },
+  "vars": {
+    "SITE_URL": "https://shivolabs.com",
+    "INSIGHTS_TIMEZONE": "Africa/Dar_es_Salaam"
+  }
+  // Secrets (never written here): DATABASE_URL, AUTH_SECRET, CRON_SECRET, GITHUB_CLIENT_ID,
+  // GITHUB_CLIENT_SECRET, INSIGHTS_GITHUB_USER, UMAMI_SHARE_ID. Set with: npx wrangler secret put NAME
+}

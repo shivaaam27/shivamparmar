@@ -338,7 +338,7 @@ export function sample(range: RangeKey, note: string): Insights {
 /** For the status check: which credential is set, and does Umami answer. */
 export async function umamiStatus() {
   const via = API_KEY ? 'api key' : SHARE_ID ? 'share link' : 'not set';
-  if (!connected()) return { via, ok: false, detail: 'Add UMAMI_SHARE_ID in Vercel' };
+  if (!connected()) return { via, ok: false, detail: 'Add UMAMI_SHARE_ID in Cloudflare' };
   remembered = null; // always re-check here
   // show the id we read (first and last characters only), so a wrong value is easy to spot
   const shareId = SHARE_ID ? `${SHARE_ID.slice(0, 3)}…${SHARE_ID.slice(-2)} (${SHARE_ID.length} characters)` : undefined;
@@ -364,10 +364,10 @@ export async function umamiDay(startAt: number, endAt: number) {
 
 /** Umami, or sample data with the reason. (Which source to show is decided in lib/insights-data.ts.) */
 export async function umamiOrSample(range: RangeKey): Promise<Insights> {
-  if (!connected()) return sample(range, 'Sample data. Add UMAMI_SHARE_ID in Vercel to see your real numbers.');
+  if (!connected()) return sample(range, 'Sample data. Add UMAMI_SHARE_ID in Cloudflare to see your real numbers.');
   try {
     return await fromUmami(range);
   } catch (e) {
-    return sample(range, `Couldn't reach Umami (${(e as Error).message}), so this is sample data. Check UMAMI_SHARE_ID in Vercel.`);
+    return sample(range, `Couldn't reach Umami (${(e as Error).message}), so this is sample data. Check UMAMI_SHARE_ID in Cloudflare.`);
   }
 }

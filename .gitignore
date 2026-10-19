@@ -7,3 +7,6 @@ next-env.d.ts
 .vercel
 .DS_Store
 !.env.example
+.open-next/
+.wrangler/
+.dev.vars
