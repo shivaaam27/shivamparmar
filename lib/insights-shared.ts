@@ -44,6 +44,8 @@ export type Insights = {
   totals: Totals;
   previous: Totals;
   live: number;
+  /** Visitors from data centres (robots running a browser) in the range, left out of everything else (own database only). */
+  robots?: number;
   series: Point[];
   /** The previous period, bucket for bucket, for the comparison line. */
   prevSeries: Point[];

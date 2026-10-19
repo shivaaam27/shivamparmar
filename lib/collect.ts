@@ -2,6 +2,7 @@ import { createHmac } from 'node:crypto';
 import { db, dbConfigured } from './db';
 import { isBot, parseUA } from './ua';
 import { visitorPlace, type Cf } from './location';
+import { fromServers } from './robots';
 
 /**
  * Records a page view or an action from the site's own tracker into your
@@ -53,14 +54,15 @@ export async function collect(req: Request, cf?: Cf): Promise<Response> {
   try {
     // a reload of the same page in the same visit within 30 minutes isn't another page view
     await db(
-      `insert into visits_events (kind, name, path, referrer, country, region, city, device, browser, os, screen, language, visitor, session)
-       select $1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14
+      `insert into visits_events (kind, name, path, referrer, country, region, city, device, browser, os, screen, language, visitor, session, asn, network, robot)
+       select $1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17
        where $1 <> 'pageview' or not exists (
          select 1 from visits_events
          where session = $14 and path = $3 and kind = 'pageview' and ts > now() - interval '30 minutes'
        )`,
       [kind, name, path, referrer, place.country, place.region, place.city,
-        device, browser, os, clip(body.screen, 20), clip(body.language, 20), visitor, session],
+        device, browser, os, clip(body.screen, 20), clip(body.language, 20), visitor, session,
+        cf?.asn ?? null, clip(cf?.asOrganization, 120), fromServers(cf)],
     );
   } catch {
     // never break the page for a failed stat

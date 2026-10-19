@@ -9,7 +9,7 @@ const decode = (v: string | null | undefined) => {
   try { return decodeURIComponent(v); } catch { return v; }
 };
 
-export type Cf = { country?: string; regionCode?: string; city?: string };
+export type Cf = { country?: string; regionCode?: string; city?: string; asn?: number; asOrganization?: string };
 
 export function visitorPlace(headers: Headers, cf?: Cf): Place {
 

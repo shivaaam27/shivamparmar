@@ -40,6 +40,12 @@ const SCHEMA = [
    )`,
   `create index if not exists visits_events_ts on visits_events (ts)`,
   `create index if not exists visits_events_session on visits_events (session, ts)`,
+  // the network each visit came from, and whether it looks like a robot (lib/robots.ts)
+  `alter table visits_events add column if not exists asn integer`,
+  `alter table visits_events add column if not exists network text`,
+  `alter table visits_events add column if not exists robot boolean not null default false`,
+  // what the dashboard counts: people only
+  `create or replace view visits_people as select * from visits_events where not robot`,
   `create table if not exists umami_daily (
      day date primary key,
      visitors int not null, visits int not null, pageviews int not null,

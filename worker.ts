@@ -77,7 +77,16 @@ export default {
     if (url.pathname === '/api/collect' && req.method === 'POST') return collect(req, req.cf);
     if (url.pathname === '/api/insights/data' && req.method === 'GET') {
       const user = await accessUser(req.headers);
-      return user ? insightsJson(url, user) : new Response('Not found', { status: 404 });
+      if (!user) return new Response('Not found', { status: 404 });
+      // the same numbers for 45 seconds: the dashboard asks every minute, and a reload or a range switch back
+      // shouldn't redo the work (only after the sign-in check above, and never shared with anyone else)
+      const key = new Request(`https://cache.shivolabs.internal/insights${url.search}`);
+      const cache = (globalThis as unknown as { caches: { default: Cache } }).caches.default;
+      const hit = await cache.match(key).catch(() => undefined);
+      if (hit && !url.searchParams.has('fresh')) return new Response(hit.body, { headers: { 'content-type': 'application/json', 'cache-control': 'private, no-store' } });
+      const res = await insightsJson(url, user);
+      if (res.ok) ctx.waitUntil(cache.put(key, new Response(res.clone().body, { headers: { 'content-type': 'application/json', 'cache-control': 'max-age=45' } })).catch(() => undefined));
+      return res;
     }
     if (!url.pathname.startsWith('/api/') && (req.method === 'GET' || req.method === 'HEAD') && !req.headers.get('rsc')) {
       // an address that isn't a page (bots try many): the ready-made 'not found' page, without starting Next

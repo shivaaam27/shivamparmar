@@ -3,8 +3,8 @@ import { db } from './db';
 import { LISTS, RANGES, TIMEZONE, fillSeries, toRhythm, toTotals, type Insights, type ListKey, type RangeKey, type Row } from './umami';
 
 /**
- * The dashboard's numbers, computed from this site's own database
- * (visits_events). Shapes match what Umami gives, so every chart works
+ * The dashboard's numbers, computed from this site's own database: people only
+ * (visits_people, which leaves out visits from data centres; their count is in `robots`). Shapes match what Umami gives, so every chart works
  * from either source.
  */
 
@@ -15,7 +15,7 @@ type Bucket = { x: string; y: number };
 
 async function totals(from: number, to: number) {
   const [r] = await db(
-    `with ev as (select * from visits_events where ts >= $1 and ts < $2),
+    `with ev as (select * from visits_people where ts >= $1 and ts < $2),
           sess as (select session, count(*) filter (where kind = 'pageview') as views,
                           extract(epoch from max(ts) - min(ts)) as dur
                    from ev group by session)
@@ -34,7 +34,7 @@ async function buckets(unit: 'hour' | 'day' | 'month', from: number, to: number)
   const rows = await db(
     `select to_char(date_trunc($3, ts at time zone $4), 'YYYY-MM-DD HH24:MI:SS') as x,
             count(distinct visitor) as v, count(*) as p
-     from visits_events where kind = 'pageview' and ts >= $1 and ts < $2
+     from visits_people where kind = 'pageview' and ts >= $1 and ts < $2
      group by 1 order by 1`,
     [iso(from), iso(to), unit, TIMEZONE],
   );
@@ -52,13 +52,13 @@ const COLUMN: Partial<Record<ListKey, string>> = {
 async function list(key: ListKey, from: number, to: number): Promise<Row[]> {
   const p = [iso(from), iso(to)];
   const rows =
-    key === 'pages' ? await db(`select path as label, count(*) as value from visits_events where kind = 'pageview' and ts >= $1 and ts < $2 group by 1 order by 2 desc limit 50`, p)
+    key === 'pages' ? await db(`select path as label, count(*) as value from visits_people where kind = 'pageview' and ts >= $1 and ts < $2 group by 1 order by 2 desc limit 50`, p)
     : key === 'entries' ? await db(
       `select path as label, count(*) as value from (
-         select distinct on (session) path from visits_events where kind = 'pageview' and ts >= $1 and ts < $2 order by session, ts
+         select distinct on (session) path from visits_people where kind = 'pageview' and ts >= $1 and ts < $2 order by session, ts
        ) first group by 1 order by 2 desc limit 50`, p)
-    : key === 'events' ? await db(`select name as label, count(*) as value from visits_events where kind = 'event' and ts >= $1 and ts < $2 group by 1 order by 2 desc limit 50`, p)
-    : await db(`select coalesce(${COLUMN[key]}, '') as label, count(distinct visitor) as value from visits_events where kind = 'pageview' and ts >= $1 and ts < $2 group by 1 order by 2 desc limit 50`, p);
+    : key === 'events' ? await db(`select name as label, count(*) as value from visits_people where kind = 'event' and ts >= $1 and ts < $2 group by 1 order by 2 desc limit 50`, p)
+    : await db(`select coalesce(${COLUMN[key]}, '') as label, count(distinct visitor) as value from visits_people where kind = 'pageview' and ts >= $1 and ts < $2 group by 1 order by 2 desc limit 50`, p);
   return rows.map((r) => ({ label: String(r.label ?? ''), value: n(r.value) }));
 }
 
@@ -70,15 +70,16 @@ export async function fromDb(range: RangeKey): Promise<Insights> {
   const rhythmStart = endAt - 28 * 86400e3;
   const keys = Object.keys(LISTS) as ListKey[];
 
-  const [now, before, cur, prev, year, hours, live, liveBy, ...lists] = await Promise.all([
+  const [now, before, cur, prev, year, hours, live, liveBy, robots, ...lists] = await Promise.all([
     totals(startAt, endAt),
     totals(startAt - ms, startAt),
     buckets(unit, startAt, endAt),
     buckets(unit, startAt - ms, startAt),
     buckets('day', yearStart, endAt),
     buckets('hour', rhythmStart, endAt),
-    db(`select count(distinct session) as n from visits_events where ts > now() - interval '5 minutes'`),
-    db(`select coalesce(country, '') as label, count(distinct session) as value from visits_events where ts > now() - interval '5 minutes' group by 1 order by 2 desc`),
+    db(`select count(distinct session) as n from visits_people where ts > now() - interval '5 minutes'`),
+    db(`select coalesce(country, '') as label, count(distinct session) as value from visits_people where ts > now() - interval '5 minutes' group by 1 order by 2 desc`),
+    db(`select count(distinct visitor) as n from visits_events where robot and kind = 'pageview' and ts >= $1 and ts < $2`, [iso(startAt), iso(endAt)]),
     ...keys.map((k) => list(k, startAt, endAt)),
   ]);
 
@@ -88,6 +89,7 @@ export async function fromDb(range: RangeKey): Promise<Insights> {
     totals: now,
     previous: before,
     live: n(live[0]?.n),
+    robots: n(robots[0]?.n),
     series: fillSeries(unit, startAt, endAt, cur.visitors, cur.pageviews),
     prevSeries: fillSeries(unit, startAt - ms, startAt, prev.visitors, prev.pageviews),
     year: fillSeries('day', yearStart, endAt, year.visitors, year.pageviews).map((p) => ({ t: p.t, visitors: p.visitors })),

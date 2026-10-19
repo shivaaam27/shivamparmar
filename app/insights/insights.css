@@ -416,3 +416,4 @@ body:has(.dash) .grain { display: none; }
 .now__hours .bars__col i { border-radius: 2px 2px 1px 1px; }
 .now__hours + .now__today { margin-top: 0; }
 .map__tip p { white-space: nowrap; }
+.card__meta .robots { display: inline-flex; margin-left: 8px; padding: 2px 8px; border-radius: 999px; background: var(--soft); color: var(--ink-2); cursor: help; }

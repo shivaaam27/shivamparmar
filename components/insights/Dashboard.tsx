@@ -40,11 +40,11 @@ export default function Dashboard() {
   const [, setNamesReady] = useState(0);
   const asked = useRef(0);
 
-  const load = useCallback(async (r: RangeKey, s: Source | null) => {
+  const load = useCallback(async (r: RangeKey, s: Source | null, fresh = false) => {
     const ask = ++asked.current;
     setBusy(true);
     try {
-      const res = await fetch(`/api/insights/data?range=${r}${s ? `&source=${s}` : ''}`, { cache: 'no-store' });
+      const res = await fetch(`/api/insights/data?range=${r}${s ? `&source=${s}` : ''}${fresh ? '&fresh=1' : ''}`, { cache: 'no-store' });
       if (res.status === 404) throw new Error('Your sign-in has ended. Reload the page to sign in again.');
       if (!res.ok) throw new Error(`The numbers could not load (${res.status}). They try again in a minute.`);
       const p = (await res.json()) as Payload;
@@ -112,7 +112,7 @@ export default function Dashboard() {
               </button>
             ))}
           </nav>
-          <button type="button" className="dash__icon" onClick={() => load(r, source)} aria-label="Refresh now" title="Refresh now">
+          <button type="button" className="dash__icon" onClick={() => load(r, source, true)} aria-label="Refresh now" title="Refresh now">
             <RefreshCw size={15} aria-hidden="true" className={busy ? 'spin' : undefined} />
           </button>
           <a className="dash__icon" href={SIGN_OUT} aria-label="Sign out" title={payload?.user ? `Signed in as ${payload.user}. Sign out` : 'Sign out'}><LogOut size={15} aria-hidden="true" /></a>
@@ -273,7 +273,10 @@ function Traffic({ data }: { data: Insights }) {
     <article className="card span-8">
       <header className="card__head">
         <h2 className="card__title"><span className="card__icon" aria-hidden="true"><LineChart size={ICON} /></span>Traffic</h2>
-        <span className="card__meta">{RANGES[data.range].label}</span>
+        <span className="card__meta">
+          {RANGES[data.range].label}
+          {data.robots ? <span className="robots" title="Visits from data centres (search engines, link previews, scanners). Saved, but not counted anywhere on this page.">{fmt(data.robots)} {data.robots === 1 ? 'robot' : 'robots'} left out</span> : null}
+        </span>
       </header>
       <TrafficChart points={data.series} previous={data.prevSeries} unit={RANGES[data.range].unit} timeZone={TIMEZONE}
         totals={{ visitors: data.totals.visitors, pageviews: data.totals.pageviews }}
