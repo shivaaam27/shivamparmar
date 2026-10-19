@@ -6,6 +6,11 @@
   "compatibility_flags": ["nodejs_compat", "global_fetch_strictly_public"],
   "assets": { "directory": ".open-next/assets", "binding": "ASSETS" },
   "observability": { "enabled": true },
+  // The public addresses. Wrangler creates the DNS records in the shivolabs.com zone for these.
+  "routes": [
+    { "pattern": "shivolabs.com", "custom_domain": true },
+    { "pattern": "www.shivolabs.com", "custom_domain": true }
+  ],
   // The two nightly jobs that used to be Vercel crons in vercel.json (UTC times)
   "triggers": { "crons": ["30 1 * * *", "15 3 * * *"] },
   "vars": {
