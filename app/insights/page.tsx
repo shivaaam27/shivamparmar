@@ -4,7 +4,7 @@ import { notFound } from 'next/navigation';
 import {
   Activity, ArrowUpRight, CalendarDays, Compass, Database, Download, FileText, Globe2, Hourglass, Images, LineChart, LogOut, MonitorSmartphone, Radio, Route,
 } from 'lucide-react';
-import { MIN_SECRET, authConfigured, currentUser, secretStrong } from '@/lib/auth';
+import { MIN_SECRET, authConfigured, currentUser, secretStrong, usesAccess } from '@/lib/auth';
 import { RANGES, TIMEZONE, toRange, type Insights, type ListKey, type RangeKey, type Row } from '@/lib/umami';
 import { defaultSource, getInsights, toSource, type Source } from '@/lib/insights-data';
 import { buildGeo } from '@/lib/geo';
@@ -364,7 +364,9 @@ function SignIn() {
       <div className="card signin">
         <p className="dash__eyebrow">Private</p>
         <h1 className="dash__title">Insights</h1>
-        {secretStrong() ? (
+        {usesAccess() ? (
+          <p className="signin__text">This page opens only after the email code sign-in. Reload it to sign in again.</p>
+        ) : secretStrong() ? (
           <>
             <p className="signin__text">Sign in with the GitHub account that owns this site.</p>
             <a className="signin__btn" href="/api/auth/github">Sign in with GitHub<ArrowUpRight size={16} aria-hidden="true" /></a>
