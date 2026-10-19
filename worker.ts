@@ -71,6 +71,9 @@ async function fromFile(req: Request, env: Env): Promise<Response | null> {
 
 export default {
   async fetch(req: CfRequest, env: Env, ctx: Ctx) {
+    // one address for search engines: www.shivolabs.com forwards to shivolabs.com, keeping the path
+    const host = new URL(req.url).hostname;
+    if (host.startsWith('www.')) { const to = new URL(req.url); to.hostname = host.slice(4); return Response.redirect(to.toString(), 301); }
     const file = await fromFile(req, env).catch(() => null);
     if (file) return file;
     const url = new URL(req.url);

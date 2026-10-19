@@ -6,9 +6,10 @@ import { categoryHasWork, categories, pagedProjects } from './work';
  * worth listing, and the "who is this" card search engines read.
  */
 
-/** The public address: the custom domain (SITE_URL, set in wrangler.jsonc), else Vercel's production host if still there. */
+/** The public address. Pages are built ahead of time, so this must be right at build time too: SITE_URL, else shivolabs.com in
+ *  any production build (next build), else the local preview address. */
 export const siteUrl = () =>
-  (process.env.SITE_URL || (process.env.VERCEL_PROJECT_PRODUCTION_URL ? `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}` : 'http://localhost:3210')).replace(/\/$/, '');
+  (process.env.SITE_URL || (process.env.NODE_ENV === 'production' ? 'https://shivolabs.com' : 'http://localhost:3210')).replace(/\/$/, '');
 
 /** Every public page, most important first. Insights and the API are never listed. */
 export function publicPaths() {
