@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useRef } from 'react';
-import { prefersReducedMotion } from '@/lib/motion';
+import { prefersReducedMotion, ScrollTrigger } from '@/lib/motion';
 import { awakeNow } from './HeroAvatar';
 
 /**
@@ -32,6 +32,9 @@ export default function BlobbyJourney() {
   useEffect(() => {
     const el = layer.current, eyes = face.current;
     if (!el || !eyes || prefersReducedMotion()) return;
+    const part = (c: string) => el.querySelector<HTMLElement>(c)!;
+    const cutBox = part('.journey__cut'), inner = part('.journey__in'), disc = part('.journey__disc'), glow = part('.journey__light');
+    const veil = part('.journey__veil'), ramp = part('.journey__ramp');
     el.classList.toggle('is-night', !awakeNow());
     const root = document.documentElement;
     let raf = 0, px = 0, py = 0, lx = 0, ly = 0, easing = false;
@@ -43,22 +46,50 @@ export default function BlobbyJourney() {
 
     // write a style only when its value changed
     const last = new Map<string, string>();
+    const ids = new Map<HTMLElement, number>();
     const put = (node: HTMLElement, k: string, v: string) => {
-      const key = (node === eyes ? 'e' : node === el ? 'l' : 'r') + k;
+      if (!ids.has(node)) ids.set(node, ids.size);
+      const key = ids.get(node) + k;
       if (last.get(key) === v) return;
       last.set(key, v);
       if (k.startsWith('--')) node.style.setProperty(k, v); else (node.style as unknown as Record<string, string>)[k] = v;
     };
 
     const q = (s: string) => document.querySelector<HTMLElement>(s);
+    // where the landmarks sit in the page, measured once and again only when the layout changes (a resize,
+    // ScrollTrigger re-measuring its pins, fonts or pictures settling). Each frame then only subtracts the
+    // scroll: reading positions from the page on every scroll step forced a full layout each time on phones.
+    type Box = { top: number; bottom: number; height: number };
+    let marks: { head: Box; reel: Box; contact: Box; foot: Box; textBottom: number; docH: number } | null = null;
+    // from the layout itself, not the screen: an entrance animation still sliding an element in doesn't skew it
+    const box = (n: HTMLElement | null): Box | null => {
+      if (!n) return null;
+      let top = 0, e: HTMLElement | null = n;
+      while (e) { top += e.offsetTop; e = e.offsetParent as HTMLElement | null; }
+      return { top, bottom: top + n.offsetHeight, height: n.offsetHeight };
+    };
+    const measure = () => {
+      const head = box(q('.work__head')), reel = box(q('.work__reel')), contact = box(q('.contact h2')), foot = box(q('.site-footer__name'));
+      if (!head || !reel || !contact || !foot) { marks = null; return; }
+      const textBottom = Math.max(box(q('.contact__cols'))?.bottom ?? 0, box(q('.contact__mail'))?.bottom ?? 0);
+      marks = { head, reel, contact, foot, textBottom, docH: document.documentElement.scrollHeight };
+      kick();
+    };
+    const view = (b: Box, y: number) => ({ top: b.top - y, bottom: b.bottom - y, height: b.height });
+    ScrollTrigger.addEventListener('refresh', measure);
+    window.addEventListener('resize', measure);
+    const settled = new ResizeObserver(() => measure());
+    settled.observe(document.body);
+
     const frame = () => {
       raf = 0;
       const W = window.innerWidth, H = window.innerHeight;
       const orbBody = q('.about__orb-body'), orbFace = q('.about__orb-face');
-      const head = q('.work__head'), reel = q('.work__reel'), contact = q('.contact h2'), foot = q('.site-footer__name');
-      if (!orbBody || !head || !reel || !contact || !foot) return;
-      const headR = head.getBoundingClientRect(), reelR = reel.getBoundingClientRect();
-      const cR = contact.getBoundingClientRect(), fR = foot.getBoundingClientRect();
+      if (!marks) measure();
+      if (!orbBody || !marks) return;
+      const y = window.scrollY;
+      const headR = view(marks.head, y), reelR = view(marks.reel, y);
+      const cR = view(marks.contact, y), fR = view(marks.foot, y);
 
       const a = along(headR.top, H, 0.95, 0.3);          // read more → Work
       const b = along(reelR.top, H, 0.62, -0.25);        // past Work: a long, gentle exit
@@ -70,15 +101,16 @@ export default function BlobbyJourney() {
       //   spread  then, clear of the text, it spreads out into a wide, soft blob behind the name (done at the
       //           very end of the page)
       const c = along(cR.top, H, 0.92, 0.45);
-      const left = document.documentElement.scrollHeight - (window.scrollY + H);
-      const textEnd = Math.max(q('.contact__cols')?.getBoundingClientRect().bottom ?? 0, q('.contact__mail')?.getBoundingClientRect().bottom ?? 0) + 14;
+      const left = marks.docH - (y + H);
+      const textEnd = marks.textBottom - y + 14;
       const tSpan = H - (textEnd - left);                // scroll from that last line coming into view to the end
       const Q = tSpan > 1 ? clamp01((H - textEnd) / tSpan) : (textEnd < H ? 1 : 0);
       const SPREAD = 0.65;
       const s1 = smooth(clamp01(Q / SPREAD)), d = clamp01((Q - SPREAD) / (1 - SPREAD));
 
       // ---- the circles it travels between
-      const o = orbBody.getBoundingClientRect();
+      const arriving = along(headR.top, H, 0.95, 0.3) > 0 && along(reelR.top, H, 0.62, -0.25) === 0;
+      const o = arriving ? orbBody.getBoundingClientRect() : { left: 0, top: 0, width: 12, height: 12 };
       const orb: Circle = { cx: o.left + o.width / 2, cy: o.top + o.height / 2, r: Math.max(o.width / 2, 6) };
       const domeR = W * 1.6, domeBottom = reelR.top - 18;               // broad and gentle, resting on the strip
       // Contact: Blobby attached to the right edge of the screen (like the corner Blobby on the About page),
@@ -151,19 +183,31 @@ export default function BlobbyJourney() {
 
       // the small Blobby by the link steps aside the moment this one takes over (and back)
       put(root, '--blobby-away', phase ? '1' : '0');
-      put(el, 'opacity', phase ? '1' : '0');
+      put(el, 'opacity', phase ? alpha.toFixed(3) : '0');
       if (!circ) return;
-      const px1 = (n: number) => `${n.toFixed(1)}px`;
-      put(el, '--cx', px1(circ.cx)); put(el, '--cy', px1(circ.cy)); put(el, '--r', px1(circ.r)); put(el, '--ry', px1(circ.ry ?? circ.r));
-      put(el, '--lx', px1(light.x)); put(el, '--ly', px1(light.y)); put(el, '--ls', px1(light.s));
-      put(el, '--m0', px1(fadeA)); put(el, '--m1', px1(fadeB));
-      put(el, '--cut', px1(cut)); put(el, '--alpha', alpha.toFixed(3));
+      // Everything below is a transform, so the phone's graphics chip only slides and stretches ready-made
+      // pieces: nothing is repainted while you scroll. The circle and its light are drawn at 500px and scaled
+      // (small enough to keep the graphics memory low on phones, big enough to keep the edge crisp).
+      const f = (n: number) => n.toFixed(2);
+      const rx = Math.max(circ.r, 0.5), ry = circ.ry ?? circ.r;
+      const sx = rx / 250, sy = Math.max(ry, 0.5) / 250;
+      // the circle (or the footer's wide oval)
+      put(disc, 'transform', `translate3d(${f(circ.cx - rx)}px, ${f(circ.cy - ry)}px, 0) scale(${(sx).toFixed(5)}, ${(sy).toFixed(5)})`);
+      // its light: a round glow in screen space, so inside the stretched circle it is un-stretched again
+      const ls = Math.max(light.s, 1), gx = (light.x - (circ.cx - rx)) / sx, gy = (light.y - (circ.cy - ry)) / sy;
+      put(glow, 'transform', `translate3d(${f(gx - ls / sx)}px, ${f(gy - ls / sy)}px, 0) scale(${(ls / 250 / sx).toFixed(5)}, ${(ls / 250 / sy).toFixed(5)})`);
+      // the soft top: the page colour laid over the circle above fadeA, fading out by fadeB
+      put(veil, 'transform', `translate3d(0, ${f(fadeA - 3000)}px, 0) scaleY(300)`);
+      put(ramp, 'transform', `translate3d(0, ${f(fadeA)}px, 0) scaleY(${(Math.max(fadeB - fadeA, 0.01) / 100).toFixed(4)})`);
+      // the cut along the bottom: the frame moves up by `cut`, its contents back down by the same
+      put(cutBox, 'transform', `translate3d(0, ${f(-cut)}px, 0)`);
+      put(inner, 'transform', `translate3d(0, ${f(cut)}px, 0)`);
       // eyes: placed, sized, and turned toward the pointer (eased: keep going a little while it settles)
       const dx = px - eye.x, dy = py - eye.y, dist = Math.hypot(dx, dy) || 1, k = Math.min(1, dist / 300);
       const tx = (dx / dist) * k * eye.w * 0.55, ty = (dy / dist) * k * eye.w * 0.4;
       lx += (tx - lx) * 0.12; ly += (ty - ly) * 0.12;
       easing = Math.abs(tx - lx) > 0.05 || Math.abs(ty - ly) > 0.05;
-      put(eyes, '--ex', px1(eye.x)); put(eyes, '--ey', px1(eye.y)); put(eyes, '--ew', px1(eye.w));
+      put(eyes, 'transform', `translate3d(${f(eye.x)}px, ${f(eye.y)}px, 0) translate(-50%, -50%)`); put(eyes, '--ew', `${f(eye.w)}px`);
       put(eyes, '--look', `${lx.toFixed(1)}px ${ly.toFixed(1)}px`);
       put(eyes, 'opacity', eyeA.toFixed(2));
       if (easing) kick();
@@ -174,12 +218,20 @@ export default function BlobbyJourney() {
     return () => {
       cancelAnimationFrame(raf); clearTimeout(later);
       window.removeEventListener('pointermove', onPointer); window.removeEventListener('scroll', kick); window.removeEventListener('resize', kick);
+      window.removeEventListener('resize', measure); ScrollTrigger.removeEventListener('refresh', measure); settled.disconnect();
       root.style.removeProperty('--blobby-away');
     };
   }, []);
 
   return (
     <div className="journey" ref={layer} aria-hidden="true">
+      <div className="journey__cut">
+        <div className="journey__in">
+          <div className="journey__disc"><div className="journey__light" /></div>
+          <div className="journey__veil" />
+          <div className="journey__ramp" />
+        </div>
+      </div>
       <div className="journey__eyes" ref={face}><i /><i /></div>
     </div>
   );

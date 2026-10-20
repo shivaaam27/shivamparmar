@@ -1106,23 +1106,28 @@ body.menu-open .site-header--over-work .wordmark { opacity: 1 !important; pointe
    --m0/--m1 a soft fade at its top (in Work), --cut clips it at the picture strip
    ========================================================= */
 .journey {
-  --cx: 50vw; --cy: 50vh; --r: 0px; --ry: 0px; --lx: 50vw; --ly: 50vh; --ls: 100px; --m0: -200vh; --m1: -199vh; --cut: 0px; --alpha: 1;
   --c1: #F4F3F8; --c2: #D7D5E0; --c3: #ABA8BA;
   position: fixed; inset: 0; z-index: -1; pointer-events: none; opacity: 0;
-  background: radial-gradient(circle var(--ls) at var(--lx) var(--ly), var(--c1) 0%, var(--c2) 34%, var(--c3) 100%);
-  -webkit-mask-image: radial-gradient(var(--r) var(--ry) at var(--cx) var(--cy), #000 99.6%, transparent 100%),
-                      linear-gradient(to bottom, transparent var(--m0), #000 var(--m1));
-  -webkit-mask-composite: source-in;
-          mask-image: radial-gradient(var(--r) var(--ry) at var(--cx) var(--cy), #000 99.6%, transparent 100%),
-                      linear-gradient(to bottom, transparent var(--m0), #000 var(--m1));
-          mask-composite: intersect;
-  clip-path: inset(0 0 var(--cut) 0);
-  filter: opacity(var(--alpha));
+  overflow: hidden; contain: strict;
 }
+/* all pieces are moved and stretched by transforms only (BlobbyJourney), so nothing repaints while scrolling */
+.journey__cut, .journey__in { position: absolute; inset: 0; will-change: transform; }
+.journey__cut { overflow: hidden; }
+.journey__disc {
+  position: absolute; left: 0; top: 0; width: 500px; height: 500px; border-radius: 50%; overflow: hidden;
+  transform-origin: 0 0; background: var(--c3); will-change: transform;
+}
+.journey__light {
+  position: absolute; left: 0; top: 0; width: 500px; height: 500px; transform-origin: 0 0; will-change: transform;
+  background: radial-gradient(circle closest-side, var(--c1) 0%, var(--c2) 34%, var(--c3) 100%);
+}
+/* the soft top edge: the page colour over the circle, solid above and fading out below */
+.journey__veil { position: absolute; left: 0; top: 0; width: 100%; height: 10px; transform-origin: 0 0; background: var(--paper); will-change: transform; }
+.journey__ramp { position: absolute; left: 0; top: 0; width: 100%; height: 100px; transform-origin: 0 0; background: linear-gradient(var(--paper), transparent); will-change: transform; }
 .journey.is-night { --c1: #ABA8BA; --c2: #8E8BA0; --c3: #6E6B82; }
 .journey__eyes {
-  --ex: 50vw; --ey: 50vh; --ew: 12px;
-  position: absolute; left: var(--ex); top: var(--ey); translate: -50% -50%;
+  --ew: 12px;
+  position: absolute; left: 0; top: 0; will-change: transform;
   display: flex; gap: var(--ew);
 }
 .journey__eyes i {
