@@ -1,16 +1,17 @@
 /**
  * Headers on every answer of the site, used by next.config.ts (pages Next answers) and worker.ts (ready-made pages).
- * The Content-Security-Policy lists the only places a page may load from: this site, and Umami for visit counts.
+ * The Content-Security-Policy lists the only places a page may load from: this site, and Umami and Cloudflare Web
+ * Analytics (which Cloudflare adds to every page itself) for visit counts.
  * Scripts and styles inline in the page are allowed because Next writes its page data that way.
  */
 const CSP = [
   "default-src 'self'",
-  "script-src 'self' 'unsafe-inline' https://cloud.umami.is",
+  "script-src 'self' 'unsafe-inline' https://cloud.umami.is https://static.cloudflareinsights.com",
   "style-src 'self' 'unsafe-inline'",
   "img-src 'self' data: blob:",
   "font-src 'self' data:",
   "media-src 'self' blob:",
-  "connect-src 'self' https://*.umami.is https://*.umami.dev",
+  "connect-src 'self' https://*.umami.is https://*.umami.dev https://cloudflareinsights.com",
   "frame-ancestors 'none'",   // no other site may show these pages inside its own (fake copies, click tricks)
   "base-uri 'self'",
   "form-action 'self'",
