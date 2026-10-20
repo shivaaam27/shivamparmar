@@ -112,10 +112,9 @@ img { pointer-events: none; }
 }
 .wordmark__mark { width: 1.05em; height: 1.05em; flex: none; fill: currentColor; overflow: visible; } /* the 15° tilt pokes slightly past the square */
 /* The header blends with mix-blend-mode: difference, so a colour is drawn as |page - colour|.
-   --hot is what draws as sage (#4F7A5A): over the white page that's #B085A5, over the dark menu #638F71,
+   --hot is what draws as sage (#4F7A5A): over the white page (and the menu, which is the page's colour) that's #B085A5,
    and with no blending (header on a photo) sage itself. The mark runs the slow sage loader all the time. */
 .wordmark__mark { --hot: #B085A5; }
-body.menu-open .wordmark__mark { --hot: #638F71; }
 .site-header--on-image .wordmark__mark { --hot: #4F7A5A; }
 .wordmark__mark rect { transition: fill .3s; }
 .wordmark__mark .is-lit { fill: var(--hot); }
@@ -126,10 +125,9 @@ body.menu-open .wordmark__mark { --hot: #638F71; }
 }
 @media (prefers-reduced-motion: reduce) { .wordmark__mark rect:not(.is-lit) { animation: none; } }
 /* as in the brand wordmark and the hero lockup: capitals, SHIVO in SemiBold, LABS in Light slate.
-   Under the difference blend, #817F7D draws as slate #7E8082 on the white page; over the menu it stays light. */
+   Under the difference blend, #817F7D draws as slate #7E8082 on the white page, and on the menu, which is the page's colour. */
 .wordmark__text { text-transform: uppercase; letter-spacing: .015em; }
 .wordmark__text span { font-weight: 300; margin-left: .28em; color: #817F7D; }
-body.menu-open .wordmark__text span { color: #fff; }
 .site-header--on-image .wordmark__text span { color: #7E8082; }
 .menu-btn { width: 44px; height: 44px; display: grid; place-items: center; margin-right: -8px; }
 .menu-btn__lines { --gap: 5px; position: relative; width: 30px; height: calc((var(--n) - 1) * var(--gap) + 1.5px); }
@@ -150,8 +148,9 @@ body.menu-open .wordmark__text span { color: #fff; }
 .menu {
   position: fixed; inset: 0; z-index: 55;
   display: flex; flex-direction: column; justify-content: center;
-  padding: 6rem var(--gutter) var(--gutter);
-  background: var(--ink); color: #fff;
+  padding: 6rem var(--gutter) 4.5rem; overflow-y: auto; overscroll-behavior: contain;
+  /* the page's own colours: a white menu with ink words, or in dark mode a black menu with light words */
+  background: var(--paper); color: var(--ink);
   clip-path: inset(0 0 100% 0);
   visibility: hidden;
   transition: clip-path .8s var(--ease-io), visibility 0s .8s;
@@ -160,24 +159,24 @@ body.menu-open .wordmark__text span { color: #fff; }
 .menu__list { display: grid; gap: clamp(.25rem, 1vw, .75rem); }
 .menu__list a {
   display: inline-flex; align-items: baseline; gap: clamp(1rem, 2vw, 2rem);
-  font: 400 clamp(3rem, 9vw, 8rem)/.95 var(--serif);
+  /* sized by the screen's width and height, so all seven links fit on a short laptop screen too */
+  font: 400 clamp(2.25rem, min(9vw, 9.2vh), 8rem)/.95 var(--serif);
   text-transform: uppercase;
   opacity: 0; transform: translateY(40%);
   transition: opacity .6s var(--ease), transform .8s var(--ease), color .3s;
 }
-.menu__list .mono { color: #fff; transform: translateY(-.2em); }
+.menu__list .mono { color: var(--ink-soft); transform: translateY(-.2em); }
 .menu.is-open .menu__list a { opacity: 1; transform: none; }
 .menu.is-open li:nth-child(1) a { transition-delay: .25s; }
 .menu.is-open li:nth-child(2) a { transition-delay: .31s; }
 .menu.is-open li:nth-child(3) a { transition-delay: .37s; }
 .menu.is-open li:nth-child(4) a { transition-delay: .43s; }
 .menu__list a:hover { opacity: .6; }
-.menu__foot { position: absolute; left: var(--gutter); bottom: var(--gutter); color: #fff; }
+.menu__list a:focus:not(:focus-visible) { outline: none; }
+.menu__foot { position: absolute; left: var(--gutter); bottom: var(--gutter); color: var(--ink-soft); }
 body.menu-open { overflow: hidden; }
 body.menu-open { padding-right: var(--sbw, 0px); }
 body.menu-open .site-header { padding-right: calc(var(--gutter) + var(--sbw, 0px)); }
-/* the page's scrollbar must not show as a pale strip beside the dark menu */
-html:has(body.menu-open) { scrollbar-color: #3A3B3F #141517; color-scheme: dark; }
 /* the logo stays visible over the menu, even when the header had hidden it over the work strip */
 body.menu-open .site-header--over-work .wordmark { opacity: 1 !important; pointer-events: auto; }
 
@@ -996,7 +995,7 @@ body.menu-open .site-header--over-work .wordmark { opacity: 1 !important; pointe
 .products__all { justify-self: start; display: inline-flex; align-items: center; gap: .4rem; font-size: 1rem; border-bottom: 1px solid currentColor; padding-bottom: .1rem; }
 .products__all:hover { opacity: .6; }
 /* the full page: a little more about each one */
-.products__grid--page { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; margin-block: clamp(1.5rem, 3vw, 2.5rem) clamp(3rem, 6vw, 5rem); }
+.products__grid.products__grid--page { grid-template-columns: repeat(2, minmax(0, 1fr)); margin-block: clamp(1.5rem, 3vw, 2.5rem) clamp(3rem, 6vw, 5rem); }
 .products__card { place-items: start; align-content: start; text-align: left; gap: .9rem; min-height: 0; padding: 1.75rem 1.6rem 1.5rem; scroll-margin-top: 7rem; box-shadow: none; }
 .products__card .plock { margin-bottom: .9rem; }
 .products__card .products__line { color: var(--ink); font-size: 1.125rem; font-weight: 600; }
@@ -1006,7 +1005,10 @@ body.menu-open .site-header--over-work .wordmark { opacity: 1 !important; pointe
 @media (max-width: 1100px) { .products__grid { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
 @media (max-width: 860px) { .products__grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
 @media (max-width: 720px) {
-  .products__grid--page { grid-template-columns: minmax(0, 1fr); }
+  .products__grid.products__grid--page { grid-template-columns: minmax(0, 1fr); gap: .6rem; }
+  .products__card { padding: 1.35rem 1.2rem 1.25rem; border-radius: 18px; }
+  .products__card .plock { font-size: 1.05rem; margin-bottom: .5rem; }
+  .products__card .products__line { font-size: 1.05rem; }
   .products__tile { min-height: 6.5rem; padding: 1rem .6rem; border-radius: 18px; }
   .products__tile .plock { font-size: .86rem; }
   .products__tile .plock__sub { letter-spacing: .16em; }

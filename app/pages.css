@@ -7,6 +7,8 @@
 .pg-hero { display: grid; gap: clamp(1.25rem, 2.5vw, 2rem); padding-bottom: clamp(3rem, 6vw, 5rem); border-bottom: 1px solid var(--line); }
 .pg-hero__title { font: 400 clamp(2.6rem, 7.2vw, 7rem)/.95 var(--serif); letter-spacing: -.02em; text-wrap: balance; max-width: 16ch; }
 .pg-hero .lead { max-width: 46rem; color: var(--ink-soft); }
+/* phones: the small section label sits on its own line above the big title, not squeezed in front of it */
+@media (max-width: 720px) { .pg-hero__title .tag { display: flex; width: max-content; margin: 0 0 .9rem; vertical-align: 0; } .pg-hero__title { font-size: clamp(2.4rem, 11vw, 3.4rem); } }
 .pg-crumbs { display: flex; flex-wrap: wrap; gap: .4rem .9rem; color: var(--ink-soft); }
 .pg-crumbs a { background: linear-gradient(currentColor, currentColor) 0 100% / 0 1px no-repeat; transition: background-size .5s var(--ease); }
 .pg-crumbs a:hover { background-size: 100% 1px; }
