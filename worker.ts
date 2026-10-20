@@ -3,7 +3,8 @@
 //     files (scripts/static-pages.mjs puts them there). That costs about no computer time, which keeps the site inside
 //     Cloudflare's free plan (10 ms per request); running Next for the same page costs 20–200 ms.
 //  2. The requests that come all the time are answered here directly, without Next: the visit tracker (/api/collect),
-//     the dashboard's numbers (/api/insights/data, after checking the Cloudflare Access sign-in) and the nightly jobs.
+//     the dashboard's numbers (/api/insights/data, after checking the Cloudflare Access sign-in), the Shivo Labs apps'
+//     numbers (/api/apps/insights, with the apps' key) and the nightly jobs.
 //  3. Everything else (CSV export, sign-in callbacks, unknown pages) goes to Next through OpenNext's worker. It is
 //     loaded only when such a request comes, so the paths above never pay for starting Next (20–200 ms).
 // @ts-ignore .open-next/static-pages.json is created after `next build`, by scripts/static-pages.mjs
@@ -11,6 +12,7 @@ import STATIC from './.open-next/static-pages.json';
 import { collect } from './lib/collect';
 import { accessUser } from './lib/access';
 import { insightsJson } from './lib/insights-api';
+import { appsInsightsJson } from './lib/apps-insights';
 import { indexNow, umamiBackup } from './lib/jobs';
 
 type Page = { kind: 'page' | 'file'; headers: Record<string, string>; segments?: string[]; status?: number };
@@ -91,6 +93,8 @@ export default {
       if (res.ok) ctx.waitUntil(cache.put(key, new Response(res.clone().body, { headers: { 'content-type': 'application/json', 'cache-control': 'max-age=45' } })).catch(() => undefined));
       return res;
     }
+    // the Shivo Labs apps' Insights (through the shelf, with the site's key; lib/apps-insights.ts)
+    if (url.pathname === '/api/apps/insights' && req.method === 'GET') return appsInsightsJson(req);
     if (!url.pathname.startsWith('/api/') && (req.method === 'GET' || req.method === 'HEAD') && !req.headers.get('rsc')) {
       // an address that isn't a page (bots try many): the ready-made 'not found' page, without starting Next
       const res = await env.ASSETS.fetch(new URL('/__static/_404/page.html', url)).catch(() => null);
