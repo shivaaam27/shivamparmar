@@ -99,7 +99,7 @@ function ProjectPage({ slug }: { slug: string }) {
           </nav>
           <h1 className="headline headline--left reveal" data-delay="1">{project.title}</h1>
           {project.summary && <p className="lead project__summary reveal" data-delay="2">{project.summary}</p>}
-          {SHOW_PROJECT_LINKS && project.link && <a className="project__link mono reveal" data-delay="2" href={project.link.href} title={project.link.title} target="_blank" rel="noopener">{project.link.label}<span aria-hidden="true"> ↗</span></a>}
+          {project.link && (SHOW_PROJECT_LINKS || project.link.always) && <a className="project__link mono reveal" data-delay="2" href={project.link.href} title={project.link.title} target="_blank" rel="noopener">{project.link.label}<span aria-hidden="true"> ↗</span></a>}
           {details.length > 0 && (
             <dl className="project__details reveal" data-delay="3">
               {details.map((d) => (
