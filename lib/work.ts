@@ -118,7 +118,7 @@ export const categories: Category[] = [
             title: 'Shivo Labs',
             tone: 'sage',
             cover: '/images/shivo-labs/home.jpg',
-            link: { label: 'Download for Windows', href: '/get', title: 'shivolabs.com/get', always: true },
+            link: { label: 'Download for Windows and Android', href: '/get', title: 'shivolabs.com/get', always: true },
             summary: 'A Windows app that puts your own iPhone and iPad apps on your devices, no Mac needed. It installs in a few clicks, sets up everything the PC needs by itself, finds the apps already on the computer, and renews them every week with one button. It also has a guide built in, and updates itself.',
             images: [
               { src: '/images/shivo-labs/splash.jpg', alt: 'The Shivo Labs logo, six tiles leaning forward like an arrow with a sage tip, and the words Shivo Labs, X Tools', caption: 'Opening', screen: true },

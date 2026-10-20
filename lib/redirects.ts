@@ -4,6 +4,6 @@
  * remembering the old one.
  */
 export const REDIRECTS: Record<string, string> = {
-  // shivolabs.com/get: the Shivo Labs download page (Setup.exe, the one-line install)
+  // shivolabs.com/get: the Shivo Labs download page (Setup.exe, the one-line install, the Android app; phones get Android first)
   '/get': 'https://shivo-id.ishivamparmar.workers.dev/',
 };
