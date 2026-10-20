@@ -60,7 +60,9 @@ export const about = {
   headline: ['Freelance digital solutions,', 'from Dar es Salaam.'],
   /** Part of the headline whose letters jumble, then land (like the hero). */
   scramble: 'digital solutions',
-  body: 'I design and build websites, iPhone, Android and Windows apps, and custom systems for task and document management, dashboards and internal tools. I set up AI workflows and automation, including MCP connections that let assistants like Claude work with your own systems, so repetitive work stops taking hours. I also do branding, photography and social media. In English or Kiswahili, for businesses in Tanzania, East Africa and beyond.',
+  body: 'I’m Shivam Parmar, and Shivo Labs is my freelance software and digital solutions business in Dar es Salaam, Tanzania. I design and build websites, iPhone, Android and Windows apps, and custom systems* such as task and document management, dashboards and internal tools. I set up AI workflows and automation, including MCP connections that let AI agents work with your own systems, saving you time. I also do branding, photography and social media for businesses in Tanzania, East Africa and beyond.',
+  /** Small print under the description (for the asterisk). */
+  note: '*Not limited to those listed.',
   link: { label: 'Read more about me', href: '/about' },
 };
 
@@ -137,18 +139,23 @@ export const aboutPage = {
     ],
   },
   clients: {
-    title: ['Brands and people', 'I’ve worked with.'],
+    title: ['Brands, projects and people', 'I’ve worked with.'],
     /** Companies I've worked with (backgrounds removed, in /public/logos). */
     logos: [
+      { name: 'Oracle Consultancy Group', src: '/logos/oracle.png' },
+      { name: 'TerraGreen', src: '/logos/terragreen.png' },
+      { name: 'Delta Hotels by Marriott Dar es Salaam', src: '/logos/delta-hotels.png' },
       { name: 'CocoZuri Chocolat', src: '/logos/cocozuri.png' },
       { name: 'Dar Spice Centre', src: '/logos/dar-spice-centre.png' },
-      { name: 'Mining Engineering Services', src: '/logos/mes.png' },
-      { name: 'Oracle', src: '/logos/oracle.png' },
-      { name: 'Pamoja+', src: '/logos/pamoja-plus.png' },
-      { name: 'Pinnacle Engineering Solutions', src: '/logos/pinnacle-engineering.png' },
-      { name: 'Rugantino', src: '/logos/rugantino.png' },
-      { name: 'TerraGreen', src: '/logos/terragreen.png' },
+      { name: 'RORO’s Beach Bar', src: '/logos/roros.png' },
+      { name: 'Dar Distributors', src: '/logos/dar-distributors.png' },
+      { name: 'The Beachcomber Hotel & Resort', src: '/logos/beachcomber.png' },
       { name: 'V1 Supermarket', src: '/logos/v1-supermarket.png' },
+      { name: 'Rugantino', src: '/logos/rugantino.png' },
+      { name: 'Akasaki FZCO', src: '/logos/akasaki.png' },
+      { name: 'Mining Engineering Services', src: '/logos/mes.png' },
+      { name: 'Tanam Advisory', src: '/logos/tanam-advisory.png' },
+      { name: 'Pinnacle Engineering Solutions', src: '/logos/pinnacle-engineering.png' },
     ] as { name: string; src: string | null }[],
   },
   /** The journey so far, newest first: a summary from the CV (the full story comes later). */
@@ -182,13 +189,23 @@ export const aboutPage = {
 /** The logo strip on the home page, between Work and Contact. */
 export const clients = {
   tag: 'Worked with',
+  /** Same title as the About page. */
+  title: ['Brands, projects and people', 'I’ve worked with.'],
   logos: [
     { name: 'Oracle Consultancy Group', src: '/logos/oracle.png' },
-    { name: 'Terra Green', src: '/logos/terragreen.png' },
+    { name: 'TerraGreen', src: '/logos/terragreen.png' },
+    { name: 'Delta Hotels by Marriott Dar es Salaam', src: '/logos/delta-hotels.png' },
     { name: 'CocoZuri Chocolat', src: '/logos/cocozuri.png' },
     { name: 'Dar Spice Centre', src: '/logos/dar-spice-centre.png' },
+    { name: 'RORO’s Beach Bar', src: '/logos/roros.png' },
     { name: 'Dar Distributors', src: '/logos/dar-distributors.png' },
+    { name: 'The Beachcomber Hotel & Resort', src: '/logos/beachcomber.png' },
     { name: 'V1 Supermarket', src: '/logos/v1-supermarket.png' },
+    { name: 'Rugantino', src: '/logos/rugantino.png' },
+    { name: 'Akasaki FZCO', src: '/logos/akasaki.png' },
+    { name: 'Mining Engineering Services', src: '/logos/mes.png' },
+    { name: 'Tanam Advisory', src: '/logos/tanam-advisory.png' },
+    { name: 'Pinnacle Engineering Solutions', src: '/logos/pinnacle-engineering.png' },
   ],
 };
 

@@ -539,6 +539,7 @@ body.menu-open .site-header--over-work .wordmark { opacity: 1 !important; pointe
   font-size: clamp(.9375rem, .55rem + 1.1vw, 1.25rem); line-height: 1.55;
   text-wrap: pretty;
 }
+.about__note { display: block; margin-top: .9em; font-size: .8125rem; line-height: 1.4; opacity: .6; }
 .about__sign {
   display: inline-flex; align-items: baseline; gap: .4em;
   font: 400 clamp(1.25rem, 1.8vw, 1.75rem)/1.1 var(--serif); color: var(--taupe);
@@ -965,17 +966,34 @@ body.menu-open .site-header--over-work .wordmark { opacity: 1 !important; pointe
 }
 
 /* =========================================================
-   Clients: logos drifting left to right
+   Clients: logos on white tiles, two rows gliding in opposite directions
+   (the same rows as the About page: components/LogoRows.tsx)
    ========================================================= */
 .clients { position: relative; z-index: 1; display: grid; gap: clamp(1.25rem, 2.5vw, 2rem); padding-block: clamp(2.5rem, 6vw, 5rem); }
-.clients__tag { text-align: center; color: var(--tag); text-transform: uppercase; font-size: var(--fs-label); letter-spacing: .08em; }
-.clients__marquee { overflow: hidden; mask-image: linear-gradient(90deg, transparent, #000 12%, #000 88%, transparent); }
-.clients__track { display: flex; align-items: center; width: max-content; animation: clients-drift 50s linear infinite; }
-.clients__track li { flex: none; width: clamp(9rem, 14vw, 13rem); display: grid; place-items: center; margin-right: clamp(1.5rem, 3vw, 3rem); }
-.clients__track img { height: calc(var(--k, 1) * clamp(2.75rem, 4.4vw, 4rem)); width: auto; max-width: 100%; object-fit: contain; }
-.clients__marquee:hover .clients__track { animation-play-state: paused; }
-@keyframes clients-drift { from { transform: translateX(-50%); } to { transform: translateX(0); } }
-@media (prefers-reduced-motion: reduce) { .clients__track { animation: none; } }
+.clients__rows { width: 100%; max-width: var(--max); margin-inline: auto; padding-inline: var(--gutter); display: grid; gap: clamp(1rem, 2vw, 1.5rem); }
+.clients__title { font: 400 clamp(2.25rem, 4.6vw, 4rem)/.95 var(--serif); letter-spacing: -.015em; text-wrap: balance; margin: 0 0 .5rem; }
+
+.ab-logos { display: grid; gap: .75rem; margin-top: .5rem; }
+.ab-marquee { overflow: hidden; padding-block: 1px; mask-image: linear-gradient(90deg, transparent, #000 10%, #000 90%, transparent); }
+.ab-marquee__track { display: flex; width: max-content; margin: 0; padding: 0; list-style: none; animation: ab-marquee var(--dur, 46s) linear infinite; }
+.ab-marquee--back .ab-marquee__track { animation-direction: reverse; }
+.ab-logos:hover .ab-marquee__track { animation-play-state: paused; }
+/* spacing is a margin, not a gap, so half the track is exactly one set */
+.ab-marquee li {
+  flex: none; width: clamp(10rem, 15vw, 13rem); height: 6.5rem; margin-right: .75rem;
+  display: grid; place-items: center; background: var(--card, #FFFFFF); border-radius: 20px; box-shadow: inset 0 0 0 1px var(--card-edge, rgba(0, 0, 0, .08));
+  transition: box-shadow .35s;
+}
+.ab-marquee li:hover { box-shadow: inset 0 0 0 1px rgba(0, 0, 0, .16); }
+.ab-marquee img { height: 2.75rem; width: auto; max-width: 70%; object-fit: contain; transition: transform .5s var(--ease); }
+.ab-marquee li:hover img { transform: scale(1.06); }
+.ab-logo-ph { font: 400 1.5rem/1 var(--serif); letter-spacing: -.01em; color: #B4B4B4; }
+@keyframes ab-marquee { to { transform: translateX(-50%); } }
+@media (max-width: 720px) {
+  .ab-marquee li { height: 5rem; width: 9rem; border-radius: 16px; }
+  .ab-marquee img { height: 2.25rem; }
+}
+@media (prefers-reduced-motion: reduce) { .ab-marquee__track { animation: none; } }
 
 /* =========================================================
    Contact + footer

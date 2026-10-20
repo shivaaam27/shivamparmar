@@ -241,7 +241,7 @@ export default function About() {
         </h2>
 
         <div className="about__text">
-          <p className="lead" aria-label={about.body}>
+          <p className="lead" aria-label={`${about.body} ${about.note}`}>
             {words.map((w, i) => {
               // a space inside a phrase is highlighted with it; any other space sits between the words
               const inside = i < words.length - 1 && phraseOf[i] >= 0 && phraseOf[i + 1] === phraseOf[i];
@@ -252,6 +252,7 @@ export default function About() {
                 </Fragment>
               );
             })}
+            <small className="about__note" aria-hidden="true">{about.note}</small>
           </p>
           <a className="about__sign" href={about.link.href}>
             {about.link.label}<span aria-hidden="true">→</span>

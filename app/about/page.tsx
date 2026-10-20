@@ -9,6 +9,7 @@ import Glow from '@/components/about/Glow';
 import Odometer from '@/components/about/Odometer';
 import Reveal from '@/components/about/Reveal';
 import ExperienceStack from '@/components/about/ExperienceStack';
+import LogoRows from '@/components/LogoRows';
 import { aboutPage, nav, site } from '@/lib/content';
 import { pagedProjects, visibleCategories } from '@/lib/work';
 import './about.css';
@@ -175,20 +176,8 @@ export default function AboutPage() {
           {/* 05 worked with: logos glide past */}
           <section id="clients" className="ab-sec" aria-label="Worked with">
             <p className="ab-label">Worked with</p>
-            <h2 className="ab-h2 ab-center">{clients.title[0]}<br />{clients.title[1]}</h2>
-            <div className="ab-logos" aria-label="Logos of brands I’ve worked with">
-              {[0, 1].map((row) => (
-                <div key={row} className={`ab-marquee${row ? ' ab-marquee--back' : ''}`}>
-                  <ul className="ab-marquee__track">
-                    {(row ? [...clients.logos.slice(4), ...clients.logos.slice(0, 4)] : clients.logos).concat(row ? [...clients.logos.slice(4), ...clients.logos.slice(0, 4)] : clients.logos).map((l, i) => (
-                      <li key={i} aria-hidden={row > 0 || i >= clients.logos.length}>
-                        {l.src ? <img src={l.src} alt={row || i >= clients.logos.length ? '' : l.name} loading="lazy" /> : <span className="ab-logo-ph">{l.name}</span>}
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              ))}
-            </div>
+            <h2 className="ab-h2">{clients.title[0]}<br />{clients.title[1]}</h2>
+            <LogoRows logos={clients.logos} label="Logos of brands I’ve worked with" />
           </section>
 
           {/* 06 experience: cards that stack up as you scroll */}

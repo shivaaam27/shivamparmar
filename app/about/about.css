@@ -154,23 +154,7 @@
 .ab-card__go { display: flex; align-items: center; justify-content: space-between; gap: .75rem; margin-top: .6rem; font-size: .9375rem; }
 .ab-card--cta:hover .ab-card__icon { transform: translate(3px, -3px) scale(1.12); }
 
-/* ---- 04 logos glide past in colour on white tiles, two rows in opposite directions */
-.ab-logos { display: grid; gap: .75rem; margin-top: .5rem; }
-.ab-marquee { overflow: hidden; padding-block: 1px; mask-image: linear-gradient(90deg, transparent, #000 10%, #000 90%, transparent); }
-.ab-marquee__track { display: flex; width: max-content; animation: ab-marquee 46s linear infinite; }
-.ab-marquee--back .ab-marquee__track { animation-direction: reverse; animation-duration: 54s; }
-.ab-logos:hover .ab-marquee__track { animation-play-state: paused; }
-/* spacing is a margin, not a gap, so half the track is exactly one set */
-.ab-marquee li {
-  flex: none; width: clamp(10rem, 15vw, 13rem); height: 6.5rem; margin-right: .75rem;
-  display: grid; place-items: center; background: var(--card); border-radius: 20px; box-shadow: inset 0 0 0 1px var(--card-edge);
-  transition: box-shadow .35s;
-}
-.ab-marquee li:hover { box-shadow: inset 0 0 0 1px rgba(0, 0, 0, .16); }
-.ab-marquee img { height: 2.75rem; width: auto; max-width: 70%; object-fit: contain; transition: transform .5s var(--ease); }
-.ab-marquee li:hover img { transform: scale(1.06); }
-.ab-logo-ph { font: 400 1.5rem/1 var(--serif); letter-spacing: -.01em; color: #B4B4B4; }
-@keyframes ab-marquee { to { transform: translateX(-50%); } }
+/* ---- 04 logos: the two gliding rows live in globals.css (shared with the home page) */
 
 /* ---- 05 the journey: a section with room around it, held still while each role is lifted
    onto a pile of cards (see <ExperienceStack>). Without that it's a plain list of cards */
@@ -262,15 +246,12 @@
   .ab-rows li { grid-template-columns: minmax(0, 1fr); gap: .35rem; padding: 1rem 1.15rem 1.2rem; }
   .ab-facts { grid-template-columns: minmax(0, 1fr); }
   .ab-facts > div { grid-template-columns: 6.5rem minmax(0, 1fr); }
-  .ab-marquee li { height: 5rem; width: 9rem; border-radius: 16px; }
-  .ab-marquee img { height: 2.25rem; }
   .ab-end { border-radius: 24px; }
   .ab-end__top, .ab-end__lists { grid-template-columns: minmax(0, 1fr); }
   .ab-end__body { padding: .5rem .5rem .75rem; }
   .ab-end__cta { justify-self: stretch; justify-content: center; }
 }
 @media (prefers-reduced-motion: reduce) {
-  .ab-marquee__track { animation: none; }
   .glow__field { filter: blur(48px); }
   .ab-intro-sec > * { animation: none; }
   .ab-side__nav li { transform: none; transition: none; }
