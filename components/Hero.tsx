@@ -50,6 +50,13 @@ export default function Hero() {
     const restScale = () => (window.matchMedia('(max-width: 720px)').matches ? REST_SCALE.phone : REST_SCALE.desktop);
 
     let loader: gsap.core.Timeline | undefined;
+    // the loader only runs while the intro is on screen (it would otherwise keep restyling the logo forever)
+    let heroOnScreen = true;
+    const heroIo = new IntersectionObserver(([e]) => {
+      heroOnScreen = e.isIntersecting;
+      if (heroOnScreen) loader?.resume(); else loader?.pause();
+    });
+    heroIo.observe(el);
     const startLoader = () => {
       loader?.kill();
       if (prefersReducedMotion()) return;
@@ -59,6 +66,7 @@ export default function Hero() {
         if (tiles[t].classList.contains('is-lit')) return;
         loader!.to(tiles[t], { keyframes: [{ fill: '#4F7A5A', duration: 0.35 }, { fill: ink, duration: 0.55 }], ease: 'sine.inOut' }, n * 0.16);
       });
+      if (!heroOnScreen) loader.pause();
     };
 
     // the finished logo, straight away (no intro)
@@ -73,7 +81,7 @@ export default function Hero() {
     // a refresh part-way down the page (or a link to #work) skips the intro
     const awayFromTop = () => window.scrollY > window.innerHeight * 0.5 || (location.hash && location.hash !== '#top');
 
-    if (prefersReducedMotion() || awayFromTop()) { settleNow(); return; }
+    if (prefersReducedMotion() || awayFromTop()) { settleNow(); return () => { loader?.kill(); heroIo.disconnect(); }; }
 
     let tick: ReturnType<typeof setInterval> | undefined;
     let tl: gsap.core.Timeline | undefined;
@@ -211,7 +219,7 @@ export default function Hero() {
       ScrollTrigger.create({ trigger: root.current, start: 'top top', end: 'bottom 40%', onEnterBack: play });
     }
 
-    return () => { clearInterval(tick); clearTimeout(fallback); loader?.kill(); flies.forEach((f) => f.remove()); };
+    return () => { clearInterval(tick); clearTimeout(fallback); loader?.kill(); heroIo.disconnect(); flies.forEach((f) => f.remove()); };
   }, { scope: root });
 
   return (
