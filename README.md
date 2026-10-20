@@ -80,7 +80,7 @@ Add a folder, for example `app/work/page.tsx` for `/work`.
 | Build | `npm run cf:build` (OpenNext turns the Next.js build into a Worker). `npm run cf:preview` runs it locally on the Workers runtime. |
 | Send live | `npm run cf:deploy` (signed in with `npx wrangler login`; account Shivo Labs) |
 | Nightly jobs | Cloudflare cron triggers (01:30 and 03:15 UTC) call `/api/cron/umami-backup` and `/api/cron/indexnow`; they need the `CRON_SECRET` secret |
-| Secrets | `DATABASE_URL`, `AUTH_SECRET`, `CRON_SECRET`, `GITHUB_CLIENT_ID`, `GITHUB_CLIENT_SECRET`, `INSIGHTS_GITHUB_USER`, `UMAMI_SHARE_ID`: set with `npx wrangler secret put NAME`, never in git |
+| Secrets | `DATABASE_URL`, `AUTH_SECRET` (salt for the anonymous visitor ids), `CRON_SECRET`, `INSIGHTS_APP_TOKEN`, `UMAMI_SHARE_ID`: set with `npx wrangler secret put NAME`, never in git |
 | Visitor location | `lib/location.ts` reads Cloudflare's country, region and city |
 | Free-plan speed | Ready-made pages are served as plain files by `worker.ts` (copied by `scripts/static-pages.mjs`), so they use no computer time. `/insights` is drawn in the browser (`components/insights/Dashboard.tsx`); the server only checks the sign-in and returns numbers (`/api/insights/data`). The map's shapes and city places are made once at build time (`scripts/build-geo.mjs` → `public/geo`, not in git). |
 | Insights sign-in | Cloudflare Access (Zero Trust, free): an emailed code, only for `INSIGHTS_EMAIL`. `lib/auth.ts` checks Access's signed token. Local preview: `INSIGHTS_DEV_USER` in `.env.local` (only works in `next dev`). |
@@ -105,17 +105,16 @@ reloads of the same page within the same visit for 30 minutes. Umami counts relo
 On /insights you can switch between the two sources; if one can't be read, the page falls back to the other and says so.
 
 The site counts visits with [Umami](https://umami.is): no cookies, Do Not Track respected,
-live site only. You see the numbers at **/insights**, which only your GitHub account can open;
-everyone else gets a 404, and search engines are told not to index it.
+live site only. You see the numbers at **/insights**, which only `INSIGHTS_EMAIL` can open (Cloudflare Access);
+everyone else is asked to sign in, and search engines are told not to index it.
 
 Setup (all in Cloudflare → Workers & Pages → shivo-labs-site → Settings → Variables and Secrets, or `npx wrangler secret put NAME`; see `.env.example`):
 
 1. `UMAMI_SHARE_ID`: in Umami, Websites → your site → Edit → Share URL → on, and paste the id at the end
    of that URL (paid plans can use `UMAMI_API_KEY` instead). Without either, /insights shows sample data.
-2. A GitHub OAuth app (GitHub → Settings → Developer settings → OAuth Apps → New):
-   homepage `https://<your-domain>`, callback `https://<your-domain>/api/auth/github/callback`.
-   Put its ID and secret in `GITHUB_CLIENT_ID` / `GITHUB_CLIENT_SECRET`.
-3. `INSIGHTS_GITHUB_USER`: your GitHub username. `AUTH_SECRET`: any long random string.
+2. Cloudflare Access (Zero Trust → Access → Applications) guarding `shivolabs.com/insights` and `/api/insights`,
+   allowing one email. Its team domain, audience tag and the email go in the `ACCESS_*` / `INSIGHTS_EMAIL` vars (`wrangler.jsonc`).
+3. `AUTH_SECRET`: any long random string (salt for the anonymous visitor ids).
 4. Redeploy (`npm run cf:deploy`). Opening /insights on a device also stops that device's visits being counted.
 5. Signed in, open `/api/insights/status` to check each setting and whether Umami answers.
 

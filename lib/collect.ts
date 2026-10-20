@@ -21,11 +21,9 @@ export async function collect(req: Request, cf?: Cf): Promise<Response> {
   const ua = req.headers.get('user-agent') ?? '';
   if (isBot(ua)) return ok();
 
-  // only accept reports sent from this site's own pages
+  // only accept reports sent from this site's own pages (browsers always send Origin with these; scripts often don't)
   const origin = req.headers.get('origin');
-  if (origin) {
-    try { if (new URL(origin).host !== host) return ok(); } catch { return ok(); }
-  }
+  try { if (!origin || new URL(origin).host !== host) return ok(); } catch { return ok(); }
 
   const text = await req.text();
   if (text.length > 2000) return ok();

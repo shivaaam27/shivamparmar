@@ -1,10 +1,12 @@
 import type { NextConfig } from 'next';
+import { SITE_HEADERS } from './lib/headers';
 
 const nextConfig: NextConfig = {
   reactStrictMode: true,
-  // copyright: ask AI not to train on the photographs (the text may be read and quoted by AI search; see app/robots.ts)
+  // lib/headers.ts; only on the built site, since `next dev` needs things the policy forbids (eval, its own socket)
   async headers() {
-    return [{ source: '/:path*', headers: [{ key: 'X-Robots-Tag', value: 'noimageai' }] }];
+    if (process.env.NODE_ENV !== 'production') return [];
+    return [{ source: '/:path*', headers: Object.entries(SITE_HEADERS).map(([key, value]) => ({ key, value })) }];
   },
 };
 

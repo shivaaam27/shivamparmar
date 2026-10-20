@@ -14,9 +14,13 @@ import { accessUser } from './lib/access';
 import { insightsJson } from './lib/insights-api';
 import { appsInsightsJson } from './lib/apps-insights';
 import { indexNow, umamiBackup } from './lib/jobs';
+import { SITE_HEADERS } from './lib/headers';
 
 type Page = { kind: 'page' | 'file'; headers: Record<string, string>; segments?: string[]; status?: number };
-type Env = { ASSETS: { fetch(req: Request | URL): Promise<Response> }; CRON_SECRET?: string; SITE_URL?: string };
+type Env = {
+  ASSETS: { fetch(req: Request | URL): Promise<Response> }; CRON_SECRET?: string; SITE_URL?: string;
+  COLLECT_LIMIT?: { limit(o: { key: string }): Promise<{ success: boolean }> };
+};
 type CfRequest = Request & { cf?: { country?: string; regionCode?: string; city?: string } };
 type Ctx = { waitUntil(p: Promise<unknown>): void; passThroughOnException?(): void };
 type Next = { fetch(req: Request, env: Env, ctx: Ctx): Promise<Response> };
@@ -31,8 +35,6 @@ const JOBS: Record<string, () => Promise<unknown>> = {
   '15 3 * * *': () => indexNow(Object.entries(pages).filter(([p, v]) => v.kind === 'page' && !p.startsWith('/insights')).map(([p]) => p)),
 };
 
-// the site-wide headers from next.config.ts, which Next would have added
-const SITE_HEADERS: Record<string, string> = { 'X-Robots-Tag': 'noimageai' };
 
 /** The ready-made answer for this request, or null when Next has to answer it. */
 async function fromFile(req: Request, env: Env): Promise<Response | null> {
@@ -79,7 +81,12 @@ export default {
     const file = await fromFile(req, env).catch(() => null);
     if (file) return file;
     const url = new URL(req.url);
-    if (url.pathname === '/api/collect' && req.method === 'POST') return collect(req, req.cf);
+    if (url.pathname === '/api/collect' && req.method === 'POST') {
+      // more than 30 reports a minute from one address is someone filling the stats: answer as usual, save nothing
+      const ip = req.headers.get('cf-connecting-ip') ?? '';
+      const within = await env.COLLECT_LIMIT?.limit({ key: ip }).then((r) => r.success).catch(() => true);
+      return within === false ? new Response(null, { status: 204 }) : collect(req, req.cf);
+    }
     if (url.pathname === '/api/insights/data' && req.method === 'GET') {
       const user = await accessUser(req.headers);
       if (!user) return new Response('Not found', { status: 404 });
