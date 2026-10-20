@@ -15,6 +15,7 @@ import { insightsJson } from './lib/insights-api';
 import { appsInsightsJson } from './lib/apps-insights';
 import { indexNow, umamiBackup } from './lib/jobs';
 import { SITE_HEADERS } from './lib/headers';
+import { REDIRECTS } from './lib/redirects';
 
 type Page = { kind: 'page' | 'file'; headers: Record<string, string>; segments?: string[]; status?: number };
 type Env = {
@@ -81,6 +82,8 @@ export default {
     const file = await fromFile(req, env).catch(() => null);
     if (file) return file;
     const url = new URL(req.url);
+    const to = REDIRECTS[url.pathname.replace(/(.)\/+$/, '$1')];   // short addresses (lib/redirects.ts), e.g. /get
+    if (to) return new Response(null, { status: 307, headers: { location: to, 'cache-control': 'no-store' } });
     if (url.pathname === '/api/collect' && req.method === 'POST') {
       // more than 30 reports a minute from one address is someone filling the stats: answer as usual, save nothing
       const ip = req.headers.get('cf-connecting-ip') ?? '';
