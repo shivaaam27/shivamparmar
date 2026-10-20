@@ -8,7 +8,7 @@ import AboutShell from '@/components/about/AboutShell';
 import Glow from '@/components/about/Glow';
 import Odometer from '@/components/about/Odometer';
 import Reveal from '@/components/about/Reveal';
-import ExperienceStack from '@/components/about/ExperienceStack';
+import Timeline from '@/components/about/Timeline';
 import LogoRows from '@/components/LogoRows';
 import { aboutPage, nav, site } from '@/lib/content';
 import { pagedProjects, visibleCategories } from '@/lib/work';
@@ -38,13 +38,15 @@ export default function AboutPage() {
   ];
   const [phone] = site.phones;
 
-  // 08 index: the whole site on one page, full width at the end
+  // 08 index: a photo across the top, then the quick ways in, the site by type and contact, split by thin lines
+  const byType = Object.values(projects.reduce((m, { category }) => {
+    (m[category.slug] ??= { slug: category.slug, name: category.name, n: 0 }).n += 1;
+    return m;
+  }, {} as Record<string, { slug: string; name: string; n: number }>));
   const endingPanel = (
     <section id="index" className="ab-sec ab-end" aria-label="Index">
       <div className="ab-end__art">
-        <div className="ab-end__caption">
-          <p><b>{ending.greeting}</b><br />{ending.line}</p>
-        </div>
+        <img src={ending.photo} alt="" loading="lazy" />
       </div>
       <div className="ab-end__body">
         <div className="ab-end__top">
@@ -52,35 +54,37 @@ export default function AboutPage() {
           <p><b>Quicker on the phone?</b><a href={wa(phone.wa)} target="_blank" rel="noopener">WhatsApp me</a></p>
           <p><b>See what I make</b><Link href="/work">Browse the work</Link></p>
         </div>
+        <hr className="ab-end__rule" />
         <div className="ab-end__lists">
           <div>
-            <p className="ab-end__h">Work</p>
+            <p className="ab-end__h">Work by type</p>
             <ul className="ab-end__list">
-        {projects.map(({ project, category }) => (
-          <li key={project.slug}><Link href={`/work/${project.slug}`}>{project.title}</Link><span>{category.name}</span></li>
-        ))}
+              {byType.map((c) => <li key={c.slug}><Link href={`/work/${c.slug}`}>{c.name}</Link><span>{c.n}</span></li>)}
             </ul>
           </div>
           <div>
             <p className="ab-end__h">Disciplines</p>
             <ul className="ab-end__list">
-        {disciplines.map((d) => <li key={d.title}><a href="#services">{d.title}</a></li>)}
+              {disciplines.map((d) => <li key={d.title}><a href="#services">{d.title}</a></li>)}
             </ul>
+          </div>
+          <div>
             <p className="ab-end__h">Pages</p>
             <ul className="ab-end__list">
-        {nav.map((n) => <li key={n.href}><Link href={n.href}>{n.label}</Link></li>)}
+              {nav.map((n) => <li key={n.href}><Link href={n.href}>{n.label}</Link></li>)}
             </ul>
           </div>
           <div>
             <p className="ab-end__h">Contact</p>
             <ul className="ab-end__list">
-        <li><a href={`mailto:${site.email}`}>Email</a><span>{site.email}</span></li>
-        {site.phones.map((p) => <li key={p.tel}><a href={`tel:${p.tel}`}>Call</a><span>{p.label}</span></li>)}
-        {site.phones.map((p) => <li key={p.wa}><a href={wa(p.wa)} target="_blank" rel="noopener">WhatsApp</a><span>{p.label}</span></li>)}
-        <li><span className="ab-end__plain">{site.location}</span></li>
+              <li><a href={`mailto:${site.email}`}>Email</a><span>{site.email}</span></li>
+              {site.phones.map((p) => <li key={p.tel}><a href={`tel:${p.tel}`}>Call</a><span>{p.label}</span></li>)}
+              {site.phones.map((p) => <li key={p.wa}><a href={wa(p.wa)} target="_blank" rel="noopener">WhatsApp</a><span>{p.label}</span></li>)}
+              <li><span className="ab-end__plain">{site.location}</span></li>
             </ul>
           </div>
         </div>
+        <hr className="ab-end__rule" />
         <a className="ab-btn ab-btn--ink ab-end__cta" href={`mailto:${site.email}?subject=New%20project`} data-umami-event="Contact · About start project">
           {ending.cta}<ArrowUpRight size={15} aria-hidden="true" />
         </a>
@@ -105,8 +109,8 @@ export default function AboutPage() {
           </section>
 
           {/* 02 numbers */}
-          <section id="numbers" className="ab-sec" aria-label="In numbers">
-            <p className="ab-label">In numbers</p>
+          <section id="numbers" className="ab-sec" aria-label="At a glance">
+            <p className="ab-label">At a glance</p>
             <Reveal as="ul" className="ab-stats">
               {stats.map(({ value, label, Icon }, i) => (
                 <Glow key={label} as="li" seed={i} className="ab-stat">
@@ -152,7 +156,7 @@ export default function AboutPage() {
                 <div className="ab-card__body">
                   <h3 className="ab-card__title">Something else?</h3>
                   <p>Most good projects mix a few of these. Tell me what you have in mind.</p>
-                  <a href="#say-hello" className="ab-card__go">Say hello<span className="ab-card__icon" aria-hidden="true"><ArrowUpRight size={20} strokeWidth={1.4} /></span></a>
+                  <a href="#say-hello" className="ab-card__go">Get in touch<span className="ab-card__icon" aria-hidden="true"><ArrowUpRight size={20} strokeWidth={1.4} /></span></a>
                 </div>
               </Glow>
             </Reveal>
@@ -183,12 +187,12 @@ export default function AboutPage() {
           {/* 06 experience: cards that stack up as you scroll */}
           <section id="experience" className="ab-sec ab-exp" aria-label="Experience">
             <p className="ab-label">Experience</p>
-            <ExperienceStack items={experience} />
+            <Timeline items={experience} />
           </section>
 
           {/* 07 say hello */}
-          <section id="say-hello" className="ab-sec ab-hello-sec" aria-label="Say hello">
-            <p className="ab-label">Say hello</p>
+          <section id="say-hello" className="ab-sec ab-hello-sec" aria-label="Contact">
+            <p className="ab-label">Contact</p>
             <h2 className="ab-h2 ab-center">{hello.title[0]}<br />{hello.title[1]}</h2>
             <p className="ab-text ab-center">{hello.text}</p>
             <div className="ab-actions">

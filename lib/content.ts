@@ -72,12 +72,12 @@ export const aboutPage = {
   /** The sections, in order; they also make up the index on the left. */
   sections: [
     { id: 'intro', label: 'Intro' },
-    { id: 'numbers', label: 'In numbers' },
+    { id: 'numbers', label: 'At a glance' },
     { id: 'services', label: 'What I do' },
     { id: 'highlights', label: 'Highlights' },
     { id: 'clients', label: 'Worked with' },
     { id: 'experience', label: 'Experience' },
-    { id: 'say-hello', label: 'Say hello' },
+    { id: 'say-hello', label: 'Contact' },
     { id: 'index', label: 'Index' },
   ],
   eyebrow: 'Freelance software & digital solutions · Pharmacist · Photographer',
@@ -158,17 +158,17 @@ export const aboutPage = {
       { name: 'Pinnacle Engineering Solutions', src: '/logos/pinnacle-engineering.png' },
     ] as { name: string; src: string | null }[],
   },
-  /** The journey so far, newest first: a summary from the CV (the full story comes later). */
+  /** The journey so far, newest first: a summary from the CV. `group` puts each role under Work or Education. */
   experience: [
-    { years: '2026', role: 'Shivo Labs', place: 'Dar es Salaam', text: 'Freelance software and digital solutions: websites, apps for iPhone, Android, Windows and TV, and AI tools, built and shipped from Dar es Salaam.' },
-    { years: '2026', role: 'Systems & AI', place: 'Dar es Salaam', text: 'In five months, went from spreadsheets to building a group of companies’ task management platform, an AI document agent and a compliance alert engine, with AI workflows made in Claude Code.' },
-    { years: '2025 – 2026', role: 'MSc Pharmacovigilance & Pharmacoepidemiology', place: 'MUHAS', text: 'Drug safety, and how medicines behave across whole populations.' },
-    { years: '2024 – 2025', role: 'Pharmacy intern', place: 'Jakaya Kikwete Cardiac Institute', text: 'Internship training at Tanzania’s national heart hospital.' },
-    { years: '2024', role: 'Branch Manager', place: 'Mansoor Daya Chemicals', text: 'Ran a pharmacy branch: the team, the stock and the customers.' },
-    { years: '2020 – 2024', role: 'Bachelor of Pharmacy', place: 'GITAM University, India', text: 'On a full Government of India scholarship. Founded the pharmacy students’ association, led the international students’ association and co-wrote seven papers.' },
-    { years: '2019 – 2020', role: 'Pharmaceutical Technician', place: 'Regency Hospital', text: 'Dispensing and pharmacy care in a busy private hospital.' },
-    { years: '2016 – 2019', role: 'Diploma in Pharmaceutical Sciences', place: 'Kilimanjaro School of Pharmacy', text: 'Where pharmacy began, alongside volunteering at St. Joseph Hospital and the Jaffery dispensary.' },
-    { years: '2014', role: 'Graphic design', place: 'Moshi Institute of Technology', text: 'A certificate in graphics and design, and later teaching it: the start of the other half.' },
+    { group: 'Work', years: '2026', role: 'Shivo Labs', place: 'Dar es Salaam', text: 'Freelance software and digital solutions: websites, apps for iPhone, Android, Windows and TV, and AI tools, built and shipped from Dar es Salaam.' },
+    { group: 'Work', years: '2026', role: 'Systems & AI', place: 'Dar es Salaam', text: 'In five months, went from spreadsheets to building a group of companies’ task management platform, an AI document agent and a compliance alert engine, with AI workflows made in Claude Code.' },
+    { group: 'Education', years: '2025 – 2026', role: 'MSc Pharmacovigilance & Pharmacoepidemiology', place: 'MUHAS', text: 'Drug safety, and how medicines behave across whole populations.' },
+    { group: 'Work', years: '2024 – 2025', role: 'Pharmacy intern', place: 'Jakaya Kikwete Cardiac Institute', text: 'Internship training at Tanzania’s national heart hospital.' },
+    { group: 'Work', years: '2024', role: 'Branch Manager', place: 'Mansoor Daya Chemicals', text: 'Ran a pharmacy branch: the team, the stock and the customers.' },
+    { group: 'Education', years: '2020 – 2024', role: 'Bachelor of Pharmacy', place: 'GITAM University, India', text: 'On a full Government of India scholarship. Founded the pharmacy students’ association, led the international students’ association and co-wrote seven papers.' },
+    { group: 'Work', years: '2019 – 2020', role: 'Pharmaceutical Technician', place: 'Regency Hospital', text: 'Dispensing and pharmacy care in a busy private hospital.' },
+    { group: 'Education', years: '2016 – 2019', role: 'Diploma in Pharmaceutical Sciences', place: 'Kilimanjaro School of Pharmacy', text: 'Where pharmacy began, alongside volunteering at St. Joseph Hospital and the Jaffery dispensary.' },
+    { group: 'Education', years: '2014', role: 'Graphic design', place: 'Moshi Institute of Technology', text: 'A certificate in graphics and design, and later teaching it: the start of the other half.' },
   ],
 
   hello: {
@@ -179,6 +179,8 @@ export const aboutPage = {
     greeting: 'Hallo, I’m Shivam.',
     line: 'Through Shivo Labs I build systems, apps, websites and brands, from Dar es Salaam.',
     cta: 'Start a project',
+    /** The photo across the top of the index. */
+    photo: '/images/dar-kayak.jpg',
   },
   closing: {
     headline: ['Let’s build something', 'that lasts.'],

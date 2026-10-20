@@ -3,10 +3,10 @@
 import { useRef } from 'react';
 import { gsap, useGSAP, prefersReducedMotion } from '@/lib/motion';
 
-/** Colour fields for the backdrop: deep foliage greens, warm brown, pale light. */
-const PALETTE = ['#4b5e45', '#7f9270', '#6d5b46', '#c9d0bd', '#243029', '#a89782'];
-/** Deep: dark green above, lit from below by moss and warm taupe. */
-const DEEP = ['#6e8159', '#8f7a64', '#5a6d4d'];
+/** Colour fields from the logo: its ink tiles and its sage tile, with a lighter and a deeper sage between. */
+const PALETTE = ['#4F7A5A', '#141517', '#6F9A7B', '#26382C', '#3D6347', '#1C1E21'];
+/** Deep: ink above, lit from below by sage. */
+const DEEP = ['#4F7A5A', '#6F9A7B', '#3D6347'];
 
 type Tone = 'light' | 'deep';
 

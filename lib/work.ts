@@ -557,7 +557,6 @@ export const categories: Category[] = [
         ],
       },
       { slug: 'terragreen', name: 'TerraGreen', listed: true, projects: [soon('terragreen-soon', 'sage')] },
-      { slug: 'pamoja-plus', name: 'Pamoja Plus', listed: true, projects: [soon('pamoja-plus-soon', 'amber')] },
     ],
   },
   {

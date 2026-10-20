@@ -6,7 +6,7 @@
    White, soft grey cards with generous curves, no hard black.
    ========================================================= */
 .about-page {
-  --card: #FFFFFF; --card-edge: rgba(0, 0, 0, .08); --accent: #1A1A1A; --brown: var(--tag);
+  --card: #FFFFFF; --card-edge: rgba(0, 0, 0, .08); --accent: #141517; --brown: var(--tag); --sage: #4F7A5A;
   --r: 14px;          /* small things: rows, chips */
   --r-card: 26px;     /* cards */
   --r-in: 18px;       /* pictures inside cards (card radius minus its padding) */
@@ -47,7 +47,7 @@
 /* ---- shared pieces */
 .ab-sec { display: grid; gap: clamp(1.25rem, 2.4vw, 2rem); scroll-margin-top: 7rem; }
 .ab-label { font: 500 .875rem/1.2 var(--sans); letter-spacing: .01em; text-transform: uppercase; color: var(--brown); display: flex; align-items: center; gap: .55em; }
-.ab-label::before { content: ''; width: .7em; height: .7em; border-radius: 2px; background: currentColor; }
+.ab-label::before { content: ''; width: .7em; height: .7em; border-radius: 2px; background: var(--sage); }
 .ab-h2 { font: 400 clamp(2.25rem, 4.6vw, 4rem)/.95 var(--serif); letter-spacing: -.015em; text-wrap: balance; }
 .ab-center { text-align: center; justify-self: center; }
 .ab-text { font-size: var(--fs-lead); line-height: 1.5; max-width: 38rem; }
@@ -81,7 +81,7 @@
 .ab-hello { font: 400 clamp(3rem, 7vw, 6.25rem)/.9 var(--serif); letter-spacing: -.02em; text-transform: uppercase; }
 .ab-lead { font-size: clamp(1.1875rem, 1.7vw, 1.5rem); line-height: 1.45; max-width: 34rem; text-wrap: balance; }
 
-/* ---- 02 numbers: the digits roll into place; the icons turn on hover */
+/* ---- 02 at a glance: the digits roll into place; the icons turn on hover */
 .ab-stats { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: .75rem; }
 .ab-stats > li:nth-child(2) { --i: 1; }
 .ab-stats > li:nth-child(3) { --i: 2; }
@@ -99,7 +99,7 @@
 .ab-stat:hover .ab-stat__icon { transform: translateY(-3px) rotate(-14deg) scale(1.12); }
 .ab-stat__n { font-size: .6875rem; letter-spacing: .06em; opacity: .7; padding-top: .2rem; }
 .ab-stat > b { align-self: end; font: 300 clamp(2.5rem, 4.4vw, 3.75rem)/1 var(--sans); letter-spacing: -.045em; font-variant-numeric: tabular-nums; }
-.ab-stat__label { min-height: 2.6em; font-size: .8125rem; line-height: 1.3; max-width: 10rem; color: rgba(255, 255, 255, .85); }
+.ab-stat__label { min-height: 2.6em; font-size: .875rem; line-height: 1.3; max-width: 11rem; color: rgba(255, 255, 255, .82); }
 
 /* odometer: each column a reel of digits that spins down to its number. The rows are
    taller than the digits, so no sliver of the next digit ever shows at the edges */
@@ -112,15 +112,15 @@
 
 /* each number box has its own slowly moving gradient */
 /* clipped to its own rounded shape, so no hairline of the blurred colour bleeds at the corners while it moves */
-.glow { position: relative; isolation: isolate; overflow: hidden; background: #26302a; clip-path: inset(0 round var(--glow-r, 22px)); }
-.glow__field { position: absolute; inset: -30%; z-index: -1; filter: blur(34px) saturate(1.1); }
+.glow { position: relative; isolation: isolate; overflow: hidden; background: #141517; clip-path: inset(0 round var(--glow-r, 22px)); }
+.glow__field { position: absolute; inset: -30%; z-index: -1; filter: blur(40px); opacity: .9; }
 .glow__blob { position: absolute; aspect-ratio: 1; border-radius: 50%; opacity: .95; }
-.glow::after { content: ''; position: absolute; inset: 0; z-index: -1; background: linear-gradient(180deg, rgba(0, 0, 0, .05), rgba(0, 0, 0, .3)); }
-/* deep: near-black green, the colour kept to the lower part, the top held dark */
-.glow--deep { background: #243029; }
+.glow::after { content: ''; position: absolute; inset: 0; z-index: -1; background: linear-gradient(180deg, rgba(20, 21, 23, .55), rgba(20, 21, 23, .15) 60%, rgba(20, 21, 23, .35)); }
+/* deep: ink, the sage kept to the lower part, the top held dark */
+.glow--deep { background: #141517; }
 .glow--deep .glow__field { filter: blur(38px) saturate(1.05); }
 .glow--deep .glow__blob { opacity: 1; }
-.glow--deep::after { background: linear-gradient(180deg, rgba(24, 33, 27, .6) 0%, rgba(24, 33, 27, .1) 55%, transparent); }
+.glow--deep::after { background: linear-gradient(180deg, rgba(20, 21, 23, .85) 0%, rgba(20, 21, 23, .35) 55%, rgba(20, 21, 23, .05)); }
 
 /* quick facts: plain lines people search for and AI quotes */
 .ab-facts { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0 2rem; border-top: 1px solid var(--line); }
@@ -128,7 +128,7 @@
 .ab-facts dt { font: 500 .8125rem/1.4 var(--sans); letter-spacing: .01em; text-transform: uppercase; color: var(--brown); }
 .ab-facts dd { margin: 0; font-size: .9375rem; line-height: 1.45; }
 
-/* ---- 03 cards: deep green, lit warm from below, each a little differently; the icon and
+/* ---- 03 cards: ink, lit sage from below, each a little differently; the icon and
    number up top, the title and words settled at the bottom */
 .ab-cards { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: .85rem; }
 .ab-cards > li:nth-child(6) { --i: 5; }
@@ -143,7 +143,7 @@
 .ab-card__n { font-size: .6875rem; letter-spacing: .06em; color: rgba(255, 255, 255, .6); padding-top: .15rem; }
 .ab-card__body { margin-top: auto; display: grid; gap: .7rem; }
 .ab-card__title { font: 400 clamp(1.75rem, 2.4vw, 2.125rem)/.95 var(--serif); letter-spacing: -.01em; }
-.ab-card__body p { font-size: .875rem; line-height: 1.5; color: rgba(255, 255, 255, .82); }
+.ab-card__body p { font-size: .9063rem; line-height: 1.55; color: rgba(255, 255, 255, .8); }
 /* icons on their own: still at rest, a small lift and turn on hover */
 .ab-card__icon { display: block; line-height: 0; transform-origin: 50% 60%; transition: transform .6s cubic-bezier(.34, 1.56, .64, 1); }
 .ab-card:hover .ab-card__icon { transform: translateY(-3px) rotate(-14deg) scale(1.12); }
@@ -156,22 +156,25 @@
 
 /* ---- 04 logos: the two gliding rows live in globals.css (shared with the home page) */
 
-/* ---- 05 the journey: a section with room around it, held still while each role is lifted
-   onto a pile of cards (see <ExperienceStack>). Without that it's a plain list of cards */
-.ab-exp { padding-block: clamp(2rem, 6vw, 5rem); }
-.ab-rows { display: grid; gap: .75rem; }
-.ab-rows li {
-  display: grid; grid-template-columns: 7.5rem minmax(0, 1.1fr) minmax(0, 1.2fr); gap: .35rem 1.75rem; align-items: baseline;
-  padding: 1.2rem 1.4rem 1.4rem; border-radius: 22px;
-  background: var(--card); box-shadow: inset 0 0 0 1px var(--card-edge), 0 -12px 32px -20px rgba(0, 0, 0, .22);
-}
-.ab-stack.is-stacked .ab-rows { position: relative; display: block; }
-.ab-stack.is-stacked .ab-rows li { position: absolute; inset: 0 0 auto; will-change: transform, opacity; }
-.ab-rows__years { font: 500 .8125rem/1.3 var(--sans); letter-spacing: .01em; color: var(--brown); font-variant-numeric: tabular-nums; }
-.ab-rows__role { display: grid; gap: .15rem; }
-.ab-rows__role b { font-weight: 500; font-size: 1rem; line-height: 1.3; }
-.ab-rows__role em { font-style: normal; font-size: .875rem; color: var(--ink-soft); }
-.ab-rows__text { font-size: .9063rem; line-height: 1.5; color: var(--ink-soft); }
+/* ---- 06 the journey: a thin timeline, years on the left, a dot per role, grouped Work then Education */
+.ab-exp { padding-block: clamp(1rem, 3vw, 2.5rem); }
+.ab-tl { display: grid; gap: 2.25rem; }
+.ab-tl__group { position: relative; display: grid; gap: .25rem; }
+.ab-tl__line { position: absolute; left: calc(8rem + 1.25rem + .95rem - .5px); top: 2.6rem; bottom: .4rem; width: 1px; background: var(--line); }
+.ab-tl__fill { position: absolute; inset: 0; background: var(--sage); transform-origin: top; transform: scaleY(0); }
+.ab-tl:not(.is-live) .ab-tl__fill { transform: none; }
+.ab-tl__head { margin: 0 0 .5rem calc(8rem + 1.9rem + 2.5rem); font: 600 1.0625rem/1.3 var(--sans); letter-spacing: .03em; text-transform: uppercase; color: var(--sage); }
+.ab-tl__list { list-style: none; margin: 0; padding: 0; display: grid; }
+.ab-tl__list li { display: grid; grid-template-columns: 8rem 1.9rem minmax(0, 1fr) minmax(0, 1.2fr); gap: 0 1.25rem; align-items: baseline; padding: .95rem 0; }
+.ab-tl__years { font: 500 .8125rem/1.3 var(--sans); letter-spacing: .01em; color: var(--brown); font-variant-numeric: tabular-nums; }
+.ab-tl__dot { justify-self: center; width: 11px; height: 11px; border-radius: 50%; background: #fff; box-shadow: inset 0 0 0 1.5px var(--line); position: relative; z-index: 1; transform: translateY(1px); transition: background .4s, box-shadow .4s, transform .5s cubic-bezier(.34, 1.56, .64, 1); }
+.ab-tl:not(.is-live) .ab-tl__dot, .is-past .ab-tl__dot { box-shadow: inset 0 0 0 1.5px var(--sage); }
+.is-past .ab-tl__dot { transform: translateY(1px) scale(1.15); }
+.is-now .ab-tl__dot, .ab-tl:not(.is-live) .is-now .ab-tl__dot { background: var(--sage); box-shadow: 0 0 0 5px rgba(79, 122, 90, .16); }
+.ab-tl__role { display: grid; gap: .15rem; }
+.ab-tl__role b { font-weight: 500; font-size: 1.0625rem; line-height: 1.3; }
+.ab-tl__role em { font-style: normal; font-size: .9rem; color: var(--ink-soft); }
+.ab-tl__text { font-size: .9375rem; line-height: 1.5; color: var(--ink-soft); }
 
 /* ---- highlights from the CV: a two-column numbered list */
 .ab-high { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0 2rem; border-top: 1px solid var(--line); }
@@ -185,36 +188,33 @@
 .ab-hello-sec { justify-items: center; text-align: center; padding: clamp(2.5rem, 5vw, 4rem) 1.5rem; background: var(--card); border-radius: var(--r-card); box-shadow: inset 0 0 0 1px var(--card-edge); }
 .ab-hello-sec .ab-label { justify-self: center; }
 
-/* ---- 07 index page: a whole page of its own, full width */
+/* ---- 08 index page: a whole page of its own, full width. A photo across the top, then thin lines between the parts */
 .ab-stage > .ab-end { width: calc(100% - 2 * var(--gutter)); max-width: calc(var(--max) - 2 * var(--gutter)); margin: clamp(2rem, 5vw, 4rem) auto clamp(3rem, 6vw, 5rem); }
 .ab-end {
-  grid-template-columns: minmax(0, 5fr) minmax(0, 8fr); gap: clamp(1.5rem, 3vw, 3rem);
-  min-height: min(100svh, 52rem); padding: clamp(.75rem, 1.2vw, 1rem); background: var(--card); border-radius: 30px; box-shadow: inset 0 0 0 1px var(--card-edge);
+  display: grid; gap: clamp(1.25rem, 2.5vw, 2rem);
+  padding: clamp(.75rem, 1.2vw, 1rem); background: var(--card); border-radius: 30px; box-shadow: inset 0 0 0 1px var(--card-edge);
 }
-.ab-end__art { position: relative; border-radius: 20px; overflow: hidden; min-height: 26rem; background: #F2F2F2; }
-.ab-end__caption { position: absolute; inset: 0; display: flex; flex-direction: column; justify-content: flex-end; padding: 1.25rem; font-size: .9375rem; line-height: 1.45; }
-.ab-end__caption b { font-weight: 500; }
-.ab-end__caption p:last-child { align-self: flex-start; max-width: 22rem; padding: .85rem 1rem; border-radius: var(--r); background: rgba(255, 255, 255, .72); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); }
-.ab-end__body { display: grid; grid-template-rows: auto 1fr auto; gap: 2rem; padding: clamp(1rem, 2vw, 1.75rem) clamp(.5rem, 1.5vw, 1.25rem) clamp(.5rem, 1.5vw, 1.25rem) 0; }
-.ab-end__top { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1.25rem; font-size: .9063rem; line-height: 1.35; }
-.ab-end__top p { display: grid; }
+.ab-end__art { border-radius: 20px; overflow: hidden; height: clamp(13rem, 26vw, 22rem); background: #F2F2F2; }
+.ab-end__art img { display: block; width: 100%; height: 100%; object-fit: cover; object-position: center 78%; }
+.ab-end__body { display: grid; gap: clamp(1.25rem, 2.2vw, 1.75rem); padding: .25rem clamp(.5rem, 2vw, 1.75rem) clamp(.5rem, 1.6vw, 1.25rem); }
+.ab-end__rule { border: 0; height: 1px; margin: 0; background: var(--line); }
+.ab-end__top { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1.25rem; font-size: .9375rem; line-height: 1.4; }
+.ab-end__top p { display: grid; gap: .15rem; }
 .ab-end__top b { font-weight: 500; }
-.ab-end__top a { color: var(--ink-soft); }
+.ab-end__top a { color: var(--ink-soft); text-decoration: underline; text-decoration-color: var(--line); text-underline-offset: 3px; }
 .ab-end__top a:hover, .ab-end__list a:hover { opacity: .6; }
-.ab-end__lists { display: grid; grid-template-columns: 1.3fr 1fr 1.4fr; gap: 1.25rem; align-content: end; }
-.ab-end__h { font-size: .875rem; font-weight: 500; margin: 0 0 .5rem; }
-.ab-end__h:not(:first-child) { margin-top: 1.5rem; }
-.ab-end__list { display: grid; gap: .15rem; font-size: .8438rem; }
+.ab-end__lists { display: grid; grid-template-columns: 1.15fr 1fr .8fr 1.3fr; gap: 2rem; }
+.ab-end__h { margin: 0 0 .75rem; font: 500 .75rem/1.2 var(--sans); letter-spacing: .04em; text-transform: uppercase; color: var(--brown); }
+.ab-end__list { list-style: none; margin: 0; padding: 0; display: grid; gap: .5rem; font-size: .9375rem; }
 .ab-end__list li { display: flex; justify-content: space-between; gap: .75rem; }
-.ab-end__list span { color: var(--ink-soft); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.ab-end__plain { color: var(--ink) !important; }
+.ab-end__list span { color: var(--ink-soft); white-space: nowrap; font-variant-numeric: tabular-nums; }
+.ab-end__plain { color: var(--ink) !important; white-space: normal !important; }
 .ab-end__cta { justify-self: end; }
 
 /* ---- sizes */
 @media (max-width: 1100px) {
   .ab-cards { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-  .ab-end { grid-template-columns: minmax(0, 1fr); }
-  .ab-end__art { min-height: 22rem; }
+  .ab-end__lists { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1.75rem 2rem; }
 }
 @media (max-width: 1000px) {
   .ab { grid-template-columns: minmax(0, 1fr); gap: 1.5rem; }
@@ -243,7 +243,13 @@
   .ab-stat { min-height: 10rem; }
   .ab-cards { grid-template-columns: minmax(0, 1fr); }
   .ab-card { min-height: 15rem; gap: 2rem; }
-  .ab-rows li { grid-template-columns: minmax(0, 1fr); gap: .35rem; padding: 1rem 1.15rem 1.2rem; }
+  /* timeline: the line and dots stay on the left, the years go above each role */
+  .ab-tl__line { left: calc(.95rem - .5px); top: 2.4rem; }
+  .ab-tl__head { margin-left: 2.5rem; }
+  .ab-tl__list li { grid-template-columns: 1.9rem minmax(0, 1fr); gap: .3rem .6rem; }
+  .ab-tl__dot { grid-row: 1; grid-column: 1; }
+  .ab-tl__years { grid-row: 1; grid-column: 2; }
+  .ab-tl__role, .ab-tl__text { grid-column: 2; }
   .ab-facts { grid-template-columns: minmax(0, 1fr); }
   .ab-facts > div { grid-template-columns: 6.5rem minmax(0, 1fr); }
   .ab-end { border-radius: 24px; }

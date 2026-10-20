@@ -11,7 +11,7 @@
   --ink:        #151412;
   --ink-soft:   #4B4640;
   --taupe:      #151412;   /* small text and labels: ink, for readability */
-  --tag:        #45352A;   /* the section tags (SELECTED, CONTACT) and small capitals: a deep brown; was #5C4936 */
+  --tag:        #141517;   /* the section tags (SELECTED, CONTACT) and small capitals: the logo's ink, beside its sage square; was brown #45352A */
   --taupe-lite: #BDB1A2;   /* decorative only (jumble letters, marks) */
   --line:       rgba(21, 20, 18, .14);
 
@@ -463,7 +463,7 @@ body.menu-open .site-header--over-work .wordmark { opacity: 1 !important; pointe
   vertical-align: .55em;
   margin-right: .5em;
 }
-.tag::before { content: ""; width: .8em; height: .8em; background: currentColor; opacity: .75; }
+.tag::before { content: ""; width: .8em; height: .8em; border-radius: 2px; background: #4F7A5A; }
 
 .headline {
   font: 400 var(--fs-head)/.94 var(--serif);
