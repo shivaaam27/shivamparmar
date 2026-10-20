@@ -1,17 +1,30 @@
 /**
  * Visit tracking, sent to two places: Umami (its own script) and this site's
  * own database via /api/collect. Both skip visitors with Do Not Track on, and
- * this device once its owner has opened /insights.
+ * a browser once its owner has opened /insights or the link shivolabs.com/?notrack
+ * (?track counts it again). The link is for browsers that never open /insights,
+ * like the ones inside Instagram, LinkedIn and WhatsApp.
  */
 type Umami = { track: (name: string, data?: Record<string, string | number>) => void };
 
 const SESSION_KEY = 'visit.session';
 const IDLE = 30 * 60e3; // a new visit starts after 30 idle minutes
+const OFF_KEY = 'umami.disabled'; // Umami's own switch, so both stop together
+
+/** Reads ?notrack / ?track once, before anything is sent; returns what changed for a short note. */
+export const optOutChange: 'off' | 'on' | null = (() => {
+  if (typeof window === 'undefined') return null;
+  const q = new URLSearchParams(window.location.search);
+  const change = q.has('notrack') ? 'off' : q.has('track') ? 'on' : null;
+  if (!change) return null;
+  try { if (change === 'off') localStorage.setItem(OFF_KEY, '1'); else localStorage.removeItem(OFF_KEY); } catch { return null; }
+  return change;
+})();
 
 function off() {
   if (typeof window === 'undefined' || process.env.NODE_ENV !== 'production') return true;
   if (navigator.doNotTrack === '1') return true;
-  try { if (localStorage.getItem('umami.disabled')) return true; } catch { /* storage blocked: still count */ }
+  try { if (localStorage.getItem(OFF_KEY)) return true; } catch { /* storage blocked: still count */ }
   return window.location.pathname.startsWith('/insights');
 }
 

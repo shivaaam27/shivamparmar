@@ -16,12 +16,15 @@ const SERVER_ASNS = new Set([
   14061, 16276, 24940, 63949, 31898, 45102, 132203, 51167, 20473, 60781, 12876, 9009, 60068, 46606, 62567, 202425,
   //  DigitalOcean, OVH, Hetzner, Linode, Oracle, Alibaba, Tencent, Contabo, Vultr, Leaseweb, Scaleway, M247, Datacamp,
   //  Unified Layer, DigitalOcean (2), IP Volume
+  22295, 64286, 577,             // Advin Services, LogicWeb, Fortinet (seen in the stats as single-view scanners)
 ]);
-const SERVER_NAMES = /amazon|aws|google|microsoft|azure|facebook|meta platforms|apple inc|digitalocean|ovh|hetzner|linode|akamai connected cloud|oracle|alibaba|tencent|contabo|vultr|choopa|leaseweb|scaleway|m247|datacamp|hosting|data ?cent(er|re)|server|colocation|cloud(?!flare)/i;
+const SERVER_NAMES = /amazon|aws|google|microsoft|azure|facebook|meta platforms|apple inc|digitalocean|ovh|hetzner|linode|akamai connected cloud|oracle|alibaba|tencent|contabo|vultr|choopa|leaseweb|scaleway|m247|datacamp|hosting|data ?cent(er|re)|server|colocation|advin|logicweb|fortinet|zscaler|palo alto|cloud(?!flare)/i;
 
 export type Network = { asn?: number; asOrganization?: string };
 
-export function fromServers(cf?: Network): boolean {
+/** A screen of 0 x 0 is a browser with no window: an automated one, never a person. */
+export function fromServers(cf?: Network, screen?: string | null): boolean {
+  if (screen === '0x0') return true;
   if (!cf) return false;
   if (cf.asn && SERVER_ASNS.has(cf.asn)) return true;
   return Boolean(cf.asOrganization && SERVER_NAMES.test(cf.asOrganization));

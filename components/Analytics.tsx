@@ -1,9 +1,9 @@
 'use client';
 
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import Script from 'next/script';
 import { usePathname } from 'next/navigation';
-import { collect } from '@/lib/track';
+import { collect, optOutChange } from '@/lib/track';
 
 /** Umami website ID (public: it's in every page's source). An env var can override it. */
 const WEBSITE_ID = process.env.NEXT_PUBLIC_UMAMI_WEBSITE_ID || 'c8e39f81-6be1-4b1b-a492-801b885b6347';
@@ -17,6 +17,15 @@ const DOMAINS = process.env.NEXT_PUBLIC_UMAMI_DOMAINS;
  */
 export default function Analytics() {
   const path = usePathname();
+  // shown after the first render, so the server's page and the browser's match
+  const [note, setNote] = useState<typeof optOutChange>(null);
+  useEffect(() => setNote(optOutChange), []);
+
+  useEffect(() => {
+    if (!note) return;
+    const t = setTimeout(() => setNote(null), 4000);
+    return () => clearTimeout(t);
+  }, [note]);
 
   useEffect(() => {
     if (!path?.startsWith('/insights')) collect('pageview');
@@ -32,17 +41,23 @@ export default function Analytics() {
     return () => document.removeEventListener('click', onClick, true);
   }, []);
 
-  if (!WEBSITE_ID || process.env.NODE_ENV !== 'production' || path?.startsWith('/insights')) return null;
+  const toast = note && (
+    <p className="track-note" role="status">{note === 'off' ? 'Visits from this browser are not counted' : 'Visits from this browser are counted again'}</p>
+  );
+  if (!WEBSITE_ID || process.env.NODE_ENV !== 'production' || path?.startsWith('/insights')) return toast || null;
   return (
-    <Script
-      src="https://cloud.umami.is/script.js"
-      data-website-id={WEBSITE_ID}
-      data-do-not-track="true"
-      // filters and in-page links change ?c=… and #…; count those as the same page
-      data-exclude-search="true"
-      data-exclude-hash="true"
-      {...(DOMAINS ? { 'data-domains': DOMAINS } : {})}
-      strategy="afterInteractive"
-    />
+    <>
+      {toast}
+      <Script
+        src="https://cloud.umami.is/script.js"
+        data-website-id={WEBSITE_ID}
+        data-do-not-track="true"
+        // filters and in-page links change ?c=… and #…; count those as the same page
+        data-exclude-search="true"
+        data-exclude-hash="true"
+        {...(DOMAINS ? { 'data-domains': DOMAINS } : {})}
+        strategy="afterInteractive"
+      />
+    </>
   );
 }

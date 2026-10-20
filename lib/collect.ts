@@ -62,7 +62,7 @@ export async function collect(req: Request, cf?: Cf): Promise<Response> {
        )`,
       [kind, name, path, referrer, place.country, place.region, place.city,
         device, browser, os, clip(body.screen, 20), clip(body.language, 20), visitor, session,
-        cf?.asn ?? null, clip(cf?.asOrganization, 120), fromServers(cf)],
+        cf?.asn ?? null, clip(cf?.asOrganization, 120), fromServers(cf, clip(body.screen, 20))],
     );
   } catch {
     // never break the page for a failed stat

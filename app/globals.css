@@ -1298,3 +1298,10 @@ body:has(.dash) { color-scheme: light; }   /* the Insights dashboard keeps its o
   .plock__sub, .plock__mark rect.is-lit { color: #6F9A7B; fill: #5E8A69; }
   .ab-marquee li:hover { box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .5); }
 }
+
+/* the short note after opening ?notrack / ?track (components/Analytics.tsx) */
+.track-note {
+  position: fixed; left: 50%; bottom: calc(24px + env(safe-area-inset-bottom)); z-index: 200; transform: translateX(-50%);
+  margin: 0; padding: 10px 16px; border-radius: 999px; background: var(--ink); color: var(--paper);
+  font-size: 0.875rem; white-space: nowrap; box-shadow: 0 6px 20px rgba(0, 0, 0, .18);
+}
