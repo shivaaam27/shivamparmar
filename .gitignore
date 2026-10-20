@@ -13,3 +13,6 @@ next-env.d.ts
 
 # insights map data, made by scripts/build-geo.mjs at build time
 public/geo/
+
+# phone-sized photo copies, made by scripts/build-thumbs.mjs at build time
+public/_w/

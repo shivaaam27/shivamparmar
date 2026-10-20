@@ -37,7 +37,8 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: '#F5F5F2',
+  // the phone's browser bar matches the page, light or dark
+  themeColor: [{ media: '(prefers-color-scheme: light)', color: '#FFFFFF' }, { media: '(prefers-color-scheme: dark)', color: '#141517' }],
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

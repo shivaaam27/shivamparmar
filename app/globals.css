@@ -88,7 +88,7 @@ img { pointer-events: none; }
 /* film grain over everything — the “paper” */
 .grain {
   position: fixed; inset: -50%; z-index: 90; pointer-events: none;
-  opacity: 0;   /* off for the white test (was .09 on the paper colour) */
+  opacity: 0; display: none;   /* off on the white page; kept out of the page entirely so phones never draw it (was .09 on the paper colour) */
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 .9 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
 }
 
@@ -1131,3 +1131,47 @@ body.menu-open .site-header--over-work .wordmark { opacity: 1 !important; pointe
   translate: var(--look, 0 0); animation: orb-blink 5.2s infinite;
 }
 @media (prefers-reduced-motion: reduce) { .journey { display: none; } }
+
+/* =========================================================
+   Dark mode: the phone or computer asks for it, the site answers with its own dark design
+   (instead of the browser inverting the light one). The logo's ink becomes the page, its
+   sage stays the accent; Blobby dims to a soft dusk stone; logos keep light tiles so they read.
+   ========================================================= */
+:root { color-scheme: light dark; }
+body:has(.dash) { color-scheme: light; }   /* the Insights dashboard keeps its own light look */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --paper:      #141517;
+    --paper-deep: #1C1E21;
+    --ink:        #ECEDE9;
+    --ink-soft:   #A3A5A2;
+    --taupe:      #ECEDE9;
+    --tag:        #ECEDE9;
+    --taupe-lite: #4A4D52;
+    --line:       rgba(236, 237, 233, .14);
+  }
+  /* the header draws through a difference blend: these are the colours that come out as sage and slate on the dark page */
+  .wordmark__mark { --hot: #638F71; }
+  .wordmark__text span { color: #929599; }
+  /* the intro letters */
+  .hero:has(.avatar) .jumble__cell { color: rgba(236, 237, 233, .4); }
+  .hero:has(.avatar) .jumble__cell.is-settled { color: rgba(236, 237, 233, .3); }
+  .jumble__cell.is-labs, .hero__lock-word span { color: #8E9094; }
+  .jumble__cell.is-name { color: #6F7175; }
+  /* Blobby at dusk: the same stone, dimmed so it glows softly instead of shining */
+  .avatar { --core: #5E5C6E; --mid: #46444F; --rim: #2F2E37; --halo: 110, 106, 132; }
+  .avatar.is-asleep { --core: #4A4857; --mid: #383642; --rim: #26252C; --halo: 90, 88, 108; }
+  .about__orb-body { background: radial-gradient(circle at 34% 16%, #6A6879 0%, #4C4A57 34%, #33323B 100%); }
+  .about__orb-ink { background: #3A3846; }
+  .journey, .blob-transit { --c1: #555363; --c2: #3E3C48; --c3: #2A2930; }
+  .journey.is-night, .blob-transit.is-night { --c1: #46444F; --c2: #34333C; --c3: #232228; }
+  /* the highlighter under key words in the intro */
+  .about__word[data-hl] { background-image: linear-gradient(rgba(79, 122, 90, .55), rgba(79, 122, 90, .55)); }
+  .work__arrows button:hover { background: #2A2C30; box-shadow: inset 0 0 0 1px rgba(236, 237, 233, .2); }
+  .work__card-name { text-shadow: 0 1px 10px rgba(0, 0, 0, .6); }
+  /* glass labels over pictures */
+  .wb__play { background: rgba(20, 21, 23, .8); }
+  /* logos stay on light tiles: most of them are dark ink and would vanish on the dark page */
+  .ab-marquee li { background: #F1F1EE; box-shadow: none; }
+  .ab-marquee li:hover { box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .5); }
+}

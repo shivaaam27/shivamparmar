@@ -94,6 +94,10 @@ export default function HeroAvatar({ side = false }: { side?: boolean }) {
     const face = el.querySelector<HTMLElement>('.avatar__face')!;
     const orb = el.querySelector<HTMLElement>('.avatar__orb')!;
     let tx = 0, ty = 0, x = 0, y = 0, raf = 0, visible = true, lastMove = 0;
+    // the orb's size, measured when it changes rather than every frame
+    let size = orb.offsetWidth;
+    const sizeRo = new ResizeObserver(() => { size = orb.offsetWidth; });
+    sizeRo.observe(orb);
 
     const aim = (px: number, py: number) => {
       const r = face.getBoundingClientRect();
@@ -110,7 +114,7 @@ export default function HeroAvatar({ side = false }: { side?: boolean }) {
       // nobody pointing for a while: look around slowly on its own
       if (t - lastMove > 2500) { tx = Math.sin(t / 2300) * 0.55; ty = Math.sin(t / 3100) * 0.3; }
       x += (tx - x) * 0.09; y += (ty - y) * 0.09;
-      const D = orb.offsetWidth;
+      const D = size;
       // the About blob is turned 45°: turn the look back so the eyes still point at the pointer
       const [lx, ly] = side ? [(x + y) * Math.SQRT1_2, (y - x) * Math.SQRT1_2] : [x, y];
       face.style.transform = `translate(${lx * D * 0.05}px, ${ly * D * 0.04}px)`;
@@ -141,7 +145,7 @@ export default function HeroAvatar({ side = false }: { side?: boolean }) {
     window.addEventListener('avatar:back', back);
     document.documentElement.addEventListener('pointerleave', onLeave);
     return () => {
-      cancelAnimationFrame(raf); clearTimeout(blinkT); io.disconnect();
+      cancelAnimationFrame(raf); clearTimeout(blinkT); io.disconnect(); sizeRo.disconnect();
       window.removeEventListener('pointermove', onPointer);
       window.removeEventListener('avatar:back', back);
       document.documentElement.removeEventListener('pointerleave', onLeave);

@@ -41,7 +41,7 @@
 /* the section you're on gets the same square as the home tags */
 .ab-side__nav a[aria-current] { color: var(--ink); }
 .ab-side__nav a[aria-current] .mono { font-size: 0; }
-.ab-side__nav a[aria-current] .mono::before { content: ''; display: inline-block; width: .7rem; height: .7rem; border-radius: 2px; background: var(--brown); vertical-align: -.05rem; }
+.ab-side__nav a[aria-current] .mono::before { content: ''; display: inline-block; width: .7rem; height: .7rem; border-radius: 2px; background: var(--sage); vertical-align: -.05rem; }
 .ab-main { min-width: 0; max-width: 50rem; width: 100%; justify-self: center; display: grid; gap: clamp(5rem, 11vw, 9rem); }
 
 /* ---- shared pieces */
@@ -113,12 +113,13 @@
 /* each number box has its own slowly moving gradient */
 /* clipped to its own rounded shape, so no hairline of the blurred colour bleeds at the corners while it moves */
 .glow { position: relative; isolation: isolate; overflow: hidden; background: #141517; clip-path: inset(0 round var(--glow-r, 22px)); }
-.glow__field { position: absolute; inset: -30%; z-index: -1; filter: blur(40px); opacity: .9; }
-.glow__blob { position: absolute; aspect-ratio: 1; border-radius: 50%; opacity: .95; }
+/* each patch is already soft (a radial gradient), so nothing is blurred while it moves: on phones it stays smooth */
+.glow__field { position: absolute; inset: -30%; z-index: -1; opacity: .9; }
+.glow__blob { position: absolute; aspect-ratio: 1; border-radius: 50%; opacity: .95; transform: scale(1.5); will-change: transform; }
 .glow::after { content: ''; position: absolute; inset: 0; z-index: -1; background: linear-gradient(180deg, rgba(20, 21, 23, .55), rgba(20, 21, 23, .15) 60%, rgba(20, 21, 23, .35)); }
 /* deep: ink, the sage kept to the lower part, the top held dark */
 .glow--deep { background: #141517; }
-.glow--deep .glow__field { filter: blur(38px) saturate(1.05); }
+
 .glow--deep .glow__blob { opacity: 1; }
 .glow--deep::after { background: linear-gradient(180deg, rgba(20, 21, 23, .85) 0%, rgba(20, 21, 23, .35) 55%, rgba(20, 21, 23, .05)); }
 
@@ -258,7 +259,19 @@
   .ab-end__cta { justify-self: stretch; justify-content: center; }
 }
 @media (prefers-reduced-motion: reduce) {
-  .glow__field { filter: blur(48px); }
+
   .ab-intro-sec > * { animation: none; }
   .ab-side__nav li { transform: none; transition: none; }
+}
+
+/* ---- dark mode (after the light tokens above, so it wins): the logo's ink as the page, cards a step lighter */
+@media (prefers-color-scheme: dark) {
+  .about-page { --card: #1B1D20; --card-edge: rgba(255, 255, 255, .08); --accent: #ECEDE9; --ink: #ECEDE9; --ink-soft: #A3A5A2; --line: rgba(236, 237, 233, .12); }
+  .ab-btn { background: #1B1D20; }
+  .ab-btn--ink { color: #141517; }
+  .ab-btn--ink:hover { background: #FFFFFF; border-color: #FFFFFF; color: #141517; }
+  .glow, .glow--deep { background: #0C0D0E; box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .06); }
+  .ab-tl__dot { background: var(--paper); }
+  .ab-end__art { background: #1B1D20; }
+  .ab-logo-ph { color: #6F7175; }
 }

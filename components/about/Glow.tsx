@@ -39,25 +39,34 @@ export default function Glow({ children, className = '', seed = 0, tone = 'light
   useGSAP(() => {
     if (prefersReducedMotion()) return;
     const deep = tone === 'deep';
+    // drifting only while the box is on screen: off screen every tween is paused
+    const live: gsap.core.Tween[] = [];
+    let onScreen = true;
+    const io = new IntersectionObserver(([e]) => {
+      onScreen = e.isIntersecting;
+      live.forEach((t) => (onScreen ? t.resume() : t.pause()));
+    });
+    if (root.current) io.observe(root.current);
     gsap.utils.toArray<HTMLElement>('.glow__blob', root.current).forEach((el, i) => {
-      const drift = () => gsap.to(el, {
+      const drift = (): gsap.core.Tween => { const t = gsap.to(el, {
         // deep: sway sideways and breathe, but never climb far from the bottom
         xPercent: gsap.utils.random(deep ? -45 : -70, deep ? 5 : 20),
         yPercent: gsap.utils.random(deep ? -35 : -70, deep ? 0 : 20),
         scale: gsap.utils.random(0.8, deep ? 1.25 : 1.4),
         duration: gsap.utils.random(6, 11),
         ease: 'sine.inOut',
-        onComplete: drift,
-      });
+        onComplete: () => { live.splice(live.indexOf(t), 1); drift(); },
+      }); if (!onScreen) t.pause(); live.push(t); return t; };
       gsap.delayedCall(i * 0.3 + seed * 0.2, drift);
     });
+    return () => io.disconnect();
   }, { scope: root });
 
   return (
     <Tag ref={root as never} className={`glow${tone === 'deep' ? ' glow--deep' : ''} ${className}`} style={style}>
       <span className="glow__field" aria-hidden="true">
         {blobs(seed, tone).map((b, i) => (
-          <i key={i} className="glow__blob" style={{ background: b.c, left: `${b.x}%`, top: `${b.y}%`, width: `${b.s}%` }} />
+          <i key={i} className="glow__blob" style={{ background: `radial-gradient(closest-side, ${b.c}, ${b.c}cc 35%, ${b.c}00)`, left: `${b.x}%`, top: `${b.y}%`, width: `${b.s}%` }} />
         ))}
       </span>
       {children}

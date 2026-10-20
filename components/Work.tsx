@@ -98,11 +98,16 @@ export default function Work() {
     const el = strip.current; if (!el) return;
     const still = prefersReducedMotion();
     let x = 0, v = still ? 0 : SPEED, last = performance.now(), raf = 0, visible = true;
-    const io = new IntersectionObserver(([e]) => { visible = e.isIntersecting; });
+    // the strip's width is measured when it changes, not every frame (reading it each frame forces a layout)
+    let half = el.scrollWidth / 2;
+    const ro = new ResizeObserver(() => { half = el.scrollWidth / 2; });
+    ro.observe(el);
+    // off screen and at rest, the loop stops; it starts again when the strip comes back
+    const start = () => { if (!raf) { last = performance.now(); raf = requestAnimationFrame(loop); } };
+    const io = new IntersectionObserver(([e]) => { visible = e.isIntersecting; if (visible) start(); });
     if (reel.current) io.observe(reel.current);
     const loop = (now: number) => {
       const dt = Math.min(0.05, (now - last) / 1000); last = now;
-      const half = el.scrollWidth / 2;
       // ease the drift down under the pointer (or off screen), back up when it leaves
       const target = still || hovered.current || drag.current || !visible ? 0 : SPEED;
       v += (target - v) * Math.min(1, dt * 4);
@@ -113,10 +118,11 @@ export default function Work() {
       x += dragDx.current; dragDx.current = 0;   // follow the hand while dragging
       if (half > 0) { while (x <= -half) x += half; while (x > 0) x -= half; }
       el.style.transform = `translate3d(${x}px, 0, 0)`;
-      raf = requestAnimationFrame(loop);
+      const resting = !visible && v < 0.5 && Math.abs(nudge.current) < 0.5 && !drag.current;
+      raf = resting ? 0 : requestAnimationFrame(loop);
     };
     raf = requestAnimationFrame(loop);
-    return () => { cancelAnimationFrame(raf); io.disconnect(); };
+    return () => { cancelAnimationFrame(raf); io.disconnect(); ro.disconnect(); };
   }, [pics]);
   const onDown = (e: React.PointerEvent) => {
     if (e.button !== 0) return;

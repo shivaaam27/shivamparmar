@@ -8,6 +8,7 @@ import { Play } from 'lucide-react';
 import { track } from '@/lib/track';
 import Wheel, { type WheelItem } from './Wheel';
 import PhotoCarousel from './ui/PhotoCarousel';
+import { srcSet } from '@/lib/thumb';
 
 /** A picture, or a video (then `src` is its poster). */
 export type Shot = { src: string; alt: string; w: number; h: number; project: string; slug: string; n: number; video?: string; screen?: boolean; linked?: boolean; compare?: { video: string; poster: string; label: string; otherLabel: string } };
@@ -134,10 +135,10 @@ export default function WorkBrowser({ cats, initial }: { cats: Cat[]; initial: S
                 {/* the next two screens peek out behind the first, like a stack of cards */}
                 {it.ps.slice(1, 3).reverse().map((p, k, back) => (
                   <span key={p.src} className={`wb__stack-card wb__stack-card--${back.length - k}`} aria-hidden="true">
-                    <img src={p.src} alt="" width={p.w} height={p.h} loading="lazy" />
+                    <img src={p.src} srcSet={srcSet(p.src, p.w)} sizes="(max-width: 720px) 100vw, 50vw" alt="" width={p.w} height={p.h} loading="lazy" />
                   </span>
                 ))}
-                <span className="wb__media"><img src={it.ps[0].src} alt={it.ps[0].alt} width={it.ps[0].w} height={it.ps[0].h} loading="eager" /></span>
+                <span className="wb__media"><img src={it.ps[0].src} srcSet={srcSet(it.ps[0].src, it.ps[0].w)} sizes="(max-width: 720px) 100vw, 50vw" alt={it.ps[0].alt} width={it.ps[0].w} height={it.ps[0].h} loading="eager" /></span>
               </Link>
               <Link className="wb__shot-link mono" href={`/work/${it.ps[0].slug}`} onClick={() => track(`Open project · ${it.ps[0].project}`)}>
                 <span>{it.ps[0].project}</span><span className="wb__stack-count">{it.ps.length} screens <span aria-hidden="true">↗</span></span>
@@ -151,7 +152,7 @@ export default function WorkBrowser({ cats, initial }: { cats: Cat[]; initial: S
                 onPointerLeave={p.video ? (e) => { const v = e.currentTarget.querySelector('video'); if (v) { v.pause(); v.currentTime = 0; } } : undefined}>
                 {/* a screen is shown whole, framed inside the tile; a photo fills it */}
                 <span className="wb__media">
-                  <img src={p.src} alt={p.alt} width={p.w} height={p.h} loading={i < 10 ? 'eager' : 'lazy'} />
+                  <img src={p.src} srcSet={srcSet(p.src, p.w)} sizes={p.screen ? '(max-width: 720px) 100vw, 50vw' : '(max-width: 720px) 50vw, 20vw'} alt={p.alt} width={p.w} height={p.h} loading={i < 4 ? 'eager' : 'lazy'} decoding="async" />
                   {/* a silent preview plays while the mouse is over it */}
                   {p.video && <video src={p.video} muted loop playsInline preload="none" aria-hidden="true" tabIndex={-1} />}
                 </span>

@@ -6,7 +6,9 @@ import { awakeNow } from './HeroAvatar';
 
 /**
  * Blobby's journey down the home page, after the intro. One moonstone circle on a fixed layer behind
- * the content, recomputed from the scroll every frame (so every step reverses when you scroll back):
+ * the content, recomputed from the scroll (so every step reverses when you scroll back). It only works when
+ * something changes (a scroll, a resize, the pointer moving, the eyes still easing): an idle page costs nothing,
+ * and a value is only written when it differs, so the browser repaints the layer only when it really moved.
  *   A  from beside "Read more about me" it grows, its bottom edge flowing down, into a broad dome
  *      hanging behind the Work header (its top dissolving into the page, its eyes settling on the right)
  *   B  past Work it flattens out and slides down behind the picture strip until it's gone
@@ -32,13 +34,25 @@ export default function BlobbyJourney() {
     if (!el || !eyes || prefersReducedMotion()) return;
     el.classList.toggle('is-night', !awakeNow());
     const root = document.documentElement;
-    let raf = 0, px = 0, py = 0, lx = 0, ly = 0;
-    const onPointer = (e: PointerEvent) => { px = e.clientX; py = e.clientY; };
+    let raf = 0, px = 0, py = 0, lx = 0, ly = 0, easing = false;
+    const kick = () => { if (!raf) raf = requestAnimationFrame(frame); };
+    const onPointer = (e: PointerEvent) => { px = e.clientX; py = e.clientY; kick(); };
     window.addEventListener('pointermove', onPointer, { passive: true });
+    window.addEventListener('scroll', kick, { passive: true });
+    window.addEventListener('resize', kick);
+
+    // write a style only when its value changed
+    const last = new Map<string, string>();
+    const put = (node: HTMLElement, k: string, v: string) => {
+      const key = (node === eyes ? 'e' : node === el ? 'l' : 'r') + k;
+      if (last.get(key) === v) return;
+      last.set(key, v);
+      if (k.startsWith('--')) node.style.setProperty(k, v); else (node.style as unknown as Record<string, string>)[k] = v;
+    };
 
     const q = (s: string) => document.querySelector<HTMLElement>(s);
     const frame = () => {
-      raf = requestAnimationFrame(frame);
+      raf = 0;
       const W = window.innerWidth, H = window.innerHeight;
       const orbBody = q('.about__orb-body'), orbFace = q('.about__orb-face');
       const head = q('.work__head'), reel = q('.work__reel'), contact = q('.contact h2'), foot = q('.site-footer__name');
@@ -136,22 +150,32 @@ export default function BlobbyJourney() {
       }
 
       // the small Blobby by the link steps aside the moment this one takes over (and back)
-      root.style.setProperty('--blobby-away', phase ? '1' : '0');
-      el.style.opacity = phase ? '1' : '0';
+      put(root, '--blobby-away', phase ? '1' : '0');
+      put(el, 'opacity', phase ? '1' : '0');
       if (!circ) return;
-      el.style.setProperty('--cx', `${circ.cx}px`); el.style.setProperty('--cy', `${circ.cy}px`); el.style.setProperty('--r', `${circ.r}px`); el.style.setProperty('--ry', `${circ.ry ?? circ.r}px`);
-      el.style.setProperty('--lx', `${light.x}px`); el.style.setProperty('--ly', `${light.y}px`); el.style.setProperty('--ls', `${light.s}px`);
-      el.style.setProperty('--m0', `${fadeA}px`); el.style.setProperty('--m1', `${fadeB}px`);
-      el.style.setProperty('--cut', `${cut}px`); el.style.setProperty('--alpha', String(alpha));
-      // eyes: placed, sized, and turned toward the pointer
+      const px1 = (n: number) => `${n.toFixed(1)}px`;
+      put(el, '--cx', px1(circ.cx)); put(el, '--cy', px1(circ.cy)); put(el, '--r', px1(circ.r)); put(el, '--ry', px1(circ.ry ?? circ.r));
+      put(el, '--lx', px1(light.x)); put(el, '--ly', px1(light.y)); put(el, '--ls', px1(light.s));
+      put(el, '--m0', px1(fadeA)); put(el, '--m1', px1(fadeB));
+      put(el, '--cut', px1(cut)); put(el, '--alpha', alpha.toFixed(3));
+      // eyes: placed, sized, and turned toward the pointer (eased: keep going a little while it settles)
       const dx = px - eye.x, dy = py - eye.y, dist = Math.hypot(dx, dy) || 1, k = Math.min(1, dist / 300);
-      lx += ((dx / dist) * k * eye.w * 0.55 - lx) * 0.12; ly += ((dy / dist) * k * eye.w * 0.4 - ly) * 0.12;
-      eyes.style.setProperty('--ex', `${eye.x}px`); eyes.style.setProperty('--ey', `${eye.y}px`); eyes.style.setProperty('--ew', `${eye.w}px`);
-      eyes.style.setProperty('--look', `${lx.toFixed(2)}px ${ly.toFixed(2)}px`);
-      eyes.style.opacity = String(eyeA);
+      const tx = (dx / dist) * k * eye.w * 0.55, ty = (dy / dist) * k * eye.w * 0.4;
+      lx += (tx - lx) * 0.12; ly += (ty - ly) * 0.12;
+      easing = Math.abs(tx - lx) > 0.05 || Math.abs(ty - ly) > 0.05;
+      put(eyes, '--ex', px1(eye.x)); put(eyes, '--ey', px1(eye.y)); put(eyes, '--ew', px1(eye.w));
+      put(eyes, '--look', `${lx.toFixed(1)}px ${ly.toFixed(1)}px`);
+      put(eyes, 'opacity', eyeA.toFixed(2));
+      if (easing) kick();
     };
-    raf = requestAnimationFrame(frame);
-    return () => { cancelAnimationFrame(raf); window.removeEventListener('pointermove', onPointer); root.style.removeProperty('--blobby-away'); };
+    kick();
+    // the page settles a little after load (fonts, pictures): look again once it has
+    const later = setTimeout(kick, 1200);
+    return () => {
+      cancelAnimationFrame(raf); clearTimeout(later);
+      window.removeEventListener('pointermove', onPointer); window.removeEventListener('scroll', kick); window.removeEventListener('resize', kick);
+      root.style.removeProperty('--blobby-away');
+    };
   }, []);
 
   return (
