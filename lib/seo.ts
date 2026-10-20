@@ -18,6 +18,7 @@ export function publicPaths() {
     { path: '/', priority: 1 },
     { path: '/about', priority: 0.9 },
     { path: '/work', priority: 0.9 },
+    { path: '/products', priority: 0.9 },
     { path: '/services', priority: 0.95 },
     ...services.map((s) => ({ path: `/services/${s.slug}`, priority: 0.9 })),
     { path: '/sw/huduma', priority: 0.85 },

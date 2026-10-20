@@ -966,6 +966,114 @@ body.menu-open .site-header--over-work .wordmark { opacity: 1 !important; pointe
 }
 
 /* =========================================================
+   Product logos (components/ProductLockup.tsx): the mark, SHIVO LABS and the product name, as in the app
+   ========================================================= */
+.plock { display: inline-flex; align-items: center; gap: .62em; font-size: 1rem; color: var(--ink); }
+.plock__mark { width: 2.05em; height: 2.05em; flex: none; }
+.plock__mark rect { fill: currentColor; }
+.plock__mark rect.is-lit { fill: #4F7A5A; }
+.plock__words { display: grid; gap: .32em; text-align: left; justify-items: start; }
+.plock__wm { font: 600 1.1em/1 var(--serif); letter-spacing: .12em; white-space: nowrap; }
+.plock__wm span { font-weight: 300; color: #7E8082; margin-left: .22em; }
+.plock__sub { font: 600 max(.5em, .62rem)/1 var(--serif); letter-spacing: .3em; text-transform: uppercase; color: #4F7A5A; white-space: nowrap; }
+
+/* =========================================================
+   Our Products on the home page, after Work: logos on soft tiles, no borders
+   ========================================================= */
+.products { position: relative; z-index: 1; padding-block: clamp(3rem, 7vw, 6rem) clamp(1.5rem, 4vw, 3rem); }
+.products__in { max-width: var(--max); margin-inline: auto; padding-inline: var(--gutter); display: grid; gap: clamp(1rem, 2vw, 1.5rem); }
+.products__title { font: 400 clamp(2.25rem, 4.6vw, 4rem)/.95 var(--serif); letter-spacing: -.015em; text-wrap: balance; margin: 0 0 .5rem; }
+.products__grid { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: .75rem; }
+.products__tile, .products__card {
+  display: grid; place-items: center; text-align: center; gap: 1.6rem; min-height: 9.5rem; padding: 1.5rem 1rem;
+  background: #F4F4F1; border-radius: 22px;
+  transition: box-shadow .35s, transform .5s var(--ease);
+}
+.products__tile .plock { font-size: clamp(1rem, 1.35vw, 1.3rem); }
+.products__card .plock { font-size: clamp(1.15rem, 1.6vw, 1.45rem); }
+.products__tile:hover { transform: translateY(-3px); background: #EEEEEA; }
+.products__line { margin: 0; font: 500 1rem/1.35 var(--sans); color: var(--ink-soft); }
+.products__all { justify-self: start; display: inline-flex; align-items: center; gap: .4rem; font-size: 1rem; border-bottom: 1px solid currentColor; padding-bottom: .1rem; }
+.products__all:hover { opacity: .6; }
+/* the full page: a little more about each one */
+.products__grid--page { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; margin-block: clamp(1.5rem, 3vw, 2.5rem) clamp(3rem, 6vw, 5rem); }
+.products__card { place-items: start; align-content: start; text-align: left; gap: .9rem; min-height: 0; padding: 1.75rem 1.6rem 1.5rem; scroll-margin-top: 7rem; box-shadow: none; }
+.products__card .plock { margin-bottom: .9rem; }
+.products__card .products__line { color: var(--ink); font-size: 1.125rem; font-weight: 600; }
+.products__card p { margin: 0; color: var(--ink-soft); line-height: 1.55; }
+.products__on { list-style: none; margin: .35rem 0 0; padding: 0; display: flex; flex-wrap: wrap; gap: .4rem; }
+.products__on li { font: 500 .78rem/1 var(--sans); letter-spacing: .02em; padding: .45rem .7rem; border-radius: 99px; background: #FFFFFF; color: var(--ink); }
+@media (max-width: 1100px) { .products__grid { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+@media (max-width: 860px) { .products__grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 720px) {
+  .products__grid--page { grid-template-columns: minmax(0, 1fr); }
+  .products__tile { min-height: 6.5rem; padding: 1rem .6rem; border-radius: 18px; }
+  .products__tile .plock { font-size: .86rem; }
+  .products__tile .plock__sub { letter-spacing: .16em; }
+  .products__tile .plock__wm { letter-spacing: .09em; }
+}
+@media (max-width: 400px) { .products__tile { padding-inline: .4rem; } .products__tile .plock { font-size: .78rem; } .products__tile .plock__sub { font-size: .56rem; letter-spacing: .12em; } }
+
+/* =========================================================
+   Shivo Labs Hub & Products (components/Showcase.tsx): a full screen on the page's own colour (white, or
+   black in dark mode), played like a short film once per visit: the title meets in the middle, the logo
+   builds, and the products roll by beside it. Only transforms and opacity move.
+   ========================================================= */
+.show {
+  --show-sage: #4F7A5A;
+  position: relative; z-index: 1; overflow: hidden;
+  min-height: 100svh; display: grid; place-items: center;
+  background: var(--paper); color: var(--ink);
+}
+.show__in {
+  width: 100%; max-width: var(--max); min-height: 100svh; padding: clamp(5rem, 10vh, 7rem) var(--gutter) clamp(2.5rem, 6vh, 4rem);
+  /* title above, the logo in the very middle */
+  display: grid; grid-template-rows: 1fr auto 1fr; justify-items: center; row-gap: clamp(2.5rem, 7vh, 4.5rem); text-align: center;
+}
+.show__title { align-self: end; margin: 0; font: 400 clamp(2.4rem, 5.4vw, 5rem)/1 var(--serif); letter-spacing: -.02em; will-change: transform; }
+.show__half + .show__half { margin-left: .26em; }
+/* each half slides out from behind its own edge, so it appears from nothing as it meets the other */
+.show__half { display: inline-block; overflow: hidden; vertical-align: top; padding-block: .08em; }
+.show__half > span { display: inline-block; will-change: transform; }
+
+.show__stage { display: grid; justify-items: center; gap: clamp(2rem, 5vh, 3rem); }
+.show__row { display: flex; align-items: center; justify-content: center; column-gap: clamp(1rem, 2vw, 1.6rem); font-size: clamp(1.9rem, 4.4vw, 4.2rem); will-change: transform; }
+.show__mark { width: 1.75em; height: 1.75em; flex: none; overflow: visible; }
+.show__mark rect { fill: var(--ink); }
+.show__mark rect.is-lit { fill: #4F7A5A; }
+.show__wm { display: inline-flex; gap: .26em; font: 600 1em/1 var(--serif); letter-spacing: .12em; white-space: nowrap; }
+.show__wm > * { display: inline-block; }
+.show__wm > span { font-weight: 300; color: #7E8082; }
+/* the product names all share one spot, as wide as the longest; the row slides to keep the pair centred */
+.show__slot {
+  display: grid; justify-items: start; align-items: center; padding-left: clamp(1rem, 2vw, 1.6rem);
+  border-left: 1px solid var(--line); min-height: 1.1em;
+  font: 600 .52em/1 var(--serif); letter-spacing: .32em; color: var(--show-sage); white-space: nowrap;
+}
+.show__name { grid-area: 1 / 1; display: inline-flex; overflow: hidden; padding-block: .2em; }
+.show__name i { display: inline-block; font-style: normal; will-change: transform; }
+.show__slot:hover { opacity: .75; }
+/* See all products: a calm pill that fills with ink on hover, its arrow in a small round of its own */
+.show__all {
+  display: inline-flex; align-items: center; gap: .85rem; padding: .55rem .55rem .55rem 1.35rem;
+  font: 500 1rem/1 var(--sans); color: var(--ink); border-radius: 999px; box-shadow: inset 0 0 0 1px var(--line);
+  transition: background .35s var(--ease), color .35s var(--ease), box-shadow .35s var(--ease);
+}
+.show__all-arrow { display: grid; place-items: center; width: 2.25rem; height: 2.25rem; border-radius: 50%; background: var(--ink); color: var(--paper); transition: transform .45s var(--ease), background .35s, color .35s; }
+.show__all:hover { background: var(--ink); color: var(--paper); box-shadow: inset 0 0 0 1px var(--ink); }
+.show__all:hover .show__all-arrow { background: #4F7A5A; color: #fff; transform: rotate(45deg); }
+.show__all:focus-visible { outline: 2px solid #4F7A5A; outline-offset: 3px; }
+/* phones: the product rolls in under the logo, as in the app, so the line never gets squeezed */
+@media (max-width: 720px) {
+  .show__row { flex-wrap: wrap; row-gap: .8rem; font-size: clamp(1.5rem, 7.4vw, 2.2rem); }
+  .show__title { font-size: clamp(2.1rem, 10vw, 3rem); }
+  .show__half { display: block; }
+  .show__half + .show__half { margin-left: 0; }
+  .show__slot { flex-basis: 100%; justify-items: center; padding-left: 0; border-left: 0; font-size: .62em; letter-spacing: .26em; }
+}
+@media (prefers-color-scheme: dark) { .show { --show-sage: #7FA98A; } }
+
+/* =========================================================
    Clients: logos on white tiles, two rows gliding in opposite directions
    (the same rows as the About page: components/LogoRows.tsx)
    ========================================================= */
@@ -1178,5 +1286,10 @@ body:has(.dash) { color-scheme: light; }   /* the Insights dashboard keeps its o
   .wb__play { background: rgba(20, 21, 23, .8); }
   /* logos stay on light tiles: most of them are dark ink and would vanish on the dark page */
   .ab-marquee li { background: #F1F1EE; box-shadow: none; }
+  .products__tile, .products__card { background: #1B1D20; box-shadow: none; }
+  .products__tile:hover { background: #222428; }
+  .products__on li { background: #26282C; }
+  .plock__wm span { color: #8E9094; }
+  .plock__sub, .plock__mark rect.is-lit { color: #6F9A7B; fill: #5E8A69; }
   .ab-marquee li:hover { box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .5); }
 }
