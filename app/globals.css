@@ -42,7 +42,8 @@ main { animation: page-in .7s var(--ease) both; }
 
 /* ---------- reset ---------- */
 *, *::before, *::after { box-sizing: border-box; }
-html { -webkit-text-size-adjust: 100%; }
+/* the page's colour on the root too: phone browsers (Safari's top and bottom bars) read it from here */
+html { -webkit-text-size-adjust: 100%; background-color: var(--paper); }
 body {
   margin: 0;
   background: var(--paper);
@@ -150,12 +151,14 @@ img { pointer-events: none; }
   display: flex; flex-direction: column; justify-content: center;
   padding: 6rem var(--gutter) 4.5rem; overflow-y: auto; overscroll-behavior: contain;
   /* the page's own colours: a white menu with ink words, or in dark mode a black menu with light words */
-  background: var(--paper); color: var(--ink);
+  /* closed, it has no colour at all: iPhone Safari tints its top and bottom bars from full-screen layers
+     fixed to the screen edges, even hidden ones, so a closed menu must never paint them */
+  background: transparent; color: var(--ink);
   clip-path: inset(0 0 100% 0);
   visibility: hidden;
-  transition: clip-path .8s var(--ease-io), visibility 0s .8s;
+  transition: clip-path .8s var(--ease-io), visibility 0s .8s, background-color 0s .8s;
 }
-.menu.is-open { clip-path: inset(0 0 0 0); visibility: visible; transition-delay: 0s; }
+.menu.is-open { background: var(--paper); clip-path: inset(0 0 0 0); visibility: visible; transition-delay: 0s; }
 .menu__list { display: grid; gap: clamp(.25rem, 1vw, .75rem); }
 .menu__list a {
   display: inline-flex; align-items: baseline; gap: clamp(1rem, 2vw, 2rem);
