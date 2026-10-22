@@ -5,7 +5,6 @@ import { personJsonLd, siteUrl } from '@/lib/seo';
 import SmoothScroll from '@/components/SmoothScroll';
 import Analytics from '@/components/Analytics';
 import ImageGuard from '@/components/ImageGuard';
-import VersionSwitch from '@/components/VersionSwitch';
 import './globals.css';
 
 // brand type: Sora for display, headings and the logo; Hanken Grotesk for body text and every small label
@@ -38,8 +37,8 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  // the phone's browser bar matches the page, light or dark
-  themeColor: [{ media: '(prefers-color-scheme: light)', color: '#FFFFFF' }, { media: '(prefers-color-scheme: dark)', color: '#141517' }],
+  // the phone's browser bar in the site's deep green
+  themeColor: '#0A2E20',
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
@@ -53,11 +52,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(personJsonLd()) }} />
         <a className="skip" href="#main">Skip to content</a>
         <SmoothScroll>{children}</SmoothScroll>
-        <div className="grain" aria-hidden="true" />
         <Analytics />
         <ImageGuard />
-        {/* V1 / V2 while both are compared (docs/V2-PLAN.md) */}
-        <VersionSwitch />
       </body>
     </html>
   );

@@ -1,7 +1,7 @@
 import 'server-only';
 import { categories, categoryHasWork, hasPage } from './work';
 import { imageSize } from './image-size';
-import type { Cat } from '@/components/WorkBrowser';
+import type { Cat } from '@/components/site/WorkBrowser';
 
 /** Work that isn't pictures (systems, tools, websites): each tile gets a link to its project page under it. */
 const LINKED = new Set(['systems', 'tools', 'websites']);

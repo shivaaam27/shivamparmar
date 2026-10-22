@@ -16,6 +16,22 @@ const SCRAMBLE_POOL = 'SHIVOLAB';
 
 export const rand = (s: string) => s[Math.floor(Math.random() * s.length)];
 
+/**
+ * One scroll pace for the whole site (docs/SITE.md, "Scroll pace"). Every held scene is as tall as its timeline
+ * needs at this pace, so a change on screen always takes the same scroll, and the same smoothing (scrub) gives every
+ * scene the same weight. Raise screensPerUnit for slower scenes everywhere, lower it for faster.
+ */
+export const PACE = { screensPerUnit: 0.5, scrub: 0.8 };
+
+/**
+ * Makes a held scene the right height for its timeline at PACE. `rest` is how many screens of the element the
+ * timeline does not scroll through (its own held screen, and the screen the next section overlaps).
+ */
+export function fitScene(el: HTMLElement, tl: gsap.core.Timeline, rest: number) {
+  el.style.height = `${((tl.duration() * PACE.screensPerUnit) + rest) * 100}vh`;
+  ScrollTrigger.refresh();
+}
+
 export const prefersReducedMotion = () =>
   typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 

@@ -26,6 +26,7 @@ export function publicPaths() {
     { path: '/faq', priority: 0.8 },
     { path: '/sw/maswali', priority: 0.75 },
     { path: '/journal', priority: 0.8 },
+    { path: '/contact', priority: 0.8 },
     ...categories.filter(categoryHasWork).map((c) => ({ path: `/work/${c.slug}`, priority: 0.7 })),
     ...pagedProjects().map(({ project }) => ({ path: `/work/${project.slug}`, priority: 0.6 })),
   ];

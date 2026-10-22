@@ -1,8 +1,8 @@
 import { categories, coverOf, pagedProjects } from './work';
 import { imageSize } from './image-size';
-import type { ReelEntry } from '@/components/v2/WorkIndex';
+import type { ReelEntry } from '@/components/site/WorkIndex';
 
-/** The V2 reel's projects (components/v2/WorkIndex.tsx), in site order, optionally for one category. */
+/** The reel's projects (components/site/WorkIndex.tsx), in site order, optionally for one category. */
 export function reelEntries(categorySlug?: string): ReelEntry[] {
   return pagedProjects()
     .filter((e) => !categorySlug || e.category.slug === categorySlug)
@@ -25,7 +25,7 @@ export function reelEntries(categorySlug?: string): ReelEntry[] {
 const ONE_TILE_OVER = 5;
 
 /**
- * The tiles of V2's work page: on a category's page, each of its projects; on the main page, each project of a small
+ * The tiles of the work page: on a category's page, each of its projects; on the main page, each project of a small
  * category (websites, systems...) and one tile for a big one (photography), so the wall stays short.
  */
 export function wallEntries(categorySlug?: string): ReelEntry[] {

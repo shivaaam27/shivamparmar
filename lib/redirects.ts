@@ -7,3 +7,6 @@ export const REDIRECTS: Record<string, string> = {
   // shivolabs.com/get: the Shivo Labs download page (Setup.exe, the one-line install, the Android app; phones get Android first)
   '/get': 'https://shivo-id.ishivamparmar.workers.dev/',
 };
+
+/** The new look was tried out under /v2 before it became the site: old /v2 links land on the same page now. */
+export const fromV2 = (path: string) => (path === '/v2' || path.startsWith('/v2/') ? path.slice(3) || '/' : null);

@@ -5,7 +5,7 @@
  * Scripts and styles inline in the page are allowed because Next writes its page data that way.
  */
 /**
- * Sites the work pages may show inside a Shivo Labs frame (components/v2/LiveSite.tsx). Add a project site's address
+ * Sites the work pages may show inside a Shivo Labs frame (components/site/LiveSite.tsx). Add a project site's address
  * here once that site allows shivolabs.com to show it (its own frame-ancestors). Empty: every link opens a new tab.
  */
 export const EMBED_ORIGINS: string[] = [];

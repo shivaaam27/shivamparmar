@@ -1,0 +1,74 @@
+/* =========================================================
+   Type, applied last (docs/SITE.md): every headline in the contact card's voice — Archivo, condensed,
+   heavy, in capitals, large and clean. Reading and the interface in Instrument Sans. Near-black text on light
+   surfaces, white on dark; green only for accents.
+   ========================================================= */
+
+/* ---------- headlines ---------- */
+.v2-h1, .v2-h2, .v2-display, .v2-show__title {
+  font-family: var(--display); font-weight: 600; font-style: normal;
+  text-transform: uppercase; letter-spacing: -.004em; line-height: .9; text-wrap: balance;
+  font-variation-settings: normal; color: inherit;
+}
+.v2-h1 { font-size: clamp(3rem, 7.2vw, 7rem); }
+.v2-h2 { font-size: clamp(2.6rem, 6vw, 5.6rem); line-height: .9; }
+/* the second half of a headline: the same letters in green, never italic */
+.v2-h1 em, .v2-h2 em, .v2-show__title em, .v2-show__half--r > span { font-style: normal; font-weight: 600; color: var(--leaf); }
+.v2-dark .v2-h1 em, .v2-dark .v2-h2 em, .v2-show__half--r > span { color: var(--lime); }
+.v2-whero__title { font-size: clamp(3.4rem, 9vw, 8.4rem); line-height: .86; }
+.v2-show__title { font-size: clamp(2.8rem, 6.4vw, 6rem); }
+
+/* card and list titles: the same voice, smaller */
+.v2-lcard__title, .v2-step__title {
+  font-family: var(--display); font-weight: 600; font-style: normal; text-transform: uppercase;
+  letter-spacing: 0; line-height: .94; font-variation-settings: normal;
+}
+.v2-lcard__title { font-size: clamp(1.7rem, 2.4vw, 2.3rem); }
+.v2-step__title { font-size: clamp(1.6rem, 2.2vw, 2.1rem); }
+
+/* figures */
+
+/* small labels and numbers that were in the serif */
+.v2-step__n, .v2-list li > span:first-child {
+  font-family: var(--body); font-weight: 600; font-size: .8rem; letter-spacing: .06em; font-variant-numeric: tabular-nums;
+}
+
+/* ---------- reading ---------- */
+.v2-lead { font: 400 var(--fs-lead)/1.55 var(--body); letter-spacing: -.01em; font-variation-settings: normal; }
+.v2-prose { font: 400 1.15rem/1.75 var(--body); color: var(--ink); letter-spacing: -.005em; font-variation-settings: normal; }
+.v2-prose > p:first-of-type::first-letter { float: none; font-size: inherit; margin: 0; color: inherit; line-height: inherit; font-weight: inherit; }
+.v2 .v2-prose h2 { font: 600 clamp(1.9rem, 3vw, 2.6rem)/.95 var(--display); text-transform: uppercase; color: var(--ink); }
+.v2-list li { font: 500 clamp(1.02rem, 1.2vw, 1.15rem)/1.45 var(--body); }
+.v2-faq summary { font: 600 clamp(1.05rem, 1.4vw, 1.25rem)/1.35 var(--body); letter-spacing: -.015em; }
+.v2-wheel__list button { font: 500 1rem/1 var(--body); font-variation-settings: normal; }
+.v2-wheel__list button[aria-pressed="true"] { font-style: normal; font-weight: 700; }
+.v2-screen__cap b, .v2-contact__mail {
+  font-family: var(--body); font-variation-settings: normal; font-style: normal;
+}
+.v2-screen__cap b { font-weight: 600; font-size: 1.05rem; }
+.v2-contact__mail { font-weight: 500; letter-spacing: -.03em; }
+
+/* ---------- readable colours: near-black on light, white on dark ---------- */
+.v2-dark { --ink-2: rgba(255, 255, 255, .78); --ink-3: rgba(255, 255, 255, .58); color: #fff; }
+.v2-lcard__text, .v2-step p, .v2-faq details p { color: var(--ink-2); }
+.v2-card--lime, .v2-contact__card { --ink: #111511; --ink-2: rgba(17, 21, 17, .78); color: #111511; }
+.v2-whero__lead, .v2-phero__lead { color: rgba(255, 255, 255, .82); }
+
+/* an inner page's section name: a plain headline in the same capitals (the numbered labels are gone) */
+.v2-psec__title { font: 600 clamp(1.7rem, 2.6vw, 2.4rem)/.95 var(--display); text-transform: uppercase; color: var(--ink); }
+
+/* ---------- The fonts: Sora headlines are much wider than the condensed face, so every size steps down ---------- */
+.v2-h1, .v2-h2, .v2-display, .v2-show__title, .v2-lcard__title, .v2-step__title, .v2-psec__title, .v2 .v2-prose h2, .v2-menu__list a {
+  font-weight: 600; letter-spacing: -.025em; line-height: 1;
+}
+.v2-h1 { font-size: clamp(2.3rem, 5vw, 4.8rem); }
+.v2-h2 { font-size: clamp(2rem, 4vw, 3.8rem); }
+.v2-display { font-size: clamp(2.2rem, 5.2vw, 5rem); }
+.v2-whero__title { font-size: clamp(2.6rem, 6vw, 5.6rem); line-height: .96; }
+.v2-contact__title { font-size: clamp(2.2rem, 5.6vw, 5.4rem); }
+.v2-show__title { font-size: clamp(2rem, 4.4vw, 4rem); }
+.v2-lcard__title { font-size: clamp(1.25rem, 1.7vw, 1.6rem); line-height: 1.08; }
+.v2-step__title { font-size: clamp(1.15rem, 1.6vw, 1.5rem); }
+.v2-psec__title { font-size: clamp(1.3rem, 1.9vw, 1.75rem); }
+.v2 .v2-prose h2 { font-size: clamp(1.4rem, 2.2vw, 1.9rem); line-height: 1.1; }
+.v2-menu__list a { font-size: clamp(2rem, min(8vw, 6.4vh), 4.4rem); }

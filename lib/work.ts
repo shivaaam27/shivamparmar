@@ -28,17 +28,17 @@ export type Project = {
   role?: string;
   tools?: string[];
   summary?: string;
-  /** a longer description, one string per paragraph (V2's project page shows it under the summary) */
+  /** a longer description, one string per paragraph (the project page shows it under the summary) */
   details?: string[];
   images?: WorkImage[];
   /** a live address, shown as a link under the summary (always: shown even while SHOW_PROJECT_LINKS is off) */
-  /** embed: open inside the site's own frame on V2 (the site must allow it; see EMBED_ORIGINS in lib/headers.ts) */
+  /** embed: open inside the site's own frame (the site must allow it; see EMBED_ORIGINS in lib/headers.ts) */
   link?: { label: string; href: string; title?: string; always?: boolean; embed?: boolean };
 };
 
 /** listed: show it on the work page as "Soon" even before it has work. */
 export type Subcategory = { slug: string; name: string; projects: Project[]; listed?: boolean };
-/** `cover`: the picture that stands for the whole category where it is shown as one tile (V2's work page). */
+/** `cover`: the picture that stands for the whole category where it is shown as one tile (the work page). */
 export type Category = { slug: string; name: string; cover?: string; subcategories: Subcategory[] };
 
 const soon = (slug: string, tone: Tone): Project => ({ slug, title: 'Coming soon', tone });
@@ -588,8 +588,6 @@ export const categories: Category[] = [
 export const hasPage = (p: Project) => Boolean(p.images?.length);
 export const coverOf = (p: Project) => p.cover ?? p.images?.[0]?.src;
 
-export const countCategory = (c: Category) => c.subcategories.reduce((n, s) => n + s.projects.length, 0);
-export const countAll = () => categories.reduce((n, c) => n + countCategory(c), 0);
 
 /** Every project that has a page, in site order, with where it sits. */
 export const pagedProjects = () =>
@@ -615,5 +613,3 @@ export const visibleCategories = (): Category[] => categories
 export const findCategory = (slug: string) => categories.find((c) => c.slug === slug);
 /** A category gets a full page once any of its projects has pictures. */
 export const categoryHasWork = (c: Category) => c.subcategories.some((s) => s.projects.some(hasPage));
-/** How many sub-categories the Work filter lists before linking to the category page. */
-export const FILTER_SUBS = 5;
