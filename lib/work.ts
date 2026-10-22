@@ -28,14 +28,18 @@ export type Project = {
   role?: string;
   tools?: string[];
   summary?: string;
+  /** a longer description, one string per paragraph (V2's project page shows it under the summary) */
+  details?: string[];
   images?: WorkImage[];
   /** a live address, shown as a link under the summary (always: shown even while SHOW_PROJECT_LINKS is off) */
-  link?: { label: string; href: string; title?: string; always?: boolean };
+  /** embed: open inside the site's own frame on V2 (the site must allow it; see EMBED_ORIGINS in lib/headers.ts) */
+  link?: { label: string; href: string; title?: string; always?: boolean; embed?: boolean };
 };
 
 /** listed: show it on the work page as "Soon" even before it has work. */
 export type Subcategory = { slug: string; name: string; projects: Project[]; listed?: boolean };
-export type Category = { slug: string; name: string; subcategories: Subcategory[] };
+/** `cover`: the picture that stands for the whole category where it is shown as one tile (V2's work page). */
+export type Category = { slug: string; name: string; cover?: string; subcategories: Subcategory[] };
 
 const soon = (slug: string, tone: Tone): Project => ({ slug, title: 'Coming soon', tone });
 
@@ -159,6 +163,7 @@ export const categories: Category[] = [
   {
     slug: 'photography',
     name: 'Photography',
+    cover: '/images/mikumi-elephants.jpg',
     subcategories: [
       {
         slug: 'cocozuri',

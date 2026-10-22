@@ -79,3 +79,58 @@ loop-line tiles, "Together" values, ribbon video, Veggies kit): nature, green, c
 
 Desktop 1440 × 900, laptop 1280 × 720, tablet 768, phone 375 (and 390 × 844): spacing, alignment, sizes, no
 sideways scroll, reduce motion, keyboard focus. Not tested on a real iPhone unless said.
+
+## Work pages (plan, 22 Oct 2026)
+
+Research: stacked full-screen project panels are the common pattern on strong portfolio sites (each new one slides
+over the last, which steps back); React 19.3's `<ViewTransition>` gives shared-element morphs between pages in the App
+Router with no setup; Apple keeps the picture full screen with the words over it, then pulls back.
+
+- **/v2/work** (components/v2/WorkIndex.tsx, lib/work-reel.ts wallEntries, changed 22 Oct on Shivam's word): "My Work"
+  on the deep green with the lime loop line (it fades where it meets the words) over a wall of the work, drifting
+  slowly to the right under the green. Scrolling (a long, calm hand-over) the title and line leave, the green turns to
+  the paper and the wall comes forward: three rows of pictures at one height, **each at its own uploaded shape**
+  (landscape stays landscape, 4:5 stays 4:5, tall stays tall: never cropped into another shape). Every row holds all
+  the work in its own order and runs on endlessly (moved by a transform that wraps at the row's set width), staggered
+  like bricks; drag, swipe, trackpad or the centred arrows move it with a little glide. On the main page
+  a category with more than five projects (photography) is one tile that opens its own page; small ones show each
+  project. Under the wall the filters, centred; they stick while the pictures scroll and pop to the front. Then every
+  picture, as pictures only (no project cards, which would repeat the wall).
+- **Scrolling (V2 only, components/SmoothScroll.tsx):** a softer glide and less movement per wheel step, so held
+  scenes can't be skipped; a new page starts in place instead of gliding from the last page's position.
+- **Viewer:** the small copy shows at once and the full picture fades in over it; the next pictures load ahead;
+  thumbnails use the small copies.
+- **Project pages**: the panel's picture morphs into the page's opening picture (`ViewTransition name="work-<slug>"`),
+  which pulls back into a frame; the facts in the Apple style; the gallery; the next project full screen to step into.
+- **Live sites in the site** (components/v2/LiveSite.tsx): a project link with `embed: true` opens in a Shivo Labs frame
+  with a back button (Esc and the phone's back close it); otherwise in a new tab. Two things must allow it first:
+  the project's own site must allow shivolabs.com to show it (`frame-ancestors https://shivolabs.com`), and its address
+  must be added to `EMBED_ORIGINS` in lib/headers.ts. The Task Management site currently refuses (frame-ancestors 'none').
+
+## Products page (22 Oct 2026)
+
+/v2/products is one held scene (components/v2/ProductsScene.tsx, app/v2/styles/products.css), changed 22 Oct on
+Shivam's word: the title and the loop line on the deep green; they leave and the paper rises over the green (no colour
+fade); the logo builds itself, its six tiles coming in large from across the screen and locking together near the top,
+SHIVO LABS with PRODUCTS beneath, and "All Shivo Labs Apps in One Place" with the devices. Scrolling on, only the small
+word under the logo and the centred block beneath change: HUB, then each app (its number, its name, what it does,
+where it runs). Soft lines run behind on the paper and fade where they meet the words. The same words are in a plain
+list for screen readers, search and "reduce motion". Words come from content/products.json as before.
+
+## Services and Journal (22 Oct 2026)
+
+- **Services** (components/v2/ServicesPanels.tsx, app/v2/styles/services.css): the title on the green with the loop
+  line, then the four services as tall panels over a picture of their work (`picture` in lib/services.ts); one is open
+  at a time (pointer, tap or keyboard) with its words, what you get and Read more. Phones: stacked, tap to open.
+- **Products** now loop on their own under the centred logo (arrows, dots that fill with the time left, rests under the
+  pointer, swipe on phones); scrolling only brings them in.
+- **Journal** (components/v2/JournalIndex.tsx, Article.tsx, app/v2/styles/journal.css): reading first. The list: the
+  green opening, the newest post as a cover, the rest in rows, filters for language and topic. A post: the title on the
+  green, then one steady column (about 66 characters a line) with "In this article" beside it on wide screens (marks
+  the section being read; on phones it opens from a button), a text-size control remembered in the browser, headings
+  and quotes rising in once, a progress line along the top, then the other language and newer / older / all posts.
+  Section headings get ids in lib/journal.ts (`toc`).
+
+- **Contact** (app/v2/contact, components/v2/ContactPage.tsx, app/v2/styles/contact.css): its own full page in V2
+  (V1 keeps it on the home page; the V1/V2 switch sends /v2/contact to /#contact). Topics prefill the WhatsApp
+  message and the email subject; the Call tile shows the time in Dar es Salaam. Contact and Start a project link here.

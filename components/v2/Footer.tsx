@@ -52,6 +52,9 @@ export default function V2Footer() {
           </nav>
         </div>
 
+        {/* the logo across the whole width, so the footer ends full and finished on every page */}
+        <div className="v2-wrap v2-footer__big" aria-hidden="true"><Logo tone="dark" /></div>
+
         <div className="v2-wrap v2-footer__bar">
           <span>© {new Date().getFullYear()} {site.fullName} · All rights reserved</span>
           <span>{site.location.split(',')[0]} · <LocalTime /> local time</span>

@@ -339,7 +339,7 @@
 .v2:has(.v2-home) .v2-footer__hills { background: transparent; }
 /* the footer is one full screen tall here, so it covers the contact screen exactly as the page ends */
 .v2:has(.v2-home) .v2-footer { min-height: 100vh; min-height: 100svh; display: flex; flex-direction: column; }
-.v2:has(.v2-home) .v2-footer__body { flex: 1; display: flex; flex-direction: column; justify-content: center; }
+.v2:has(.v2-home) .v2-footer__body { flex: 1; display: flex; flex-direction: column; }
 .v2:has(.v2-home) .v2-footer__bar { margin-top: auto; }
 
 /* =========================================================
@@ -347,13 +347,13 @@
    a full-screen photograph with the headline, pulling back into a framed picture; then a centred paragraph
    and two columns of figures and work
    ========================================================= */
-.v2-home > .v2-wa { position: relative; z-index: 3; margin-top: -200vh; margin-top: -200svh; background: linear-gradient(transparent 200vh, var(--forest) 200vh); }
-/* it slides in over the About screen while still invisible, so its picture can start the moment About's words leave */
+.v2-home > .v2-wa { position: relative; z-index: 3; margin-top: -125vh; margin-top: -125svh; background: linear-gradient(transparent 125vh, var(--paper) 125vh); color: var(--ink); }
+/* the photograph rises over About's last screen as a layer, the moment About's words have left */
 .v2-wa__pin { position: relative; height: 420vh; }
 .v2-wa__stick { position: sticky; top: 0; height: 100vh; height: 100svh; overflow: hidden; background: transparent; }
 .v2-wa__frame { position: absolute; inset: 0; display: block; overflow: hidden; }
 .v2-wa__frame img { width: 100%; height: 100%; object-fit: cover; object-position: 50% 62%; }
-.v2-wa__shade { position: absolute; inset: 0; background: linear-gradient(180deg, rgba(5, 20, 14, .45), rgba(5, 20, 14, .15) 40%, rgba(5, 20, 14, .2) 60%, rgba(5, 20, 14, .55)); }
+.v2-wa__shade { position: absolute; inset: 0; background: radial-gradient(ellipse 60% 45% at 50% 50%, rgba(5, 20, 14, .28), rgba(5, 20, 14, 0) 75%), linear-gradient(180deg, rgba(5, 20, 14, .18), transparent 30%, transparent 75%, rgba(5, 20, 14, .2)); }
 .v2-wa__over {
   position: absolute; inset: 0; z-index: 2; display: grid; place-content: center; justify-items: center; gap: .9rem;
   padding: 0 var(--gutter); text-align: center; color: #fff; pointer-events: none;
@@ -362,36 +362,36 @@
 .v2-wa__head { text-shadow: 0 2px 30px rgba(0, 0, 0, .25); }
 .v2-wa__head { margin: 0; font: 600 clamp(2.6rem, 7.4vw, 7.4rem)/.98 var(--display); letter-spacing: -.035em; text-transform: uppercase; text-wrap: balance; }
 .v2-wa__head em { font-style: normal; color: var(--lime); }
-.v2-wa__tag { position: absolute; left: 0; right: 0; bottom: 3.5%; z-index: 2; text-align: center; font: 500 .8125rem/1 var(--body); color: rgba(255, 255, 255, .6); }
+.v2-wa__tag { position: absolute; left: 0; right: 0; bottom: 3.5%; z-index: 2; text-align: center; font: 500 .8125rem/1 var(--body); color: rgba(17, 21, 17, .7); }
 
 .v2-wa__body { max-width: calc(66rem + 2 * var(--gutter)); margin: 0 auto; padding: clamp(3rem, 8vh, 5rem) var(--gutter) calc(var(--section) * 1.1); }
 .v2-wa__lead {
   max-width: 50rem; margin: 0 auto; text-align: center;
-  font: 500 clamp(1.25rem, 2vw, 1.75rem)/1.45 var(--body); letter-spacing: -.02em; color: rgba(255, 255, 255, .52); text-wrap: pretty;
+  font: 500 clamp(1.25rem, 2vw, 1.75rem)/1.45 var(--body); letter-spacing: -.02em; color: rgba(17, 21, 17, .58); text-wrap: pretty;
 }
-.v2-wa__lead b { font-weight: 600; color: #fff; }
+.v2-wa__lead b { font-weight: 600; color: var(--ink); }
 .v2-wa__cols { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 2.4fr); gap: clamp(2rem, 8vw, 8rem); margin-top: clamp(4rem, 10vh, 6.5rem); }
 .v2-wa__stats, .v2-wa__cats { list-style: none; margin: 0; padding: 0; display: grid; align-content: start; }
-.v2-wa__stats li { display: grid; gap: .3rem; padding: 1.6rem 0 2.6rem; border-top: 1px solid rgba(255, 255, 255, .22); }
-.v2-wa__stats span { font-size: .9rem; color: rgba(255, 255, 255, .55); }
-.v2-wa__stats b { font: 600 clamp(3.2rem, 5.4vw, 4.8rem)/.95 var(--display); letter-spacing: -.04em; color: #fff; }
-.v2-wa__cats { border-top: 1px solid rgba(255, 255, 255, .22); padding-top: .6rem; }
+.v2-wa__stats li { display: grid; gap: .3rem; padding: 1.6rem 0 2.6rem; border-top: 1px solid rgba(17, 21, 17, .16); }
+.v2-wa__stats span { font-size: .9rem; color: rgba(17, 21, 17, .65); }
+.v2-wa__stats b { font: 600 clamp(3.2rem, 5.4vw, 4.8rem)/.95 var(--display); letter-spacing: -.04em; color: var(--ink); }
+.v2-wa__cats { border-top: 1px solid rgba(17, 21, 17, .16); padding-top: .6rem; }
 .v2-wa__cats a { display: grid; gap: .3rem; padding: 1rem 0 1.15rem; }
-.v2-wa__cats b { display: inline-flex; align-items: center; gap: .5rem; font: 600 clamp(1.1rem, 1.5vw, 1.3rem)/1.25 var(--body); color: #fff; letter-spacing: -.015em; }
-.v2-wa__cats b .v2-arw { color: var(--lime); font-size: .85em; }
-.v2-wa__cats span { font-size: clamp(.95rem, 1.2vw, 1.08rem); line-height: 1.5; color: rgba(255, 255, 255, .55); transition: color .3s; }
-.v2-wa__cats a:hover span { color: rgba(255, 255, 255, .85); }
+.v2-wa__cats b { display: inline-flex; align-items: center; gap: .5rem; font: 600 clamp(1.1rem, 1.5vw, 1.3rem)/1.25 var(--body); color: var(--ink); letter-spacing: -.015em; }
+.v2-wa__cats b .v2-arw { color: var(--leaf); font-size: .85em; }
+.v2-wa__cats span { font-size: clamp(.95rem, 1.2vw, 1.08rem); line-height: 1.5; color: rgba(17, 21, 17, .65); transition: color .3s; }
+.v2-wa__cats a:hover span { color: var(--ink); }
 .v2-wa__all { display: flex; justify-content: center; margin-top: clamp(2.5rem, 6vh, 4rem); }
 @media (max-width: 760px) {
   .v2-wa__cols { grid-template-columns: 1fr; gap: 1rem; }
   .v2-wa__stats { grid-template-columns: 1fr 1fr; gap: 1rem; }
   .v2-wa__stats li { padding-bottom: 1.4rem; }
 }
-/* the products film follows on the same green, so its panel grows without a cream gap */
-.v2-home > .v2-wa + .v2-show { background: var(--forest); }
+/* the products film follows on the same paper: its deep green panel grows out of it into the full screen */
+.v2-home > .v2-wa + .v2-show { background: var(--paper); }
 /* reduced motion */
 .v2-home > .v2-wa.is-still { margin-top: 0; }
-.v2-wa.is-still .v2-wa__stick { background: var(--forest); }
+.v2-wa.is-still .v2-wa__stick { background: var(--paper); }
 .v2-wa.is-still .v2-wa__pin { height: 100svh; }
 .v2-wa.is-still .v2-wa__rise { opacity: 1; }
 

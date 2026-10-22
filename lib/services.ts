@@ -15,13 +15,15 @@ export type ServiceText = {
   forWho: string[];
   steps: { title: string; text: string }[];
 };
-export type Service = { slug: string; swSlug: string; work: string[]; en: ServiceText; sw: ServiceText };
+/** picture: what the services page shows behind this service (defaults to its first work's cover) */
+export type Service = { slug: string; swSlug: string; work: string[]; picture?: string; en: ServiceText; sw: ServiceText };
 
 export const services: Service[] = [
   {
     slug: 'websites-and-apps',
     swSlug: 'tovuti-na-programu',
     work: ['oracle-consultancy-group', 'terragreen-website', 'cocozuri-website', 'v1-supermarket-website'],
+    picture: '/images/websites/terragreen-poster.jpg',
     en: {
       title: 'Websites and apps',
       short: 'Websites and web apps for businesses in Tanzania and East Africa, fast on any phone and easy to find on Google and AI search.',
@@ -112,6 +114,7 @@ export const services: Service[] = [
     slug: 'ai-automation',
     swSlug: 'akili-bandia-na-otomatiki',
     work: ['task-management'],
+    picture: '/images/work-dashboard.jpg',
     en: {
       title: 'AI workflows and automation',
       short: 'AI and automation that save your team hours every week: reports, replies, data entry and documents done for you.',

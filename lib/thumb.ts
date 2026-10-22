@@ -9,3 +9,8 @@ export function srcSet(src: string, w?: number): string | undefined {
   if (!w || w <= THUMB_W || !/^\/images\/.+\.jpe?g$/i.test(src)) return undefined;
   return `/_w/${THUMB_W}${src} ${THUMB_W}w, ${src} ${w}w`;
 }
+
+/** The phone-sized copy's address when there is one (for thumbnails and quick placeholders), else the original. */
+export function thumbOf(src: string, w?: number): string {
+  return srcSet(src, w) ? `/_w/${THUMB_W}${src}` : src;
+}

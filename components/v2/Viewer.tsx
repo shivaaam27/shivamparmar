@@ -2,7 +2,9 @@
 
 import { useCallback, useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
+import { useLenis } from 'lenis/react';
 import { v2 } from '@/lib/v2';
+import { srcSet, thumbOf } from '@/lib/thumb';
 import V2Compare from './Compare';
 import { ArrowUR } from './Art';
 
@@ -20,7 +22,20 @@ export default function Viewer({ shots, start, onClose }: { shots: ViewShot[]; s
   const strip = useRef<HTMLDivElement>(null);
   const touch = useRef<number | null>(null);
   const shot = shots[at];
+  const [loaded, setLoaded] = useState<string | null>(null);
+  const lenis = useLenis();
   const go = useCallback((n: number) => { setDir(Math.sign(n - at)); setAt(Math.max(0, Math.min(shots.length - 1, n))); }, [at, shots.length]);
+
+  // the page behind stays still while the viewer is open
+  useEffect(() => { lenis?.stop(); return () => { lenis?.start(); }; }, [lenis]);
+
+  // the pictures either side are fetched ahead, so stepping through is instant
+  useEffect(() => {
+    [at - 1, at + 1, at + 2].forEach((i) => {
+      const s = shots[i];
+      if (s && !s.video) { const im = new Image(); im.decoding = 'async'; im.src = s.src; }
+    });
+  }, [at, shots]);
 
   useEffect(() => {
     const html = document.documentElement;
@@ -58,7 +73,15 @@ export default function Viewer({ shots, start, onClose }: { shots: ViewShot[]; s
             ? <V2Compare a={shot.video} b={shot.compare.video} posterA={shot.src} posterB={shot.compare.poster} labelA={shot.compare.label} labelB={shot.compare.otherLabel} alt={shot.alt} active />
             : shot.video
             ? <video src={shot.video} poster={shot.src} controls controlsList="nodownload noremoteplayback" disablePictureInPicture playsInline loop autoPlay aria-label={shot.alt} />
-            : <img src={shot.src} alt={shot.alt} draggable={false} />}
+            : (
+              // the small copy shows at once (the grid already loaded it); the full picture fades in over it when ready
+              <span className={`v2-viewer__pic${loaded === shot.src ? ' is-loaded' : ''}`}
+                style={shot.w && shot.h ? { aspectRatio: `${shot.w} / ${shot.h}`, width: `min(100%, calc((100svh - 11.5rem) * ${(shot.w / shot.h).toFixed(4)}))` } : undefined}>
+                <img className="v2-viewer__lo" src={thumbOf(shot.src, shot.w)} alt="" aria-hidden="true" draggable={false} />
+                <img className="v2-viewer__hi" src={shot.src} srcSet={srcSet(shot.src, shot.w)} sizes="100vw" alt={shot.alt} draggable={false}
+                  decoding="async" onLoad={() => setLoaded(shot.src)} ref={(el) => { if (el?.complete && el.naturalWidth) setLoaded(shot.src); }} />
+              </span>
+            )}
         </figure>
         <button type="button" className="v2-viewer__arrow" onClick={() => go(at + 1)} disabled={at === shots.length - 1} aria-label="Next">→</button>
       </div>
@@ -68,7 +91,7 @@ export default function Viewer({ shots, start, onClose }: { shots: ViewShot[]; s
           {shots.map((s, i) => (
             <button key={s.src + i} type="button" role="tab" aria-selected={i === at} className={i === at ? 'is-on' : undefined}
               aria-label={`${s.video ? 'Video' : 'Photo'} ${i + 1}: ${s.project}`} onClick={() => go(i)}>
-              <img src={s.src} alt="" loading="lazy" draggable={false} />
+              <img src={thumbOf(s.src, s.w)} alt="" loading="lazy" decoding="async" draggable={false} />
             </button>
           ))}
         </div>

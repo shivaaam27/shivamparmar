@@ -9,8 +9,9 @@ import { v2 } from '@/lib/v2';
 import Logo from './Logo';
 import { ArrowUR, Leaf, Loop, LOOPS } from './Art';
 
-/** The pages in the pill bar (Home is the logo, Contact is the button). */
-const BAR = nav.filter((n) => n.label !== 'Home' && n.label !== 'Contact');
+/** The pages in the pill bar (Home is the logo); Contact has its own page in V2. */
+const LINKS = nav.map((n) => (n.label === 'Contact' ? { ...n, href: '/contact' } : n));
+const BAR = LINKS.filter((n) => n.label !== 'Home');
 
 /**
  * V2 header: the logo in its own pill on the left, the pages in a pill in the middle, and a lime
@@ -88,7 +89,7 @@ export default function V2Header() {
           </nav>
 
           <div className="v2-header__end">
-            <a className="v2-btn v2-btn--small v2-header__cta" href={`${v2('/')}#contact`}>
+            <a className="v2-btn v2-btn--small v2-header__cta" href={v2('/contact')}>
               Start a project<span className="v2-btn__dot"><ArrowUR /></span>
             </a>
             <button ref={btn} type="button" className="v2-header__menu" aria-expanded={open} aria-controls="v2-menu" onClick={() => setOpen((o) => !o)}>
@@ -104,7 +105,7 @@ export default function V2Header() {
         <Loop className="v2-menu__loop" d={LOOPS.long} color="var(--lime)" width={16} draw={false} />
         <Leaf className="v2-menu__leaf" />
         <nav className="v2-menu__list" aria-label="Menu">
-          {nav.map((n, i) => (
+          {LINKS.map((n, i) => (
             <Link key={n.href} href={v2(n.href)} style={{ '--i': i } as React.CSSProperties} onClick={() => setOpen(false)}>
               <span className="v2-menu__n">{String(i + 1).padStart(2, '0')}</span>
               <span className="v2-menu__word">{n.label}</span>

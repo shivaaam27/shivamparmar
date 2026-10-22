@@ -21,18 +21,12 @@
 .v2-hloop__thin { stroke: var(--forest); stroke-width: 1.6; opacity: .35; stroke-dasharray: 1; stroke-dashoffset: 1; }
 /* light running along the line: a short brighter green stretch, twice, a few seconds apart */
 .v2-hloop__run { stroke: var(--lime-3); stroke-width: 26; stroke-dasharray: .1 .9; stroke-dashoffset: .1; opacity: 0; }
-.v2-scene.is-done .v2-hloop__base { animation: v2-hloop-draw 2.6s var(--ease-io) .1s forwards; }
-.v2-scene.is-done .v2-hloop__thin { animation: v2-hloop-draw 3.4s var(--ease-io) .5s forwards; }
-.v2-scene.is-done .v2-hloop__run { animation: v2-hloop-run 9s linear 2.8s infinite; }
+.v2-scene.is-drawn .v2-hloop__base { animation: v2-hloop-draw 4s var(--ease-io) .1s forwards; }
+.v2-scene.is-done .v2-hloop__run { animation: v2-hloop-run 9s linear 1.2s infinite; }
 .v2-scene.is-done .v2-hloop__run--late { animation-delay: 7.3s; }
 @keyframes v2-hloop-draw { to { stroke-dashoffset: 0; } }
 @keyframes v2-hloop-run { 0% { stroke-dashoffset: .1; opacity: 1; } 96% { opacity: 1; } 100% { stroke-dashoffset: -1; opacity: 0; } }
 .v2-scene.is-covered .v2-hloop path { animation-play-state: paused; }
-/* a soft paper glow behind the logo: the line fades out as it meets the logo and returns after */
-.v2-hero__stage::before {
-  content: ""; position: absolute; inset: -40% -18%; z-index: -1;
-  background: radial-gradient(closest-side, var(--paper) 55%, rgba(244, 241, 230, 0));
-}
 
 /* the logo intro, sized as in V1 */
 .v2-hero__stage { position: relative; z-index: 1; }
@@ -91,18 +85,9 @@
   .v2-hloop__run { display: none; }
 }
 
-/* the logo's soft glow goes with the cream: on deep green it would show as a disc */
-.v2-hero__stage::before { transition: opacity .6s; }
-.v2-scene.is-dark .v2-hero__stage::before { opacity: 0; }
 .v2-hero__foot { align-self: end; }
 
 /* ---------- About, in the same place ---------- */
-/* a soft deep-green glow behind the words: the line fades out as it meets them and comes back after,
-   as it does around the logo */
-.v2-scene__about::before {
-  content: ""; position: absolute; inset: -22% -24%; z-index: -1; pointer-events: none;
-  background: radial-gradient(closest-side, var(--forest) 72%, rgba(10, 46, 32, 0));
-}
 .v2-scene__about {
   position: relative; z-index: 3; display: grid; justify-items: center; gap: clamp(1.1rem, 2.6vh, 1.8rem);
   width: min(100% - 2 * var(--gutter), 52rem); text-align: center; color: #fff;
@@ -119,7 +104,14 @@
 .v2-scene__body .v2-sw__hl.is-on { color: var(--lime); text-decoration-color: rgba(200, 241, 105, .55); }
 .v2-scene__end { display: grid; justify-items: center; gap: .8rem; }
 .v2-scene__note { font-size: .78rem; color: rgba(255, 255, 255, .55); }
-.v2-scene .v2-hloop { z-index: 0; }
+.v2-scene .v2-hloop {
+  z-index: 0;
+  -webkit-mask-image: radial-gradient(ellipse 46% 40% at 50% 50%, transparent 52%, #000 100%);
+  mask-image: radial-gradient(ellipse 46% 40% at 50% 50%, transparent 52%, #000 100%);
+}
+@media (max-width: 720px) {
+  .v2-scene .v2-hloop { -webkit-mask-image: radial-gradient(ellipse 60% 40% at 50% 50%, transparent 55%, #000 100%); mask-image: radial-gradient(ellipse 60% 40% at 50% 50%, transparent 55%, #000 100%); }
+}
 .v2-scene .v2-hero__stage { z-index: 2; }
 
 /* reduced motion: two plain screens, one after the other */

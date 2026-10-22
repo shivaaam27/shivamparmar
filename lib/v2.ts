@@ -13,6 +13,8 @@ export function v2(path: string): string {
 
 /** The same page in the other version: '/about' ↔ '/v2/about'. `rest` is the query and #hash, kept as they are. */
 export function otherVersion(pathname: string, rest = ''): string {
+  // V1 has no contact page: its contact section is on the home page
+  if (pathname === `${V2_BASE}/contact`) return '/#contact';
   if (pathname === V2_BASE || pathname.startsWith(`${V2_BASE}/`)) return (pathname.slice(V2_BASE.length) || '/') + rest;
   return v2(pathname) + rest;
 }

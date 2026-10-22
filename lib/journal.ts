@@ -23,7 +23,24 @@ import type { Lang } from './services';
 export type Post = {
   slug: string; title: string; description: string; date: string; lang: Lang; tags: string[]; pair?: string;
   html: string; words: number;
+  /** the post's sections (its ## headings), for the "In this article" list; each heading in `html` has the same id */
+  toc: { id: string; text: string }[];
 };
+
+/** Gives every section heading an id the contents list can link to. */
+function withIds(html: string) {
+  const toc: { id: string; text: string }[] = [];
+  const used = new Set<string>();
+  const out = html.replace(/<h2>([\s\S]*?)<\/h2>/g, (_, inner: string) => {
+    const text = inner.replace(/<[^>]+>/g, '').replace(/&amp;/g, '&').replace(/&#39;/g, "'").replace(/&quot;/g, '"').trim();
+    let id = text.toLowerCase().normalize('NFKD').replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '') || 'section';
+    while (used.has(id)) id += '-2';
+    used.add(id);
+    toc.push({ id, text });
+    return `<h2 id="${id}">${inner}</h2>`;
+  });
+  return { html: out, toc };
+}
 
 const DIR = join(process.cwd(), 'content', 'journal');
 
@@ -46,7 +63,7 @@ function parse(file: string): Post | null {
     lang: meta.lang === 'sw' ? 'sw' : 'en',
     tags: (meta.tags ?? '').split(',').map((t) => t.trim()).filter(Boolean),
     pair: meta.pair || undefined,
-    html: marked.parse(body, { async: false }) as string,
+    ...withIds(marked.parse(body, { async: false }) as string),
     words: body.split(/\s+/).length,
   };
 }

@@ -1,15 +1,17 @@
 import type { Metadata } from 'next';
-import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import V2WorkBrowser from '@/components/v2/WorkBrowser';
-import ProjectGallery from '@/components/v2/ProjectGallery';
+import ProjectWall from '@/components/v2/ProjectWall';
 import { imageSize } from '@/lib/image-size';
-import { Cta, PageHero } from '@/components/v2/Kit';
-import { ArrowUR } from '@/components/v2/Art';
+import V2WorkIndex from '@/components/v2/WorkIndex';
+import { ProjectOpen, ProjectNav } from '@/components/v2/ProjectScene';
+import LiveSite from '@/components/v2/LiveSite';
+import { Cta } from '@/components/v2/Kit';
 import { site } from '@/lib/content';
-import { SHOW_PROJECT_LINKS, categories, findCategory, findProject, pagedProjects, coverOf, type Category } from '@/lib/work';
+import { SHOW_PROJECT_LINKS, categories, findCategory, findProject, pagedProjects, type Category } from '@/lib/work';
 import { workData } from '@/lib/work-data';
-import { tc, v2 } from '@/lib/v2';
+import { reelEntries } from '@/lib/work-reel';
+import { tc } from '@/lib/v2';
 
 type Props = { params: Promise<{ slug: string }> };
 
@@ -36,61 +38,58 @@ export default async function WorkSlugV2({ params }: Props) {
 }
 
 function CategoryPage({ category }: { category: Category }) {
+  const entries = reelEntries(category.slug);
   return (
-    <main id="main" className="v2-page">
-      <V2WorkBrowser cats={workData()} initial={{ c: category.slug, s: null }} />
-      <Cta />
+    <main id="main" className="v2-page v2-work-film">
+      <V2WorkIndex entries={entries} title={['My', category.name]} lead={`${category.name}, made in Tanzania.`}>
+        <V2WorkBrowser cats={workData()} initial={{ c: category.slug, s: null }} archive />
+        <Cta />
+      </V2WorkIndex>
     </main>
   );
 }
 
-const TONES = ['lime', 'sky', 'sun', 'clay', 'mint'];
-
+/**
+ * A project: its picture or recording full screen (morphing in from the work page), the information sliding up over
+ * it; the rest of its pictures (the one already shown full screen is not repeated; a day / night recording stays, as
+ * its slider). The previous project, all work and the next come straight after the information, before the pictures.
+ */
 function ProjectPage({ slug }: { slug: string }) {
   const entry = findProject(slug);
   if (!entry) notFound();
-  const { category, sub, project } = entry;
-  const all = pagedProjects();
-  const at = all.findIndex((e) => e.project.slug === project.slug);
-  const prev = all.length > 2 ? all[(at - 1 + all.length) % all.length] : null;
+  const { sub, project } = entry;
+  const all = reelEntries();
+  const at = all.findIndex((e) => e.slug === project.slug);
+  const e = all[at];
+  const prev = all.length > 1 ? all[(at - 1 + all.length) % all.length] : null;
   const next = all.length > 1 ? all[(at + 1) % all.length] : null;
-  const details = [
+  const facts = [
+    sub.name !== project.title && { label: 'Collection', value: tc(sub.name) },
     project.year && { label: 'Year', value: project.year },
     project.role && { label: 'Role', value: project.role },
     project.tools?.length && { label: 'Tools', value: project.tools.join(', ') },
   ].filter(Boolean) as { label: string; value: string }[];
-  const showLink = project.link && (SHOW_PROJECT_LINKS || project.link.always);
+  const link = project.link && (SHOW_PROJECT_LINKS || project.link.always) ? project.link : null;
+  const shots = (project.images ?? []).map((img) => ({ ...img, ...imageSize(img.src), project: project.title, slug: project.slug }));
+  const lead = Math.max(0, shots.findIndex((s) => s.src === e.cover));
+  const rest = shots.filter((s, i) => i !== lead || s.compare);
 
   return (
     <main id="main" className="v2-page v2-project">
-      <PageHero tone="forest" tag={category.name} title={tc(project.title)} lead={project.summary}
-        crumbs={[{ href: v2('/work'), label: 'Work' }, { href: v2(`/work/${category.slug}`), label: category.name }, { href: `${v2(`/work/${category.slug}`)}?s=${sub.slug}`, label: sub.name }]}>
-        <span className="v2-pill v2-pill--lime">{project.images?.length ?? 0} {project.images?.some((i) => i.video) ? 'pictures and videos' : 'pictures'}</span>
-        {details.map((d) => <span key={d.label} className="v2-pill">{d.label}: {d.value}</span>)}
-        {showLink && <a className="v2-pill" href={project.link!.href} title={project.link!.title} target="_blank" rel="noopener">{project.link!.label} <ArrowUR size={12} /></a>}
-      </PageHero>
+      <ProjectOpen e={e} index={at} total={all.length} facts={facts} details={project.details} shots={shots} lead={lead}>
+        {link && (
+          <p className="v2-po__live v2-po__rise">
+            <LiveSite href={link.href} label={link.label} title={tc(project.title)} embed={link.embed} />
+            {link.title && <span className="v2-po__host">{link.title}</span>}
+          </p>
+        )}
+      </ProjectOpen>
 
-      <section className="v2-gallery" aria-label="Images">
-        <div className="v2-wrap">
-          <ProjectGallery shots={(project.images ?? []).map((img) => ({ ...img, ...imageSize(img.src), project: project.title, slug: project.slug }))} />
-        </div>
-      </section>
-
-      {(prev || next) && (
-        <nav className="v2-sec v2-sec--tight v2-pager" aria-label="More work">
-          <div className="v2-wrap v2-pager__in" data-reveal>
-            {[prev, next].map((e, k) => e && (
-              <Link key={k} href={v2(`/work/${e.project.slug}`)} className={`v2-card v2-card--${TONES[(at + k) % TONES.length]} v2-pager__card v2-grow${k ? ' is-next' : ''}`}>
-                {coverOf(e.project) && <span className="v2-pager__img"><img src={coverOf(e.project)} alt="" loading="lazy" /></span>}
-                <span className="v2-pager__txt">
-                  <span className="v2-label">{k ? `Next · ${e.category.name}` : `Previous · ${e.category.name}`}</span>
-                  <b>{tc(e.project.title)}</b>
-                </span>
-                <span className="v2-pager__go" aria-hidden="true">{k ? '→' : '←'}</span>
-              </Link>
-            ))}
-          </div>
-        </nav>
+      <ProjectNav prev={prev && { slug: prev.slug, title: prev.title }} next={next && { slug: next.slug, title: next.title }} />
+      {rest.length > 0 && (
+        <section className="v2-gallery" aria-label="Pictures">
+          <ProjectWall shots={rest} />
+        </section>
       )}
       <Cta />
     </main>

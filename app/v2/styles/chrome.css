@@ -134,6 +134,11 @@ html.v2-menu-open { overflow: hidden; }
   font-size: .8125rem; color: rgba(243, 240, 228, .66);
 }
 .v2-footer__top { color: var(--lime); font-weight: 700; }
+.v2-footer__body { display: flex; flex-direction: column; }
+.v2-footer__big { position: relative; z-index: 1; margin-top: auto; padding-top: clamp(2rem, 5vh, 3.5rem); padding-bottom: clamp(1rem, 2.5vh, 1.6rem); line-height: 0; }
+.v2-footer__big .v2-logo { width: 100%; justify-content: space-between; font-size: clamp(2.6rem, 11.2vw, 13.4rem); letter-spacing: -.01em; --logo-labs: rgba(244, 241, 230, .32); }
+.v2-footer__big .v2-logo__text { flex: 1; display: flex; justify-content: space-between; }
+.v2-footer__big .v2-mark { width: .92em; height: .92em; }
 @media (max-width: 900px) {
   .v2-footer__in { grid-template-columns: 1fr; }
 }

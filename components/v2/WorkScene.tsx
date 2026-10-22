@@ -38,13 +38,15 @@ const cats = visibleCategories().map((c) => {
 });
 
 /**
- * Selected work, the way Apple opens a feature: continuing from About on the same deep green,
- * 1. once the screen is held, a photograph fills in from the top down to the full screen, the headline rising over it;
+ * Selected work, the way Apple opens a feature: the photograph rises over About, then everything after it is on the
+ * cream paper, which the Hub & Products panel then grows out of,
+ * 1. the photograph itself rises over the end of About as the next layer; once it fills the screen the headline
+ *    rises over it;
  * 2. scrolling, the headline fades and the photograph pulls back into the middle of a grid of work, the other
  *    pictures filling in around it in rows and columns that drift past each other;
- * 3. then, on the same green, a centred paragraph whose key words are in white, and below it two columns:
+ * 3. then, on the paper, a centred paragraph whose key words are in black, and below it two columns:
  *    big figures on the left, every kind of work with its projects on the right, each opened by a fine rule.
- * The section starts one screen early, over the last (empty) screen of the About scene, so there is no seam.
+ * The section starts one screen early, so the photograph slides up over the last screen of the About scene.
  */
 export default function V2WorkScene() {
   const root = useRef<HTMLElement>(null);
@@ -65,15 +67,12 @@ export default function V2WorkScene() {
       // starts once the screen is held, so nothing slides: the picture opens in place
       scrollTrigger: { trigger: pin, start: 'top top', end: 'bottom bottom', scrub: 0.6, invalidateOnRefresh: true },
     });
-    // until then the screen is plain deep green, like the end of About it covers
-    gsap.set(q('.v2-wa__frame'), { clipPath: 'inset(0% 0% 100% 0% round 0px)' });
+    // the picture itself is the layer that rises over the end of About (the section starts one screen early);
+    // once it fills the screen, the headline rises over it and it holds
     gsap.set(q('.v2-wa__over > *'), { autoAlpha: 0, y: 40 });
-    // 1. the picture fills in from the top down to the full screen, the headline rises over it, a short hold
-    tl.set(q('.v2-wa__stick'), { backgroundColor: '#0A2E20' })
-      .to(q('.v2-wa__frame'), { clipPath: 'inset(0% 0% 0% 0% round 0px)', duration: 1.1, ease: 'power2.out' })
-      .fromTo(q('.v2-wa__frame img'), { scale: 1.45 }, { scale: 1.18, duration: 1.6, ease: 'power2.out' }, '<')
-      .to(q('.v2-wa__over > *'), { autoAlpha: 1, y: 0, duration: .8, stagger: .15, ease: 'power3.out' }, '-=.6')
-      .to({}, { duration: .8 })
+    tl.to(q('.v2-wa__over > *'), { autoAlpha: 1, y: 0, duration: .8, stagger: .15, ease: 'power3.out' })
+      .fromTo(q('.v2-wa__frame img'), { scale: 1.12 }, { scale: 1.06, duration: 1.4, ease: 'power1.out' }, 0)
+      .to({}, { duration: .7 })
       // 2. the headline fades up; the photograph pulls back into a framed picture
       .to(q('.v2-wa__over'), { autoAlpha: 0, y: -50, duration: .9, ease: 'power1.in' })
       .to(q('.v2-wa__frame'), { clipPath: () => slotClip(), duration: 2, ease: 'power2.inOut' }, '<.2')
@@ -94,7 +93,7 @@ export default function V2WorkScene() {
   }, { scope: root });
 
   return (
-    <section ref={root} className="v2-wa v2-dark" id="work" aria-label="Selected work">
+    <section ref={root} className="v2-wa" id="work" aria-label="Selected work">
       <div className="v2-wa__pin">
         <div className="v2-wa__stick">
           <Link href={v2(`/work/${PHOTO.slug}`)} className="v2-wa__frame" aria-label="Mikumi National Park photographs">
@@ -102,8 +101,7 @@ export default function V2WorkScene() {
             <span className="v2-wa__shade" aria-hidden="true" />
           </Link>
           <div className="v2-wa__over">
-            <p className="v2-wa__kicker">Selected work</p>
-            <h2 className="v2-wa__head">Systems, Sites <em>&amp; Photographs.</em></h2>
+            <h2 className="v2-wa__head">Selected <em>Work</em></h2>
           </div>
           <div className="v2-wa__grid" aria-hidden="true">
             {TILES.map((row, r) => (

@@ -4,6 +4,12 @@
  * Analytics (which Cloudflare adds to every page itself) for visit counts.
  * Scripts and styles inline in the page are allowed because Next writes its page data that way.
  */
+/**
+ * Sites the work pages may show inside a Shivo Labs frame (components/v2/LiveSite.tsx). Add a project site's address
+ * here once that site allows shivolabs.com to show it (its own frame-ancestors). Empty: every link opens a new tab.
+ */
+export const EMBED_ORIGINS: string[] = [];
+
 const CSP = [
   "default-src 'self'",
   "script-src 'self' 'unsafe-inline' https://cloud.umami.is https://static.cloudflareinsights.com",
@@ -12,6 +18,7 @@ const CSP = [
   "font-src 'self' data:",
   "media-src 'self' blob:",
   "connect-src 'self' https://*.umami.is https://*.umami.dev https://cloudflareinsights.com",
+  `frame-src 'self' ${EMBED_ORIGINS.join(' ')}`.trim(),
   "frame-ancestors 'none'",   // no other site may show these pages inside its own (fake copies, click tricks)
   "base-uri 'self'",
   "form-action 'self'",

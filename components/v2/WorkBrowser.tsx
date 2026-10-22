@@ -49,18 +49,20 @@ const pathOf = ({ c, s, t }: Sel) => {
  * category, a collection and photos or videos (it stays at hand while you scroll), then the work: screens in
  * browser frames, and every photo in a rounded masonry grid. A picture opens the full-screen viewer.
  */
-export default function V2WorkBrowser({ cats, initial }: { cats: Cat[]; initial: Sel }) {
+export default function V2WorkBrowser({ cats, initial, archive }: { cats: Cat[]; initial: Sel; archive?: boolean }) {
   const [sel, setSel] = useState<Sel>(initial);
   const [viewing, setViewing] = useState<number | null>(null);
   // the slim tab bar shows once the wheels in the green band have scrolled out of view
   const [stuck, setStuck] = useState(false);
+  // (archive: the filters themselves stick; "stuck" is when the line just above them has gone under the header)
   useEffect(() => {
-    const el = document.querySelector('.v2-whero');
+    const el = document.querySelector(archive ? '.v2-wf__sentinel' : '.v2-whero');
     if (!el) return;
-    const io = new IntersectionObserver(([e]) => setStuck(!e.isIntersecting && e.boundingClientRect.top < 0));
+    const io = new IntersectionObserver(([e]) => setStuck(!e.isIntersecting && e.boundingClientRect.top < 0),
+      archive ? { rootMargin: '-96px 0px 0px 0px' } : undefined);
     io.observe(el);
     return () => io.disconnect();
-  }, []);
+  }, [archive]);
   const lenis = useLenis();
   const closeViewer = useCallback(() => setViewing(null), []);
 
@@ -79,8 +81,15 @@ export default function V2WorkBrowser({ cats, initial }: { cats: Cat[]; initial:
     document.title = `${s?.name ?? c?.name ?? 'Work'} — Shivo Labs`;
     const apply = () => {
       flushSync(() => setSel(next));
-      const bar = document.querySelector<HTMLElement>('.v2-wbar');
-      if (bar && window.scrollY > bar.offsetTop) lenis?.scrollTo(bar.offsetTop - 8, { immediate: true, force: true });
+      // past the filters, the grid goes back to its start (under the filters) so the new choice is seen from its top
+      const mark = document.querySelector<HTMLElement>('.v2-wf__sentinel');
+      if (mark) {
+        const top = mark.getBoundingClientRect().top + window.scrollY;
+        if (window.scrollY > top) lenis?.scrollTo(top - 8, { immediate: true, force: true });
+      } else {
+        const bar = document.querySelector<HTMLElement>('.v2-wbar');
+        if (bar && window.scrollY > bar.offsetTop) lenis?.scrollTo(bar.offsetTop - 8, { immediate: true, force: true });
+      }
     };
     const vt = (document as Document & { startViewTransition?: (cb: () => void) => unknown }).startViewTransition;
     if (vt && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) vt.call(document, apply);
@@ -97,7 +106,8 @@ export default function V2WorkBrowser({ cats, initial }: { cats: Cat[]; initial:
     const out: ({ kind: 'shot'; p: Shot; i: number } | { kind: 'stack'; ps: Shot[] })[] = [];
     const stacks = new Map<string, Shot[]>();
     shots.forEach((p, i) => {
-      if (col || !p.linked) return void out.push({ kind: 'shot', p, i });
+      // under the project wall (archive) every picture is just a picture: the project cards would repeat the wall
+      if (archive || col || !p.linked) return void out.push({ kind: 'shot', p, i });
       const ps = stacks.get(p.slug);
       if (ps) return void ps.push(p);
       const fresh = [p];
@@ -110,16 +120,46 @@ export default function V2WorkBrowser({ cats, initial }: { cats: Cat[]; initial:
       if (it.ps.length === 1) return { kind: 'shot' as const, p: it.ps[0], i: shots.indexOf(it.ps[0]) };
       return { kind: 'stack' as const, ps: [...it.ps].sort((a, b) => rank(a) - rank(b)) };
     });
-  }, [shots, col]);
-  const isWide = (it: (typeof items)[number]) => it.kind === 'stack' || (it.p.screen && it.p.w > it.p.h);
+  }, [shots, col, archive]);
+  const isWide = (it: (typeof items)[number]) => !archive && (it.kind === 'stack' || (it.p.screen && it.p.w > it.p.h));
   const wide = items.filter(isWide), rest = items.filter((it) => !isWide(it));
   const hasVideo = Boolean(cat?.collections.some((x) => x.shots.some((p) => p.video)));
   const count = (c: Cat) => c.collections.reduce((n, x) => n + x.shots.length, 0);
   const title = tc(col?.name ?? cat?.name ?? 'Work');
 
+  // the filters: category, then the chosen category's collections and photos or videos
+  const filters = (
+    <>
+      <Tabs label="Category" value={sel.c ?? ALL} onChange={(k) => choose({ c: k === ALL ? null : k, s: null })}
+            items={[{ key: ALL, label: 'All', count: cats.reduce((n, c) => n + count(c), 0) }, ...cats.map((c) => ({ key: c.slug, label: tc(c.name), count: count(c) }))]} />
+          {cat && (cat.collections.length > 1 || hasVideo) && (
+            <div className="v2-wbar__sub">
+              {cat.collections.length > 1 && (
+                <Tabs soft label={cat.name} value={sel.s ?? ALL} onChange={(k) => choose({ c: cat.slug, s: k === ALL ? null : k, t: sel.t })}
+                  items={[{ key: ALL, label: tc(`All ${cat.name.toLowerCase()}`) }, ...cat.collections.map((x) => ({ key: x.slug, label: tc(x.name), disabled: !x.shots.length }))]} />
+              )}
+              {hasVideo && (
+                <Tabs soft label="Type" value={sel.t ?? ALL} onChange={(k) => choose({ c: cat.slug, s: sel.s, t: isKind(k) ? k : null })}
+                  items={[{ key: ALL, label: 'Photos & videos' }, { key: 'photos', label: 'Photos' }, { key: 'videos', label: 'Videos' }]} />
+              )}
+            </div>
+          )}
+    </>
+  );
+
   return (
     <div className="v2-wb">
-      <section className="v2-whero v2-dark" data-reveal>
+      {/* archive: under the wall, only the filters, centred; they stick while the pictures scroll and lift to the front */}
+      {archive && (
+        <>
+          <div className="v2-wf__sentinel" id="every-picture" aria-hidden="true" />
+          <div className="v2-wf">
+            <div className={`v2-wf__in${stuck ? ' is-stuck' : ''}`}>{filters}</div>
+          </div>
+        </>
+      )}
+      {!archive && <>
+      <section className="v2-whero v2-dark" id="every-picture" data-reveal>
         <Ribbons set="page" className="v2-whero__lines" />
         <div className="v2-wrap v2-whero__grid">
         <div className="v2-whero__in">
@@ -152,23 +192,9 @@ export default function V2WorkBrowser({ cats, initial }: { cats: Cat[]; initial:
       </section>
 
       <div className={`v2-wbar${stuck ? ' is-on' : ''}`} aria-hidden={!stuck} inert={!stuck}>
-        <div className="v2-wbar__in">
-          <Tabs label="Category" value={sel.c ?? ALL} onChange={(k) => choose({ c: k === ALL ? null : k, s: null })}
-            items={[{ key: ALL, label: 'All', count: cats.reduce((n, c) => n + count(c), 0) }, ...cats.map((c) => ({ key: c.slug, label: tc(c.name), count: count(c) }))]} />
-          {cat && (cat.collections.length > 1 || hasVideo) && (
-            <div className="v2-wbar__sub">
-              {cat.collections.length > 1 && (
-                <Tabs soft label={cat.name} value={sel.s ?? ALL} onChange={(k) => choose({ c: cat.slug, s: k === ALL ? null : k, t: sel.t })}
-                  items={[{ key: ALL, label: tc(`All ${cat.name.toLowerCase()}`) }, ...cat.collections.map((x) => ({ key: x.slug, label: tc(x.name), disabled: !x.shots.length }))]} />
-              )}
-              {hasVideo && (
-                <Tabs soft label="Type" value={sel.t ?? ALL} onChange={(k) => choose({ c: cat.slug, s: sel.s, t: isKind(k) ? k : null })}
-                  items={[{ key: ALL, label: 'Photos & videos' }, { key: 'photos', label: 'Photos' }, { key: 'videos', label: 'Videos' }]} />
-              )}
-            </div>
-          )}
-        </div>
+        <div className="v2-wbar__in">{filters}</div>
       </div>
+      </>}
 
       <div className="v2-wrap v2-wgrid-wrap">
         {shots.length ? (
