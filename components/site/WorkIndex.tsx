@@ -51,9 +51,10 @@ const mod = (a: number, m: number) => ((a % m) + m) % m;
  * where it meets the words, as on the home page) over a wall of the work, drifting slowly to the right under the
  * green. Scrolling, the title and the line leave, the green turns to the light paper and the wall comes forward.
  *
- * The wall is three rows of pictures at one height, each as wide as its own shape (nothing is cropped into another
- * shape). Every row holds all the work in its own order and runs on endlessly: a row is its set laid a few times over,
- * moved by a transform that wraps at the set's width. Drag, swipe, trackpad or the arrows move it, with a little glide.
+ * The wall is up to three rows of pictures at one height, each as wide as its own shape (nothing is cropped into another
+ * shape). Each piece of work is in one row only. A row wider than the screen runs on endlessly (its set laid a few times
+ * over, moved by a transform that wraps at the set's width, so a picture and its repeat are never on screen together);
+ * a shorter row stays still in the middle. Drag, swipe, trackpad or the arrows move it, with a little glide.
  * On the main page a big category is one tile that opens its own page. Below (children): the filters, every picture.
  */
 export default function V2WorkIndex({ entries, title, lead, children }: { entries: ReelEntry[]; title: [string, string]; lead: string; children?: React.ReactNode }) {
@@ -67,16 +68,16 @@ export default function V2WorkIndex({ entries, title, lead, children }: { entrie
   const [drawn, setDrawn] = useState(false);
   const n = entries.length;
   const few = n <= 2; // one or two pictures: one row, at their own shapes, still
-  const [copies, setCopies] = useState<number[]>(() => Array(ROWS).fill(3));
+  const [copies, setCopies] = useState<number[]>(() => Array(ROWS).fill(1));
+  const [loops, setLoops] = useState<boolean[]>(() => Array(ROWS).fill(false));
   useEffect(() => { const t = setTimeout(() => setDrawn(true), 300); return () => clearTimeout(t); }, []);
   const projects = entries.reduce((sum, e) => sum + (e.count ?? 1), 0);
 
-  // each row has every tile, in its own order (moved along, the middle row reversed), so no two rows line up
-  const rows = few ? [entries] : Array.from({ length: ROWS }, (_, r) => {
-    const off = Math.floor((n * r) / ROWS) + r;
-    const seq = [...entries.slice(off % n), ...entries.slice(0, off % n)];
-    return r === 1 ? seq.reverse() : seq;
-  });
+  // each tile is in one row only (dealt out in turn), so the same work never shows twice on screen; a row runs on
+  // endlessly only when it is wider than the screen by a tile, otherwise it stays still in the middle
+  const count = few ? 1 : n < 7 ? 2 : ROWS;
+  const rows = Array.from({ length: count }, (_, r) => entries.filter((_, i) => i % count === r));
+  const still = loops.slice(0, count).every((l) => !l);
 
   // scrolling: the words go, the green lifts to the paper and the wall settles, then it holds
   useGSAP(() => {
@@ -106,14 +107,21 @@ export default function V2WorkIndex({ entries, title, lead, children }: { entrie
     const w = wall.current;
     if (!w || few) return;
     const widths: number[] = [];
+    const runs: boolean[] = [];
     const measure = () => {
-      const need = rowEls.current.map((row, r) => {
+      const need = rows.map((seq, r) => {
+        const row = rowEls.current[r];
         const t = row?.children as HTMLCollectionOf<HTMLElement> | undefined;
-        const per = rows[r].length;
-        widths[r] = t && t[per] ? t[per].offsetLeft - t[0].offsetLeft : 0;
-        return widths[r] ? Math.ceil(w.clientWidth / widths[r]) + 2 : 3;
+        const per = seq.length;
+        if (!row || !t || !t[per - 1]) { widths[r] = 0; runs[r] = false; return 1; }
+        const gap = parseFloat(getComputedStyle(row).columnGap) || 0;
+        widths[r] = t[per - 1].offsetLeft + t[per - 1].offsetWidth + gap - t[0].offsetLeft;
+        const widest = Math.max(...Array.from(t).slice(0, per).map((x) => x.offsetWidth));
+        runs[r] = widths[r] >= w.clientWidth + widest + gap;
+        return runs[r] ? Math.ceil(w.clientWidth / widths[r]) + 2 : 1;
       });
       setCopies((c) => (c.join() === need.join() ? c : need));
+      setLoops((l) => (l.join() === runs.join() ? l : [...runs]));
     };
     measure();
     const ro = new ResizeObserver(measure);
@@ -130,8 +138,9 @@ export default function V2WorkIndex({ entries, title, lead, children }: { entrie
       if (p.x !== shown) {
         shown = p.x;
         // each row starts a little further along than the one above, so even same-shaped pictures sit like bricks
-        rowEls.current.forEach((row, r) => { if (row && widths[r]) row.style.transform = `translate3d(${-mod(p.x + r * w.clientHeight * .09, widths[r])}px,0,0)`; });
-        if (bar.current && widths[0]) bar.current.style.transform = `scaleX(${Math.max(.06, mod(p.x, widths[0]) / widths[0])})`;
+        rowEls.current.forEach((row, r) => { if (row) row.style.transform = runs[r] && widths[r] ? `translate3d(${-mod(p.x + r * w.clientHeight * .09, widths[r])}px,0,0)` : ''; });
+        const lead = runs.findIndex(Boolean);
+        if (bar.current && lead >= 0) bar.current.style.transform = `scaleX(${Math.max(.06, mod(p.x, widths[lead]) / widths[lead])})`;
       }
       raf = requestAnimationFrame(tick);
     };
@@ -185,22 +194,23 @@ export default function V2WorkIndex({ entries, title, lead, children }: { entrie
       w.removeEventListener('wheel', wheel);
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [few]);
+  }, [few, count]);
   useEffect(() => { ScrollTrigger.refresh(); }, []);
 
   const step = (d: number) => { pos.current.target += d * (wall.current?.clientWidth ?? 1000) * .6; };
 
   return (
     <>
-      <section ref={root} className={`v2-wo${isFront ? ' is-front' : ''}${drawn ? ' is-drawn' : ''}${few ? ' is-few' : ''}`} aria-label="Work">
+      <section ref={root} className={`v2-wo${isFront ? ' is-front' : ''}${drawn ? ' is-drawn' : ''}${few ? ' is-few' : ''}${still ? ' is-held' : ''}`}
+        style={{ '--rows': count } as React.CSSProperties} aria-label="Work">
         <div className="v2-wo__stick">
           <div ref={wall} className="v2-wo__wall">
             {rows.map((seq, r) => (
-              <div key={r} ref={(el) => { rowEls.current[r] = el; }} className="v2-wo__row">
-                {Array.from({ length: few ? 1 : copies[r] }, (_, c) => seq.map((e, i) => {
-                  // the first set of the first row holds the real tiles (they morph into the project page); every
-                  // other tile is a repeat: seen, but skipped by keyboards and screen readers
-                  const real = r === 0 && c === 0;
+              <div key={r} ref={(el) => { rowEls.current[r] = el; }} className={`v2-wo__row${loops[r] ? '' : ' is-held'}`}>
+                {Array.from({ length: few ? 1 : copies[r] ?? 1 }, (_, c) => seq.map((e, i) => {
+                  // the first set of each row holds the real tiles (they morph into the project page); every other
+                  // tile is a repeat further along the same row, never on screen at once with it: skipped by keyboards
+                  const real = c === 0;
                   const href = (e.href ?? `/work/${e.slug}`);
                   const cover = thumbOf(e.cover, e.coverW);
                   const label = e.count ? `${e.count} projects` : tc(e.category);

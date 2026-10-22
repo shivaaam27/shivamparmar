@@ -90,7 +90,7 @@
 /* ---------- About, in the same place ---------- */
 .v2-scene__about {
   position: relative; z-index: 3; display: grid; justify-items: center; gap: clamp(1.1rem, 2.6vh, 1.8rem);
-  width: min(100% - 2 * var(--gutter), 52rem); text-align: center; color: #fff;
+  width: min(100% - 2 * var(--gutter), 58rem); text-align: center; color: #fff;
 }
 .v2-scene__title {
   display: grid; justify-items: center; margin: 0;
@@ -98,12 +98,12 @@
 }
 .v2-scene__line { white-space: nowrap; }
 .v2-scene__pill { display: inline-block; padding: .02em .16em .04em; margin-right: .04em; border-radius: .12em; background: var(--lime); color: var(--ink); rotate: -2deg; }
-.v2-scene__body { font: 400 min(clamp(1.05rem, 1.5vw, 1.4rem), 2.75vh)/1.5 var(--body); letter-spacing: -.012em; color: #fff; text-wrap: pretty; }
+.v2-scene__body { font: 400 min(var(--fs-lead), 3.15vh)/1.5 var(--body); letter-spacing: -.012em; color: #fff; text-wrap: pretty; }
 /* on deep green, the key phrases turn lime with a fine underline */
 .v2-scene__body .v2-sw__hl { background: none; color: inherit; transition: color .6s var(--ease); text-decoration: underline 1.5px transparent; text-underline-offset: .22em; }
 .v2-scene__body .v2-sw__hl.is-on { color: var(--lime); text-decoration-color: rgba(200, 241, 105, .55); }
 .v2-scene__end { display: grid; justify-items: center; gap: .8rem; }
-.v2-scene__note { font-size: .78rem; color: rgba(255, 255, 255, .55); }
+.v2-scene__note { font-size: .85rem; color: #fff; }
 .v2-scene .v2-hloop {
   z-index: 0;
   -webkit-mask-image: radial-gradient(ellipse 46% 40% at 50% 50%, transparent 52%, #000 100%);
@@ -122,5 +122,5 @@
 .v2-scene.is-still .v2-scene__about { margin: 0 auto; padding: var(--section) 0; background: var(--forest); width: 100%; padding-inline: var(--gutter); }
 @media (max-width: 720px) {
   .v2-scene__title { font-size: min(7.6vw, 5.4vh); }
-  .v2-scene__body { font-size: min(4.1vw, 2.35vh); line-height: 1.45; }
+  .v2-scene__body { font-size: min(4.4vw, 2.55vh); line-height: 1.45; }
 }

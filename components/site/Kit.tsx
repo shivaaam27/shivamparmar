@@ -24,7 +24,7 @@ export const UI = {
 } as const;
 
 export const paths = {
-  services: { en: '/services', sw: '/sw/huduma' },
+  services: { en: '/about#services', sw: '/sw/huduma' },
   faq: { en: '/faq', sw: '/sw/maswali' },
 };
 

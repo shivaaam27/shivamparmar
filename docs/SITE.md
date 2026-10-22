@@ -93,23 +93,31 @@ Router with no setup; Apple keeps the picture full screen with the words over it
   the project's own site must allow shivolabs.com to show it (`frame-ancestors https://shivolabs.com`), and its address
   must be added to `EMBED_ORIGINS` in lib/headers.ts. The Task Management site currently refuses (frame-ancestors 'none').
 
-## Products page (22 Oct 2026)
+## About: products and services (23 Oct 2026, on Shivam's word)
 
-/products is one held scene (components/site/ProductsScene.tsx, app/(site)/styles/products.css), changed 22 Oct on
-Shivam's word: the title and the loop line on the deep green; they leave and the paper rises over the green (no colour
-fade); the logo builds itself, its six tiles coming in large from across the screen and locking together near the top,
-SHIVO LABS with PRODUCTS beneath, and "All Shivo Labs Apps in One Place" with the devices. Scrolling on, only the small
-word under the logo and the centred block beneath change: HUB, then each app (its number, its name, what it does,
-where it runs). Soft lines run behind on the paper and fade where they meet the words. The same words are in a plain
-list for screen readers, search and "reduce motion". Words come from content/products.json as before.
+The Products and Services pages are gone; both are part of About now (/products and /services redirect to
+/about#products and /about#services). About runs: hello → the belief and the figures → highlights (cards) → the
+products → the services → contact.
 
-## Services and Journal (22 Oct 2026)
+- **Products** (components/site/ProductsScene.tsx, products.css): one held green screen. SHIVO LABS on top; the word
+  under it starts as PRODUCTS and turns into each product's name as you scroll (one at a time, never two at once),
+  with what it does, the description and Works on beneath, all at the one description size. Names and words come from
+  content/products.json (X Tools is listed as iPhone App Signing).
+- **Services** (components/site/ServicesPanels.tsx, services.css): the title card on the green, then each service in
+  plain words (name, what it is, Read more), no picture cards; then where we work. The Kiswahili page /sw/huduma uses
+  the same block.
 
-- **Services** (components/site/ServicesPanels.tsx, app/(site)/styles/services.css): the title on the green with the loop
-  line, then the four services as tall panels over a picture of their work (`picture` in lib/services.ts); one is open
-  at a time (pointer, tap or keyboard) with its words, what you get and Read more. Phones: stacked, tap to open.
-- **Products** now loop on their own under the centred logo (arrows, dots that fill with the time left, rests under the
-  pointer, swipe on phones); scrolling only brings them in.
+## Colours, descriptions, footer (23 Oct 2026)
+
+- The deep sections use a softer green (`--forest: #2B6444`), so the lime lines still show; the old deep green is
+  `--forest-ink`, for text on light and lime.
+- Every main description on the site is one size: `--fs-lead` in base.css.
+- The footer is the same on every page, compact, and nothing in it moves; it no longer slides over the contact screen.
+- The work wall gives each piece of work one row only; a row loops only when it is wider than the screen by a tile,
+  otherwise it stays still in the middle, so the same picture is never on screen twice.
+
+## Journal (22 Oct 2026)
+
 - **Journal** (components/site/JournalIndex.tsx, Article.tsx, app/(site)/styles/journal.css): reading first. The list: the
   green opening, the newest post as a cover, the rest in rows, filters for language and topic. A post: the title on the
   green, then one steady column (about 66 characters a line) with "In this article" beside it on wide screens (marks

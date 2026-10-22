@@ -64,7 +64,7 @@ export default function V2Hero() {
     // 1 → 2: the logo and services leave, the page turns deep green, the line brightens
     tl.to(q('.v2-hero__stage'), { autoAlpha: 0, scale: .9, y: -50, duration: 2.2, ease: 'power1.in' }, 0)
       .to(q('.v2-hero__foot'), { autoAlpha: 0, y: 20, duration: 1.2 }, 0)
-      .to(q('.v2-scene__stick'), { backgroundColor: '#0A2E20', duration: 2.4, ease: 'power1.inOut' }, .6)
+      .to(q('.v2-scene__stick'), { backgroundColor: '#2B6444', duration: 2.4, ease: 'power1.inOut' }, .6)
       .to(q('.v2-hloop'), { scale: 1.08, duration: 10 }, 0)
       // 3: About rises in the same place
       .to(q('.v2-scene__about'), { autoAlpha: 1, duration: .4 }, 2.6)

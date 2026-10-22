@@ -16,7 +16,7 @@ const TILES: { src: string; slug: string }[][] = [
     { src: '/images/websites/terragreen-poster.jpg', slug: 'terragreen-website' },
     { src: '/images/cocozuri-pralines.jpg', slug: 'cocozuri' },
     { src: '/images/delta-facade.jpg', slug: 'delta-hotel' },
-    { src: '/images/shivo-labs/home.jpg', slug: 'shivo-labs' },
+    { src: '/images/cocozuri-social/strawberry-and-basil-2.jpg', slug: 'cocozuri-social' },
   ],
   [
     { src: '/images/roros-boat-bar.jpg', slug: 'roros' },
@@ -26,7 +26,7 @@ const TILES: { src: string; slug: string }[][] = [
     { src: '/images/websites/cocozuri-poster.jpg', slug: 'cocozuri-website' },
     { src: '/images/dar-kayak.jpg', slug: 'dar-es-salaam' },
     { src: '/images/morogoro-aerial.jpg', slug: 'morogoro-hotel' },
-    { src: '/images/websites/v1-poster.jpg', slug: 'v1-supermarket-website' },
+    { src: '/images/websites/group-poster.jpg', slug: 'oracle-consultancy-group' },
     { src: '/images/moshi-fields.jpg', slug: 'moshi' },
   ],
 ];
@@ -122,9 +122,8 @@ export default function V2WorkScene() {
 
       <div className="v2-wa__body">
         <p className="v2-wa__lead v2-wa__rise">
-          Work for <b>companies, hotels and brands across Tanzania</b>: <b>a task management system</b> for a group of companies,
-          {' '}<b>websites</b> for TerraGreen, CocoZuri, V1 Supermarket and Oracle Consultancy Group, <b>photography</b> from Mikumi
-          {' '}to the SGR train, and <b>social media</b> for Dar Distributors and CocoZuri.
+          Working Across <b>Companies, Hotels And Brands Across Tanzania</b>, Building <b>Client-Tailored Software,
+          {' '}Applications, Websites</b>, And More, But Not Limited To These. <b>More Than 20 Projects Completed</b>, And More Ongoing.
         </p>
 
         <div className="v2-wa__cols">

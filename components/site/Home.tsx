@@ -25,7 +25,7 @@ export function marked(text: string) {
 export function V2Contact({ n = 6 }: { n?: number }) {
   const [phone] = site.phones;
   return (
-    // a lime card that grows into the full screen and stays while the footer slides up over it
+    // a lime card that grows into the full screen, rests a moment, then the footer follows
     <Grow className="v2-contact" id="contact" label={contact.tag}>
       <div className="v2-contact__stick">
         <div className="v2-contact__card" data-reveal>

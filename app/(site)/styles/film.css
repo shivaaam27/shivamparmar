@@ -23,14 +23,17 @@
   position: relative; height: 300vh; background: var(--paper); color: #fff;
   --head: calc(clamp(.6rem, 1.2vw, .9rem) * 2 + 3.5rem + .9rem); --foot: 5rem; --gap: clamp(.5rem, .8vw, .75rem);
   /* three rows at one height; each picture is as wide as its own shape (--ar, its width over its height) */
-  --h: calc(100svh - var(--head) - var(--foot)); --rowh: calc((var(--h) - 2 * var(--gap)) / 3);
+  --h: calc(100svh - var(--head) - var(--foot)); --rowh: calc((var(--h) - (var(--rows, 3) - 1) * var(--gap)) / var(--rows, 3));
 }
 .v2-wo__stick { position: sticky; top: 0; height: 100vh; height: 100svh; overflow: hidden; background: var(--forest); }
 .v2-wo__wall {
-  position: absolute; inset: 0; padding: var(--head) 0 var(--foot); display: grid; grid-template-rows: repeat(3, var(--rowh)); gap: var(--gap);
+  position: absolute; inset: 0; padding: var(--head) 0 var(--foot); display: grid; grid-template-columns: minmax(0, 1fr); grid-template-rows: repeat(var(--rows, 3), var(--rowh)); align-content: center; gap: var(--gap);
   overflow: hidden; touch-action: pan-y; user-select: none; transform-origin: 50% 45%; will-change: transform; contain: layout paint;
 }
 .v2-wo__row { display: flex; gap: var(--gap); height: var(--rowh); padding-left: var(--gutter); will-change: transform; }
+/* a row narrower than the screen (plus a tile) does not run: it stays in the middle, so nothing repeats */
+.v2-wo__row.is-held { justify-content: center; padding: 0 var(--gutter); }
+.v2-wo.is-held .v2-wo__arrow, .v2-wo.is-held .v2-wo__track { visibility: hidden; }
 .v2-wo:not(.is-front) .v2-wo__wall { pointer-events: none; }
 .v2-wo.is-front .v2-wo__wall { cursor: grab; }
 .v2-wo__wall.is-dragging { cursor: grabbing; }
@@ -180,7 +183,7 @@ html:has(.v2-header:not(.is-hidden)) .v2-wf { top: calc(clamp(.6rem, 1.2vw, .9re
 .v2-po__body { position: relative; z-index: 1; border-radius: 28px 28px 0 0; box-shadow: 0 -30px 60px -30px rgba(0, 0, 0, .45); }
 .v2-po__in { max-width: calc(var(--max) + 2 * var(--gutter)); margin: 0 auto; padding: clamp(3.4rem, 9vh, 6rem) var(--gutter) clamp(3rem, 8vh, 5rem); display: grid; gap: clamp(1.6rem, 4vh, 2.4rem); }
 .v2-po__meta { font: 600 .78rem/1.4 var(--body); letter-spacing: .14em; text-transform: uppercase; color: rgba(255, 255, 255, .78); }
-.v2-po__lead { max-width: 46rem; font: 500 clamp(1.35rem, 2.3vw, 2rem)/1.35 var(--body); letter-spacing: -.02em; color: #fff; text-wrap: pretty; }
+.v2-po__lead { max-width: 46rem; font: 400 var(--fs-lead)/1.5 var(--body); letter-spacing: -.012em; color: #fff; text-wrap: pretty; }
 .v2-po__text { max-width: 40rem; display: grid; gap: 1.1rem; font: 400 clamp(1.05rem, 1.25vw, 1.15rem)/1.7 var(--body); color: #fff; }
 .v2-po__facts { margin: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(12rem, 1fr)); gap: 0 clamp(1.4rem, 3vw, 2.4rem); }
 .v2-po__facts > div { display: grid; align-content: start; gap: .45rem; padding: 1rem 0 1.1rem; border-top: 1px solid rgba(255, 255, 255, .22); }

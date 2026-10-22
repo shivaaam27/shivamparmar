@@ -19,7 +19,7 @@ import './styles/type.css';
 // The fonts are loaded by the root layout: Sora (--font-serif) for headlines and the logo, Hanken Grotesk
 // (--font-sans) for reading and the interface.
 
-export const viewport: Viewport = { themeColor: '#0A2E20' };
+export const viewport: Viewport = { themeColor: '#2B6444' };
 
 export default function SiteLayout({ children }: { children: React.ReactNode }) {
   return (

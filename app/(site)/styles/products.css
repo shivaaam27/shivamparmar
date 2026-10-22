@@ -1,94 +1,46 @@
 /* =========================================================
-   Products page as one held scene (components/site/ProductsScene.tsx)
+   The products on the About page, one held green screen (components/site/ProductsScene.tsx)
    ========================================================= */
 
-.v2-ps { position: relative; height: 330vh; background: var(--paper); }
-.v2-ps__stick { position: sticky; top: 0; height: 100vh; height: 100svh; overflow: hidden; background: var(--forest); }
+.v2-pn { position: relative; z-index: 3; height: 900vh; background: var(--forest); }
+.v2-pn__stick { position: sticky; top: 0; height: 100vh; height: 100svh; overflow: hidden; display: grid; place-items: center; }
 
-/* 1. the title on the green, with the loop line (it fades where it meets the words) */
-.v2-ps .v2-hloop {
-  z-index: 1; translate: none; opacity: .9; will-change: opacity;
-  -webkit-mask-image: radial-gradient(ellipse 46% 30% at 50% 50%, transparent 40%, #000 100%);
-  mask-image: radial-gradient(ellipse 46% 30% at 50% 50%, transparent 40%, #000 100%);
+/* the loop line, fading where it meets the words */
+.v2-pn .v2-hloop {
+  translate: none; opacity: .9;
+  -webkit-mask-image: radial-gradient(ellipse 48% 34% at 50% 50%, transparent 40%, #000 100%);
+  mask-image: radial-gradient(ellipse 48% 34% at 50% 50%, transparent 40%, #000 100%);
 }
-.v2-ps .v2-hloop__thin { stroke: var(--lime); opacity: .45; }
-.v2-ps.is-drawn .v2-hloop__base { animation: v2-hloop-draw 2.6s var(--ease-io) .1s forwards; }
-.v2-ps.is-drawn .v2-hloop__thin { animation: v2-hloop-draw 3.4s var(--ease-io) .5s forwards; }
-.v2-ps__head { position: absolute; inset: 0; z-index: 3; display: grid; place-content: center; justify-items: center; gap: 1.2rem; padding: 0 var(--gutter); text-align: center; will-change: transform, opacity; }
-.v2-ps__title { margin: 0; max-width: 14ch; font: 600 clamp(3rem, 8.4vw, 8.4rem)/.92 var(--display); letter-spacing: -.035em; text-transform: uppercase; color: #fff; text-wrap: balance; }
-.v2-ps__title em { font-style: normal; color: var(--lime); }
-.v2-ps__hint { font: 600 .74rem/1 var(--body); letter-spacing: .14em; text-transform: uppercase; color: rgba(255, 255, 255, .78); }
+.v2-pn .v2-hloop__thin { stroke: var(--lime); opacity: .45; }
+.v2-pn.is-drawn .v2-hloop__base { animation: v2-hloop-draw 2.6s var(--ease-io) .1s forwards; }
+.v2-pn.is-drawn .v2-hloop__thin { animation: v2-hloop-draw 3.4s var(--ease-io) .5s forwards; }
 
-/* 2–3. the stage: the logo near the top, centred; under it the block that changes */
-.v2-ps__lines--green { z-index: 0; }
-.v2-ps__paper { position: absolute; inset: 0; z-index: 1; background: var(--paper); clip-path: inset(100% 0 0 0); will-change: clip-path; }
-.v2-ps__lines--paper { z-index: 1; }
-.v2-ps__lines--paper { position: absolute; inset: -3%; width: 106%; height: 106%; pointer-events: none; visibility: hidden; opacity: 0; }
-.v2-ps__lines--paper path { fill: none; stroke-linecap: round; stroke-dasharray: .22 .78; animation: v2-ps-run 26s linear infinite; }
-.v2-ps__lines--paper path:nth-child(1) { stroke: var(--lime); stroke-width: 18; opacity: .55; }
-.v2-ps__lines--paper path:nth-child(2) { stroke: var(--leaf); stroke-width: 1.4; opacity: .5; stroke-dasharray: .5 .5; animation-duration: 34s; }
-.v2-ps__lines--paper path:nth-child(3) { stroke: var(--leaf); stroke-width: 1.4; opacity: .4; stroke-dasharray: .4 .6; animation-duration: 30s; animation-direction: reverse; }
-@keyframes v2-ps-run { to { stroke-dashoffset: -1; } }
-/* the words sit on a soft patch of the paper, so the lines fade out where they meet them */
-.v2-ps__stage {
-  position: absolute; inset: 0; z-index: 2; display: flex; flex-direction: column; align-items: center; justify-content: center;
-  gap: clamp(1.4rem, 4vh, 2.6rem); padding: calc(clamp(.6rem, 1.2vw, .9rem) * 2 + 3.5rem) var(--gutter) 7vh; text-align: center; color: var(--ink);
-}
-.v2-ps__logo { display: inline-flex; align-items: center; gap: .6em; font-size: clamp(1.4rem, 2.3vw, 2.1rem); color: #141517; white-space: nowrap; }
-.v2-ps__logo .v2-mark { width: 2.1em; height: 2.1em; fill: var(--tile, #141517); overflow: visible; will-change: transform, opacity; }
-.v2-ps__words { display: grid; gap: .32em; text-align: left; }
-.v2-ps__wm { font: 600 1em/1 var(--logo); letter-spacing: .015em; }
-.v2-ps__wm span { font-weight: 300; margin-left: .28em; color: #6E7072; }
-.v2-ps__subs { display: grid; }
-.v2-ps__sub { grid-area: 1 / 1; font: 600 .62em/1 var(--logo); letter-spacing: .32em; text-transform: uppercase; }
+.v2-pn__in { position: relative; z-index: 1; display: grid; justify-items: center; gap: clamp(1.4rem, 4vh, 2.4rem); width: min(100% - 2 * var(--gutter), 64rem); text-align: center; }
 
-/* under the logo: the products playing one after another, centred */
-.v2-ps__show { display: grid; justify-items: center; gap: clamp(1.4rem, 4vh, 2.4rem); width: 100%; max-width: 50rem; margin-top: clamp(.4rem, 2vh, 1.2rem); }
-.v2-ps__slides { display: grid; width: 100%; min-height: clamp(14rem, 32vh, 17rem); overflow: hidden; padding-inline: 1rem; }
-.v2-ps__slide {
-  grid-area: 1 / 1; display: grid; justify-items: center; align-content: start; gap: clamp(.8rem, 2vh, 1.15rem);
-  opacity: 0; visibility: hidden; transform: translateX(calc(var(--dir) * -80px));
-}
-.v2-ps__slide.is-on, .v2-ps__slide.is-out { visibility: visible; transition: transform .9s cubic-bezier(.2, .8, .2, 1), opacity .6s ease, visibility 0s; }
-.v2-ps__slide.is-on { opacity: 1; transform: none; transition-delay: .12s; }
-.v2-ps__slide.is-out { opacity: 0; transform: translateX(calc(var(--dir) * 80px)); transition-duration: .7s, .45s, 0s; }
-.v2-ps__line { max-width: 20ch; font: 600 clamp(1.9rem, 3.6vw, 3.4rem)/1.02 var(--display); letter-spacing: -.03em; text-transform: uppercase; text-wrap: balance; }
-.v2-ps__text { max-width: 36rem; font: 400 clamp(1rem, 1.2vw, 1.12rem)/1.6 var(--body); color: var(--ink); text-wrap: pretty; }
-.v2-ps__on { font: 500 1rem/1.4 var(--body); color: var(--ink); word-spacing: .2em; }
-.v2-ps__on span { display: block; margin-bottom: .3rem; word-spacing: normal; font: 600 .7rem/1.2 var(--body); letter-spacing: .14em; text-transform: uppercase; color: rgba(17, 21, 17, .62); }
-/* the small word under the logo follows the product */
-.v2-ps__sub { opacity: 0; transform: translateY(.5em); transition: opacity .4s ease, transform .5s cubic-bezier(.2, .8, .2, 1); }
-.v2-ps__sub.is-on { opacity: 1; transform: none; transition-delay: .12s; }
-/* arrows either side of the dots; the current dot fills with the time left */
-.v2-ps__ctrl { display: flex; align-items: center; gap: 1rem; }
-.v2-ps__arrow {
-  display: grid; place-items: center; width: 2.8rem; height: 2.8rem; border-radius: 50%; color: var(--ink);
-  box-shadow: inset 0 0 0 1px rgba(17, 21, 17, .18); transition: background-color .3s, color .3s, box-shadow .3s, transform .3s;
-}
-.v2-ps__arrow:hover { background: var(--forest); color: #fff; box-shadow: none; }
-.v2-ps__arrow:active { transform: scale(.94); }
-.v2-ps__dots { display: flex; align-items: center; gap: .45rem; }
-.v2-ps__dot { position: relative; width: .5rem; height: .5rem; padding: 0; border-radius: 999px; background: rgba(17, 21, 17, .2); overflow: hidden; transition: width .5s cubic-bezier(.2, .8, .2, 1), background-color .3s; }
-.v2-ps__dot:hover { background: rgba(17, 21, 17, .4); }
-.v2-ps__dot.is-on { width: 2.4rem; background: rgba(17, 21, 17, .14); }
-.v2-ps__dot i { position: absolute; inset: 0; background: var(--forest); transform-origin: left; animation: v2-ps-fill linear forwards; }
-.v2-ps__dot.is-held i { animation-play-state: paused; }
-@keyframes v2-ps-fill { from { transform: scaleX(0); } }
+/* SHIVO LABS on top; under it the word that changes */
+.v2-pn__title { margin: 0; display: grid; justify-items: center; font: 600 min(clamp(2.6rem, 8vw, 7.4rem), 13vh)/.95 var(--display); letter-spacing: -.035em; text-transform: uppercase; color: #fff; }
+.v2-pn__words { display: grid; overflow: hidden; padding-block: .04em .08em; }
+/* one line each: a long name (iPhone App Signing) gets smaller instead of wrapping */
+.v2-pn__word { grid-area: 1 / 1; align-self: center; white-space: nowrap; color: var(--lime); font-size: min(1em, calc(90vw / (var(--len) * .66))); }
 
-@media (max-width: 760px) {
-  .v2-ps__stage { gap: 1.3rem; padding-bottom: 8vh; }
-  .v2-ps__logo { font-size: 1.2rem; }
-  .v2-ps__line { font-size: clamp(1.6rem, 7.6vw, 2.3rem); }
-  .v2-ps__slides { min-height: 20rem; padding-inline: 0; }
-  .v2-ps__dots { gap: .35rem; }
-  .v2-ps__dot.is-on { width: 1.6rem; }
+/* what it does and where it runs, one at a time in the same place */
+.v2-pn__infos { list-style: none; margin: 0; padding: 0; display: grid; min-height: 11rem; }
+.v2-pn__info { grid-area: 1 / 1; display: grid; justify-items: center; align-content: start; gap: .7rem; }
+/* one voice for all four lines: the site's description size (--fs-lead), the name of what it does in bold, Works on in lime */
+.v2-pn__info p { max-width: 40rem; font: 400 var(--fs-lead)/1.5 var(--body); color: #fff; text-wrap: pretty; }
+.v2-pn__info .v2-pn__line { font-weight: 600; }
+.v2-pn__on { display: flex; flex-wrap: wrap; justify-content: center; gap: 0 .5em; }
+.v2-pn__on span { color: var(--lime); font-weight: 600; }
+
+@media (max-width: 720px) {
+  .v2-pn__title { font-size: min(13vw, 9vh); }
+  .v2-pn__infos { min-height: 13rem; }
 }
 
-/* "reduce motion": no held scene; the title, then the logo and the products (moved by the arrows only) */
-.v2-ps.is-still { height: auto; }
-.v2-ps.is-still .v2-ps__stick { position: relative; height: auto; background: var(--paper); }
-.v2-ps.is-still .v2-ps__head { position: relative; padding: 9rem var(--gutter) 2rem; }
-.v2-ps.is-still .v2-ps__title, .v2-ps.is-still .v2-ps__hint { color: var(--ink); }
-.v2-ps.is-still .v2-ps__title em { color: var(--leaf); }
-.v2-ps.is-still .v2-hloop, .v2-ps.is-still .v2-ps__paper, .v2-ps.is-still .v2-ps__lines--paper, .v2-ps.is-still .v2-ps__patch { display: none; }
-.v2-ps.is-still .v2-ps__stage { position: relative; padding-block: 2rem var(--section); }
+/* reduce motion: every product in a plain list under the title */
+.v2-pn.is-still { height: auto; }
+.v2-pn.is-still .v2-pn__stick { position: relative; height: auto; padding: var(--section) 0; }
+.v2-pn.is-still .v2-pn__word:not(:first-child) { display: none; }
+.v2-pn.is-still .v2-pn__infos { gap: 2.4rem; }
+.v2-pn.is-still .v2-pn__info { grid-area: auto; }
+.v2-pn.is-still .v2-pn__info .sr-only { position: static; width: auto; height: auto; clip: auto; font: 600 1.4rem/1 var(--display); text-transform: uppercase; color: var(--lime); }

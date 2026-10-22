@@ -59,7 +59,7 @@ export default function V2Showcase({ children }: { children?: React.ReactNode })
         gsap.fromTo(chars, { yPercent: 110, opacity: 0, filter: 'blur(6px)' }, { yPercent: 0, opacity: 1, filter: 'blur(0px)', duration: 0.7, stagger: 0.035, ease: 'power3.out' });
         gsap.to(row, { x: centreFor(k), duration: 0.8, ease: 'power3.inOut', overwrite: 'auto' });
       }
-      slot.href = `${'/products'}#${products[k].slug}`;
+      slot.href = '/about#products';
       slot.setAttribute('aria-label', `Shivo Labs ${products[k].name}: ${products[k].line}`);
     };
     const hide = (k: number) => {
@@ -187,7 +187,7 @@ export default function V2Showcase({ children }: { children?: React.ReactNode })
               </g>
             </svg>
             <span className="v2-show__wm" aria-hidden="true"><b>SHIVO</b><span>LABS</span></span>
-            <a className="v2-show__slot" href={`${'/products'}#${products[0].slug}`}>
+            <a className="v2-show__slot" href="/about#products">
               {products.map((p) => (
                 <span key={p.slug} className="v2-show__name" aria-hidden="true">
                   {[...p.name.toUpperCase()].map((c, k) => <i key={k}>{c === ' ' ? ' ' : c}</i>)}
@@ -202,7 +202,7 @@ export default function V2Showcase({ children }: { children?: React.ReactNode })
 
         {/* the same products for screen readers and search, without the film */}
         <ul className="sr-only">
-          {products.map((p) => <li key={p.slug}><Link href={`${'/products'}#${p.slug}`}>Shivo Labs {p.name}: {p.line}</Link></li>)}
+          {products.map((p) => <li key={p.slug}><Link href="/about#products">Shivo Labs {p.name}: {p.line}</Link></li>)}
         </ul>
       </div>
       {/* the lower half: the brands, on the same panel */}

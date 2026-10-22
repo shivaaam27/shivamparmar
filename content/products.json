@@ -75,7 +75,7 @@
     },
     {
       "slug": "tools",
-      "name": "Tools",
+      "name": "iPhone App Signing",
       "line": "Build and Install iPhone Apps on Windows",
       "text": "Build, install and update your own iPhone apps from a Windows computer over Wi-Fi, and renew them before they expire. No Mac needed.",
       "on": [

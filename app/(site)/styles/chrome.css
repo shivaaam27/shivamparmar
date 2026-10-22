@@ -9,6 +9,8 @@
   font: 600 1.3rem/1 var(--logo); letter-spacing: .015em; color: var(--logo-ink);
   white-space: nowrap;
 }
+/* on dark backgrounds (built as v2-logo--${tone}, so keep this rule) */
+.v2-logo--dark { --logo-ink: #F3F0E4; --logo-labs: #A5A9A6; --logo-tip: var(--sage-lit); }
 .v2-mark { width: 1.05em; height: 1.05em; flex: none; overflow: visible; fill: var(--logo-ink, currentColor); }
 .v2-mark .is-lit { fill: var(--logo-tip, var(--sage)); }
 .v2-logo__text span { font-weight: 300; margin-left: .28em; color: var(--logo-labs); }
@@ -48,7 +50,7 @@
   font: 500 .9rem/1 var(--body); color: rgba(10, 46, 32, .72); letter-spacing: -.005em;
   transition: color .3s;
 }
-.v2-header__nav a:hover, .v2-header__nav a.is-here { color: var(--forest); }
+.v2-header__nav a:hover, .v2-header__nav a.is-here { color: var(--forest-ink); }
 .v2-header__nav a.is-here::after {
   content: ""; position: absolute; left: 50%; bottom: .22rem; width: 4px; height: 4px; margin-left: -2px; border-radius: 50%; background: var(--leaf);
 }
@@ -107,42 +109,38 @@
 .v2-menu .v2-petals { opacity: .12; }
 html.v2-menu-open { overflow: hidden; }
 
-/* ---------- footer ---------- */
+/* ---------- footer: the same on every page, compact, nothing moves ---------- */
 .v2-footer { position: relative; margin-top: 0; }
-.v2-footer__hills { position: relative; height: clamp(80px, 11vw, 160px); background: var(--paper); overflow: hidden; }
+.v2-footer__hills { position: relative; height: clamp(44px, 5vw, 76px); background: var(--paper); overflow: hidden; }
 .v2-footer__hills .v2-hills { position: absolute; inset: auto 0 -1px; width: 100%; height: 100%; }
-.v2-footer__sun { position: absolute; left: 62%; bottom: 18%; width: clamp(70px, 9vw, 130px); color: var(--sun); }
-.v2-footer__leaf { position: absolute; left: 8%; bottom: 46%; width: clamp(40px, 5vw, 70px); color: var(--lime-2); }
-.v2-footer__body { position: relative; overflow: hidden; padding-top: clamp(2.5rem, 5vw, 4.5rem); }
-.v2-footer__body .v2-petals { opacity: .1; }
+.v2-footer__sun { position: absolute; left: 64%; bottom: 22%; width: clamp(40px, 4.4vw, 64px); color: var(--sun); }
+.v2-footer__leaf { position: absolute; left: 9%; bottom: 40%; width: clamp(24px, 2.6vw, 38px); color: var(--lime-2); }
+.v2-footer__body { position: relative; overflow: hidden; display: flex; flex-direction: column; padding-top: clamp(2rem, 3.4vw, 3rem); }
+.v2-footer__body .v2-petals { opacity: .07; }
 .v2-footer__in {
   position: relative; z-index: 1;
-  display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, 1.4fr); gap: clamp(2.5rem, 6vw, 6rem);
-  padding-bottom: clamp(2.5rem, 5vw, 4rem);
+  display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.5fr); gap: clamp(2rem, 5vw, 5rem);
+  padding-bottom: clamp(1.8rem, 3.4vw, 2.6rem);
 }
-.v2-footer__brand { display: grid; align-content: start; justify-items: start; gap: 1.4rem; }
-.v2-footer__brand .v2-logo { font-size: clamp(1.6rem, 2.6vw, 2.3rem); }
-.v2-footer__line { max-width: 26rem; color: var(--ink-2); }
-.v2-footer__cols { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 2rem; }
-.v2-footer__cols .v2-label { color: var(--lime); margin-bottom: 1rem; }
-.v2-footer__cols ul { list-style: none; margin: 0; padding: 0; display: grid; gap: .45rem; }
+.v2-footer__brand { display: grid; align-content: start; justify-items: start; gap: .9rem; }
+.v2-footer__brand .v2-logo { font-size: clamp(1.3rem, 1.8vw, 1.6rem); }
+.v2-footer__line { max-width: 24rem; font-size: .9375rem; line-height: 1.5; color: rgba(255, 255, 255, .78); }
+.v2-footer__mail { display: inline-flex; align-items: center; gap: .4em; font-weight: 600; color: var(--lime); padding-bottom: .15em; background: linear-gradient(currentColor, currentColor) 0 100% / 100% 1px no-repeat; }
+.v2-footer__cols { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1.5rem; }
+.v2-footer__cols .v2-label { color: var(--lime); margin-bottom: .7rem; }
+.v2-footer__cols ul { list-style: none; margin: 0; padding: 0; display: grid; gap: .3rem; font-size: .9375rem; }
 .v2-footer__bar {
   position: relative; z-index: 1;
-  display: flex; flex-wrap: wrap; justify-content: space-between; gap: .6rem 2rem;
-  padding-block: 1.4rem 1.6rem; border-top: 1px solid var(--line-light);
-  font-size: .8125rem; color: rgba(243, 240, 228, .66);
+  display: flex; flex-wrap: wrap; justify-content: space-between; gap: .5rem 2rem;
+  padding-block: 1rem 1.2rem; border-top: 1px solid var(--line-light);
+  font-size: .78rem; color: rgba(255, 255, 255, .7);
 }
 .v2-footer__top { color: var(--lime); font-weight: 700; }
-.v2-footer__body { display: flex; flex-direction: column; }
-.v2-footer__big { position: relative; z-index: 1; margin-top: auto; padding-top: clamp(2rem, 5vh, 3.5rem); padding-bottom: clamp(1rem, 2.5vh, 1.6rem); line-height: 0; }
-.v2-footer__big .v2-logo { width: 100%; justify-content: space-between; font-size: clamp(2.6rem, 11.2vw, 13.4rem); letter-spacing: -.01em; --logo-labs: rgba(244, 241, 230, .32); }
-.v2-footer__big .v2-logo__text { flex: 1; display: flex; justify-content: space-between; }
-.v2-footer__big .v2-mark { width: .92em; height: .92em; }
 @media (max-width: 900px) {
   .v2-footer__in { grid-template-columns: 1fr; }
 }
 @media (max-width: 560px) {
   .v2-footer__cols { grid-template-columns: 1fr 1fr; }
   .v2-footer__cols > div:last-child { grid-column: 1 / -1; }
-  .v2-footer__bar { flex-direction: column; padding-bottom: 4.5rem; }   /* room for the version switch */
+  .v2-footer__bar { flex-direction: column; }
 }

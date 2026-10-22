@@ -17,8 +17,8 @@ import { LOOP, THIN } from './Hero';
 const svcPath = (s: Service, lang: Lang) => (lang === 'sw' ? `/sw/huduma/${s.swSlug}` : `/services/${s.slug}`);
 const dateFmt = (d: string, lang: Lang) => new Intl.DateTimeFormat(lang === 'sw' ? 'sw-TZ' : 'en-GB', { day: 'numeric', month: 'long', year: 'numeric' }).format(new Date(d));
 
-/** /services and /sw/huduma: every service as a card. */
-export function ServicesView({ lang }: { lang: Lang }) {
+/** Every service in plain words: on the About page (English) and /sw/huduma (Kiswahili). */
+export function ServicesBlock({ lang, level = 'h1' }: { lang: Lang; level?: 'h1' | 'h2' }) {
   const t = UI[lang];
   const title = lang === 'sw'
     ? <>{tc('Huduma za kidijitali')} <em>{tc('kwa biashara Tanzania na Afrika Mashariki', { start: false })}</em></>
@@ -26,22 +26,24 @@ export function ServicesView({ lang }: { lang: Lang }) {
   const lead = lang === 'sw'
     ? 'Shivo Labs ni kampuni ya suluhisho za kidijitali jijini Dar es Salaam. Tunajenga tovuti na programu, mifumo ya biashara, AI na otomatiki, na chapa zinazovutia.'
     : 'Shivo Labs is a digital solutions company in Dar es Salaam. We build websites and apps, business systems, AI workflows and automation, and brands that stand out.';
-  // each service over a picture of work it made (a different project for each where it can)
-  const used = new Set<string>();
-  const panels = services.map((s) => {
-    const slug = s.work.find((w) => !used.has(w)) ?? s.work[0];
-    if (slug) used.add(slug);
-    const project = slug ? findProject(slug)?.project : undefined;
-    const cover = s.picture ?? (project ? coverOf(project) : undefined);
-    const screen = !s.picture && Boolean(project?.images?.find((im) => im.src === cover)?.screen);
-    return { slug: s.slug, href: svcPath(s, lang), title: s[lang].title, short: s[lang].short, offer: s[lang].offer, cover, screen };
-  });
+  const panels = services.map((s) => ({ slug: s.slug, href: svcPath(s, lang), title: s[lang].title, short: s[lang].short }));
+  return <ServicesPanels title={title} lead={lead} label={t.services} readMore={lang === 'sw' ? 'Soma zaidi' : 'Read more'} panels={panels} areas={areas[lang]} level={level} />;
+}
+
+/** /sw/huduma: the services page in Kiswahili. */
+export function ServicesView({ lang }: { lang: Lang }) {
+  const t = UI[lang];
   return (
     <Page lang={lang} className="v2-servicesp">
       <JsonLd data={graph(breadcrumbs([{ name: t.home, path: home(lang) }, { name: t.services, path: paths.services[lang] }]), ...services.map((sv) => serviceLd(sv, lang, svcPath(sv, lang))))} />
-      <ServicesPanels title={title} lead={lead} label={t.services} readMore={lang === 'sw' ? 'Soma zaidi' : 'Read more'} panels={panels} areas={areas[lang]} />
+      <ServicesBlock lang={lang} />
     </Page>
   );
+}
+
+/** The services' search data, for the page that shows them in English (About). */
+export function ServicesLd() {
+  return <JsonLd data={graph(...services.map((sv) => serviceLd(sv, 'en', svcPath(sv, 'en'))))} />;
 }
 
 /** One service, in one language. */

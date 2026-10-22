@@ -9,15 +9,15 @@ import { ArrowUR, Burst, Hills, Leaf } from './Art';
 const SOCIAL: Record<string, string> = { linkedin: 'LinkedIn', instagram: 'Instagram', orcid: 'ORCID' };
 const socialName = (url: string) => Object.entries(SOCIAL).find(([k]) => url.includes(k))?.[1] ?? url;
 
-/** Footer: hills rise from the page into deep green, then the logo, the pages, the work, contact and the small print. */
+/** Footer, the same on every page: low hills into the green, then the logo, the pages, the work, contact and the small print. */
 export default function V2Footer() {
   const cats = visibleCategories();
   const [phone] = site.phones;
   return (
     <footer className="v2-footer">
       <div className="v2-footer__hills" aria-hidden="true">
-        <Burst className="v2-footer__sun v2-spin" points={16} />
-        <Leaf className="v2-footer__leaf v2-sway" />
+        <Burst className="v2-footer__sun" points={16} />
+        <Leaf className="v2-footer__leaf" />
         <Hills />
       </div>
       <div className="v2-footer__body v2-dark">
@@ -26,8 +26,8 @@ export default function V2Footer() {
           <div className="v2-footer__brand">
             <Link href={'/'} aria-label="Shivo Labs — home"><Logo tone="dark" /></Link>
             <p className="v2-footer__line">{site.tagline}, from {site.location}. Working with people anywhere.</p>
-            <a className="v2-btn v2-btn--lime" href={`mailto:${site.email}`} data-umami-event="Contact · footer email">
-              {site.email}<span className="v2-btn__dot"><ArrowUR size={16} /></span>
+            <a className="v2-footer__mail" href={`mailto:${site.email}`} data-umami-event="Contact · footer email">
+              {site.email} <ArrowUR size={14} />
             </a>
           </div>
 
@@ -51,9 +51,6 @@ export default function V2Footer() {
             </div>
           </nav>
         </div>
-
-        {/* the logo across the whole width, so the footer ends full and finished on every page */}
-        <div className="v2-wrap v2-footer__big" aria-hidden="true"><Logo tone="dark" /></div>
 
         <div className="v2-wrap v2-footer__bar">
           <span>© {new Date().getFullYear()} {site.fullName} · All rights reserved</span>

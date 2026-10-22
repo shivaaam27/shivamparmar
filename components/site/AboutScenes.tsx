@@ -14,8 +14,8 @@ import { LOOP, THIN } from './Hero';
 
 /*
  * The About page told as held scenes, as the home page is (docs/SITE.md):
- *   AboutOpen → AboutDisciplines (+ the belief and the figures) → AboutHighlights (which turns into the brands)
- * then the contact screen and the footer. Every scene holds the screen while scrolling moves it on,
+ *   AboutOpen → AboutBelief (the belief and the figures) → AboutHighlights, then the products and the services
+ * (app/(site)/about/page.tsx), the contact screen and the footer. Every scene holds the screen while scrolling moves it on,
  * and each ends on the colour the next begins with, so there are no seams.
  */
 
@@ -43,6 +43,9 @@ function split(text: string, phrases: string[]) {
  * greeting rises to the top, and the introduction fills in word by word; then the words leave and the screen is
  * plain green for the next scene to open over.
  */
+/** Screens after the opening's words leave: one for the held screen itself, a little more of plain green. */
+const OPEN_REST = 1.3;
+
 export function AboutOpen() {
   const root = useRef<HTMLElement>(null);
   const [drawn, setDrawn] = useState(false);
@@ -62,7 +65,7 @@ export function AboutOpen() {
     const tl = gsap.timeline({
       defaults: { ease: 'none' },
       scrollTrigger: {
-        trigger: el, start: 'top top', end: () => `+=${el.offsetHeight - 2 * window.innerHeight}`, scrub: PACE.scrub, invalidateOnRefresh: true,
+        trigger: el, start: 'top top', end: () => `+=${el.offsetHeight - OPEN_REST * window.innerHeight}`, scrub: PACE.scrub, invalidateOnRefresh: true,
         onUpdate: (st) => {
           const filled = gsap.utils.clamp(0, 1, (st.progress - .3) / .45) * words.length;
           marks.forEach((m) => m.classList.toggle('is-on', filled > Number(m.dataset.at)));
@@ -72,7 +75,7 @@ export function AboutOpen() {
       },
     });
     tl.to(q('.v2-abo__eyebrow'), { autoAlpha: 0, y: -20, duration: .8 }, 0)
-      .to(q('.v2-scene__stick'), { backgroundColor: '#0A2E20', duration: 1.6, ease: 'power1.inOut' }, .2)
+      .to(q('.v2-scene__stick'), { backgroundColor: '#2B6444', duration: 1.6, ease: 'power1.inOut' }, .2)
       .to(q('.v2-abo__title'), { y: () => -window.innerHeight * .27, scale: .62, color: '#fff', duration: 1.6, ease: 'power2.inOut' }, .2)
       .to(q('.v2-hloop'), { opacity: .22, duration: 1.4 }, .4)
       .to(q('.v2-abo__body'), { autoAlpha: 1, duration: .4 }, 1.5)
@@ -81,7 +84,7 @@ export function AboutOpen() {
       .to({}, { duration: 1 })
       .to(q('.v2-abo__title, .v2-abo__body, .v2-abo__end, .v2-hloop'), { autoAlpha: 0, y: '-=50', duration: 1.1, ease: 'power2.in' })
       .to({}, { duration: .05 });
-    fitScene(el, tl, 2);
+    fitScene(el, tl, OPEN_REST);
     return () => { tl.scrollTrigger?.kill(); tl.kill(); };
   }, { scope: root });
 
@@ -110,90 +113,24 @@ export function AboutOpen() {
   );
 }
 
-/* ------------------------------------------------------------------ 2. what I do, then the figures */
+/* ------------------------------------------------------------------ 2. the belief and the figures */
 
-const HREF: Record<string, string> = {
-  'Systems & apps': '/services/custom-software',
-  'AI & prompt engineering': '/services/ai-automation',
-  Design: '/services/branding-and-social-media',
-  Photography: '/work/photography',
-};
-
-/**
- * What I do, one discipline at a time on the held green screen: each photograph fills in from the top over the last
- * one while its words rise beside it. Then, scrolling on normally on the same green, the belief and the figures.
- */
-export function AboutDisciplines() {
+/** The belief beside the figures, on the same green the opening ends on; each rises in as it comes into view. */
+export function AboutBelief() {
   const root = useRef<HTMLElement>(null);
-  const { disciplines, intro } = aboutPage;
-  const n = disciplines.length;
+  const { intro } = aboutPage;
 
   useGSAP(() => {
-    const el = root.current!;
-    if (prefersReducedMotion()) { el.classList.add('is-still'); return; }
-    const q = gsap.utils.selector(el);
-    const pin = q('.v2-adc__pin')[0] as HTMLElement;
-    const texts = q('.v2-adc__text') as HTMLElement[];
-    const pics = q('.v2-adc__pic') as HTMLElement[];
-    const ticks = q('.v2-adc__ticks i') as HTMLElement[];
-    gsap.set(q('.v2-adc__head > *'), { autoAlpha: 0, y: 40 });
-    gsap.set(texts, { autoAlpha: 0, y: 60 });
-    gsap.set(pics, { clipPath: 'inset(0% 0% 100% 0% round 24px)' });
-    const tl = gsap.timeline({ defaults: { ease: 'none' }, scrollTrigger: { trigger: pin, start: 'top top', end: 'bottom bottom', scrub: PACE.scrub, invalidateOnRefresh: true } });
-    tl.set(q('.v2-adc__stick'), { backgroundColor: '#0A2E20' })
-      .to(q('.v2-adc__head > *'), { autoAlpha: 1, y: 0, duration: .8, stagger: .15, ease: 'power3.out' });
-    pics.forEach((p, i) => {
-      const at = 1 + i * 2.2;
-      if (i > 0) tl.to(texts[i - 1], { autoAlpha: 0, y: -50, duration: .6, ease: 'power2.in' }, at - .2);
-      tl.to(p, { clipPath: 'inset(0% 0% 0% 0% round 24px)', duration: 1.1, ease: 'power2.out' }, at)
-        .fromTo(p.querySelector('img'), { scale: 1.25 }, { scale: 1, duration: 2, ease: 'power2.out' }, at)
-        .to(texts[i], { autoAlpha: 1, y: 0, duration: .8, ease: 'power3.out' }, at + .3)
-        .to(ticks[i], { '--on': 1, duration: .6 }, at);
-    });
-    tl.to({}, { duration: 1.2 });
-    (q('.v2-adc__rise') as HTMLElement[]).forEach((item) => {
+    if (prefersReducedMotion()) return;
+    (gsap.utils.toArray<HTMLElement>('.v2-adc__rise', root.current)).forEach((item) => {
       gsap.fromTo(item, { autoAlpha: 0, y: 40 }, { autoAlpha: 1, y: 0, duration: 1, ease: 'power3.out', scrollTrigger: { trigger: item, start: 'top 88%' } });
     });
-    fitScene(pin, tl, 1);
-    return () => { tl.scrollTrigger?.kill(); tl.kill(); };
   }, { scope: root });
 
   const stats = useStats();
   return (
-    <section ref={root} className="v2-adc v2-dark" id="services" aria-label="What I do">
-      <div className="v2-adc__pin" style={{ '--n': n } as React.CSSProperties}>
-        <div className="v2-adc__stick">
-          <div className="v2-adc__grid">
-            <div className="v2-adc__copy">
-              <div className="v2-adc__head">
-                <p className="v2-adc__kicker">What I do</p>
-                <h2 className="v2-adc__h">{tc('Five disciplines,')} <em>{tc('one way of working.', { start: false })}</em></h2>
-              </div>
-              <div className="v2-adc__texts">
-                {disciplines.map((d, i) => (
-                  <div key={d.title} className="v2-adc__text">
-                    <p className="v2-adc__n">{pad(i + 1)} / {pad(n)}</p>
-                    <h3 className="v2-adc__t">{tc(d.title)}</h3>
-                    <p className="v2-adc__p">{d.text}</p>
-                    {HREF[d.title] && (
-                      <Link className="v2-more" href={HREF[d.title]}>{d.title === 'Photography' ? 'See the photographs' : 'How it works'} <ArrowUR /></Link>
-                    )}
-                  </div>
-                ))}
-              </div>
-              <div className="v2-adc__ticks" aria-hidden="true">{disciplines.map((d) => <i key={d.title} />)}</div>
-            </div>
-            <div className="v2-adc__pics">
-              {disciplines.map((d) => d.image && (
-                <figure key={d.title} className="v2-adc__pic"><img src={d.image} alt={d.title} loading="lazy" /></figure>
-              ))}
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* the belief and the figures, on the same green */}
-      <div className="v2-adc__body" id="numbers">
+    <section ref={root} className="v2-adc v2-dark" id="numbers" aria-label="What I believe">
+      <div className="v2-adc__body">
         <div className="v2-adc__cols">
           <p className="v2-adc__lead v2-adc__rise">
             {split(intro[1], ['technical precision with emotional depth', 'resonate with the people they serve', 'long-term growth']).map((p, i) => (p.hl ? <b key={i}>{p.t}</b> : <span key={i}>{p.t}</span>))}
@@ -226,9 +163,9 @@ function useStats() {
 
 /**
  * The eight things built and shipped, as cards on one held green screen that slide sideways as you scroll, each
- * with its own moving line. Then the same screen turns cream and the brands arrive: the headline settles and the logos fly into a grid.
+ * with its own moving line. The products scene follows on the same green.
  */
-export function AboutHighlights({ children }: { children?: React.ReactNode }) {
+export function AboutHighlights() {
   const root = useRef<HTMLElement>(null);
   const { highlights } = aboutPage;
 
@@ -237,21 +174,9 @@ export function AboutHighlights({ children }: { children?: React.ReactNode }) {
     if (prefersReducedMotion()) { el.classList.add('is-still'); return; }
     const q = gsap.utils.selector(el);
     const track = q('.v2-ahl__track')[0] as HTMLElement;
-    const tiles = q('.v2-bs__grid li') as HTMLElement[];
     const dist = () => Math.max(0, track.scrollWidth - window.innerWidth);
-    gsap.set(q('.v2-ahl__brands'), { autoAlpha: 0 });
     const tl = gsap.timeline({ defaults: { ease: 'none' }, scrollTrigger: { trigger: el, start: 'top top', end: 'bottom bottom', scrub: PACE.scrub, invalidateOnRefresh: true } });
     tl.fromTo(track, { x: 0 }, { x: () => -dist(), duration: 7 })
-      .to({}, { duration: .5 })
-      // the same screen turns cream and becomes the brands
-      .to(q('.v2-ahl__track, .v2-ahl__head'), { autoAlpha: 0, y: -40, duration: 1, ease: 'power2.in' })
-      .to(q('.v2-ahl__stick'), { backgroundColor: '#F4F1E6', duration: 1.2, ease: 'power1.inOut' }, '<.3')
-      .set(q('.v2-ahl__brands'), { autoAlpha: 1 }, '<.5')
-      .fromTo(q('.v2-bs__title'), { autoAlpha: 0, y: '18vh', scale: 1.3 }, { autoAlpha: 1, y: 0, scale: 1, duration: 1.8, ease: 'power2.inOut' }, '<')
-      .fromTo(tiles, {
-        autoAlpha: 0, scale: .5,
-        x: (i) => ((i % 7) - 3) * 40, y: (i) => (i < 7 ? -1 : 1) * 90 + ((i * 37) % 60) - 30, rotate: (i) => ((i * 53) % 24) - 12,
-      }, { autoAlpha: 1, scale: 1, x: 0, y: 0, rotate: 0, duration: 2, stagger: { each: .1, from: 'random' }, ease: 'power3.out' }, '<.9')
       .to({}, { duration: .8 });
     fitScene(el, tl, 1);
     return () => { tl.scrollTrigger?.kill(); tl.kill(); };
@@ -274,7 +199,6 @@ export function AboutHighlights({ children }: { children?: React.ReactNode }) {
             </li>
           ))}
         </ol>
-        {children && <div className="v2-ahl__brands">{children}</div>}
       </div>
     </section>
   );

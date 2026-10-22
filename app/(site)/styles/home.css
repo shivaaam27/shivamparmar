@@ -27,16 +27,16 @@
   transition: color .35s var(--ease);
 }
 .v2-tabs__b sup { font-size: .65em; line-height: 1; opacity: .7; top: 0; font-variant-numeric: tabular-nums; }
-.v2-tabs__b:hover { color: var(--forest); }
+.v2-tabs__b:hover { color: var(--forest-ink); }
 .v2-tabs__b[aria-pressed="true"] { color: var(--lime); }
 .v2-tabs__b:disabled { opacity: .4; cursor: default; }
 .v2-tabs--soft { background: transparent; padding-inline: 0; }
 .v2-tabs--soft .v2-tabs__mark { background: var(--lime); }
-.v2-tabs--soft .v2-tabs__b[aria-pressed="true"] { color: var(--forest); }
+.v2-tabs--soft .v2-tabs__b[aria-pressed="true"] { color: var(--forest-ink); }
 .v2-dark .v2-tabs { background: rgba(244, 241, 230, .08); }
 .v2-dark .v2-tabs__b { color: rgba(244, 241, 230, .7); }
 .v2-dark .v2-tabs__mark { background: var(--lime); }
-.v2-dark .v2-tabs__b[aria-pressed="true"] { color: var(--forest); }
+.v2-dark .v2-tabs__b[aria-pressed="true"] { color: var(--forest-ink); }
 
 /* ---------- work ---------- */
 
@@ -66,7 +66,7 @@
 .v2-contact__loop { position: absolute; right: 3%; top: 4%; width: min(36%, 440px); opacity: .9; }
 .v2-contact__leaf { position: absolute; right: -4%; bottom: -12%; width: clamp(8rem, 20vw, 18rem); color: var(--lime-2); --vein: rgba(10, 46, 32, .18); }
 .v2-contact__petal { position: absolute; right: 22%; bottom: 14%; width: clamp(2.6rem, 4vw, 4rem); color: var(--sun); animation-duration: 16s; }
-.v2-contact__spark { position: absolute; right: 8%; top: 12%; width: clamp(1.6rem, 2.6vw, 2.4rem); color: var(--forest); animation: v2-twinkle 3.2s var(--ease-io) infinite; }
+.v2-contact__spark { position: absolute; right: 8%; top: 12%; width: clamp(1.6rem, 2.6vw, 2.4rem); color: var(--forest-ink); animation: v2-twinkle 3.2s var(--ease-io) infinite; }
 @media (max-width: 720px) {
   .v2-contact__loop { width: 80%; top: auto; bottom: 26%; opacity: .3; }
   .v2-contact__petal { right: 10%; bottom: 4%; }
@@ -171,10 +171,9 @@
 .v2-show.is-still .v2-show__brands { padding-block: 3rem; }
 
 /* =========================================================
-   Contact and footer, as one ending: the lime card grows into the full screen, stays,
-   and the footer's hills rise up over it
+   Contact: the lime card grows into the full screen and rests a moment, then the footer follows
    ========================================================= */
-.v2-home > .v2-contact { position: relative; z-index: 2; height: 200vh; height: 200svh; padding: 0; background: var(--paper); }
+.v2-home > .v2-contact { position: relative; z-index: 2; height: 130vh; height: 130svh; padding: 0; background: var(--paper); }
 .v2-contact__stick {
   --g: 1; position: sticky; top: 0; height: 100vh; height: 100svh; overflow: hidden; isolation: isolate;
   background: var(--lime); color: var(--ink);
@@ -187,14 +186,9 @@
 }
 .v2-contact__stick .v2-contact__title { font-size: min(clamp(2.6rem, 7vw, 7rem), 11vh); }
 .v2-contact__stick .v2-contact__loop { top: 14%; right: var(--gutter); }
-.v2-contact__stick .v2-contact__leaf { right: -2%; bottom: -8%; }
-/* the footer slides up over the contact screen (home only) */
-.v2:has(.v2-home) .v2-footer { position: relative; z-index: 3; margin-top: -100vh; margin-top: -100svh; }
-.v2:has(.v2-home) .v2-footer__hills { background: transparent; }
-/* the footer is one full screen tall here, so it covers the contact screen exactly as the page ends */
-.v2:has(.v2-home) .v2-footer { min-height: 100vh; min-height: 100svh; display: flex; flex-direction: column; }
-.v2:has(.v2-home) .v2-footer__body { flex: 1; display: flex; flex-direction: column; }
-.v2:has(.v2-home) .v2-footer__bar { margin-top: auto; }
+.v2-contact__stick .v2-contact__leaf { right: -2%; bottom: 3%; }
+/* the footer follows the lime screen, its hills on lime */
+.v2:has(.v2-home) .v2-footer__hills { background: var(--lime); }
 
 /* =========================================================
    Selected work (components/site/WorkScene.tsx), as Apple opens a feature: on the same deep green as About,
@@ -220,7 +214,7 @@
 .v2-wa__body { max-width: calc(66rem + 2 * var(--gutter)); margin: 0 auto; padding: clamp(3rem, 8vh, 5rem) var(--gutter) calc(var(--section) * 1.1); }
 .v2-wa__lead {
   max-width: 50rem; margin: 0 auto; text-align: center;
-  font: 500 clamp(1.25rem, 2vw, 1.75rem)/1.45 var(--body); letter-spacing: -.02em; color: rgba(17, 21, 17, .58); text-wrap: pretty;
+  font: 400 var(--fs-lead)/1.5 var(--body); letter-spacing: -.012em; color: rgba(17, 21, 17, .58); text-wrap: pretty;
 }
 .v2-wa__lead b { font-weight: 600; color: var(--ink); }
 .v2-wa__cols { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 2.4fr); gap: clamp(2rem, 8vw, 8rem); margin-top: clamp(4rem, 10vh, 6.5rem); }

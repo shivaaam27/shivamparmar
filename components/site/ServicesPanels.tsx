@@ -7,19 +7,17 @@ import { tc } from '@/lib/title-case';
 import { LOOP, THIN } from './Hero';
 import { ArrowUR } from './Art';
 
-export type Panel = { slug: string; href: string; title: string; short: string; offer: string[]; cover?: string; screen?: boolean };
+export type Panel = { slug: string; href: string; title: string; short: string };
 const pad = (n: number) => String(n).padStart(2, '0');
 
 /**
- * The services page (docs/SITE.md, "Services"): the title on the deep green with the loop line, then the services
- * as tall panels side by side, each over a picture of work it made. One is open at a time: pointing at, tapping or
- * tabbing to a panel opens it (what it is, what you get, a link to read more) while the others narrow to their number
- * and name. On phones the panels stack and open one at a time.
+ * The services (docs/SITE.md, "Services"), on the About page and the Kiswahili services page: the title on the deep
+ * green with the loop line, then each service in plain words (its name, what it is, a link to read more) and where we work.
  */
-export default function ServicesPanels({ title, lead, label, readMore, panels, areas }: {
-  title: React.ReactNode; lead: string; label: string; readMore: string; panels: Panel[]; areas: string;
+export default function ServicesPanels({ title, lead, label, readMore, panels, areas, level: H = 'h1' }: {
+  title: React.ReactNode; lead: string; label: string; readMore: string; panels: Panel[]; areas: string; level?: 'h1' | 'h2';
 }) {
-  const [open, setOpen] = useState(0);
+  const Sub = H === 'h1' ? 'h2' : 'h3';
   const [drawn, setDrawn] = useState(false);
   useEffect(() => { const t = setTimeout(() => setDrawn(true), 300); return () => clearTimeout(t); }, []);
 
@@ -32,33 +30,22 @@ export default function ServicesPanels({ title, lead, label, readMore, panels, a
         </svg>
         <div className="v2-so__head">
           <p className="v2-so__k">{label}</p>
-          <h1 id="services-title" className="v2-so__title">{title}</h1>
+          <H id="services-title" className="v2-so__title">{title}</H>
           <p className="v2-so__lead">{lead}</p>
         </div>
       </section>
 
       <section className="v2-sp" aria-label={label}>
-        <ul className="v2-sp__row">
-          {panels.map((p, i) => {
-            const on = i === open;
-            return (
-              <li key={p.slug} className={`v2-sp__panel${on ? ' is-open' : ''}`} onMouseEnter={() => setOpen(i)} onFocusCapture={() => setOpen(i)}>
-                {p.cover && <img className={`v2-sp__img${p.screen ? ' is-screen' : ''}`} src={p.cover} alt="" loading={i < 2 ? 'eager' : 'lazy'} />}
-                <span className="v2-sp__shade" aria-hidden="true" />
-                <button type="button" className="v2-sp__tab" onClick={() => setOpen(i)} aria-expanded={on} aria-controls={`svc-${p.slug}`}>
-                  <span className="v2-sp__n">{pad(i + 1)}</span>
-                  <span className="v2-sp__name">{tc(p.title)}</span>
-                </button>
-                <div id={`svc-${p.slug}`} className="v2-sp__body" hidden={!on}>
-                  <h2 className="v2-sp__title">{tc(p.title)}</h2>
-                  <p className="v2-sp__short">{p.short}</p>
-                  <ul className="v2-sp__offer">{p.offer.slice(0, 4).map((o) => <li key={o}>{o}</li>)}</ul>
-                  <Link className="v2-btn v2-btn--lime" href={p.href} onClick={() => track(`Service · ${p.title}`)}>{readMore}<span className="v2-btn__dot"><ArrowUR /></span></Link>
-                </div>
-              </li>
-            );
-          })}
-        </ul>
+        <ol className="v2-sp__list">
+          {panels.map((p, i) => (
+            <li key={p.slug} className="v2-sp__item">
+              <span className="v2-sp__n">{pad(i + 1)}</span>
+              <Sub className="v2-sp__title">{tc(p.title)}</Sub>
+              <p className="v2-sp__short">{p.short}</p>
+              <Link className="v2-more" href={p.href} onClick={() => track(`Service · ${p.title}`)}>{readMore} <ArrowUR /></Link>
+            </li>
+          ))}
+        </ol>
         <p className="v2-sp__areas">{areas}</p>
       </section>
     </>

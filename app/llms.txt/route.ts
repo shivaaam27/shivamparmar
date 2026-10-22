@@ -59,7 +59,7 @@ ${site.sameAs.map((u) => `- ${u}`).join('\n')}
 
 ## Pages
 - [Home](${url}/)
-- [Services](${url}/services) · [Huduma (Kiswahili)](${url}/sw/huduma)
+- [Services and products](${url}/about) · [Huduma (Kiswahili)](${url}/sw/huduma)
 - [Questions](${url}/faq) · [Maswali (Kiswahili)](${url}/sw/maswali)
 - [Journal](${url}/journal) · [RSS](${url}/journal/rss.xml)
 - [Work](${url}/work)

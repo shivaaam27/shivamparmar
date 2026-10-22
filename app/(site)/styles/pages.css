@@ -12,6 +12,12 @@
   border-radius: 0 0 calc(var(--r-xl) * 1.4) calc(var(--r-xl) * 1.4);
 }
 .v2-phero__lines { opacity: .95; }
+.v2-phero--lime { background: var(--lime); color: var(--forest-ink); }
+.v2-phero--lime .v2-kicker { color: rgba(10, 46, 32, .7); }
+.v2-phero--lime .v2-kicker__n { color: var(--forest-ink); }
+.v2-phero--lime .v2-phero__title em { color: var(--forest-ink); }
+.v2-phero--lime .v2-phero__extra .v2-pill { background: rgba(10, 46, 32, .08); }
+.v2-phero--lime .v2-phero__lead { color: rgba(17, 21, 17, .8); }
 .v2-phero__in { position: relative; z-index: 1; display: grid; justify-items: start; gap: clamp(.9rem, 1.6vw, 1.2rem); }
 .v2-phero__title { max-width: 18ch; }
 .v2-phero__lead { max-width: 40rem; opacity: .86; }
@@ -132,7 +138,7 @@
 .v2-prose { font: 360 1.2rem/1.72 var(--body); font-variation-settings: "SOFT" 20, "opsz" 18; color: #16362A; letter-spacing: -.003em; }
 .v2 .v2-prose > * + * { margin-top: 1.1em; }
 .v2-prose > p:first-of-type::first-letter { float: left; margin: .08em .1em 0 0; font-size: 3.6em; line-height: .78; font-weight: 400; font-variation-settings: "SOFT" 80, "opsz" 144; color: var(--leaf); }
-.v2 .v2-prose h2 { margin-top: 2.1em; font: 400 clamp(1.6rem, 2.6vw, 2.1rem)/1.15 var(--body); font-variation-settings: "SOFT" 60, "opsz" 72; letter-spacing: -.02em; color: var(--forest); }
+.v2 .v2-prose h2 { margin-top: 2.1em; font: 400 clamp(1.6rem, 2.6vw, 2.1rem)/1.15 var(--body); font-variation-settings: "SOFT" 60, "opsz" 72; letter-spacing: -.02em; color: var(--forest-ink); }
 .v2 .v2-prose h3 { margin-top: 1.7em; font: 600 1.05rem/1.3 var(--body); letter-spacing: -.01em; }
 .v2-prose ul, .v2-prose ol { padding-left: 1.3em; display: grid; gap: .5em; }
 .v2-prose ul { list-style: none; padding-left: 0; }
@@ -143,9 +149,9 @@
 .v2-prose ol li::marker { color: var(--leaf);  }
 .v2-prose a { background: linear-gradient(var(--lime), var(--lime)) 0 92% / 100% .32em no-repeat; transition: background-size .4s var(--ease); }
 .v2-prose a:hover { background-size: 100% 90%; }
-.v2-prose strong { font-weight: 560; color: var(--forest); }
+.v2-prose strong { font-weight: 560; color: var(--forest-ink); }
 .v2-prose em {  }
-.v2-prose blockquote { margin: 1.6em 0; padding: .2em 0 .2em 1.4em; border-left: 2px solid var(--lime-3);  font-size: 1.15em; color: var(--forest); }
+.v2-prose blockquote { margin: 1.6em 0; padding: .2em 0 .2em 1.4em; border-left: 2px solid var(--lime-3);  font-size: 1.15em; color: var(--forest-ink); }
 .v2-prose code { font: .85em ui-monospace, Consolas, monospace; background: var(--paper-2); padding: .1em .35em; border-radius: 6px; }
 .v2-prose hr { border: 0; height: 1px; background: var(--line); margin: 2.4em 0; }
 .v2-post__end { margin-top: 2.6rem; text-align: center; color: var(--leaf); font-size: 1.2rem; }

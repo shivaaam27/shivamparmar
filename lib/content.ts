@@ -26,8 +26,6 @@ export const nav = [
   { label: 'Home', href: '/#top' },
   { label: 'About', href: '/about' },
   { label: 'Work', href: '/work' },
-  { label: 'Products', href: '/products' },
-  { label: 'Services', href: '/services' },
   { label: 'Journal', href: '/journal' },
   { label: 'Contact', href: '/#contact' },
 ];
@@ -135,7 +133,7 @@ export const aboutPage = {
       { title: 'Custom MCP server', text: 'Runs the whole platform from a chat with Claude, packaged with Docker for self-hosting.' },
       { title: 'AI image pipeline', text: 'Makes natural, on-brand product images in batches of 120 to 200, saving about six hours per batch.' },
       { title: 'Shivo Labs apps', text: 'My own apps for iPhone, Android, Windows and Android TV: an AI assistant, file sharing, a camera and a TV home screen.' },
-      { title: '3D supermarket website', text: 'A game-style store you can walk through, aisle by aisle, by day and by night.' },
+      { title: 'V1 Supermarket website', text: 'A game-style store you can walk through, aisle by aisle, by day and by night.' },
       { title: 'Seven research papers', text: 'Co-written in pharmacy and pharmacology, from a lozenge formulation to reviews on heart disease.' },
     ],
   },
