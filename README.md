@@ -2,7 +2,7 @@
 
 Built with **Next.js** (React), **GSAP** for motion, **Three.js** (via React Three Fiber) for 3D,
 **Lenis** for smooth scrolling, and TypeScript. It runs on **Cloudflare Workers** at https://shivolabs.com (Shivo Labs account), built with the OpenNext adapter:
-`npm run cf:deploy` builds it and sends it live. See "Hosting on Cloudflare" below.
+a push to `main` on GitHub builds it and sends it live (Cloudflare Workers Builds). See "Hosting on Cloudflare" below.
 
 ## Run it locally
 
@@ -84,7 +84,7 @@ Add a folder, for example `app/work/page.tsx` for `/work`.
 |---|---|
 | The site | Cloudflare Worker `shivo-labs-site` (`wrangler.jsonc`, `worker.ts`), address https://shivolabs.com |
 | Build | `npm run cf:build` (OpenNext turns the Next.js build into a Worker). `npm run cf:preview` runs it locally on the Workers runtime. |
-| Send live | `npm run cf:deploy` (signed in with `npx wrangler login`; account Shivo Labs) |
+| Send live | Push to `main` on GitHub: Cloudflare Workers Builds (connected 22 Oct 2026) runs `npx opennextjs-cloudflare build && node scripts/static-pages.mjs`, then `npx wrangler deploy && node scripts/indexnow.mjs`. Other branches don't deploy. By hand from a computer instead: `npm run cf:deploy` (signed in with `npx wrangler login`). |
 | Nightly jobs | Cloudflare cron triggers (01:30 and 03:15 UTC) call `/api/cron/umami-backup` and `/api/cron/indexnow`; they need the `CRON_SECRET` secret |
 | Secrets | `DATABASE_URL`, `AUTH_SECRET` (salt for the anonymous visitor ids), `CRON_SECRET`, `INSIGHTS_APP_TOKEN`, `UMAMI_SHARE_ID`: set with `npx wrangler secret put NAME`, never in git |
 | Visitor location | `lib/location.ts` reads Cloudflare's country, region and city |
