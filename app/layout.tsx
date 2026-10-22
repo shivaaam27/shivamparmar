@@ -5,6 +5,7 @@ import { personJsonLd, siteUrl } from '@/lib/seo';
 import SmoothScroll from '@/components/SmoothScroll';
 import Analytics from '@/components/Analytics';
 import ImageGuard from '@/components/ImageGuard';
+import VersionSwitch from '@/components/VersionSwitch';
 import './globals.css';
 
 // brand type: Sora for display, headings and the logo; Hanken Grotesk for body text and every small label
@@ -55,6 +56,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <div className="grain" aria-hidden="true" />
         <Analytics />
         <ImageGuard />
+        {/* V1 / V2 while both are compared (docs/V2-PLAN.md) */}
+        <VersionSwitch />
       </body>
     </html>
   );

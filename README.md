@@ -33,6 +33,12 @@ app/work/[slug]/      one page per project that has images
 lib/motion.ts         shared GSAP setup and the scramble helper
 ```
 
+## Version 2 (green redesign, being compared)
+
+A second look for the whole site lives at `/v2` (`app/v2`, `components/v2`, `app/v2/styles`), with a V1 / V2 switch
+in the corner of every page. Same words and images, new design. How it is built, and how to make it the site and
+delete V1 later: [docs/V2-PLAN.md](docs/V2-PLAN.md).
+
 ## The system
 
 | Token   | Value                                        | From the reference                              |
