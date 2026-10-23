@@ -10,7 +10,6 @@ import './styles/pages.css';
 import './styles/about.css';
 import './styles/work.css';
 import './styles/film.css';
-import './styles/products.css';
 import './styles/services.css';
 import './styles/journal.css';
 import './styles/contact.css';

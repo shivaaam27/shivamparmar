@@ -52,7 +52,6 @@
 /* each logo fits whole inside its tile, never cut */
 
 /* ---------- contact (the poster moment) ---------- */
-.v2-contact { padding-top: calc(var(--section) * .35); padding-bottom: calc(var(--section) * .5); }
 .v2-contact__card { display: grid; justify-items: start; gap: clamp(1.1rem, 2.2vw, 1.8rem); padding: clamp(1.6rem, 5.5vw, 5rem); }
 .v2-contact__title { position: relative; z-index: 1; font-size: clamp(2.9rem, 8vw, 7.8rem); }
 .v2-contact__mail {
@@ -71,55 +70,6 @@
   .v2-contact__loop { width: 80%; top: auto; bottom: 26%; opacity: .3; }
   .v2-contact__petal { right: 10%; bottom: 4%; }
   .v2-contact__row { justify-self: stretch; }
-  .v2-contact__row .v2-btn { width: 100%; justify-content: space-between; }
-}
-
-/* =========================================================
-   Hub & Products film (components/site/Showcase.tsx): deep green panel, moving lines,
-   The title meets in the middle, the logo builds, the products roll by.
-   ========================================================= */
-.v2-home > .v2-show { position: relative; z-index: 2; background: var(--paper); height: 380vh; }
-.v2-show__stick { position: sticky; top: 0; height: 100vh; height: 100svh; }
-/* --g goes 0 → 1 as the scene arrives: a rounded card grows into the full screen */
-.v2-show__panel { --g: 1; height: 100%; clip-path: inset(calc((1 - var(--g)) * 7%) calc((1 - var(--g)) * 4%) round calc((1 - var(--g)) * 40px + 0px)); }
-.v2-show__panel { position: relative; overflow: hidden; isolation: isolate; }
-.v2-show__lines { z-index: -2; opacity: .9; }
-/* one screen: the film fills the top, the brands sit along the bottom */
-.v2-show__panel { display: grid; grid-template-columns: minmax(0, 1fr); place-items: center; }
-.v2-show__panel > .v2-show__in, .v2-show__panel > .v2-show__brands { grid-area: 1 / 1; }
-.v2-show__brands { min-width: 0; overflow: hidden; }
-.v2-show__in {
-  position: relative; width: 100%; max-width: calc(var(--max) + 2 * var(--gutter)); margin-inline: auto;
-  padding: clamp(4.5rem, 10vh, 6.5rem) var(--gutter) clamp(1.5rem, 4vh, 2.5rem);
-  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: clamp(1.8rem, 5vh, 3rem); text-align: center;
-}
-.v2-show__brands { position: relative; width: 100%; padding: 0; }
-.v2-show__title { margin: 0; font: 360 clamp(2.4rem, 5.2vw, 4.8rem)/1.05 var(--body); font-variation-settings: "SOFT" 60, "opsz" 144; letter-spacing: -.03em; will-change: transform; }
-.v2-show__half + .v2-show__half { margin-left: .24em; }
-.v2-show__half { display: inline-block; overflow: hidden; vertical-align: top; padding-block: .08em; }
-.v2-show__half--r > span {  color: var(--lime); }
-.v2-show__half > span { display: inline-block; will-change: transform; }
-.v2-show__stage { display: grid; justify-items: center; gap: clamp(2rem, 5vh, 3rem); }
-.v2-show__row { display: flex; align-items: center; justify-content: center; column-gap: clamp(1rem, 2vw, 1.6rem); font-size: clamp(1.9rem, 4.2vw, 4rem); will-change: transform; }
-.v2-show__mark { width: 1.75em; height: 1.75em; flex: none; overflow: visible; }
-.v2-show__mark rect { fill: var(--paper); }
-.v2-show__mark rect.is-lit { fill: var(--sage-lit); }
-.v2-show__wm { display: inline-flex; gap: .26em; font: 600 1em/1 var(--logo); letter-spacing: .12em; white-space: nowrap; color: var(--paper); }
-.v2-show__wm > * { display: inline-block; }
-.v2-show__wm > span { font-weight: 300; color: #A5A9A6; }
-.v2-show__slot {
-  display: grid; justify-items: start; align-items: center; padding-left: clamp(1rem, 2vw, 1.6rem);
-  border-left: 1px solid var(--line); min-height: 1.1em;
-  font: 600 .52em/1 var(--logo); letter-spacing: .32em; color: var(--lime); white-space: nowrap;
-}
-.v2-show__name { grid-area: 1 / 1; display: inline-flex; overflow: hidden; padding-block: .2em; }
-.v2-show__name i { display: inline-block; font-style: normal; will-change: transform; }
-.v2-show__slot:hover { opacity: .75; }
-@media (max-width: 720px) {
-  .v2-show__row { flex-wrap: wrap; row-gap: .8rem; font-size: clamp(1.5rem, 7.4vw, 2.2rem); }
-  .v2-show__half { display: block; }
-  .v2-show__half + .v2-show__half { margin-left: 0; }
-  .v2-show__slot { flex-basis: 100%; justify-items: center; padding-left: 0; border-left: 0; font-size: .62em; letter-spacing: .26em; }
 }
 
 /* ---------- the picker wheel (components/site/Wheel.tsx) ---------- */
@@ -162,126 +112,105 @@
   .v2-wheel__list button { font-size: 1rem; }
 }
 
-/* the brands on their own (About page): a centred headline over the gliding logos */
-
-/* reduced motion: the film and the brands one after the other, no pinning */
-.v2-home > .v2-show.is-still { height: auto; }
-.v2-show.is-still .v2-show__stick { position: relative; height: auto; }
-.v2-show.is-still .v2-show__panel { display: block; }
-.v2-show.is-still .v2-show__brands { padding-block: 3rem; }
-
 /* =========================================================
-   Contact: the lime card grows into the full screen and rests a moment, then the footer follows
+   The cream page (components/site/WorkScene.tsx): after About it rises from the bottom as a rounded card with a
+   margin each side, and grows to the full screen over About's last screen, which stays where it is.
+   It holds the wall of work, a line about the work, and the products. Then the lime contact block and the footer.
    ========================================================= */
-.v2-home > .v2-contact { position: relative; z-index: 2; height: 130vh; height: 130svh; padding: 0; background: var(--paper); }
-.v2-contact__stick {
-  --g: 1; position: sticky; top: 0; height: 100vh; height: 100svh; overflow: hidden; isolation: isolate;
-  background: var(--lime); color: var(--ink);
-  clip-path: inset(calc((1 - var(--g)) * 7%) calc((1 - var(--g)) * 4%) round calc((1 - var(--g)) * 40px));
+.v2-sheet { --rise: 2; position: relative; z-index: 3; margin-top: calc(var(--rise) * -100vh); margin-top: calc(var(--rise) * -100svh); }
+.v2-sheet__card {
+  --g: 0; background: var(--paper); color: var(--ink);
+  clip-path: inset(0 calc((1 - var(--g)) * 4%) 0 calc((1 - var(--g)) * 4%) round calc((1 - var(--g)) * 40px) calc((1 - var(--g)) * 40px) 0 0);
 }
-.v2-contact__stick > .v2-contact__card {
-  position: relative; height: 100%; max-width: calc(var(--max) + 2 * var(--gutter)); margin-inline: auto;
-  display: grid; align-content: center; justify-items: start; gap: clamp(1.1rem, 2.4vh, 1.8rem);
-  padding: 4rem var(--gutter); background: none; border-radius: 0; overflow: visible;
-}
-.v2-contact__stick .v2-contact__title { font-size: min(clamp(2.6rem, 7vw, 7rem), 11vh); }
-.v2-contact__stick .v2-contact__loop { top: 14%; right: var(--gutter); }
-.v2-contact__stick .v2-contact__leaf { right: -2%; bottom: 3%; }
-/* the footer follows the lime screen, its hills on lime */
-.v2:has(.v2-home) .v2-footer__hills { background: var(--lime); }
 
-/* =========================================================
-   Selected work (components/site/WorkScene.tsx), as Apple opens a feature: on the same deep green as About,
-   a full-screen photograph with the headline, pulling back into a framed picture; then a centred paragraph
-   and two columns of figures and work
-   ========================================================= */
-.v2-home > .v2-wa { position: relative; z-index: 3; margin-top: -125vh; margin-top: -125svh; background: linear-gradient(transparent 125vh, var(--paper) 125vh); color: var(--ink); }
-/* the photograph rises over About's last screen as a layer, the moment About's words have left */
-.v2-wa__pin { position: relative; height: 420vh; }
-.v2-wa__stick { position: sticky; top: 0; height: 100vh; height: 100svh; overflow: hidden; background: transparent; }
-.v2-wa__frame { position: absolute; inset: 0; display: block; overflow: hidden; }
-.v2-wa__frame img { width: 100%; height: 100%; object-fit: cover; object-position: 50% 62%; }
-.v2-wa__shade { position: absolute; inset: 0; background: radial-gradient(ellipse 60% 45% at 50% 50%, rgba(5, 20, 14, .28), rgba(5, 20, 14, 0) 75%), linear-gradient(180deg, rgba(5, 20, 14, .18), transparent 30%, transparent 75%, rgba(5, 20, 14, .2)); }
-.v2-wa__over {
-  position: absolute; inset: 0; z-index: 2; display: grid; place-content: center; justify-items: center; gap: .9rem;
-  padding: 0 var(--gutter); text-align: center; color: #fff; pointer-events: none;
-}
-.v2-wa__head { text-shadow: 0 2px 30px rgba(0, 0, 0, .25); }
-.v2-wa__head { margin: 0; font: 600 clamp(2.6rem, 7.4vw, 7.4rem)/.98 var(--display); letter-spacing: -.035em; text-transform: uppercase; text-wrap: balance; }
-.v2-wa__head em { font-style: normal; color: var(--lime); }
-.v2-wa__tag { position: absolute; left: 0; right: 0; bottom: 3.5%; z-index: 2; text-align: center; font: 500 .8125rem/1 var(--body); color: rgba(17, 21, 17, .7); }
-
-.v2-wa__body { max-width: calc(66rem + 2 * var(--gutter)); margin: 0 auto; padding: clamp(3rem, 8vh, 5rem) var(--gutter) calc(var(--section) * 1.1); }
-.v2-wa__lead {
-  max-width: 50rem; margin: 0 auto; text-align: center;
-  font: 400 var(--fs-lead)/1.5 var(--body); letter-spacing: -.012em; color: rgba(17, 21, 17, .58); text-wrap: pretty;
-}
-.v2-wa__lead b { font-weight: 600; color: var(--ink); }
-.v2-wa__cols { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 2.4fr); gap: clamp(2rem, 8vw, 8rem); margin-top: clamp(4rem, 10vh, 6.5rem); }
-.v2-wa__stats, .v2-wa__cats { list-style: none; margin: 0; padding: 0; display: grid; align-content: start; }
-.v2-wa__stats li { display: grid; gap: .3rem; padding: 1.6rem 0 2.6rem; border-top: 1px solid rgba(17, 21, 17, .16); }
-.v2-wa__stats span { font-size: .9rem; color: rgba(17, 21, 17, .65); }
-.v2-wa__stats b { font: 600 clamp(3.2rem, 5.4vw, 4.8rem)/.95 var(--display); letter-spacing: -.04em; color: var(--ink); }
-.v2-wa__cats { border-top: 1px solid rgba(17, 21, 17, .16); padding-top: .6rem; }
-.v2-wa__cats a { display: grid; gap: .3rem; padding: 1rem 0 1.15rem; }
-.v2-wa__cats b { display: inline-flex; align-items: center; gap: .5rem; font: 600 clamp(1.1rem, 1.5vw, 1.3rem)/1.25 var(--body); color: var(--ink); letter-spacing: -.015em; }
-.v2-wa__cats b .v2-arw { color: var(--leaf); font-size: .85em; }
-.v2-wa__cats span { font-size: clamp(.95rem, 1.2vw, 1.08rem); line-height: 1.5; color: rgba(17, 21, 17, .65); transition: color .3s; }
-.v2-wa__cats a:hover span { color: var(--ink); }
-.v2-wa__all { display: flex; justify-content: center; margin-top: clamp(2.5rem, 6vh, 4rem); }
-@media (max-width: 760px) {
-  .v2-wa__cols { grid-template-columns: 1fr; gap: 1rem; }
-  .v2-wa__stats { grid-template-columns: 1fr 1fr; gap: 1rem; }
-  .v2-wa__stats li { padding-bottom: 1.4rem; }
-}
-/* the products film follows on the same paper: its deep green panel grows out of it into the full screen */
-.v2-home > .v2-wa + .v2-show { background: var(--paper); }
-/* reduced motion */
-.v2-home > .v2-wa.is-still { margin-top: 0; }
-.v2-wa.is-still .v2-wa__stick { background: var(--paper); }
-.v2-wa.is-still .v2-wa__pin { height: 100svh; }
-.v2-wa.is-still .v2-wa__rise { opacity: 1; }
-
-/* =========================================================
-   Brands on cream, one held screen (components/site/Brands.tsx)
-   ========================================================= */
-.v2-home > .v2-bs { position: relative; z-index: 2; height: 220vh; background: var(--paper); }
-.v2-bs__title { margin: 0; max-width: 18ch; text-align: center; font: 600 clamp(2rem, 4.4vw, 4.2rem)/1 var(--display); letter-spacing: -.025em; text-transform: uppercase; will-change: transform; }
-.v2-bs__title em { font-style: normal; color: var(--leaf); }
-.v2-bs__grid { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: var(--gap); width: min(100%, 76rem); will-change: transform; }
-.v2-bs__grid li {
-  display: grid; place-items: center; aspect-ratio: 16 / 10; padding: .9rem 1.1rem; border-radius: var(--r-lg);
-  background: var(--white); box-shadow: inset 0 0 0 1px var(--line); transition: translate .5s var(--ease), box-shadow .3s;
-}
-.v2-bs__grid li:hover { translate: 0 -4px; box-shadow: inset 0 0 0 1px transparent, 0 18px 30px -22px rgba(10, 46, 32, .5); }
-.v2-bs__grid img { display: block; max-width: 100%; max-height: 2.8rem; width: auto; height: auto; object-fit: contain; }
-@media (max-width: 860px) {
-  .v2-bs__grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
-  .v2-bs__grid li { padding: .6rem .7rem; }
-  .v2-bs__grid img { max-height: 2rem; }
-}
-.v2-home > .v2-bs.is-still { height: auto; }
-
-/* the brands inside the products scene, on the cream the panel turns into */
-.v2-show__brands .v2-bs__in { display: grid; justify-items: center; gap: clamp(2rem, 5vh, 3.4rem); padding: 5rem var(--gutter) 2rem; color: var(--ink); }
-.v2-show__brands .v2-bs__title { color: var(--ink); }
-.v2-show__brands .v2-bs__grid li { box-shadow: inset 0 0 0 1px rgba(10, 46, 32, .13); }
-
-/* the grid the photo pulls back into: three rows, the middle one with the main photo's place in its centre */
+/* the wall: three rows of pictures that fill one screen, the main photograph in the middle */
 .v2-wa__grid {
-  position: absolute; inset: 0; z-index: 1; display: grid; grid-template-rows: 1fr 1.45fr 1fr; gap: var(--gap);
-  padding: calc(clamp(.6rem, 1.2vw, .9rem) * 2 + 3.5rem + .6rem) 0 3.2rem; pointer-events: none;
+  position: relative; height: 100vh; height: 100svh; min-height: 560px; overflow: hidden; display: grid; grid-template-rows: auto 1fr 1.45fr 1fr; gap: var(--gap);
+  padding: clamp(1.6rem, 4.5vh, 3rem) 0 1.4rem;
 }
+/* the title arrives first, at the top of the card; the pictures are below it */
+.v2-wa__head { margin: 0 0 clamp(.3rem, 1.2vh, .8rem); padding-inline: var(--gutter); text-align: center; font: 600 clamp(2.4rem, 6.4vw, 5.6rem)/.95 var(--display); letter-spacing: -.035em; text-transform: uppercase; }
+.v2-wa__head em { font-style: normal; color: var(--leaf); }
 .v2-wa__row { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: var(--gap); margin-inline: -6%; min-height: 0; }
 .v2-wa__row--1 { grid-template-columns: 1fr 2.4fr 1fr; margin-inline: 4%; }
-.v2-wa__tile { display: block; min-height: 0; overflow: hidden; border-radius: 16px; pointer-events: auto; opacity: 0; }
+.v2-wa__tile { display: block; min-height: 0; overflow: hidden; border-radius: 16px; background: var(--paper-2); }
 .v2-wa__tile img { width: 100%; height: 100%; object-fit: cover; transition: scale 1s var(--ease); }
 .v2-wa__tile:hover img { scale: 1.06; }
-.v2-wa__frame { z-index: 2; }
-.v2-wa__over { z-index: 3; }
+.v2-wa__tile--main { border-radius: 20px; }
+.v2-wa__tile--main img { object-position: 50% 62%; }
 @media (max-width: 720px) {
-  .v2-wa__grid { grid-template-rows: 1fr 1.6fr 1fr; }
+  .v2-wa__grid { grid-template-rows: auto 1fr 1.6fr 1fr; }
   .v2-wa__row { grid-template-columns: repeat(5, minmax(0, 1fr)); margin-inline: -40%; }
   .v2-wa__row--1 { grid-template-columns: .5fr 3fr .5fr; margin-inline: -4%; }
 }
-.v2-wa.is-still .v2-wa__tile { opacity: 1; }
+
+.v2-wa__body { display: grid; justify-items: center; gap: clamp(1.6rem, 4vh, 2.4rem); max-width: calc(40rem + 2 * var(--gutter)); margin: 0 auto; padding: clamp(3rem, 8vh, 5rem) var(--gutter) clamp(3.2rem, 9vh, 5.5rem); }
+/* the same narrow column and size as the About description */
+.v2-wa__lead {
+  margin: 0; text-align: center;
+  font: 400 clamp(1.25rem, .7rem + 1.05vw, 1.6rem)/1.5 var(--body); letter-spacing: -.012em; color: rgba(17, 21, 17, .58); text-wrap: pretty;
+}
+.v2-wa__lead b { font-weight: 600; color: var(--ink); }
+
+/* ---------- Shivo Labs products: the logos gliding past in two rows, in opposite directions ---------- */
+.v2-pr { padding: clamp(1rem, 3vh, 2rem) 0 clamp(3.5rem, 8vh, 6rem); overflow: hidden; }
+.v2-pr__head { display: grid; justify-items: center; padding-inline: var(--gutter); margin-bottom: clamp(1.6rem, 4vh, 2.6rem); text-align: center; }
+.v2-pr__title { margin: 0; font: 600 clamp(2rem, 4.4vw, 4.2rem)/1 var(--display); letter-spacing: -.025em; text-transform: uppercase; text-wrap: balance; }
+.v2-pr__title em { font-style: normal; color: var(--leaf); }
+.v2-mq { display: grid; gap: .75rem; }
+.v2-mq__row { overflow: hidden; padding-block: 1px; -webkit-mask-image: linear-gradient(90deg, transparent, #000 10%, #000 90%, transparent); mask-image: linear-gradient(90deg, transparent, #000 10%, #000 90%, transparent); }
+.v2-mq__track { display: flex; width: max-content; margin: 0; padding: 0; list-style: none; animation: v2-mq var(--dur, 46s) linear infinite; }
+.v2-mq__row--back .v2-mq__track { animation-direction: reverse; }
+.v2-mq:hover .v2-mq__track { animation-play-state: paused; }
+/* the spacing is a margin, not a gap, so half the track is exactly one set */
+.v2-mq__track > li { flex: none; margin-right: .75rem; }
+.v2-mq__tile {
+  display: flex; align-items: center; gap: clamp(.9rem, 1.4vw, 1.3rem); height: clamp(5rem, 7vw, 6.5rem); padding: 0 clamp(1.4rem, 2.4vw, 2.2rem);
+  border-radius: 20px; background: var(--white); box-shadow: inset 0 0 0 1px var(--line); white-space: nowrap;
+  transition: box-shadow .35s, translate .5s var(--ease);
+}
+.v2-mq__tile:hover { translate: 0 -3px; box-shadow: inset 0 0 0 1px rgba(10, 46, 32, .24); }
+.v2-mq__tile .v2-logo { font-size: clamp(1.1rem, 1.5vw, 1.4rem); letter-spacing: .12em; }
+.v2-mq__name { padding-left: clamp(.9rem, 1.4vw, 1.3rem); border-left: 1px solid var(--line); font: 700 clamp(.8rem, 1.05vw, 1rem)/1 var(--display); letter-spacing: .26em; text-transform: uppercase; color: var(--leaf); }
+@keyframes v2-mq { to { transform: translateX(-50%); } }
+/* things built and shipped: a deep green tile with its own moving line behind the name */
+.v2-ship__tile {
+  position: relative; display: flex; align-items: flex-end; overflow: hidden; isolation: isolate;
+  width: clamp(15rem, 20vw, 19rem); height: clamp(7.5rem, 10vw, 9.5rem); padding: 1rem 1.2rem; border-radius: 20px;
+  background: linear-gradient(165deg, #2F6E4A, #1E4C33 70%); color: #fff;
+  transition: translate .5s var(--ease), box-shadow .4s;
+}
+.v2-ship__tile:hover { translate: 0 -3px; box-shadow: 0 18px 30px -20px rgba(10, 46, 32, .6); }
+.v2-ship__art { position: absolute; inset: 0; z-index: -1; transition: transform .8s var(--ease); }
+.v2-ship__art::after { content: ""; position: absolute; inset: 0; background: linear-gradient(transparent 35%, rgba(20, 60, 40, .85)); }
+.v2-ship__art .v2-ribbons { position: absolute; }
+.v2-ship__tile:hover .v2-ship__art { transform: scale(1.14) rotate(-1.5deg); }
+.v2-ship__tile:hover .v2-ribbons path { animation-duration: 3s; }
+.v2-ship__t { font: 600 clamp(.95rem, 1.2vw, 1.1rem)/1.15 var(--display); letter-spacing: -.01em; text-transform: uppercase; white-space: normal; text-wrap: balance; }
+.v2-ship .v2-pr__title { max-width: 18ch; margin-inline: auto; }
+.v2-cream { position: relative; z-index: 3; margin-top: clamp(-2.5rem, -4vw, -1.5rem); padding-top: clamp(1.5rem, 4vw, 3rem); background: var(--paper); color: var(--ink); border-radius: clamp(24px, 3vw, 44px) clamp(24px, 3vw, 44px) 0 0; }
+.v2-pr__all { display: flex; justify-content: center; margin-top: clamp(1.8rem, 4vh, 2.8rem); padding-inline: var(--gutter); }
+@media (prefers-reduced-motion: reduce) { .v2-mq__row { overflow-x: auto; } .v2-mq__track { animation: none; } }
+
+/* ---------- contact: a lime block only as tall as what it says ---------- */
+/* the lime card arrives with a margin each side and rounded corners and grows to the full width (components/site/Grow.tsx) */
+.v2-contact { position: relative; z-index: 4; background: var(--paper); }
+.v2-contact__stick {
+  --g: 1; position: relative; overflow: hidden; isolation: isolate; background: var(--lime); color: #111511;
+  clip-path: inset(0 calc((1 - var(--g)) * 4%) 0 calc((1 - var(--g)) * 4%) round calc((1 - var(--g)) * 40px) calc((1 - var(--g)) * 40px) 0 0);
+}
+.v2-contact__card {
+  position: relative; max-width: calc(var(--max) + 2 * var(--gutter)); margin-inline: auto;
+  display: grid; justify-items: start; gap: clamp(1rem, 2.2vh, 1.6rem);
+  padding: clamp(3.2rem, 9vh, 5.5rem) var(--gutter) clamp(2.6rem, 7vh, 4.2rem); background: none; border-radius: 0; overflow: visible;
+}
+.v2-contact__loop { top: 10%; right: var(--gutter); }
+.v2-contact__leaf { right: -2%; bottom: -8%; }
+.v2-contact__row { gap: .6rem 2.4rem; }
+.v2-contact__phone { position: relative; z-index: 1; margin: 0; font: 500 clamp(1.3rem, 3vw, 2.6rem)/1.15 var(--body); letter-spacing: -.03em; }
+/* the footer follows the lime block, its hills on lime */
+.v2:has(.v2-home) .v2-footer__hills { background: var(--lime); }
+
+/* reduced motion: the cream page is just there, under About */
+.v2-sheet.is-still { margin-top: 0; }
+.v2-sheet.is-still .v2-sheet__card { --g: 1; clip-path: none; }

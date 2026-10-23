@@ -43,6 +43,10 @@ export type Category = { slug: string; name: string; cover?: string; subcategori
 
 const soon = (slug: string, tone: Tone): Project => ({ slug, title: 'Coming soon', tone });
 
+/** A piece of software: its own collection, held as a title and a description until it has pictures. */
+const soft = (slug: string, name: string, summary: string): Subcategory =>
+  ({ slug, name, listed: true, projects: [{ slug, title: name, tone: 'ink', summary }] });
+
 /** CocoZuri's chocolate photographs, ordered so no two look-alike pictures sit near each other. */
 const CZ = '/images/cocozuri-social';
 const czPhoto = (slug: string, title: string): WorkImage =>
@@ -110,6 +114,44 @@ export const categories: Category[] = [
           },
         ],
       },
+    ],
+  },
+  {
+    slug: 'software',
+    name: 'Software',
+    // Everything built and shipped, one collection each, with what it is. No pictures yet: on the work page each shows as a
+    // title and its description, and a picture or a recording added to the project turns it into a full project page.
+    subcategories: [
+      soft('task-management-platform', 'Task management platform',
+        'For a group of companies, on the web, Android and iPhone: user portals, live progress updates and admin workflows, from version 1 to 3 in five months.'),
+      soft('ai-document-agent', 'AI document agent',
+        'Reads, renames, tags and files company documents into a linked master register, with a quarantine step and no deletions.'),
+      soft('compliance-alert-engine', 'Compliance alert engine',
+        'Tracks permits, visas, contracts and payments, with tiered reminders and weekly and monthly digests.'),
+      soft('custom-mcp-server', 'Custom MCP server',
+        'Runs the whole platform from a chat with Claude, packaged with Docker for self-hosting.'),
+      soft('ai-image-pipeline', 'AI image pipeline',
+        'Makes natural, on-brand product images in batches of 120 to 200, saving about six hours per batch.'),
+      soft('product-hub', 'Shivo Labs Hub',
+        'All Shivo Labs Apps in One Place. One app that holds every Shivo Labs tool. Updates install automatically. Works on Windows, iPhone and Android.'),
+      soft('product-ai', 'Shivo Labs AI',
+        'AI Assistant for Windows. Ask questions, write and edit documents, and write code. Works with the files on your computer. Works on Windows.'),
+      soft('product-chat', 'Shivo Labs Chat',
+        'Team and Personal Messaging. Message your team, friends and family one to one or in groups, and share photos and files. Works on phone and computer. Works on iPhone, Android and Windows.'),
+      soft('product-cloud', 'Shivo Labs Cloud',
+        'File Storage. Keep your files in one place and open them on your phone or computer. Works on iPhone and Windows.'),
+      soft('product-beam', 'Shivo Labs Beam',
+        'File Transfer over Wi-Fi. Send photos, videos and documents from an iPhone to a Windows computer. Works on iPhone and Windows.'),
+      soft('product-mirror', 'Shivo Labs Mirror',
+        'iPhone Screen on Your Computer. Show your iPhone screen on a Windows computer without a cable, for presentations or screen recording. AI agents can see the screen too, so they can find and fix problems in your app. Works on iPhone and Windows.'),
+      soft('product-tools', 'Shivo Labs iPhone App Signing',
+        'Build and Install iPhone Apps on Windows. Build, install and update your own iPhone apps from a Windows computer over Wi-Fi, and renew them before they expire. No Mac needed. Works on Windows and iPhone.'),
+      soft('product-tv', 'Shivo Labs TV',
+        'Home Screen for Android TV. A clean home screen for your TV without the preinstalled apps you never use. It shows your apps, recent shows and inputs, adds extra smart features, and turns your phone into a smart remote. Works on Android TV and Google TV.'),
+      soft('product-camera', 'Shivo Labs Camera',
+        'Camera App for iPhone. Take photos with film-style colour, using looks we made ourselves. Works on iPhone.'),
+      soft('product-website-insights', 'Shivo Labs Website Insights',
+        'Website Visitor Reports. See how many people visit your website, where they come from and which pages they read. No cookies, and bots are filtered out. Works on Web.'),
     ],
   },
   {

@@ -25,7 +25,7 @@ export function marked(text: string) {
 export function V2Contact({ n = 6 }: { n?: number }) {
   const [phone] = site.phones;
   return (
-    // a lime card that grows into the full screen, rests a moment, then the footer follows
+    // a lime block, only as tall as what it says, then the footer
     <Grow className="v2-contact" id="contact" label={contact.tag}>
       <div className="v2-contact__stick">
         <div className="v2-contact__card" data-reveal>
@@ -37,11 +37,12 @@ export function V2Contact({ n = 6 }: { n?: number }) {
           <a className="v2-contact__mail v2-rise" style={{ '--d': 2 } as React.CSSProperties} href={`mailto:${site.email}`} data-umami-event="Contact · email">
             <span>{site.email}</span><ArrowUR />
           </a>
-          <div className="v2-contact__row v2-rise" style={{ '--d': 3 } as React.CSSProperties}>
-            <a className="v2-btn" href={`https://wa.me/${phone.wa}`} target="_blank" rel="noopener" data-umami-event="Contact · WhatsApp">WhatsApp {phone.label}<span className="v2-btn__dot"><ArrowUR /></span></a>
-            <a className="v2-btn v2-btn--paper" href={`tel:${phone.tel}`} data-umami-event="Contact · call">Call {phone.label}<span className="v2-btn__dot"><ArrowUR /></span></a>
+          {/* one number, written once: it is the call and the WhatsApp */}
+          <p className="v2-contact__phone v2-rise" style={{ '--d': 3 } as React.CSSProperties}>{phone.label}</p>
+          <div className="v2-contact__row v2-rise" style={{ '--d': 4 } as React.CSSProperties}>
+            <a className="v2-btn" href={`tel:${phone.tel}`} data-umami-event="Contact · call">Call<span className="v2-btn__dot"><ArrowUR /></span></a>
+            <a className="v2-btn" href={`https://wa.me/${phone.wa}`} target="_blank" rel="noopener" data-umami-event="Contact · WhatsApp">WhatsApp<span className="v2-btn__dot"><ArrowUR /></span></a>
           </div>
-          <p className="v2-contact__based v2-rise" style={{ '--d': 4 } as React.CSSProperties}>Based in {site.location}. Working with people anywhere.</p>
         </div>
       </div>
     </Grow>

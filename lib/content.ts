@@ -14,7 +14,7 @@ export const site = {
   jobTitle: 'Pharmacist, photographer and systems builder',
   /** Profiles that are also you: they tell search engines these all belong to one person. */
   sameAs: ['https://www.linkedin.com/in/shivaaam', 'https://www.instagram.com/ishivamparmar', 'https://orcid.org/0009-0007-7272-2394'],
-  email: 'info@shivolabs.co.tz',
+  email: 'shivam@shivolabs.com',
   /** Takes calls and WhatsApp. `tel` / `wa` are the same number in international form, without spaces. */
   phones: [
     { label: '+255 795 334 455', tel: '+255795334455', wa: '255795334455' },

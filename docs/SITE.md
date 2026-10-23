@@ -116,6 +116,38 @@ products → the services → contact.
 - The work wall gives each piece of work one row only; a row loops only when it is wider than the screen by a tile,
   otherwise it stays still in the middle, so the same picture is never on screen twice.
 
+## Home, header and links, on Shivam's word (23 Oct 2026)
+
+Taken back from the first (dark) site: the compact description, the header and the plain text links.
+
+- **Links:** every `v2-btn` is now the first site's link: the words in Sora, a right arrow, a fine line that draws in on hover
+  while the arrow moves on. No blocks or fills (base.css).
+- **Header** (Header.tsx, chrome.css): no bar and no "Start a project" button. The logo on the left and the menu lines on the
+  right, fixed, on every page and screen size. Scrolling down, SHIVO LABS folds away and the mark stays. The lines are one per
+  section of the page, the long one is the section you are in. Both turn light or dark by reading the colour of the page under
+  them (a soft halo helps over photographs). The pages are in the green menu that opens as a circle.
+- **About description:** a narrow centred column (40rem) and a larger size; it stays up while the cream page rises over it.
+- **Home after About** (WorkScene.tsx, ProductRows.tsx, home.css): the cream page rises from the bottom as a rounded card with a
+  margin each side and grows to the full screen (`--g`, scrubbed, clip-path), over About's last screen. It holds the wall of work
+  (three rows, Mikumi in the middle, no zoom), the line about the work with "See all work", then **Shivo Labs Products**: the logo
+  with each product's name on tiles gliding past in two rows in opposite directions (the first site's logo rows).
+  Contact is one lime block, only as tall as what it says. The old products film, the figures and work list, the brands grid
+  and the growing contact card are gone from the home page (the brands are still in the data, `lib/content.ts`).
+
+### Round 2 (23 Oct 2026)
+
+- **The cream rise has depth:** it takes `RISE` (2) screens (lib/motion.ts) and climbs at about half the speed of the scroll, while
+  About, still held, sinks back and dims under it. The card opens with the title "My Work", the pictures under it.
+  The line under the wall is the same narrow column and size as the About description.
+- **Contact:** the lime card grows from a rounded card to the full width as it arrives (components/site/Grow.tsx); one number,
+  written once, with Call and WhatsApp; the email is shivam@shivolabs.com everywhere (`site.email`, FAQ, journal posts).
+  Footer: no ORCID (it stays in the schema's `sameAs`), the small print in capitals.
+- **About:** the card scene and the products scene are gone. On cream: Things I've built and shipped (one row, a moving line
+  and the name on each tile, ShippedRow.tsx) and Shivo Labs Products (two rows). Both use Marquee.tsx.
+- **Work > Software** (lib/work.ts `soft()`): every thing built and shipped, and every Shivo Labs product, is a collection with its
+  title and description, shown as a list (WorkBrowser `.v2-notes`) at /work/software. Adding pictures to its project turns it
+  into a normal project page. Not included: the V1 Supermarket website (already under Websites) and the research papers.
+
 ## Journal (22 Oct 2026)
 
 - **Journal** (components/site/JournalIndex.tsx, Article.tsx, app/(site)/styles/journal.css): reading first. The list: the

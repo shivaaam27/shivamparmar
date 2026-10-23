@@ -46,7 +46,7 @@ export default function V2Footer() {
                 <li><a className="v2-link" href={`tel:${phone.tel}`}>Call {phone.label}</a></li>
                 <li><a className="v2-link" href={`https://wa.me/${phone.wa}`} target="_blank" rel="noopener">WhatsApp</a></li>
                 <li><a className="v2-link" href={`mailto:${site.email}`}>Email</a></li>
-                {site.sameAs.map((u) => <li key={u}><a className="v2-link" href={u} target="_blank" rel="noopener">{socialName(u)}</a></li>)}
+                {site.sameAs.filter((u) => !u.includes('orcid')).map((u) => <li key={u}><a className="v2-link" href={u} target="_blank" rel="noopener">{socialName(u)}</a></li>)}
               </ul>
             </div>
           </nav>

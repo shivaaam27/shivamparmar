@@ -129,7 +129,7 @@
 /* ---------- the filters under the wall: centred, held at the top while scrolling (they lift to the front when they
    stick), then every picture ---------- */
 .v2-wf { position: sticky; top: .6rem; z-index: 40; display: flex; justify-content: center; padding: clamp(1rem, 2.5vh, 1.6rem) var(--gutter) 0; pointer-events: none; transition: top .6s var(--ease); }
-html:has(.v2-header:not(.is-hidden)) .v2-wf { top: calc(clamp(.6rem, 1.2vw, .9rem) * 2 + 3.5rem); }
+.v2-wf { top: calc(clamp(1rem, 2.2vw, 1.75rem) + 44px + .4rem); }
 .v2-wf__in {
   pointer-events: auto; max-width: 100%; display: grid; justify-items: center; gap: .3rem; padding: .35rem; border-radius: calc(var(--r-lg) + .3rem);
   background: rgba(226, 222, 205, .94); -webkit-backdrop-filter: blur(14px); backdrop-filter: blur(14px);

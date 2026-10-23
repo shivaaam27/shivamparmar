@@ -115,7 +115,6 @@
 @media (max-width: 720px) {
   .v2-pcta__loop { width: 70%; top: auto; bottom: 6%; opacity: .3; }
   .v2-pcta__row { justify-self: stretch; }
-  .v2-pcta__row .v2-btn { width: 100%; justify-content: space-between; white-space: normal; height: auto; min-height: 2.9rem; padding-block: .6rem; }
 }
 
 /* ---------- products page ---------- */

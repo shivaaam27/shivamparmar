@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
 import { about, hero, site } from '@/lib/content';
 import { tc } from '@/lib/title-case';
-import { PACE, fitScene, gsap, prefersReducedMotion, useGSAP } from '@/lib/motion';
+import { PACE, RISE, fitScene, gsap, prefersReducedMotion, useGSAP } from '@/lib/motion';
 import HeroLogo from './HeroLogo';
 import ScrollWords from './ScrollWords';
 import { ArrowUR } from './Art';
@@ -21,7 +21,7 @@ export const THIN = 'M-40 760C180 720 330 780 520 740s300-110 470-90 260 110 520
  *  2. scrolling, the page itself turns deep green, the logo and services drift away, and the loop line stays,
  *     glowing lime on the dark;
  *  3. the About headline rises in its place, its words fill in as you keep scrolling, then the link;
- *  4. About and the line leave; the deep green screen hands over to Work without a seam.
+ *  4. a short hold, then the cream page (Work) rises over it, from the bottom, as a rounded card that grows to full screen.
  * With reduced motion it is two plain screens, one after the other.
  */
 export default function V2Hero() {
@@ -48,9 +48,8 @@ export default function V2Hero() {
     const tl = gsap.timeline({
       defaults: { ease: 'none' },
       scrollTrigger: {
-        // the whole story ends one screen early: Work (one screen of plain deep green at first) slides up over
-        // this last screen, so the hand-over shows no seam
-        trigger: el, start: 'top top', end: () => `+=${el.offsetHeight - 2 * window.innerHeight}`, scrub: PACE.scrub, invalidateOnRefresh: true,
+        // the story ends RISE screens early: the cream page (Work) rises over About while it stays held
+        trigger: el, start: 'top top', end: () => `+=${el.offsetHeight - (1 + RISE) * window.innerHeight}`, scrub: PACE.scrub, invalidateOnRefresh: true,
         onUpdate: (st) => {
           // the marker under each key phrase once the reading reaches it
           const filled = gsap.utils.clamp(0, 1, (st.progress - .52) / .36) * words.length;
@@ -72,12 +71,9 @@ export default function V2Hero() {
       .to(q('.v2-scene__pill'), { autoAlpha: 1, scale: 1, rotate: -2, duration: 1, ease: 'back.out(2)' }, 3.4)
       .to(words, { opacity: 1, duration: 4, stagger: { amount: 4 } }, 4.6)
       .to(q('.v2-scene__end'), { autoAlpha: 1, y: 0, duration: 1, ease: 'power2.out' }, 8.8)
-      // a short hold, then About and the line leave, and the screen is plain deep green for Work to take over
-      .to({}, { duration: .9 })
-      .to(q('.v2-scene__about'), { autoAlpha: 0, y: -60, duration: 1.2, ease: 'power2.in' })
-      .to(q('.v2-hloop'), { autoAlpha: 0, duration: 1 }, '<')
-      .to({}, { duration: .05 });
-    fitScene(el, tl, 2);
+      // a short hold to finish reading; then the cream page rises over About as it stands (the next section)
+      .to({}, { duration: .8 });
+    fitScene(el, tl, 1 + RISE);
     return () => { tl.scrollTrigger?.kill(); tl.kill(); };
   }, { scope: root });
 
@@ -127,7 +123,7 @@ export default function V2Hero() {
           </h2>
           <ScrollWords className="v2-scene__body" parts={marked(about.body)} controlled />
           <div className="v2-scene__end">
-            <Link className="v2-btn v2-btn--lime" href={about.link.href}>{about.link.label}<span className="v2-btn__dot"><ArrowUR /></span></Link>
+            <Link className="v2-btn" href={about.link.href}>{about.link.label}<span className="v2-btn__dot"><ArrowUR /></span></Link>
             <p className="v2-scene__note">{about.note}</p>
           </div>
         </div>

@@ -11,7 +11,7 @@ const LINKED = new Set(['systems', 'tools', 'websites']);
  * Collections without work are left out, unless they're `listed` (shown as "Soon").
  */
 export function workData(): Cat[] {
-  return categories.filter(categoryHasWork).map((c) => ({
+  return categories.filter((c) => categoryHasWork(c) || c.subcategories.some((s) => s.listed && s.projects.some((p) => p.summary))).map((c) => ({
     slug: c.slug,
     name: c.name,
     collections: c.subcategories.filter((sub) => sub.listed || sub.projects.some(hasPage)).map((sub) => {
@@ -20,7 +20,7 @@ export function workData(): Cat[] {
         slug: sub.slug,
         name: sub.name,
         page: main ? `/work/${main.slug}` : undefined,
-        summary: main?.summary,
+        summary: main?.summary ?? sub.projects.find((p) => p.summary)?.summary,
         shots: sub.projects.filter(hasPage).flatMap((project) => (project.images ?? []).map((img, i) => {
           const { w, h } = imageSize(img.src);
           return { src: img.src, alt: img.alt, w, h, project: project.title, slug: project.slug, n: i + 1, ...(img.video ? { video: img.video } : {}), ...(img.screen ? { screen: true } : {}), ...(img.compare ? { compare: img.compare } : {}), ...(LINKED.has(c.slug) ? { linked: true } : {}) };

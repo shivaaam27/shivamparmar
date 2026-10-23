@@ -1,10 +1,10 @@
 import type { Metadata } from 'next';
 import { site } from '@/lib/content';
-import { AboutBelief, AboutHighlights, AboutOpen } from '@/components/site/AboutScenes';
-import ProductsScene from '@/components/site/ProductsScene';
+import { AboutBelief, AboutOpen } from '@/components/site/AboutScenes';
+import ShippedRow from '@/components/site/ShippedRow';
+import ProductRows from '@/components/site/ProductRows';
 import { ServicesBlock, ServicesLd } from '@/components/site/Views';
 import { V2Contact } from '@/components/site/Home';
-import { products } from '@/lib/products';
 
 export const metadata: Metadata = {
   title: `About — ${site.fullName}`,
@@ -22,8 +22,11 @@ export default function AboutPage() {
       <ServicesLd />
       <AboutOpen />
       <AboutBelief />
-      <AboutHighlights />
-      <ProductsScene id="products" products={products} />
+      {/* on the cream: what I have built and shipped in one row, and the products in two */}
+      <div className="v2-cream">
+        <ShippedRow />
+        <ProductRows />
+      </div>
       <section id="services" className="v2-aboutp__services" aria-label="Services">
         <ServicesBlock lang="en" level="h2" />
       </section>

@@ -7,40 +7,79 @@ import { useLenis } from 'lenis/react';
 import { nav, site } from '@/lib/content';
 
 import Logo from './Logo';
-import { ArrowUR, Leaf, Loop, LOOPS } from './Art';
+import { Leaf, Loop, LOOPS } from './Art';
 
-/** The pages in the pill bar (Home is the logo); Contact has its own page. */
+/** The pages in the menu; Contact has its own page. */
 const LINKS = nav.map((n) => (n.label === 'Contact' ? { ...n, href: '/contact' } : n));
-const BAR = LINKS.filter((n) => n.label !== 'Home');
+
+/** Is the page dark where (x, y) is? Reads the first coloured background under that point, skipping the header itself. */
+function darkAt(x: number, y: number, header: HTMLElement | null) {
+  for (const el of document.elementsFromPoint(x, y)) {
+    if (header?.contains(el) || el.tagName === 'IMG' || el.tagName === 'VIDEO') continue;
+    const m = getComputedStyle(el).backgroundColor.match(/[\d.]+/g);
+    if (!m || (m.length > 3 && Number(m[3]) < 0.5)) continue;
+    const [r, g, b] = m.slice(0, 3).map(Number);
+    return (0.299 * r + 0.587 * g + 0.114 * b) / 255 < 0.55;
+  }
+  return false;
+}
 
 /**
- * Header: the logo in its own pill on the left, the pages in a pill in the middle, and a lime
- * "Start a project" button. It steps out of the way while you scroll down and comes back when you scroll up.
- * On phones and tablets the pages move into a full-screen green menu that opens from the button as a circle.
+ * Header, as on the first site and the same everywhere: the logo on the left and the menu lines on the right, always
+ * there, never a bar. Scrolling down, the words SHIVO LABS fold away and the logo mark stays. The lines are one per
+ * section of the page and the long one is the section you are in. Both turn light or dark with the page under them.
+ * The pages are in a full-screen green menu that opens from the lines as a circle.
  */
 export default function V2Header() {
   const pathname = usePathname() ?? '';
   const [open, setOpen] = useState(false);
-  const [hidden, setHidden] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const [darkL, setDarkL] = useState(false);
+  const [darkR, setDarkR] = useState(false);
+  const [count, setCount] = useState(3);
+  const [at, setAt] = useState(0);
+  const head = useRef<HTMLElement>(null);
   const btn = useRef<HTMLButtonElement>(null);
   const lenis = useLenis();
 
-  // hide while scrolling down, show again on the way up (and always near the top)
   useEffect(() => {
-    let last = window.scrollY, frame = 0;
+    let frame = 0, until = 0;
+    const sections = () => Array.from(document.querySelectorAll<HTMLElement>('main section'))
+      .filter((el) => !el.parentElement?.closest('section'));
     const update = () => {
       frame = 0;
       const y = window.scrollY;
-      if (Math.abs(y - last) < 6) return;
-      setHidden(y > last && y > 160);
       setScrolled(y > 40);
-      last = y;
+      // the page under the logo and under the menu lines
+      const h = head.current;
+      const bar = h?.querySelector<HTMLElement>('.v2-header__logo')?.getBoundingClientRect();
+      const lines = btn.current?.getBoundingClientRect();
+      if (bar) setDarkL(darkAt(bar.left + 10, bar.top + bar.height / 2, h));
+      if (lines) setDarkR(darkAt(lines.left + lines.width / 2, lines.top + lines.height / 2, h));
+      // one line per section of the page (a page with one section: three lines that follow the scroll)
+      const list = sections();
+      if (list.length >= 2) {
+        setCount(Math.min(list.length, 7));
+        const mid = window.innerHeight * 0.45;
+        let i = 0;
+        list.forEach((el, k) => { if (el.getBoundingClientRect().top <= mid) i = k; });
+        setAt(Math.min(i, 6));
+      } else {
+        setCount(3);
+        const max = document.documentElement.scrollHeight - window.innerHeight;
+        setAt(max > 0 ? Math.min(2, Math.floor((y / max) * 3)) : 0);
+      }
+      // the scenes' colours trail the scroll a moment (scrubbed), so keep looking until they have settled
+      if (performance.now() < until) frame = requestAnimationFrame(update);
     };
-    const onScroll = () => { if (!frame) frame = requestAnimationFrame(update); };
+    const onScroll = () => { until = performance.now() + 1600; if (!frame) frame = requestAnimationFrame(update); };
+    update();
+    // the page may still be settling (pinned scenes set their height on load)
+    const settle = setTimeout(update, 600);
     window.addEventListener('scroll', onScroll, { passive: true });
-    return () => { window.removeEventListener('scroll', onScroll); cancelAnimationFrame(frame); };
-  }, []);
+    window.addEventListener('resize', onScroll);
+    return () => { clearTimeout(settle); window.removeEventListener('scroll', onScroll); window.removeEventListener('resize', onScroll); cancelAnimationFrame(frame); };
+  }, [pathname]);
 
   useEffect(() => {
     document.documentElement.classList.toggle('v2-menu-open', open);
@@ -56,48 +95,21 @@ export default function V2Header() {
   // a new page closes the menu
   useEffect(() => { setOpen(false); }, [pathname]);
 
-  const here = (href: string) => pathname === href || pathname.startsWith(`${href}/`);
-
-  // the marker under the nav: on the hovered link, else on the current page
-  const navRef = useRef<HTMLElement>(null);
-  const [hover, setHover] = useState<string | null>(null);
-  const [mark, setMark] = useState<{ x: number; w: number } | null>(null);
-  const target = hover ?? BAR.find((n) => here(n.href))?.href ?? null;
-  useEffect(() => {
-    const nav = navRef.current;
-    const a = target ? nav?.querySelector<HTMLElement>(`[data-href="${CSS.escape(target)}"]`) : null;
-    setMark(a ? { x: a.offsetLeft, w: a.offsetWidth } : null);
-  }, [target]);
-
   return (
     <>
-      <header className={`v2-header${hidden && !open ? ' is-hidden' : ''}${open ? ' is-open' : ''}${scrolled ? ' is-scrolled' : ''}`}>
-        <div className="v2-header__bar">
-          <Link className="v2-header__logo" href={'/'} aria-label="Shivo Labs — home">
-            <Logo loader />
-          </Link>
+      <header ref={head} className={`v2-header${open ? ' is-open' : ''}${scrolled ? ' is-scrolled' : ''}`}>
+        <Link className="v2-header__logo" href={'/'} aria-label="Shivo Labs — home">
+          <Logo loader tone={darkL || open ? 'dark' : 'light'} />
+        </Link>
 
-          {/* a soft marker glides to the link under the pointer, and rests on the page you are on */}
-          <nav ref={navRef} className="v2-header__nav" aria-label="Main" onPointerLeave={() => setHover(null)}>
-            {mark && <span className="v2-header__mark" style={{ transform: `translateX(${mark.x}px)`, width: mark.w }} aria-hidden="true" />}
-            {BAR.map((n) => (
-              <Link key={n.href} href={n.href} data-href={n.href} className={here(n.href) ? 'is-here' : undefined} aria-current={here(n.href) ? 'page' : undefined}
-                onPointerEnter={() => setHover(n.href)} onFocus={() => setHover(n.href)} onBlur={() => setHover(null)}>
-                {n.label}
-              </Link>
+        <button ref={btn} type="button" className={`v2-header__menu${darkR || open ? ' is-light' : ''}`} aria-expanded={open} aria-controls="v2-menu" onClick={() => setOpen((o) => !o)}>
+          <span className="sr-only">Menu</span>
+          <span className="v2-header__lines" aria-hidden="true" style={{ '--n': count, '--gap': count > 5 ? '4px' : '5px' } as React.CSSProperties}>
+            {Array.from({ length: count }, (_, i) => (
+              <i key={i} className={i === at ? 'is-here' : undefined} style={{ '--i': i } as React.CSSProperties} />
             ))}
-          </nav>
-
-          <div className="v2-header__end">
-            <a className="v2-btn v2-btn--small v2-header__cta" href={'/contact'}>
-              Start a project<span className="v2-btn__dot"><ArrowUR /></span>
-            </a>
-            <button ref={btn} type="button" className="v2-header__menu" aria-expanded={open} aria-controls="v2-menu" onClick={() => setOpen((o) => !o)}>
-              <span className="sr-only">Menu</span>
-              <i aria-hidden="true" /><i aria-hidden="true" />
-            </button>
-          </div>
-        </div>
+          </span>
+        </button>
       </header>
 
       <div id="v2-menu" className={`v2-menu${open ? ' is-open' : ''}`} inert={!open}>

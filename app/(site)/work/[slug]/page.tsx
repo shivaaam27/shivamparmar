@@ -39,6 +39,15 @@ export default async function WorkSlugPage({ params }: Props) {
 
 function CategoryPage({ category }: { category: Category }) {
   const entries = reelEntries(category.slug);
+  // a category of words only has no pictures for the wall: the green band and its list stand alone
+  if (!entries.length) {
+    return (
+      <main id="main" className="v2-page">
+        <V2WorkBrowser cats={workData()} initial={{ c: category.slug, s: null }} />
+        <Cta />
+      </main>
+    );
+  }
   return (
     <main id="main" className="v2-page v2-work-film">
       <V2WorkIndex entries={entries} title={['My', category.name]} lead={`${category.name}, made in Tanzania.`}>

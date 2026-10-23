@@ -32,6 +32,9 @@ export function fitScene(el: HTMLElement, tl: gsap.core.Timeline, rest: number) 
   ScrollTrigger.refresh();
 }
 
+/** How many screens of scrolling the cream page takes to rise over the home page's About scene. */
+export const RISE = 2;
+
 export const prefersReducedMotion = () =>
   typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 

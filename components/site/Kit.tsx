@@ -104,7 +104,7 @@ export function Cta({ lang = 'en' }: { lang?: Lang }) {
             <a className="v2-btn" href={`https://wa.me/${phone.wa}`} target="_blank" rel="noopener" data-umami-event={`Contact · WhatsApp (${lang})`}>
               {t.whatsapp} {phone.label}<span className="v2-btn__dot"><ArrowUR /></span>
             </a>
-            <a className="v2-btn v2-btn--paper" href={`mailto:${site.email}`} data-umami-event={`Contact · Email (${lang})`}>
+            <a className="v2-btn" href={`mailto:${site.email}`} data-umami-event={`Contact · Email (${lang})`}>
               {t.email} {site.email}<span className="v2-btn__dot"><ArrowUR /></span>
             </a>
           </div>

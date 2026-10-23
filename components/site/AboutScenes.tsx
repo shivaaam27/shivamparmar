@@ -7,19 +7,16 @@ import { PACE, fitScene, gsap, prefersReducedMotion, useGSAP } from '@/lib/motio
 import { tc } from '@/lib/title-case';
 import { pagedProjects, visibleCategories } from '@/lib/work';
 import ScrollWords from './ScrollWords';
-import Ribbons from './Ribbons';
 import Count from './Count';
 import { ArrowUR } from './Art';
 import { LOOP, THIN } from './Hero';
 
 /*
  * The About page told as held scenes, as the home page is (docs/SITE.md):
- *   AboutOpen → AboutBelief (the belief and the figures) → AboutHighlights, then the products and the services
+ *   AboutOpen → AboutBelief (the belief and the figures), then the cream rows (built and shipped, products) and the services
  * (app/(site)/about/page.tsx), the contact screen and the footer. Every scene holds the screen while scrolling moves it on,
  * and each ends on the colour the next begins with, so there are no seams.
  */
-
-const pad = (n: number) => String(n).padStart(2, '0');
 
 /** Splits a text so the given phrases can be set apart (bold, or marked). */
 function split(text: string, phrases: string[]) {
@@ -44,7 +41,7 @@ function split(text: string, phrases: string[]) {
  * plain green for the next scene to open over.
  */
 /** Screens after the opening's words leave: one for the held screen itself, a little more of plain green. */
-const OPEN_REST = 1.3;
+const OPEN_REST = 1;
 
 export function AboutOpen() {
   const root = useRef<HTMLElement>(null);
@@ -81,9 +78,7 @@ export function AboutOpen() {
       .to(q('.v2-abo__body'), { autoAlpha: 1, duration: .4 }, 1.5)
       .to(words, { opacity: 1, duration: 3.6, stagger: { amount: 3.6 } }, 1.7)
       .to(q('.v2-abo__end'), { autoAlpha: 1, y: 0, duration: .8 }, 5.4)
-      .to({}, { duration: 1 })
-      .to(q('.v2-abo__title, .v2-abo__body, .v2-abo__end, .v2-hloop'), { autoAlpha: 0, y: '-=50', duration: 1.1, ease: 'power2.in' })
-      .to({}, { duration: .05 });
+      .to({}, { duration: .6 });
     fitScene(el, tl, OPEN_REST);
     return () => { tl.scrollTrigger?.kill(); tl.kill(); };
   }, { scope: root });
@@ -104,7 +99,7 @@ export function AboutOpen() {
           <ScrollWords className="v2-abo__text" controlled
             parts={split(intro[0], ['websites, apps and custom systems', 'AI workflows', 'functional at their core and considered in every detail'])} />
           <div className="v2-abo__end">
-            <Link className="v2-btn v2-btn--lime" href={'/work'}>See the work<span className="v2-btn__dot"><ArrowUR /></span></Link>
+            <Link className="v2-btn" href={'/work'}>See the work<span className="v2-btn__dot"><ArrowUR /></span></Link>
             <a className="v2-more" href={`mailto:${site.email}`} data-umami-event="Contact · About email">Email me <ArrowUR /></a>
           </div>
         </div>
@@ -157,49 +152,4 @@ function useStats() {
     { pre: 'More than', value: Math.floor(photos / 5) * 5, label: 'photographs' },
     { pre: 'Speaks', value: aboutPage.facts.find((f) => f.label === 'Languages')?.value.split(',').length ?? 4, label: 'languages' },
   ];
-}
-
-/* ------------------------------------------------------------------ 3. highlights */
-
-/**
- * The eight things built and shipped, as cards on one held green screen that slide sideways as you scroll, each
- * with its own moving line. The products scene follows on the same green.
- */
-export function AboutHighlights() {
-  const root = useRef<HTMLElement>(null);
-  const { highlights } = aboutPage;
-
-  useGSAP(() => {
-    const el = root.current!;
-    if (prefersReducedMotion()) { el.classList.add('is-still'); return; }
-    const q = gsap.utils.selector(el);
-    const track = q('.v2-ahl__track')[0] as HTMLElement;
-    const dist = () => Math.max(0, track.scrollWidth - window.innerWidth);
-    const tl = gsap.timeline({ defaults: { ease: 'none' }, scrollTrigger: { trigger: el, start: 'top top', end: 'bottom bottom', scrub: PACE.scrub, invalidateOnRefresh: true } });
-    tl.fromTo(track, { x: 0 }, { x: () => -dist(), duration: 7 })
-      .to({}, { duration: .8 });
-    fitScene(el, tl, 1);
-    return () => { tl.scrollTrigger?.kill(); tl.kill(); };
-  }, { scope: root });
-
-  return (
-    <section ref={root} className="v2-ahl v2-dark" id="highlights" aria-label="Highlights">
-      <div className="v2-ahl__stick">
-        <header className="v2-ahl__head">
-          <h2 className="v2-ahl__h">{tc(highlights.title[0])} <em>{tc(highlights.title[1], { start: false })}</em></h2>
-          <p className="v2-ahl__hint">{pad(highlights.items.length)} highlights · keep scrolling</p>
-        </header>
-        <ol className="v2-ahl__track">
-          {highlights.items.map((h, i) => (
-            <li key={h.title} className="v2-ahl__card">
-              <div className="v2-ahl__art"><Ribbons set={`h${i + 1}`} /></div>
-              <span className="v2-ahl__n">{pad(i + 1)}</span>
-              <b className="v2-ahl__t">{tc(h.title)}</b>
-              <p className="v2-ahl__p">{h.text}</p>
-            </li>
-          ))}
-        </ol>
-      </div>
-    </section>
-  );
 }

@@ -124,18 +124,22 @@ export default function V2WorkBrowser({ cats, initial, archive }: { cats: Cat[];
   const wide = items.filter(isWide), rest = items.filter((it) => !isWide(it));
   const hasVideo = Boolean(cat?.collections.some((x) => x.shots.some((p) => p.video)));
   const count = (c: Cat) => c.collections.reduce((n, x) => n + x.shots.length, 0);
+  // a category of words only (software) counts its collections instead
+  const tabCount = (c: Cat) => count(c) || c.collections.length;
+  // collections with a description and no pictures yet, listed under a chosen category
+  const notes = cat ? cat.collections.filter((x) => !x.shots.length && x.summary && (!col || x === col)) : [];
   const title = tc(col?.name ?? cat?.name ?? 'Work');
 
   // the filters: category, then the chosen category's collections and photos or videos
   const filters = (
     <>
       <Tabs label="Category" value={sel.c ?? ALL} onChange={(k) => choose({ c: k === ALL ? null : k, s: null })}
-            items={[{ key: ALL, label: 'All', count: cats.reduce((n, c) => n + count(c), 0) }, ...cats.map((c) => ({ key: c.slug, label: tc(c.name), count: count(c) }))]} />
+            items={[{ key: ALL, label: 'All', count: cats.reduce((n, c) => n + count(c), 0) }, ...cats.map((c) => ({ key: c.slug, label: tc(c.name), count: tabCount(c) }))]} />
           {cat && (cat.collections.length > 1 || hasVideo) && (
             <div className="v2-wbar__sub">
               {cat.collections.length > 1 && (
                 <Tabs soft label={cat.name} value={sel.s ?? ALL} onChange={(k) => choose({ c: cat.slug, s: k === ALL ? null : k, t: sel.t })}
-                  items={[{ key: ALL, label: tc(`All ${cat.name.toLowerCase()}`) }, ...cat.collections.map((x) => ({ key: x.slug, label: tc(x.name), disabled: !x.shots.length }))]} />
+                  items={[{ key: ALL, label: tc(`All ${cat.name.toLowerCase()}`) }, ...cat.collections.map((x) => ({ key: x.slug, label: tc(x.name), disabled: !x.shots.length && !x.summary }))]} />
               )}
               {hasVideo && (
                 <Tabs soft label="Type" value={sel.t ?? ALL} onChange={(k) => choose({ c: cat.slug, s: sel.s, t: isKind(k) ? k : null })}
@@ -170,16 +174,16 @@ export default function V2WorkBrowser({ cats, initial, archive }: { cats: Cat[];
           </nav>
           <h1 className="v2-h1 v2-whero__title v2-rise" style={{ '--d': 1 } as React.CSSProperties}>{title}</h1>
           {col?.summary && <p className="v2-lead v2-whero__lead">{col.summary}</p>}
-          {col?.page && <Link className="v2-btn v2-btn--lime v2-btn--small" href={col.page}>About this project<span className="v2-btn__dot"><ArrowUR /></span></Link>}
+          {col?.page && <Link className="v2-btn v2-btn--small" href={col.page}>About this project<span className="v2-btn__dot"><ArrowUR /></span></Link>}
           {!cat && <p className="v2-lead v2-whero__lead v2-rise" style={{ '--d': 2 } as React.CSSProperties}>Systems, tools, websites, photography and social media, from Dar es Salaam.</p>}
         </div>
         {/* Picker wheels: category, collection, photos or videos */}
         <div className="v2-wheels v2-whero__wheels v2-rise" style={{ '--d': 2 } as React.CSSProperties}>
           <V2Wheel label="Category" value={sel.c ?? ALL} onChange={(k) => choose({ c: k === ALL ? null : k, s: null })}
-            items={[{ key: ALL, label: 'All', count: cats.reduce((n, c) => n + count(c), 0) }, ...cats.map((c) => ({ key: c.slug, label: tc(c.name), count: count(c) }))]} />
+            items={[{ key: ALL, label: 'All', count: cats.reduce((n, c) => n + count(c), 0) }, ...cats.map((c) => ({ key: c.slug, label: tc(c.name), count: tabCount(c) }))]} />
           {cat && cat.collections.length > 1 && (
             <V2Wheel key={cat.slug} label={tc(cat.name)} value={sel.s ?? ALL} onChange={(k) => choose({ c: cat.slug, s: k === ALL ? null : k, t: sel.t })}
-              items={[{ key: ALL, label: 'All', count: count(cat) }, ...cat.collections.map((x) => ({ key: x.slug, label: tc(x.name), count: x.shots.length, disabled: !x.shots.length }))]} />
+              items={[{ key: ALL, label: 'All', count: count(cat) }, ...cat.collections.map((x) => ({ key: x.slug, label: tc(x.name), count: x.shots.length || undefined, disabled: !x.shots.length && !x.summary }))]} />
           )}
           {cat && hasVideo && (
             <V2Wheel key={`${cat.slug}-t`} label="Type" rows={3} value={sel.t ?? ALL} onChange={(k) => choose({ c: cat.slug, s: sel.s, t: isKind(k) ? k : null })}
@@ -241,7 +245,14 @@ export default function V2WorkBrowser({ cats, initial, archive }: { cats: Cat[];
                 )} />
             )}
           </>
-        ) : <p className="v2-lead v2-wgrid__empty">Coming soon.</p>}
+        ) : notes.length ? null : <p className="v2-lead v2-wgrid__empty">Coming soon.</p>}
+        {notes.length > 0 && (
+          <ul className="v2-notes" aria-label={cat ? tc(cat.name) : undefined}>
+            {notes.map((x) => (
+              <li key={x.slug} id={x.slug}><h3>{tc(x.name)}</h3><p>{x.summary}</p></li>
+            ))}
+          </ul>
+        )}
       </div>
 
       {/* on the site root, above the header (inside <main> it would sit under it) and with the site fonts and colours */}

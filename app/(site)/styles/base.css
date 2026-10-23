@@ -122,26 +122,21 @@ html:has(.v2), html:has(.v2) body { background: var(--v2-page, #2B6444); }
 .v2-pill--lime { background: var(--lime); }
 .v2-pill--line { background: transparent; box-shadow: inset 0 0 0 1px currentColor; }
 
-/* buttons: a plain, slightly rounded block with the arrow inline; on hover a second colour rises from the bottom
-   to fill it, and the arrow slips out and back in. No pill, no circle. */
+/* buttons are links, as on the first site: the words, an arrow, and a fine line that draws in on hover while the
+   arrow moves on. No blocks, no fills. The colour is whatever the surrounding text is. */
 .v2-btn {
-  --b-bg: var(--forest); --b-fg: #fff; --b-fill: var(--lime); --b-fill-fg: var(--ink);
-  position: relative; display: inline-flex; align-items: center; gap: .6em; overflow: hidden; isolation: isolate;
-  height: 2.9rem; padding: 0 1.15rem; border-radius: 10px;
-  background: var(--b-bg); color: var(--b-fg);
-  font: 600 .9375rem/1 var(--body); letter-spacing: -.005em; white-space: nowrap;
-  transition: color .45s var(--ease), box-shadow .35s;
+  display: inline-flex; align-items: baseline; gap: .4em; max-width: 100%; padding: 0 0 .14em;
+  border: 0; border-radius: 0; cursor: pointer; text-align: left;
+  font: 400 clamp(1.2rem, .9rem + 1.1vw, 1.6rem)/1.15 var(--display); letter-spacing: -.01em; color: inherit;
+  background: linear-gradient(currentColor, currentColor) 0 100% / 0 1px no-repeat;
+  transition: background-size .6s var(--ease), opacity .3s;
 }
-.v2-btn::before {
-  content: ""; position: absolute; inset: 0; z-index: -1; background: var(--b-fill);
-  transform: translateY(101%); transition: transform .5s var(--ease);
-}
-.v2-btn:hover::before, .v2-btn:focus-visible::before { transform: none; }
-.v2-btn:hover, .v2-btn:focus-visible { color: var(--b-fill-fg); }
-.v2-btn__dot { display: inline-flex; font-size: .95em; }
-.v2-btn--lime { --b-bg: var(--lime); --b-fg: var(--ink); --b-fill: var(--forest); --b-fill-fg: #fff; }
-.v2-btn--paper { --b-bg: #fff; --b-fg: var(--ink); --b-fill: var(--forest); --b-fill-fg: #fff; }
-.v2-btn--small { height: 2.55rem; font-size: .875rem; padding: 0 1rem; border-radius: 9px; }
+.v2-btn:hover, .v2-btn:focus-visible { background-size: 100% 1px; }
+.v2-btn__dot { display: inline-block; transition: transform .5s var(--ease); }
+.v2-btn__dot > * { display: none; }
+.v2-btn__dot::after { content: "\2192"; }
+.v2-btn:hover .v2-btn__dot, .v2-btn:focus-visible .v2-btn__dot { transform: translateX(.25em); }
+.v2-btn--small { font-size: clamp(1.05rem, .85rem + .6vw, 1.25rem); }
 
 /* text links: the words, a fine underline and an arrow; on hover the underline runs out to the right and
    draws back in from the left, and the arrow slips out and back in */

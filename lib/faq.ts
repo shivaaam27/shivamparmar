@@ -17,7 +17,7 @@ export const faq: { en: Qa[]; sw: Qa[] } = {
     { q: 'How can AI help my business?', a: 'Mostly by taking over the tasks that repeat: reports, summaries, data entry, reminders and first drafts of replies. The best start is one task automated end to end, with the hours saved measured, before doing more.' },
     { q: 'Do you work with businesses outside Dar es Salaam?', a: 'Yes. Shivo Labs works with businesses across Tanzania, East Africa and the rest of Africa, in person in Dar es Salaam or online anywhere.' },
     { q: 'Do you set up the domain, hosting and email?', a: 'Yes. Shivo Labs can register your domain (such as .co.tz or .com), host the site and set up business email, or work with what you already have.' },
-    { q: 'How do I start?', a: 'Send a message on WhatsApp, call, or email info@shivolabs.co.tz with a few lines about your business and what you need. The first conversation is free.' },
+    { q: 'How do I start?', a: 'Send a message on WhatsApp, call, or email shivam@shivolabs.com with a few lines about your business and what you need. The first conversation is free.' },
   ],
   sw: [
     { q: 'Shivo Labs inafanya nini?', a: 'Shivo Labs ni kampuni ya suluhisho za kidijitali jijini Dar es Salaam, Tanzania. Inajenga tovuti na programu, mifumo maalum ya biashara, mifumo ya AI na otomatiki, na kutengeneza chapa, picha na maudhui ya mitandao ya kijamii.' },
@@ -29,6 +29,6 @@ export const faq: { en: Qa[]; sw: Qa[] } = {
     { q: 'AI inawezaje kusaidia biashara yangu?', a: 'Hasa kwa kufanya kazi zinazojirudia: ripoti, muhtasari, kuingiza taarifa, vikumbusho na rasimu za kwanza za majibu. Mwanzo bora ni kazi moja kujiendesha yenyewe mwanzo hadi mwisho, na kupima saa zilizookolewa, kabla ya kuongeza nyingine.' },
     { q: 'Mnafanya kazi na biashara nje ya Dar es Salaam?', a: 'Ndiyo. Shivo Labs inafanya kazi na biashara kote Tanzania, Afrika Mashariki na Afrika nzima, ana kwa ana Dar es Salaam au mtandaoni popote.' },
     { q: 'Mnasajili domain, hosting na barua pepe?', a: 'Ndiyo. Shivo Labs inaweza kusajili domain yako (kama .co.tz au .com), kuweka tovuti hewani na kuandaa barua pepe za biashara, au kufanya kazi na ulichonacho tayari.' },
-    { q: 'Ninaanzaje?', a: 'Tuma ujumbe WhatsApp, piga simu, au tuma barua pepe kwa info@shivolabs.co.tz ukieleza kwa mistari michache kuhusu biashara yako na unachohitaji. Mazungumzo ya kwanza ni bure.' },
+    { q: 'Ninaanzaje?', a: 'Tuma ujumbe WhatsApp, piga simu, au tuma barua pepe kwa shivam@shivolabs.com ukieleza kwa mistari michache kuhusu biashara yako na unachohitaji. Mazungumzo ya kwanza ni bure.' },
   ],
 };

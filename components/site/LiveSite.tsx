@@ -30,11 +30,11 @@ export default function LiveSite({ href, label, title, embed }: { href: string; 
   }, [open, close]);
 
   if (!embed) {
-    return <a className="v2-btn v2-btn--lime" href={href} target={href.startsWith('/') ? undefined : '_blank'} rel="noopener" onClick={() => track(`Live site · ${title}`)}>{label}<span className="v2-btn__dot"><ArrowUR /></span></a>;
+    return <a className="v2-btn" href={href} target={href.startsWith('/') ? undefined : '_blank'} rel="noopener" onClick={() => track(`Live site · ${title}`)}>{label}<span className="v2-btn__dot"><ArrowUR /></span></a>;
   }
   return (
     <>
-      <button type="button" className="v2-btn v2-btn--lime" onClick={() => { setOpen(true); track(`Live site · ${title}`); }}>{label}<span className="v2-btn__dot"><ArrowUR /></span></button>
+      <button type="button" className="v2-btn" onClick={() => { setOpen(true); track(`Live site · ${title}`); }}>{label}<span className="v2-btn__dot"><ArrowUR /></span></button>
       {open && createPortal(
         <div className="v2-live" role="dialog" aria-modal="true" aria-label={`${title}, live`} data-lenis-prevent>
           <header className="v2-live__bar">
