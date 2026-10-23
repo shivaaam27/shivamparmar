@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
 import { about, hero, site } from '@/lib/content';
 import { tc } from '@/lib/title-case';
-import { PACE, RISE, ScrollTrigger, fitScene, gsap, prefersReducedMotion, useGSAP } from '@/lib/motion';
+import { PACE, RISE, ScrollTrigger, fitScene, gsap, onTouch, prefersReducedMotion, useGSAP } from '@/lib/motion';
 import HeroLogo from './HeroLogo';
 import ScrollWords from './ScrollWords';
 import { ArrowUR } from './Art';
@@ -65,9 +65,14 @@ export default function V2Hero() {
     });
     // 1 → 2: the logo and services leave, the page turns deep green, the line brightens
     tl.to(q('.v2-hero__stage'), { autoAlpha: 0, scale: .9, y: -50, duration: 2.2, ease: 'power1.in' }, 0)
-      .to(q('.v2-hero__foot'), { autoAlpha: 0, y: 20, duration: 1.2 }, 0)
-      .to(q('.v2-scene__stick'), { backgroundColor: () => deep(), duration: 2.4, ease: 'power1.inOut' }, .6)
-      .to(q('.v2-hloop'), { scale: 1.08, duration: 10 }, 0)
+      .to(q('.v2-hero__foot'), { autoAlpha: 0, y: 20, duration: 1.2 }, 0);
+      // (on a touch screen these two repainted the whole screen every frame of the scroll: the line growing, and the
+      // background turning a shade that on the dark look is almost the same colour; there they are left out)
+    if (!onTouch()) {
+      tl.to(q('.v2-scene__stick'), { backgroundColor: () => deep(), duration: 2.4, ease: 'power1.inOut' }, .6)
+        .to(q('.v2-hloop'), { scale: 1.08, duration: 10 }, 0);
+    }
+    tl
       // 3: About rises in the same place
       .to(q('.v2-scene__about'), { autoAlpha: 1, duration: .4 }, 2.6)
       .to(q('.v2-scene__line'), { autoAlpha: 1, y: 0, duration: 1.4, stagger: .35, ease: 'power2.out' }, 2.7)
@@ -82,7 +87,10 @@ export default function V2Hero() {
       trigger: el, start: () => `bottom ${RISE * 100}%`, end: '+=99999',
       onToggle: (s) => el.classList.toggle('is-covered', s.isActive),
     });
-    return () => { covered.kill(); tl.scrollTrigger?.kill(); tl.kill(); };
+    // the light / dark button: read the deep colour again and redraw where the scroll is (no full refresh of every scene)
+    const retheme = () => { const p = tl.progress(); tl.invalidate().progress(0, true).progress(p); };
+    window.addEventListener('v2-theme', retheme);
+    return () => { window.removeEventListener('v2-theme', retheme); covered.kill(); tl.scrollTrigger?.kill(); tl.kill(); };
   }, { scope: root });
 
   // the line leans a little toward the pointer (eased); not on touch screens or with reduced motion

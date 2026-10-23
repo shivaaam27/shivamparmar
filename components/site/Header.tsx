@@ -5,7 +5,6 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useLenis } from 'lenis/react';
 import { nav, site } from '@/lib/content';
-import { ScrollTrigger } from '@/lib/motion';
 
 import Logo from './Logo';
 import { Leaf, Loop, LOOPS } from './Art';
@@ -118,14 +117,13 @@ export default function V2Header() {
     const next = theme === 'light' ? 'dark' : 'light';
     try { localStorage.setItem('shivo-theme', next); } catch { /* storage off: the choice lasts until the page is closed */ }
     const root = document.documentElement;
-    // the page changes look where it stands (it used to reload, which showed the bare text for a moment and then the intro
-    // again): the colours fade over a third of a second, the bars take the new colour, and the scenes read their colours again
-    root.classList.add('v2-theming');
+    // the page changes look where it stands, at once (it used to reload, which showed the bare text and then the intro
+    // again; a fade on every element was tried and made the switch lag): the bars take the new colour, and the scenes read
+    // their colours again a frame later
     root.dataset.theme = next;
     setTheme(next);
     document.querySelectorAll('meta[name=theme-color]').forEach((m) => m.setAttribute('content', next === 'light' ? '#F5F5F2' : '#141517'));
-    requestAnimationFrame(() => { ScrollTrigger.refresh(); window.dispatchEvent(new Event('resize')); });
-    setTimeout(() => root.classList.remove('v2-theming'), 500);
+    requestAnimationFrame(() => { window.dispatchEvent(new Event('v2-theme')); window.dispatchEvent(new Event('scroll')); });
   };
   const here = (href: string) => { const h = href.split('#')[0]; return h !== '/' && (pathname === h || pathname.startsWith(`${h}/`)); };
 

@@ -953,10 +953,9 @@ html[data-theme="light"] .v2:has(.v3) .v2-header.is-open .v2-header__menu, html[
 /* iPhone, edge to edge (viewport-fit=cover): the full-screen scenes keep their middle clear of the status bar */
 .v2-scene__stick, .v2-wo__stick { padding-top: env(safe-area-inset-top, 0px); }
 
-/* the light / dark button: the colours fade instead of snapping (Header.tsx adds v2-theming for half a second) */
-html.v2-theming .v2, html.v2-theming .v2 *, html.v2-theming .v2 *::before, html.v2-theming .v2 *::after {
-  transition: background-color .35s var(--ease), color .35s var(--ease), border-color .35s var(--ease), box-shadow .35s var(--ease), fill .35s var(--ease), stroke .35s var(--ease) !important;
-}
+/* no blue flash when a link or button is tapped, and no focus ring after a tap or click (the keyboard still shows one) */
+html { -webkit-tap-highlight-color: transparent; }
+.v2 :focus:not(:focus-visible) { outline: none; }
 
 
 /* =========================================================
