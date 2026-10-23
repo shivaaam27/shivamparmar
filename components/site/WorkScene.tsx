@@ -4,6 +4,7 @@ import { Fragment, useRef } from 'react';
 import Link from 'next/link';
 import { PACE, RISE, gsap, prefersReducedMotion, useGSAP } from '@/lib/motion';
 import { ArrowUR } from './Art';
+import { thumbOf } from '@/lib/thumb';
 
 const PHOTO = { src: '/images/mikumi-elephants.jpg', alt: 'Elephants in the grass at Mikumi National Park, photographed by Shivam Parmar', slug: 'mikumi-national-park', title: 'Mikumi National Park' };
 /** The wall of work, row by row (the middle row has the main photo in its centre). */
@@ -71,7 +72,7 @@ export default function V2WorkScene({ children }: { children?: React.ReactNode }
                       <span className="v2-wa__cap" aria-hidden="true">{PHOTO.title}</span>
                     </Link>
                   )}
-                  <Link href={`/work/${t.slug}`} className="v2-wa__tile" tabIndex={-1} aria-hidden="true"><img src={t.src} alt="" decoding="async" /><span className="v2-wa__cap">{t.title}</span></Link>
+                  <Link href={`/work/${t.slug}`} className="v2-wa__tile" tabIndex={-1} aria-hidden="true"><img src={thumbOf(t.src, 2000)} alt="" loading="eager" decoding="async" /><span className="v2-wa__cap">{t.title}</span></Link>
                 </Fragment>
               ))}
             </div>

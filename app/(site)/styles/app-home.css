@@ -9,11 +9,11 @@
 html:has(.v3) { --v2-page: #141517; }
 .v2:has(.v3) {
   /* dark (the app's tokens) */
-  --h-bg: #141517; --h-bg2: #17191A; --h-panel: #1B1C1F; --h-soft: #26272B; --h-line: #2A2C2F;
+  --h-bg: #141517; --h-bg2: #151A17; --h-panel: #1B1C1F; --h-soft: #26272B; --h-line: #2A2C2F;
   --h-text: #ECEDE9; --h-muted: #9A9CA1; --h-faint: #6E7075;
   --h-sage: #4F7A5A; --h-glow: #8DB898; --h-hi: #A5D2B0; --h-card: #1A1D1B;
   --h-rim: rgba(255, 255, 255, .14); --h-rim2: rgba(255, 255, 255, .06);
-  --h-halo: rgba(127, 176, 139, .10); --h-halo2: rgba(127, 176, 139, .06);
+  --h-halo: rgba(127, 176, 139, .20); --h-halo2: rgba(127, 176, 139, .12); --h-halo3: rgba(127, 176, 139, .09);
   --h-dots: rgba(236, 237, 233, .12); --h-cell: rgba(236, 237, 233, .16); --h-labs: #A5A9A6;
   --h-footer: #101113; --h-shadow: rgba(0, 0, 0, .7); --h-ink2: rgba(236, 237, 233, .72); --h-ink3: rgba(236, 237, 233, .5);
   --h-spring: cubic-bezier(.32, .72, 0, 1);
@@ -32,11 +32,11 @@ html:has(.v3) { --v2-page: #141517; }
 @media (prefers-color-scheme: light) {
   html:has(.v3) { --v2-page: #F5F5F2; }
   .v2:has(.v3) {
-    --h-bg: #F5F5F2; --h-bg2: #F0F2EE; --h-panel: #FFFFFF; --h-soft: #ECECE8; --h-line: #E0E0DB;
+    --h-bg: #F5F5F2; --h-bg2: #EDF1EE; --h-panel: #FFFFFF; --h-soft: #ECECE8; --h-line: #E0E0DB;
     --h-text: #141517; --h-muted: #6B6E73; --h-faint: #9A9C9F;
     --h-sage: #4F7A5A; --h-glow: #4F7A5A; --h-hi: #3F6B4B; --h-card: #ECF1EC;
     --h-rim: rgba(0, 0, 0, .10); --h-rim2: rgba(0, 0, 0, .06);
-    --h-halo: rgba(79, 122, 90, .10); --h-halo2: rgba(79, 122, 90, .06);
+    --h-halo: rgba(79, 122, 90, .15); --h-halo2: rgba(79, 122, 90, .09); --h-halo3: rgba(79, 122, 90, .07);
     --h-dots: rgba(20, 21, 23, .12); --h-cell: rgba(20, 21, 23, .14); --h-labs: #6B6E73;
     --h-footer: #141517; --h-shadow: rgba(20, 21, 23, .22); --h-ink2: rgba(20, 21, 23, .72); --h-ink3: rgba(20, 21, 23, .55);
     --ink-2: rgba(20, 21, 23, .72); --ink-3: rgba(20, 21, 23, .55);
@@ -51,10 +51,16 @@ html:has(.v3) { --v2-page: #141517; }
 /* the light: one wide, very soft glow centred above the middle, drifting a little, leaning toward the pointer */
 .v2:has(.v3) .v2-scene__stick::before {
   inset: -10%;
-  background: radial-gradient(60% 55% at 50% 38%, var(--h-halo), transparent 72%), radial-gradient(70% 40% at 50% 105%, var(--h-halo2), transparent 70%);
+  background:
+    radial-gradient(60% 55% at 50% 36%, var(--h-halo), transparent 72%),
+    radial-gradient(45% 40% at 12% 18%, var(--h-halo3), transparent 70%),
+    radial-gradient(45% 40% at 90% 85%, var(--h-halo3), transparent 70%),
+    radial-gradient(70% 40% at 50% 105%, var(--h-halo2), transparent 70%);
+  opacity: .8; transition: opacity 1.2s;
   translate: calc(var(--px) * 18px) calc(var(--py) * 14px);
   animation: h-drift 26s ease-in-out infinite alternate;
 }
+.v2:has(.v3) .v2-scene.is-dark .v2-scene__stick::before { opacity: 1; }
 /* a fine dot grid, fading out toward the edges */
 .v2:has(.v3) .v2-scene__stick::after {
   inset: 0; opacity: .6;
@@ -346,3 +352,10 @@ html:has(.v3) { --v2-page: #141517; }
   .v2:has(.v3) .v2-art__side { background: color-mix(in srgb, var(--h-bg) 88%, transparent); border-radius: 0; box-shadow: 0 1px 0 var(--h-line); }
 }
 .v2:has(.v3) .v2-pa__end .v2-post__end { color: var(--h-glow); }
+
+
+/* the big titles (My Work, About, Journal): lighter letters need less tightening, and a clear space between the words */
+.v2:has(.v3) .v2-wa__head, .v2:has(.v3) .v2-wo__title, .v2:has(.v3) .v2-abo__title, .v2:has(.v3) .v2-jo__title, .v2:has(.v3) .v2-pr__title {
+  letter-spacing: -.012em; word-spacing: .16em; font-kerning: normal;
+}
+.v2:has(.v3) .v2-scene__title, .v2:has(.v3) .v2-contact__title, .v2:has(.v3) .v2-so__title { letter-spacing: -.012em; word-spacing: .1em; }
