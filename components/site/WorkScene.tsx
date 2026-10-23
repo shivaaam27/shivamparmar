@@ -5,26 +5,26 @@ import Link from 'next/link';
 import { PACE, RISE, gsap, prefersReducedMotion, useGSAP } from '@/lib/motion';
 import { ArrowUR } from './Art';
 
-const PHOTO = { src: '/images/mikumi-elephants.jpg', alt: 'Elephants in the grass at Mikumi National Park, photographed by Shivam Parmar', slug: 'mikumi-national-park' };
+const PHOTO = { src: '/images/mikumi-elephants.jpg', alt: 'Elephants in the grass at Mikumi National Park, photographed by Shivam Parmar', slug: 'mikumi-national-park', title: 'Mikumi National Park' };
 /** The wall of work, row by row (the middle row has the main photo in its centre). */
-const TILES: { src: string; slug: string }[][] = [
+const TILES: { src: string; slug: string; title: string }[][] = [
   [
-    { src: '/images/work-dashboard-ipad.jpg', slug: 'task-management' },
-    { src: '/images/websites/terragreen-poster.jpg', slug: 'terragreen-website' },
-    { src: '/images/cocozuri-pralines.jpg', slug: 'cocozuri' },
-    { src: '/images/delta-facade.jpg', slug: 'delta-hotel' },
-    { src: '/images/cocozuri-social/strawberry-and-basil-2.jpg', slug: 'cocozuri-social' },
+    { src: '/images/work-dashboard-ipad.jpg', slug: 'task-management', title: 'Task Management' },
+    { src: '/images/websites/terragreen-poster.jpg', slug: 'terragreen-website', title: 'TerraGreen' },
+    { src: '/images/cocozuri-pralines.jpg', slug: 'cocozuri', title: 'CocoZuri' },
+    { src: '/images/delta-facade.jpg', slug: 'delta-hotel', title: 'Delta Hotels' },
+    { src: '/images/cocozuri-social/strawberry-and-basil-2.jpg', slug: 'cocozuri-social', title: 'CocoZuri Social Media' },
   ],
   [
-    { src: '/images/roros-boat-bar.jpg', slug: 'roros' },
-    { src: '/images/sgr-platform.jpg', slug: 'sgr-train' },
+    { src: '/images/roros-boat-bar.jpg', slug: 'roros', title: 'Roro’s' },
+    { src: '/images/sgr-platform.jpg', slug: 'sgr-train', title: 'SGR Train' },
   ],
   [
-    { src: '/images/websites/cocozuri-poster.jpg', slug: 'cocozuri-website' },
-    { src: '/images/dar-kayak.jpg', slug: 'dar-es-salaam' },
-    { src: '/images/morogoro-aerial.jpg', slug: 'morogoro-hotel' },
-    { src: '/images/websites/group-poster.jpg', slug: 'oracle-consultancy-group' },
-    { src: '/images/moshi-fields.jpg', slug: 'moshi' },
+    { src: '/images/websites/cocozuri-poster.jpg', slug: 'cocozuri-website', title: 'CocoZuri Website' },
+    { src: '/images/dar-kayak.jpg', slug: 'dar-es-salaam', title: 'Dar es Salaam' },
+    { src: '/images/morogoro-aerial.jpg', slug: 'morogoro-hotel', title: 'Morogoro Hotel' },
+    { src: '/images/websites/group-poster.jpg', slug: 'oracle-consultancy-group', title: 'Oracle Consultancy Group' },
+    { src: '/images/moshi-fields.jpg', slug: 'moshi', title: 'Moshi' },
   ],
 ];
 
@@ -48,9 +48,10 @@ export default function V2WorkScene({ children }: { children?: React.ReactNode }
     // while it rises, and About, still held, sinks back a little under it.
     const st = { trigger: el, start: () => `top ${RISE * 100}%`, end: 'top top', scrub: PACE.scrub, invalidateOnRefresh: true };
     gsap.fromTo(card, { '--g': 0, y: () => -(RISE - 1) * window.innerHeight }, { '--g': 1, y: 0, ease: 'none', scrollTrigger: st });
-    const tiles = gsap.utils.toArray<HTMLElement>('.v2-wa__tile', el);
-    gsap.fromTo(tiles, { opacity: 0, y: 36, scale: .94 }, { opacity: 1, y: 0, scale: 1, ease: 'power2.out', stagger: { each: .05, from: 'center' }, immediateRender: false,
-      scrollTrigger: { trigger: el, start: () => `top ${RISE * 100 - 40}%`, end: () => `top ${RISE * 40}%`, scrub: PACE.scrub, invalidateOnRefresh: true } });
+    // the rows drift slowly past each other while the wall is on screen (top and bottom one way, the middle the other)
+    const drift = { trigger: el.querySelector('.v2-wa__grid'), start: 'top bottom', end: 'bottom top', scrub: PACE.scrub, invalidateOnRefresh: true };
+    gsap.fromTo(el.querySelectorAll('.v2-wa__row--0, .v2-wa__row--2'), { xPercent: 1.5 }, { xPercent: -1.5, ease: 'none', scrollTrigger: drift });
+    gsap.fromTo(el.querySelector('.v2-wa__row--1'), { xPercent: -1.5 }, { xPercent: 1.5, ease: 'none', scrollTrigger: drift });
     if (about) gsap.fromTo(about, { scale: 1, y: 0, opacity: 1 }, { scale: .9, y: -50, opacity: .25, ease: 'none', immediateRender: false, scrollTrigger: st });
   }, { scope: root });
 
@@ -66,10 +67,11 @@ export default function V2WorkScene({ children }: { children?: React.ReactNode }
                 <Fragment key={t.src}>
                   {r === 1 && i === 1 && (
                     <Link href={`/work/${PHOTO.slug}`} className="v2-wa__tile v2-wa__tile--main" aria-label="Mikumi National Park photographs">
-                      <img src={PHOTO.src} alt={PHOTO.alt} />
+                      <img src={PHOTO.src} alt={PHOTO.alt} decoding="async" />
+                      <span className="v2-wa__cap" aria-hidden="true">{PHOTO.title}</span>
                     </Link>
                   )}
-                  <Link href={`/work/${t.slug}`} className="v2-wa__tile" tabIndex={-1} aria-hidden="true"><img src={t.src} alt="" loading="lazy" /></Link>
+                  <Link href={`/work/${t.slug}`} className="v2-wa__tile" tabIndex={-1} aria-hidden="true"><img src={t.src} alt="" decoding="async" /><span className="v2-wa__cap">{t.title}</span></Link>
                 </Fragment>
               ))}
             </div>
