@@ -268,3 +268,14 @@ html:has(.v3) { --v2-page: #141517; }
 .v2:has(.v3) .v2-pcta__text { color: var(--h-ink2); }
 .v2:has(.v3) .v2-pcta__loop, .v2:has(.v3) .v2-pcta__leaf { display: none; }
 .v2:has(.v3) .v2-pcta .v2-h2 { font-weight: 400; }
+
+
+/* the Work opening: the title and the description on solid graphite (as About), the pictures fade up out of the dark after */
+.v2:has(.v3) .v2-wo__stick { background: var(--h-bg); }
+.v2:has(.v3) .v2-wo__veil { background: var(--h-bg); }
+.v2:has(.v3) .v2-wo .v2-hloop { display: none; }
+.v2:has(.v3) .v2-wo__head { gap: clamp(1.6rem, 5vh, 3rem); }
+.v2:has(.v3) .v2-wo__title { font-size: clamp(3.4rem, 10vw, 9.6rem); line-height: .92; }
+.v2:has(.v3) .v2-wo__lead { max-width: 40rem; font: 400 min(clamp(1.25rem, .7rem + 1.05vw, 1.6rem), 3.8vh)/1.5 var(--body); letter-spacing: -.018em; color: var(--h-ink2); text-wrap: pretty; }
+.v2:has(.v3) .v2-wo__hint { margin-top: -.6rem; }
+.v2:has(.v3) .v2-work-note { background: var(--paper); padding-bottom: clamp(2rem, 5vh, 3.4rem); }

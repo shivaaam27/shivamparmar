@@ -7,6 +7,7 @@ import { track } from '@/lib/track';
 import { tc } from '@/lib/title-case';
 import { ArrowUR } from './Art';
 import { LOOP, THIN } from './Hero';
+import ScrollWords from './ScrollWords';
 import { thumbOf } from '@/lib/thumb';
 
 /** One project on the work page (made on the server from lib/work.ts). */
@@ -85,21 +86,29 @@ export default function V2WorkIndex({ entries, title, lead, children }: { entrie
     const show = (on: boolean) => { if (front.current !== on) { front.current = on; setFront(on); } };
     if (prefersReducedMotion()) { el.classList.add('is-still'); show(true); return; }
     const q = gsap.utils.selector(el);
-    // the page's own paper colour (the page's --paper), which the green of the first screen lifts to
-    const paper = getComputedStyle(el).getPropertyValue('--paper').trim() || '#F4F1E6';
+    const words = q('.v2-sw__w') as HTMLElement[];
+    const marks = q('.v2-sw__hl') as HTMLElement[];
+    gsap.set(words, { opacity: .14 });
+    // the wall counts as in front (drag, arrows, links) once the solid cover is nearly gone
+    let frontAt = .6;
     const tl = gsap.timeline({
       defaults: { ease: 'none' },
       scrollTrigger: {
         trigger: el, start: 'top top', end: () => `+=${el.offsetHeight - window.innerHeight}`, scrub: PACE.scrub, invalidateOnRefresh: true,
-        onUpdate: (s) => show(s.progress > .5),
+        onUpdate: (s) => show(s.progress > frontAt),
       },
     });
-    tl.to(q('.v2-wo__head'), { autoAlpha: 0, y: -60, duration: 1, ease: 'power2.in' })
-      .to(q('.v2-hloop'), { autoAlpha: 0, duration: 1 }, '<.1')
-      .to(q('.v2-wo__veil'), { autoAlpha: 0, duration: 1.4, ease: 'power1.inOut' }, '<.4')
-      .fromTo(q('.v2-wo__wall'), { scale: 1.1 }, { scale: 1, duration: 1.4, ease: 'power2.out' }, '<')
-      .to(q('.v2-wo__stick'), { backgroundColor: paper, duration: 1.2, ease: 'power1.inOut' }, '<.5')
+    // 1. on solid graphite: the title, and the description filling in word by word
+    tl.to(words, { opacity: 1, duration: 2.4, stagger: { amount: 2.4 } }, 0)
+      .to({}, { duration: .5 })
+      // 2. the words leave, and the pictures fade up out of the dark
+      .to(q('.v2-wo__head'), { autoAlpha: 0, y: -50, duration: 1, ease: 'power2.in' })
+      .to(q('.v2-wo__veil'), { autoAlpha: 0, duration: 1.6, ease: 'power1.inOut' }, '<.3')
+      .fromTo(q('.v2-wo__wall'), { scale: 1.08 }, { scale: 1, duration: 1.6, ease: 'power2.out' }, '<')
+      .addLabel('seen')
       .to({}, { duration: 1.2 });
+    frontAt = tl.labels.seen / tl.duration();
+    void marks;
     fitScene(el, tl, 1);
     return () => { tl.scrollTrigger?.kill(); tl.kill(); };
   }, { scope: root });
@@ -239,7 +248,7 @@ export default function V2WorkIndex({ entries, title, lead, children }: { entrie
           </svg>
           <div className="v2-wo__head">
             <h1 className="v2-wo__title">{title[0] && <>{tc(title[0])} </>}<em>{tc(title[1], { start: !title[0] })}</em></h1>
-            <p className="v2-wo__lead">{tc(lead)}</p>
+            <ScrollWords className="v2-wo__lead" controlled parts={[{ t: lead }]} />
             <p className="v2-wo__hint">{projects} {projects === 1 ? 'project' : 'projects'} · scroll</p>
           </div>
           {/* under the wall, centred: back, how far along, forward */}

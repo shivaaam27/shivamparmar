@@ -18,6 +18,13 @@ export default function WorkPage() {
   return (
     <main id="main" className="v2-page v2-work-film v3">
       <V2WorkIndex entries={entries} title={['My', 'Work']} lead="Websites, business systems, social media and photography, made in Tanzania.">
+        {/* after the wall: a line about the work, then the filters and every picture */}
+        <section className="v2-wa__body v2-work-note" aria-label="About this work">
+          <p className="v2-wa__lead">
+            Working Across <b>Companies, Hotels And Brands Across Tanzania</b>, Building <b>Client-Tailored Software,
+            {' '}Applications, Websites</b>, And More, But Not Limited To These. <b>More Than 20 Projects Completed</b>, And More Ongoing.
+          </p>
+        </section>
         <V2WorkBrowser cats={workData()} initial={{ c: null, s: null }} archive />
         <Cta />
       </V2WorkIndex>
