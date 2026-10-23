@@ -82,10 +82,7 @@ export default function V2WorkScene({ children }: { children?: React.ReactNode }
         </div>
 
         <div className="v2-wa__body">
-          <p className="v2-wa__lead">
-            Working Across <b>Companies, Hotels And Brands Across Tanzania</b>, Building <b>Client-Tailored Software,
-            {' '}Applications, Websites</b>, And More, But Not Limited To These. <b>More Than 20 Projects Completed</b>, And More Ongoing.
-          </p>
+          <p className="v2-wa__lead"><Rich text={copy('work.paragraph')} /></p>
           <Link className="v2-btn" href={'/work'}>See all work<span className="v2-btn__dot"><ArrowUR /></span></Link>
         </div>
       </section>
