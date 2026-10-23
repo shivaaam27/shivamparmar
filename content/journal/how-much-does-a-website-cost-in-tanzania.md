@@ -79,4 +79,4 @@ Behind most of the businesses we speak to are years of work, a family that depen
 
 ## Talk it through
 
-At Shivo Labs we give a fixed written quote after a short conversation about your business, with the scope, the timeline and the yearly costs set out in plain words. We build [websites and apps](/services/websites-and-apps) for businesses across Tanzania and East Africa, in English and Kiswahili. The first conversation is free: send a message on WhatsApp or email shivam@shivolabs.com.
+At Shivo Labs we give a fixed written quote after a short conversation about your business, with the scope, the timeline and the yearly costs set out in plain words. We build [websites and apps](/about#services) for businesses across Tanzania and East Africa, in English and Kiswahili. The first conversation is free: send a message on WhatsApp or email shivam@shivolabs.com.

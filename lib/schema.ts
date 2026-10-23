@@ -2,6 +2,7 @@ import { site } from './content';
 import { siteUrl } from './seo';
 import { areas, type Lang, type Service } from './services';
 import type { Qa } from './faq';
+import { BCP47, type PostLang } from './post-lang';
 
 /**
  * schema.org descriptions for the services, FAQ and journal pages. Search engines and AI assistants read these to
@@ -22,7 +23,7 @@ export function serviceLd(s: Service, lang: Lang, path: string) {
   const t = s[lang];
   return {
     '@type': 'Service',
-    '@id': `${siteUrl()}${path}#service`,
+    '@id': `${siteUrl()}${path}#service-${s.slug}`,
     name: t.title,
     description: t.lead,
     serviceType: s.en.title,
@@ -43,7 +44,7 @@ export function faqLd(items: Qa[], lang: Lang) {
   };
 }
 
-export function postLd(p: { slug: string; title: string; description: string; date: string; lang: Lang; tags: string[]; words: number }) {
+export function postLd(p: { slug: string; title: string; description: string; date: string; lang: PostLang; tags: string[]; words: number }) {
   return {
     '@type': 'BlogPosting',
     '@id': `${siteUrl()}/journal/${p.slug}#post`,
@@ -51,7 +52,7 @@ export function postLd(p: { slug: string; title: string; description: string; da
     description: p.description,
     datePublished: p.date,
     dateModified: p.date,
-    inLanguage: inLanguage(p.lang),
+    inLanguage: BCP47[p.lang],
     keywords: p.tags.join(', '),
     wordCount: p.words,
     author: { '@type': 'Person', '@id': `${siteUrl()}/#person`, name: site.founder.name },

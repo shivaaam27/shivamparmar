@@ -15,7 +15,7 @@ import { insightsJson } from './lib/insights-api';
 import { appsInsightsJson } from './lib/apps-insights';
 import { indexNow, umamiBackup } from './lib/jobs';
 import { SITE_HEADERS } from './lib/headers';
-import { REDIRECTS, fromV2 } from './lib/redirects';
+import { REDIRECTS, fromV2, movedTo } from './lib/redirects';
 
 type Page = { kind: 'page' | 'file'; headers: Record<string, string>; segments?: string[]; status?: number };
 type Env = {
@@ -84,6 +84,8 @@ export default {
     const url = new URL(req.url);
     const to = REDIRECTS[url.pathname.replace(/(.)\/+$/, '$1')];   // short addresses (lib/redirects.ts), e.g. /get
     if (to) return new Response(null, { status: 307, headers: { location: to, 'cache-control': 'no-store' } });
+    const gone = movedTo(url.pathname.replace(/(.)\/+$/, '$1'));   // pages that no longer exist
+    if (gone) return Response.redirect(new URL(gone, url).toString(), 301);
     const moved = fromV2(url.pathname);   // the old /v2 test addresses
     if (moved) return Response.redirect(new URL(moved + url.search, url).toString(), 301);
     if (url.pathname === '/api/collect' && req.method === 'POST') {

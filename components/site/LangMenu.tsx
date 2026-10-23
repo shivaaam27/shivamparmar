@@ -2,11 +2,7 @@
 
 import { useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
-
-/** The names of the languages the Journal can be in (each written in its own language). Add a language here when its first post exists. */
-export const LANG_NAMES: Record<string, string> = {
-  en: 'English', sw: 'Kiswahili', fr: 'Français', ar: 'العربية', hi: 'हिन्दी', gu: 'ગુજરાતી', zh: '中文', es: 'Español', pt: 'Português',
-};
+import { LANG_NAMES } from '@/lib/post-lang';
 
 export type LangItem = { code: string; href?: string };
 
@@ -30,7 +26,7 @@ export default function LangMenu({ items, current, onSelect, align = 'left', lab
     return () => { document.removeEventListener('pointerdown', away); document.removeEventListener('keydown', key); };
   }, [open]);
 
-  const name = (c: string) => LANG_NAMES[c] ?? c.toUpperCase();
+  const name = (c: string) => (LANG_NAMES as Record<string, string>)[c] ?? c.toUpperCase();
   return (
     <div ref={box} className={`v2-lang v2-lang--${align}`}>
       <button type="button" className="v2-lang__btn" aria-haspopup="true" aria-expanded={open} aria-label={`${label}: ${name(current)}`} title={name(current)} onClick={() => setOpen((o) => !o)}>

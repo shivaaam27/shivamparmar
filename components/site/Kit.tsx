@@ -2,6 +2,7 @@ import Link from 'next/link';
 import { site } from '@/lib/content';
 import { copy } from '@/lib/copy';
 import type { Lang } from '@/lib/services';
+import { WORDS, isRtl, type PostLang } from '@/lib/post-lang';
 import { tc } from '@/lib/title-case';
 import { ArrowUR, BigLeaf, Loop, LOOPS } from './Art';
 import Ribbons from './Ribbons';
@@ -37,7 +38,7 @@ export function JsonLd({ data }: { data: unknown }) {
   return <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(data).replace(/</g, '\\u003c') }} />;
 }
 
-export function Page({ lang = 'en', children, className = '', cta = true }: { lang?: Lang; children: React.ReactNode; className?: string; cta?: boolean }) {
+export function Page({ lang = 'en', children, className = '', cta = true }: { lang?: PostLang; children: React.ReactNode; className?: string; cta?: boolean }) {
   return (
     <main id="main" className={`v2-page ${className}`} lang={lang}>
       {children}
@@ -90,8 +91,8 @@ export function Section({ label, children, id, n }: { label: string; children: R
 }
 
 /** The closing card on every inner page: tell us what you need, WhatsApp or email (the contact card's look). */
-export function Cta({ lang = 'en' }: { lang?: Lang }) {
-  const t = UI[lang];
+export function Cta({ lang = 'en' }: { lang?: PostLang }) {
+  const t = lang === 'en' || lang === 'sw' ? UI[lang] : WORDS[lang];
   const [phone] = site.phones;
   // the English words can be changed in content/site-text.json
   const ctaTitle = lang === 'en' ? copy('cta.title', t.ctaTitle) : t.ctaTitle;
@@ -99,7 +100,7 @@ export function Cta({ lang = 'en' }: { lang?: Lang }) {
   return (
     <section className="v2-sec v2-pcta" aria-label={ctaTitle}>
       <div className="v2-wrap">
-        <div className="v2-card v2-card--lime v2-pcta__card" data-reveal>
+        <div className="v2-card v2-card--lime v2-pcta__card" data-reveal dir={isRtl(lang) ? 'rtl' : undefined}>
           <Loop className="v2-pcta__loop" d={LOOPS.spring} viewBox="0 0 560 160" color="var(--forest)" width={9} />
           <BigLeaf className="v2-pcta__leaf v2-sway v2-sway--slow" />
           <h2 className="v2-h2 v2-rise">{tc(ctaTitle)}</h2>

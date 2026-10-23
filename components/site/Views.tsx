@@ -1,13 +1,11 @@
 import LangMenu from './LangMenu';
 import Link from 'next/link';
-import { areas, services, type Lang, type Service } from '@/lib/services';
-import { faq } from '@/lib/faq';
-import { coverOf, findProject } from '@/lib/work';
-import { posts as allPosts, readingTime, type Post } from '@/lib/journal';
+import { areas, services, type Lang } from '@/lib/services';
+import { posts as allPosts, readingTime, versionsOf, type Post } from '@/lib/journal';
+import { LANG_NAMES, LOCALE, WORDS, isRtl, type PostLang } from '@/lib/post-lang';
 import { tc } from '@/lib/title-case';
-import { JsonLd, LinkCard, Page, PageHero, Section, UI, home, pad, paths } from './Kit';
-import { breadcrumbs, faqLd, graph, postLd, serviceLd } from '@/lib/schema';
-import Faq from './Faq';
+import { JsonLd, Page, UI } from './Kit';
+import { breadcrumbs, graph, postLd, serviceLd } from '@/lib/schema';
 import ReadingBar from './ReadingBar';
 import ServicesPanels from './ServicesPanels';
 import JournalIndex from './JournalIndex';
@@ -15,10 +13,9 @@ import Article from './Article';
 import { ProjectNav } from './ProjectScene';
 import { LOOP, THIN } from './Hero';
 
-const svcPath = (s: Service, lang: Lang) => (lang === 'sw' ? `/sw/huduma/${s.swSlug}` : `/services/${s.slug}`);
-const dateFmt = (d: string, lang: Lang) => new Intl.DateTimeFormat(lang === 'sw' ? 'sw-TZ' : 'en-GB', { day: 'numeric', month: 'long', year: 'numeric' }).format(new Date(d));
+const dateFmt = (d: string, lang: PostLang) => new Intl.DateTimeFormat(LOCALE[lang], { day: 'numeric', month: 'long', year: 'numeric' }).format(new Date(d));
 
-/** Every service in plain words: on the About page (English) and /sw/huduma (Kiswahili). */
+/** Every service in plain words, on the About page. */
 export function ServicesBlock({ lang, level = 'h1' }: { lang: Lang; level?: 'h1' | 'h2' }) {
   const t = UI[lang];
   const title = lang === 'sw'
@@ -27,94 +24,20 @@ export function ServicesBlock({ lang, level = 'h1' }: { lang: Lang; level?: 'h1'
   const lead = lang === 'sw'
     ? 'Shivo Labs ni kampuni ya suluhisho za kidijitali jijini Dar es Salaam. Tunajenga tovuti na programu, mifumo ya biashara, AI na otomatiki, na chapa zinazovutia.'
     : 'Shivo Labs is a digital solutions company in Dar es Salaam. We build websites and apps, business systems, AI workflows and automation, and brands that stand out.';
-  const panels = services.map((s) => ({ slug: s.slug, href: svcPath(s, lang), title: s[lang].title, short: s[lang].short }));
-  return <ServicesPanels title={title} lead={lead} label={t.services} readMore={lang === 'sw' ? 'Soma zaidi' : 'Read more'} panels={panels} areas={areas[lang]} level={level} />;
-}
-
-/** /sw/huduma: the services page in Kiswahili. */
-export function ServicesView({ lang }: { lang: Lang }) {
-  const t = UI[lang];
-  return (
-    <Page lang={lang} className="v2-servicesp">
-      <JsonLd data={graph(breadcrumbs([{ name: t.home, path: home(lang) }, { name: t.services, path: paths.services[lang] }]), ...services.map((sv) => serviceLd(sv, lang, svcPath(sv, lang))))} />
-      <ServicesBlock lang={lang} />
-    </Page>
-  );
+  const panels = services.map((s) => ({ slug: s.slug, title: s[lang].title, short: s[lang].short }));
+  return <ServicesPanels title={title} lead={lead} label={t.services} panels={panels} areas={areas[lang]} level={level} />;
 }
 
 /** The services' search data, for the page that shows them in English (About). */
 export function ServicesLd() {
-  return <JsonLd data={graph(...services.map((sv) => serviceLd(sv, 'en', svcPath(sv, 'en'))))} />;
-}
-
-/** One service, in one language. */
-export function ServiceView({ service: s, lang }: { service: Service; lang: Lang }) {
-  const t = UI[lang];
-  const x = s[lang];
-  const work = s.work.map((slug) => findProject(slug)).filter((p): p is NonNullable<typeof p> => Boolean(p));
-  return (
-    <Page lang={lang}>
-      <JsonLd data={graph(serviceLd(s, lang, svcPath(s, lang)), breadcrumbs([{ name: t.home, path: home(lang) }, { name: t.services, path: paths.services[lang] }, { name: x.title, path: svcPath(s, lang) }]))} />
-      <PageHero lang={lang} tag={t.services} title={x.title} lead={x.lead} other={svcPath(s, lang === 'sw' ? 'en' : 'sw')}
-        crumbs={[{ href: home(lang), label: t.home }, { href: paths.services[lang], label: t.services }, { label: x.title }]} />
-      <Section label={t.offer} n={1}>
-        <div className="v2-split">
-          <ul className="v2-list">{x.offer.map((o, i) => <li key={o} className="v2-rise" style={{ '--d': i } as React.CSSProperties}><span>{pad(i + 1)}</span><span>{o}</span></li>)}</ul>
-          <aside className="v2-split__side v2-rise" style={{ '--d': 2 } as React.CSSProperties}>
-            <p className="v2-label">{t.forWho}</p>
-            <ul className="v2-leaves">{x.forWho.map((o) => <li key={o}>{o}</li>)}</ul>
-          </aside>
-        </div>
-      </Section>
-      <Section label={t.steps} n={2}>
-        <ol className="v2-steps">
-          {x.steps.map((st, i) => (
-            <li key={st.title} className="v2-step v2-rise" style={{ '--d': i } as React.CSSProperties}>
-              <span className="v2-step__n">{pad(i + 1)}</span>
-              <h3 className="v2-step__title">{tc(st.title)}</h3>
-              <p>{st.text}</p>
-            </li>
-          ))}
-        </ol>
-      </Section>
-      {work.length > 0 && (
-        <Section label={t.work} n={3}>
-          <ul className="v2-cards">
-            {work.map(({ project, category }, i) => (
-              <LinkCard key={project.slug} d={i} href={`/work/${project.slug}`} img={coverOf(project)} n={category.name} title={project.title} text={project.summary} />
-            ))}
-          </ul>
-        </Section>
-      )}
-      <Section label={t.more} n={work.length ? 4 : 3}>
-        <ul className="v2-cards">
-          {services.filter((o) => o.slug !== s.slug).map((o, i) => (
-            <LinkCard key={o.slug} d={i} href={svcPath(o, lang)} title={o[lang].title} text={o[lang].short} />
-          ))}
-        </ul>
-      </Section>
-    </Page>
-  );
-}
-
-/** /faq and /sw/maswali. */
-export function FaqView({ lang }: { lang: Lang }) {
-  const t = UI[lang];
-  const title = lang === 'sw' ? <>Maswali <em>{tc('yanayoulizwa mara kwa mara', { start: false })}</em></> : <>{tc('Questions people ask')} <em>{tc('before they start', { start: false })}</em></>;
-  return (
-    <Page lang={lang}>
-      <JsonLd data={graph(faqLd(faq[lang], lang), breadcrumbs([{ name: t.home, path: home(lang) }, { name: t.faq, path: paths.faq[lang] }]))} />
-      <PageHero lang={lang} tag={t.faq} title={title} other={paths.faq[lang === 'sw' ? 'en' : 'sw']} crumbs={[{ href: home(lang), label: t.home }, { label: t.faq }]} />
-      <Section label={t.faq} n={1}><Faq items={faq[lang]} /></Section>
-    </Page>
-  );
+  return <JsonLd data={graph(...services.map((sv) => serviceLd(sv, 'en', '/about')))} />;
 }
 
 /** /journal: the opening, the newest post as a cover, every post in rows with language and topic filters. */
 export function JournalView({ posts }: { posts: Post[] }) {
   const cards = posts.map((p) => ({
-    slug: p.slug, title: p.title, description: p.description, date: p.date, dateText: dateFmt(p.date, p.lang), lang: p.lang, tags: p.tags, pair: p.pair,
-    minutes: UI[p.lang].minutes(readingTime(p)),
+    slug: p.slug, title: p.title, description: p.description, date: p.date, dateText: dateFmt(p.date, p.lang), lang: p.lang, tags: p.tags, group: p.group,
+    minutes: WORDS[p.lang].minutes(readingTime(p)),
   }));
   return (
     <Page lang="en" className="v2-journal v3">
@@ -130,11 +53,14 @@ export function JournalView({ posts }: { posts: Post[] }) {
  * all posts.
  */
 export function PostView({ post: p }: { post: Post }) {
-  const t = UI[p.lang];
-  const list = allPosts();
+  const t = WORDS[p.lang];
+  const dir = isRtl(p.lang) ? 'rtl' : undefined;
+  // the way on stays in the post's own language
+  const list = allPosts().filter((x) => x.lang === p.lang);
   const at = list.findIndex((x) => x.slug === p.slug);
   const older = list[at + 1] ?? null, newer = at > 0 ? list[at - 1] : null;
-  const twin = p.pair ? list.find((x) => x.slug === p.pair) : undefined;
+  const versions = versionsOf(p);
+  const others = versions.filter((x) => x !== p);
   return (
     <Page lang={p.lang} className="v2-postp v3">
       <JsonLd data={graph(postLd(p), breadcrumbs([{ name: t.home, path: '/' }, { name: t.journal, path: '/journal' }, { name: p.title, path: `/journal/${p.slug}` }]))} />
@@ -146,13 +72,13 @@ export function PostView({ post: p }: { post: Post }) {
           <path className="v2-hloop__run" d={LOOP} pathLength={1} />
         </svg>
         <div className="v2-ph__in">
-          <nav className="v2-ph__crumbs" aria-label={p.lang === 'sw' ? 'Ulipo' : 'Breadcrumb'}>
-            <Link href={'/journal'}>← {t.journal}</Link>
-            {twin && <LangMenu align="right" current={p.lang} items={[p, twin].sort((a, b) => (a.lang === 'en' ? -1 : b.lang === 'en' ? 1 : 0)).map((x) => ({ code: x.lang, href: `/journal/${x.slug}` }))} />}
+          <nav className="v2-ph__crumbs" aria-label={t.breadcrumb}>
+            <Link href={'/journal'}>{dir ? '→' : '←'} {t.journal}</Link>
+            {others.length > 0 && <LangMenu align="right" current={p.lang} items={versions.map((x) => ({ code: x.lang, href: `/journal/${x.slug}` }))} />}
           </nav>
-          <p className="v2-ph__meta">{dateFmt(p.date, p.lang)} · {t.minutes(readingTime(p))}{p.tags.length > 0 && <> · {p.tags.map((x) => tc(x)).join(', ')}</>}</p>
-          <h1 className="v2-ph__title">{tc(p.title)}</h1>
-          <p className="v2-ph__dek">{p.description}</p>
+          <p className="v2-ph__meta" dir={dir}>{dateFmt(p.date, p.lang)} · {t.minutes(readingTime(p))}{p.tags.length > 0 && <> · {p.tags.map((x) => tc(x)).join(', ')}</>}</p>
+          <h1 className="v2-ph__title" dir={dir}>{p.lang === 'en' || p.lang === 'sw' ? tc(p.title) : p.title}</h1>
+          <p className="v2-ph__dek" dir={dir}>{p.description}</p>
           <p className="v2-ph__by">Shivam Parmar, Shivo Labs</p>
         </div>
       </header>
@@ -160,15 +86,17 @@ export function PostView({ post: p }: { post: Post }) {
         <Article html={p.html} toc={p.toc} lang={p.lang} />
         <div className="v2-pa__end">
           <p className="v2-post__end" aria-hidden="true">✳</p>
-          {p.pair && (
-            <p className="v2-pa__pair">
-              {p.lang === 'sw' ? 'Makala hii pia ipo kwa Kiingereza.' : 'This post is also in Kiswahili.'}{' '}
-              <Link className="v2-link" href={`/journal/${p.pair}`} hrefLang={p.lang === 'sw' ? 'en' : 'sw'}>{t.other}</Link>
+          {others.length > 0 && (
+            <p className="v2-pa__pair" dir={dir}>
+              {t.alsoIn}{' '}
+              {others.map((x, i) => (
+                <span key={x.slug}>{i > 0 && ' · '}<Link className="v2-link" href={`/journal/${x.slug}`} hrefLang={x.lang} lang={x.lang}>{LANG_NAMES[x.lang]}</Link></span>
+              ))}
             </p>
           )}
         </div>
       </article>
-      <ProjectNav base="/journal" allLabel={t.allPosts} prevLabel={p.lang === 'sw' ? 'Makala mpya zaidi' : 'Newer post'} nextLabel={p.lang === 'sw' ? 'Makala iliyotangulia' : 'Older post'}
+      <ProjectNav base="/journal" allLabel={t.allPosts} prevLabel={t.newer} nextLabel={t.older}
         prev={newer && { slug: newer.slug, title: newer.title }} next={older && { slug: older.slug, title: older.title }} />
     </Page>
   );

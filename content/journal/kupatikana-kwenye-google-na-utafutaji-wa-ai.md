@@ -109,4 +109,4 @@ Mteja anayehitaji unachotoa anatafuta sasa hivi. Kupatikana ndiyo njia ambayo bi
 
 ## Tuzungumze
 
-Shivo Labs hujenga [tovuti na programu](/sw/huduma/tovuti-na-programu) kwa biashara kote Tanzania na Afrika Mashariki, zilizoandaliwa vizuri kwa utafutaji tangu mwanzo, kwa Kiingereza na Kiswahili. Mazungumzo ya kwanza ni bure: tuma ujumbe WhatsApp au barua pepe kwa shivam@shivolabs.com.
+Shivo Labs hujenga [tovuti na programu](/about#services) kwa biashara kote Tanzania na Afrika Mashariki, zilizoandaliwa vizuri kwa utafutaji tangu mwanzo, kwa Kiingereza na Kiswahili. Mazungumzo ya kwanza ni bure: tuma ujumbe WhatsApp au barua pepe kwa shivam@shivolabs.com.

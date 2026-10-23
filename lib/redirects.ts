@@ -11,5 +11,19 @@ export const REDIRECTS: Record<string, string> = {
   '/services': '/about#services',
 };
 
+/** Pages that no longer exist: their address moves for good (301) to the page that carries the content now. */
+export const MOVED: Record<string, string> = {
+  '/faq': '/contact#faq',
+  '/sw/maswali': '/contact#faq',
+  '/sw/huduma': '/about#services',
+  '/services/:slug': '/about#services',
+  '/sw/huduma/:slug': '/about#services',
+};
+/** Where a removed page's address goes now, or null. */
+export const movedTo = (path: string): string | null => {
+  if (MOVED[path]) return MOVED[path];
+  return /^\/(services|sw\/huduma)\/[^/]+$/.test(path) ? '/about#services' : null;
+};
+
 /** The new look was tried out under /v2 before it became the site: old /v2 links land on the same page now. */
 export const fromV2 = (path: string) => (path === '/v2' || path.startsWith('/v2/') ? path.slice(3) || '/' : null);

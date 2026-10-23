@@ -1,6 +1,6 @@
 import type { NextConfig } from 'next';
 import { SITE_HEADERS } from './lib/headers';
-import { REDIRECTS } from './lib/redirects';
+import { MOVED, REDIRECTS } from './lib/redirects';
 
 const nextConfig: NextConfig = {
   reactStrictMode: true,
@@ -13,6 +13,7 @@ const nextConfig: NextConfig = {
   async redirects() {
     return [
       ...Object.entries(REDIRECTS).map(([source, destination]) => ({ source, destination, permanent: false })),
+      ...Object.entries(MOVED).map(([source, destination]) => ({ source, destination, permanent: true })),
       // the old /v2 test addresses (worker.ts does the same on the live site)
       { source: '/v2', destination: '/', permanent: true },
       { source: '/v2/:path*', destination: '/:path*', permanent: true },

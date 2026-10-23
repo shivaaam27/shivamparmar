@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { flushSync } from 'react-dom';
 import { useLenis } from 'lenis/react';
+import { WORDS, isRtl, type PostLang } from '@/lib/post-lang';
 
 type Toc = { id: string; text: string }[];
 const SIZES = [.92, 1, 1.1, 1.22];
@@ -13,14 +14,14 @@ const SIZES = [.92, 1, 1.1, 1.22];
  * from a button); a control for the text size, remembered in this browser. Headings rise in once as they arrive; the
  * words themselves never move.
  */
-export default function Article({ html, toc, lang }: { html: string; toc: Toc; lang: 'en' | 'sw' }) {
+export default function Article({ html, toc, lang }: { html: string; toc: Toc; lang: PostLang }) {
   const body = useRef<HTMLDivElement>(null);
   const aside = useRef<HTMLElement>(null);
   const lenis = useLenis();
   const [current, setCurrent] = useState(toc[0]?.id ?? '');
   const [size, setSize] = useState(1);
   const [open, setOpen] = useState(false);
-  const sw = lang === 'sw';
+  const w = WORDS[lang];
 
   useEffect(() => {
     try { const s = Number(localStorage.getItem('v2-text-size')); if (SIZES.includes(s)) setSize(s); } catch { /* storage off */ }
@@ -80,27 +81,27 @@ export default function Article({ html, toc, lang }: { html: string; toc: Toc; l
         <div className="v2-art__tools">
           {toc.length > 1 && (
             <button type="button" className="v2-art__tocbtn" onClick={() => setOpen((o) => !o)} aria-expanded={open} aria-controls="art-toc">
-              {sw ? 'Yaliyomo' : 'In this article'}
+              {w.inArticle}
             </button>
           )}
-          <div className="v2-art__size" role="group" aria-label={sw ? 'Ukubwa wa maandishi' : 'Text size'}>
+          <div className="v2-art__size" role="group" aria-label={w.textSize}>
             {SIZES.map((s, i) => (
-              <button key={s} type="button" aria-pressed={s === size} onClick={() => pick(s)} aria-label={`${sw ? 'Ukubwa' : 'Size'} ${i + 1}`} style={{ fontSize: `${.72 + i * .14}rem` }}>A</button>
+              <button key={s} type="button" aria-pressed={s === size} onClick={() => pick(s)} aria-label={`${w.size} ${i + 1}`} style={{ fontSize: `${.72 + i * .14}rem` }}>A</button>
             ))}
           </div>
         </div>
         {toc.length > 1 && (
-          <nav id="art-toc" className={`v2-art__toc${open ? ' is-open' : ''}`} aria-label={sw ? 'Yaliyomo' : 'In this article'}>
-            <p className="v2-art__tock">{sw ? 'Yaliyomo' : 'In this article'}</p>
+          <nav id="art-toc" className={`v2-art__toc${open ? ' is-open' : ''}`} aria-label={w.inArticle}>
+            <p className="v2-art__tock">{w.inArticle}</p>
             <ol>
               {toc.map((t) => (
-                <li key={t.id}><a href={`#${t.id}`} onClick={jump(t.id)} aria-current={t.id === current ? 'location' : undefined}>{t.text}</a></li>
+                <li key={t.id}><a href={`#${t.id}`} dir="auto" onClick={jump(t.id)} aria-current={t.id === current ? 'location' : undefined}>{t.text}</a></li>
               ))}
             </ol>
           </nav>
         )}
       </aside>
-      <div ref={body} className="v2-prose v2-art__text" dangerouslySetInnerHTML={{ __html: html }} />
+      <div ref={body} className="v2-prose v2-art__text" lang={lang} dir={isRtl(lang) ? 'rtl' : undefined} dangerouslySetInnerHTML={{ __html: html }} />
     </div>
   );
 }

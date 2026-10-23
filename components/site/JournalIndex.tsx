@@ -8,41 +8,35 @@ import { LOOP, THIN } from './Hero';
 import { ArrowUR } from './Art';
 import Tabs from './Tabs';
 import LangMenu from './LangMenu';
+import { POST_LANGS, WORDS, LANG_NAMES, isRtl, type PostLang } from '@/lib/post-lang';
 
-export type PostCard = { slug: string; title: string; description: string; date: string; dateText: string; lang: 'en' | 'sw'; tags: string[]; minutes: string; pair?: string };
+export type PostCard = { slug: string; title: string; description: string; date: string; dateText: string; lang: PostLang; tags: string[]; minutes: string; group: string };
 const ALL = '__all';
 
 /**
  * The journal (docs/SITE.md, "Journal"): the title with the opening light; the newest post as a large cover; then every
- * post as a row. Every post is shown once: the language tabs switch the whole list between English and Kiswahili in
- * place (English first), and a post that exists in both languages is one entry, shown in the chosen language. A post
- * that exists in one language only is shown in that language. Topic narrows the list further.
+ * post as a row. Every post is shown once: the language button switches the whole list between the languages in place
+ * (English first), and a post that exists in several languages is one entry, shown in the chosen language, else in
+ * English. Topic narrows the list further.
  */
 export default function JournalIndex({ posts }: { posts: PostCard[] }) {
   const [drawn, setDrawn] = useState(false);
-  const [lang, setLang] = useState<'en' | 'sw'>('en');
+  const [lang, setLang] = useState<PostLang>('en');
   const [tag, setTag] = useState<string>(ALL);
   useEffect(() => { const t = setTimeout(() => setDrawn(true), 300); return () => clearTimeout(t); }, []);
 
-  // one entry per post: a pair (the same post in both languages) shows in the chosen language
+  // one entry per post: a group (the same post in several languages) shows in the chosen language, else in English
   const entries = useMemo(() => {
-    const bySlug = new Map(posts.map((p) => [p.slug, p]));
-    const seen = new Set<string>();
-    const out: PostCard[] = [];
-    for (const p of posts) {
-      if (seen.has(p.slug)) continue;
-      const twin = p.pair ? bySlug.get(p.pair) : undefined;
-      seen.add(p.slug);
-      if (twin) seen.add(twin.slug);
-      out.push(twin && twin.lang === lang ? twin : twin && p.lang === lang ? p : p);
-    }
-    return out;
+    const groups = new Map<string, PostCard[]>();
+    for (const p of posts) groups.set(p.group, [...(groups.get(p.group) ?? []), p]);
+    return Array.from(groups.values()).map((g) => g.find((x) => x.lang === lang) ?? g.find((x) => x.lang === 'en') ?? g[0]);
   }, [posts, lang]);
   const tags = useMemo(() => Array.from(new Set(entries.flatMap((p) => p.tags))).sort(), [entries]);
   const shown = entries.filter((p) => tag === ALL || p.tags.includes(tag));
-  const chooseLang = (k: string) => { setLang(k === 'sw' ? 'sw' : 'en'); setTag(ALL); };
+  const chooseLang = (k: string) => { setLang(POST_LANGS.includes(k as PostLang) ? (k as PostLang) : 'en'); setTag(ALL); };
   // the languages the journal exists in, English first
-  const languages = useMemo(() => Array.from(new Set(posts.map((p) => p.lang))).sort((a, b) => (a === 'en' ? -1 : b === 'en' ? 1 : a.localeCompare(b))).map((code) => ({ code })), [posts]);
+  const languages = useMemo(() => POST_LANGS.filter((l) => posts.some((p) => p.lang === l)).map((code) => ({ code })), [posts]);
+  const w = WORDS[lang];
   const [lead, ...rest] = shown;
 
   return (
@@ -66,30 +60,30 @@ export default function JournalIndex({ posts }: { posts: PostCard[] }) {
             {languages.length > 1 && <LangMenu items={languages} current={lang} onSelect={chooseLang} />}
             {tags.length > 1 && (
               <Tabs soft label="Topic" value={tag} onChange={setTag}
-                items={[{ key: ALL, label: lang === 'sw' ? 'Mada zote' : 'Every topic' }, ...tags.map((t) => ({ key: t, label: t.length <= 2 ? t.toUpperCase() : tc(t) }))]} />
+                items={[{ key: ALL, label: w.everyTopic }, ...tags.map((t) => ({ key: t, label: lang === 'en' || lang === 'sw' ? (t.length <= 2 ? t.toUpperCase() : tc(t)) : lang === 'fr' ? (t.length <= 2 ? t.toUpperCase() : t.charAt(0).toUpperCase() + t.slice(1)) : t }))]} />
             )}
           </div>
 
           {lead ? (
-            <Link href={`/journal/${lead.slug}`} className="v2-jx__cover" lang={lead.lang}>
+            <Link href={`/journal/${lead.slug}`} className="v2-jx__cover" lang={lead.lang} dir={isRtl(lead.lang) ? 'rtl' : undefined}>
               <svg className="v2-jx__line" viewBox="0 0 1200 500" preserveAspectRatio="none" aria-hidden="true">
                 <path d="M-40 380C200 330 330 420 520 360s300-230 470-170 160 170 260 120" pathLength={1} />
               </svg>
-              <span className="v2-jx__meta"><b>Latest</b>{lead.dateText} · {lead.lang === 'sw' ? 'Kiswahili' : 'English'} · {lead.minutes}</span>
-              <span className="v2-jx__title">{tc(lead.title)}</span>
+              <span className="v2-jx__meta"><b>{WORDS[lead.lang].latest}</b>{lead.dateText} · {LANG_NAMES[lead.lang]} · {lead.minutes}</span>
+              <span className="v2-jx__title">{lead.lang === 'en' || lead.lang === 'sw' ? tc(lead.title) : lead.title}</span>
               <span className="v2-jx__text">{lead.description}</span>
-              <span className="v2-jx__go">{lead.lang === 'sw' ? 'Soma' : 'Read'} <ArrowUR /></span>
+              <span className="v2-jx__go">{WORDS[lead.lang].read} <ArrowUR /></span>
             </Link>
           ) : <p className="v2-jx__none">No posts here yet.</p>}
 
           {rest.length > 0 && (
             <ol className="v2-jx__list">
               {rest.map((p) => (
-                <li key={p.slug} lang={p.lang}>
+                <li key={p.slug} lang={p.lang} dir={isRtl(p.lang) ? 'rtl' : undefined}>
                   <Link href={`/journal/${p.slug}`} className="v2-jx__row">
                     <span className="v2-jx__date">{p.dateText}</span>
-                    <span className="v2-jx__body"><b>{tc(p.title)}</b><span>{p.description}</span></span>
-                    <span className="v2-jx__info">{p.lang === 'sw' ? 'Kiswahili' : 'English'} · {p.minutes}</span>
+                    <span className="v2-jx__body"><b>{p.lang === 'en' || p.lang === 'sw' ? tc(p.title) : p.title}</b><span>{p.description}</span></span>
+                    <span className="v2-jx__info">{LANG_NAMES[p.lang]} · {p.minutes}</span>
                     <span className="v2-jx__arrow" aria-hidden="true"><ArrowUR /></span>
                   </Link>
                 </li>

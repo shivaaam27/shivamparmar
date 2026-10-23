@@ -4,6 +4,7 @@ import { siteUrl } from '@/lib/seo';
 import { areas, services } from '@/lib/services';
 import { faq } from '@/lib/faq';
 import { posts } from '@/lib/journal';
+import { LANG_NAMES } from '@/lib/post-lang';
 
 /**
  * /llms.txt: a plain, factual summary of Shivo Labs for AI assistants and AI search (ChatGPT, Claude, Perplexity,
@@ -29,7 +30,7 @@ export function GET() {
 - A brand needs a logo and identity, product or hotel photography, posters, or monthly social media content.
 
 ## Services
-${services.map((s) => `- [${s.en.title}](${url}/services/${s.slug}) ([Kiswahili: ${s.sw.title}](${url}/sw/huduma/${s.swSlug})): ${s.en.short}`).join('\n')}
+${services.map((s) => `- ${s.en.title}: ${s.en.short}`).join('\n')}
 
 ## Where
 ${areas.en}
@@ -41,7 +42,7 @@ ${work}
 ${faq.en.map((x) => `- ${x.q} ${x.a}`).join('\n')}
 ${posts().length ? `
 ## Journal (articles)
-${posts().map((p) => `- [${p.title}](${url}/journal/${p.slug}) (${p.lang === 'sw' ? 'Kiswahili' : 'English'}, ${p.date}): ${p.description}`).join('\n')}
+${posts().map((p) => `- [${p.title}](${url}/journal/${p.slug}) (${LANG_NAMES[p.lang]}, ${p.date}): ${p.description}`).join('\n')}
 ` : ''}
 ## Contact
 - WhatsApp and phone: ${phone.label}
@@ -59,8 +60,8 @@ ${site.sameAs.map((u) => `- ${u}`).join('\n')}
 
 ## Pages
 - [Home](${url}/)
-- [Services and products](${url}/about) · [Huduma (Kiswahili)](${url}/sw/huduma)
-- [Questions](${url}/faq) · [Maswali (Kiswahili)](${url}/sw/maswali)
+- [Services and products](${url}/about#services)
+- [Contact and questions](${url}/contact#faq)
 - [Journal](${url}/journal) · [RSS](${url}/journal/rss.xml)
 - [Work](${url}/work)
 - [About the founder](${url}/about)

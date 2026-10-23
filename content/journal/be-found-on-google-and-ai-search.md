@@ -109,4 +109,4 @@ A customer who needs what you offer is searching right now. Being found is how a
 
 ## Talk it through
 
-At Shivo Labs we build [websites and apps](/services/websites-and-apps) for businesses across Tanzania and East Africa, set up properly for search from the start, in English and Kiswahili. The first conversation is free: send a message on WhatsApp or email shivam@shivolabs.com.
+At Shivo Labs we build [websites and apps](/about#services) for businesses across Tanzania and East Africa, set up properly for search from the start, in English and Kiswahili. The first conversation is free: send a message on WhatsApp or email shivam@shivolabs.com.

@@ -79,4 +79,4 @@ Nyuma ya biashara nyingi tunazozungumza nazo kuna miaka ya kazi, familia inayote
 
 ## Tuzungumze
 
-Shivo Labs hutoa makadirio ya bei maalum kwa maandishi baada ya mazungumzo mafupi kuhusu biashara yako, pamoja na kazi itakayofanywa, ratiba na gharama za kila mwaka, vikielezwa kwa maneno rahisi. Tunajenga [tovuti na programu](/sw/huduma/tovuti-na-programu) kwa biashara kote Tanzania na Afrika Mashariki, kwa Kiingereza na Kiswahili. Mazungumzo ya kwanza ni bure: tuma ujumbe WhatsApp au barua pepe kwa shivam@shivolabs.com.
+Shivo Labs hutoa makadirio ya bei maalum kwa maandishi baada ya mazungumzo mafupi kuhusu biashara yako, pamoja na kazi itakayofanywa, ratiba na gharama za kila mwaka, vikielezwa kwa maneno rahisi. Tunajenga [tovuti na programu](/about#services) kwa biashara kote Tanzania na Afrika Mashariki, kwa Kiingereza na Kiswahili. Mazungumzo ya kwanza ni bure: tuma ujumbe WhatsApp au barua pepe kwa shivam@shivolabs.com.

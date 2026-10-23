@@ -57,4 +57,4 @@ A good first step is small: pick **one task** that takes your team hours every w
 
 ## Talk it through
 
-If you are not sure where to start, a short conversation usually makes it clear. Shivo Labs is a digital solutions company in Dar es Salaam working with businesses across Tanzania and East Africa on [websites and apps](/services/websites-and-apps), [business systems](/services/custom-software) and [AI and automation](/services/ai-automation). The first conversation is free: send a message on WhatsApp or email shivam@shivolabs.com.
+If you are not sure where to start, a short conversation usually makes it clear. Shivo Labs is a digital solutions company in Dar es Salaam working with businesses across Tanzania and East Africa on [websites and apps](/about#services), [business systems](/about#services) and [AI and automation](/about#services). The first conversation is free: send a message on WhatsApp or email shivam@shivolabs.com.

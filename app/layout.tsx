@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from 'next';
-import { Sora, Hanken_Grotesk } from 'next/font/google';
+import { Sora, Hanken_Grotesk, Noto_Sans_Arabic, Noto_Sans_Devanagari, Noto_Sans_Gujarati } from 'next/font/google';
 import { site } from '@/lib/content';
 import { personJsonLd, siteUrl } from '@/lib/seo';
 import SmoothScroll from '@/components/SmoothScroll';
@@ -11,6 +11,10 @@ import './globals.css';
 const serif = Sora({ subsets: ['latin'], weight: ['300', '400', '600'], variable: '--font-serif' });
 const sans = Hanken_Grotesk({ subsets: ['latin'], weight: ['300', '400', '500', '600'], variable: '--font-sans' });
 const mono = Hanken_Grotesk({ subsets: ['latin'], weight: ['400', '500', '600'], variable: '--font-mono' });
+// the scripts of the Journal's Arabic, Hindi and Gujarati posts: loaded only on a page that uses them
+const arabic = Noto_Sans_Arabic({ subsets: ['arabic'], weight: ['400', '600'], variable: '--font-arabic', preload: false });
+const devanagari = Noto_Sans_Devanagari({ subsets: ['devanagari'], weight: ['400', '600'], variable: '--font-devanagari', preload: false });
+const gujarati = Noto_Sans_Gujarati({ subsets: ['gujarati'], weight: ['400', '600'], variable: '--font-gujarati', preload: false });
 
 export const metadata: Metadata = {
   // absolute links for search engines and share previews
@@ -43,7 +47,7 @@ export const viewport: Viewport = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" className={`${serif.variable} ${sans.variable} ${mono.variable}`} suppressHydrationWarning>
+    <html lang="en" className={`${serif.variable} ${sans.variable} ${mono.variable} ${arabic.variable} ${devanagari.variable} ${gujarati.variable}`} suppressHydrationWarning>
       <head>
         {/* hide hero chrome + reveal items until JS animates them in */}
         <script dangerouslySetInnerHTML={{ __html: "document.documentElement.classList.add('js');try{var t=localStorage.getItem('shivo-theme');if(t==='light'||t==='dark')document.documentElement.dataset.theme=t}catch(e){}" }} />

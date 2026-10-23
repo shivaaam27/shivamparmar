@@ -57,4 +57,4 @@ Hatua nzuri ya kwanza ni ndogo: chagua **kazi moja** inayochukua saa nyingi za t
 
 ## Tuzungumze
 
-Kama huna uhakika wa kuanzia wapi, mazungumzo mafupi mara nyingi huweka mambo wazi. Shivo Labs ni kampuni ya suluhisho za kidijitali jijini Dar es Salaam inayofanya kazi na biashara kote Tanzania na Afrika Mashariki kwenye [tovuti na programu](/sw/huduma/tovuti-na-programu), [mifumo ya biashara](/sw/huduma/mifumo-ya-biashara) na [AI na otomatiki](/sw/huduma/akili-bandia-na-otomatiki). Mazungumzo ya kwanza ni bure: tuma ujumbe WhatsApp au barua pepe kwa shivam@shivolabs.com.
+Kama huna uhakika wa kuanzia wapi, mazungumzo mafupi mara nyingi huweka mambo wazi. Shivo Labs ni kampuni ya suluhisho za kidijitali jijini Dar es Salaam inayofanya kazi na biashara kote Tanzania na Afrika Mashariki kwenye [tovuti na programu](/about#services), [mifumo ya biashara](/about#services) na [AI na otomatiki](/about#services). Mazungumzo ya kwanza ni bure: tuma ujumbe WhatsApp au barua pepe kwa shivam@shivolabs.com.

@@ -1,5 +1,6 @@
 import { posts } from '@/lib/journal';
 import { siteUrl } from '@/lib/seo';
+import { BCP47 } from '@/lib/post-lang';
 
 /** /journal/rss.xml: every journal post, for feed readers and for search engines and AI tools that follow feeds. */
 export const dynamic = 'force-static';
@@ -14,7 +15,7 @@ export function GET() {
       <guid isPermaLink="true">${url}/journal/${p.slug}</guid>
       <pubDate>${new Date(p.date).toUTCString()}</pubDate>
       <description>${esc(p.description)}</description>
-      <dc:language>${p.lang === 'sw' ? 'sw-TZ' : 'en'}</dc:language>
+      <dc:language>${BCP47[p.lang]}</dc:language>
     </item>`).join('\n');
   const xml = `<?xml version="1.0" encoding="UTF-8"?>
 <rss version="2.0" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:atom="http://www.w3.org/2005/Atom">
@@ -22,7 +23,7 @@ export function GET() {
     <title>Shivo Labs Journal</title>
     <link>${url}/journal</link>
     <atom:link href="${url}/journal/rss.xml" rel="self" type="application/rss+xml" />
-    <description>Websites, business systems and AI for businesses in Tanzania, East Africa and Africa, in English and Kiswahili.</description>
+    <description>Websites, business systems and AI for businesses in Tanzania, East Africa and Africa, in English, Kiswahili, French, Arabic, Hindi and Gujarati.</description>
     <language>en</language>
 ${items}
   </channel>

@@ -857,3 +857,43 @@ html[data-theme="light"] .v2:has(.v3) .v2-header.is-open .v2-header__menu, html[
 @keyframes v2-lang-in { from { opacity: 0; transform: translateY(-4px); } }
 .v2:has(.v3) .v2-jx__filters { align-items: center; }
 .v2:has(.v3) .v2-ph__crumbs { align-items: center; }
+
+
+/* =========================================================
+   The Journal in more languages: Arabic reads right to left; Arabic, Hindi and Gujarati use their own typefaces
+   (loaded by app/layout.tsx only on a page that uses them). Text on a line of its own follows its language.
+   ========================================================= */
+.v2:has(.v3) :lang(ar) { --body: var(--font-arabic), var(--font-sans), system-ui, sans-serif; --display: var(--font-arabic), system-ui, sans-serif; }
+.v2:has(.v3) :lang(hi) { --body: var(--font-devanagari), var(--font-sans), system-ui, sans-serif; --display: var(--font-devanagari), system-ui, sans-serif; }
+.v2:has(.v3) :lang(gu) { --body: var(--font-gujarati), var(--font-sans), system-ui, sans-serif; --display: var(--font-gujarati), system-ui, sans-serif; }
+/* these scripts have no capitals and need more room between lines */
+.v2:has(.v3) :is(:lang(ar), :lang(hi), :lang(gu)) :is(h1, h2, h3, .v2-jx__title, .v2-ph__title) { text-transform: none; letter-spacing: 0; line-height: 1.3; }
+.v2:has(.v3) .v2-art__text:is(:lang(ar), :lang(hi), :lang(gu)) { line-height: 1.95; letter-spacing: 0; }
+.v2:has(.v3) .v2-art__text:lang(fr) h2 { text-transform: none; }
+.v2:has(.v3) .v2-art__text[dir="rtl"] ul, .v2:has(.v3) .v2-art__text[dir="rtl"] ol { padding-left: 0; padding-right: 1.3em; }
+.v2:has(.v3) .v2-art__text[dir="rtl"] ul li { padding-left: 0; padding-right: 1.5em; }
+.v2:has(.v3) .v2-art__text[dir="rtl"] ul li::before { left: auto; right: 0; }
+.v2:has(.v3) .v2-art__text[dir="rtl"] blockquote { box-shadow: inset -2px 0 0 var(--h-text-strong); border-radius: 14px 0 0 14px; padding: .2em 1.4em .2em 0; border-left: 0; }
+.v2:has(.v3) [dir="rtl"] .v2-jx__text, .v2:has(.v3) [dir="rtl"].v2-jx__cover { text-align: right; }
+
+
+/* the services and FAQ pages: the trail runs left to right under the opening, not spread across it */
+.v2:has(.v3) .v2-ph__trail { display: flex; flex-wrap: wrap; gap: .4rem 1.4rem; }
+
+
+/* the FAQ: a plain plus that turns into a cross, no circle */
+.v2:has(.v3) .v2-faq { border-top-color: var(--h-line); }
+.v2:has(.v3) .v2-faq details { border-bottom-color: var(--h-line); }
+.v2:has(.v3) .v2-faq summary { color: var(--h-text-strong); }
+.v2:has(.v3) .v2-faq summary:hover { color: var(--h-text-strong); }
+.v2:has(.v3) .v2-faq summary i { width: 1.4rem; height: 1.4rem; border-radius: 0; box-shadow: none; background: none; }
+.v2:has(.v3) .v2-faq summary i::before, .v2:has(.v3) .v2-faq summary i::after { background: var(--h-text-strong); width: 14px; height: 1.5px; }
+.v2:has(.v3) .v2-faq details[open] summary i { background: none; box-shadow: none; }
+.v2:has(.v3) .v2-faq details p { color: var(--h-text-soft); }
+
+
+/* the questions, under the contact screen */
+.v2:has(.v3) .v2-ctq { background: var(--paper); padding: clamp(3rem, 8vh, 5.5rem) var(--gutter) var(--section); scroll-margin-top: 4rem; }
+.v2:has(.v3) .v2-ctq__in { max-width: var(--max); margin: 0 auto; display: grid; gap: clamp(1.4rem, 4vh, 2.4rem); }
+.v2:has(.v3) .v2-ctq__title { font: 400 clamp(1.8rem, 3.4vw, 3rem)/1.1 var(--display); letter-spacing: -.012em; color: var(--h-text-strong); }
+.v2:has(.v3) .v2-ctq__title em { font-style: normal; color: var(--h-text-soft); }

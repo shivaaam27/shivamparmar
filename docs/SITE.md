@@ -104,8 +104,17 @@ products → the services → contact.
   with what it does, the description and Works on beneath, all at the one description size. Names and words come from
   content/products.json (X Tools is listed as iPhone App Signing).
 - **Services** (components/site/ServicesPanels.tsx, services.css): the title card on the green, then each service in
-  plain words (name, what it is, Read more), no picture cards; then where we work. The Kiswahili page /sw/huduma uses
-  the same block.
+  plain words (name, what it is), no picture cards; then where we work. There are no separate service pages any more:
+  /services/<name>, /sw/huduma and /sw/huduma/<name> go to /about#services for good (301, lib/redirects.ts `MOVED`).
+- **Questions** (the FAQ) are on the Contact page, under the contact screen (/contact#faq); /faq and /sw/maswali go there
+  (301). Journal posts link to /about#services.
+
+## Journal in six languages (24 Oct 2026)
+A post can exist in English, Kiswahili, French, Arabic, Hindi and Gujarati (lib/post-lang.ts has the languages and the
+words on the list and posts; fonts for Arabic, Hindi and Gujarati are in app/layout.tsx). A translation is a file
+`<english-slug>-<code>.md` with `lang: <code>` and `pair: <english-slug>`; a post and all its translations form one
+group (lib/journal.ts), shown once in the list in the chosen language, with a globe button on the list and on each post,
+and hreflang in the pages and the sitemap. Arabic reads right to left. The translations should be read by a native speaker.
 
 ## Colours, descriptions, footer (23 Oct 2026)
 
