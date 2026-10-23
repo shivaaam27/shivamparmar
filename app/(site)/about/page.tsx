@@ -18,7 +18,7 @@ export const metadata: Metadata = {
  */
 export default function AboutPage() {
   return (
-    <main id="main" className="v2-home v2-aboutp">
+    <main id="main" className="v2-home v2-aboutp v3">
       <ServicesLd />
       <AboutOpen />
       <AboutBelief />

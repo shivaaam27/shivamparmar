@@ -55,6 +55,8 @@ export function AboutOpen() {
     const el = root.current!;
     if (prefersReducedMotion()) { el.classList.add('is-still'); return; }
     const q = gsap.utils.selector(el);
+    // the colour the opening settles on is the page's own deep colour (the page's --forest)
+    const deep = getComputedStyle(el).getPropertyValue('--forest').trim() || '#2B6444';
     const words = q('.v2-sw__w') as HTMLElement[];
     const marks = q('.v2-sw__hl') as HTMLElement[];
     gsap.set(words, { opacity: .14 });
@@ -72,8 +74,8 @@ export function AboutOpen() {
       },
     });
     tl.to(q('.v2-abo__eyebrow'), { autoAlpha: 0, y: -20, duration: .8 }, 0)
-      .to(q('.v2-scene__stick'), { backgroundColor: '#2B6444', duration: 1.6, ease: 'power1.inOut' }, .2)
-      .to(q('.v2-abo__title'), { y: () => -window.innerHeight * .27, scale: .62, color: '#fff', duration: 1.6, ease: 'power2.inOut' }, .2)
+      .to(q('.v2-scene__stick'), { backgroundColor: deep, duration: 1.6, ease: 'power1.inOut' }, .2)
+      .to(q('.v2-abo__title'), { y: () => -window.innerHeight * .27, scale: .62, color: () => getComputedStyle(el).getPropertyValue('--ink').trim() || '#fff', duration: 1.6, ease: 'power2.inOut' }, .2)
       .to(q('.v2-hloop'), { opacity: .22, duration: 1.4 }, .4)
       .to(q('.v2-abo__body'), { autoAlpha: 1, duration: .4 }, 1.5)
       .to(words, { opacity: 1, duration: 3.6, stagger: { amount: 3.6 } }, 1.7)
@@ -100,7 +102,7 @@ export function AboutOpen() {
             parts={split(intro[0], ['websites, apps and custom systems', 'AI workflows', 'functional at their core and considered in every detail'])} />
           <div className="v2-abo__end">
             <Link className="v2-btn" href={'/work'}>See the work<span className="v2-btn__dot"><ArrowUR /></span></Link>
-            <a className="v2-more" href={`mailto:${site.email}`} data-umami-event="Contact · About email">Email me <ArrowUR /></a>
+            <a className="v2-btn" href={`mailto:${site.email}`} data-umami-event="Contact · About email">Email me<span className="v2-btn__dot"><ArrowUR /></span></a>
           </div>
         </div>
       </div>

@@ -15,7 +15,7 @@ html:has(.v3) { --v2-page: #141517; }
   --h-rim: rgba(255, 255, 255, .14); --h-rim2: rgba(255, 255, 255, .06);
   --h-halo: rgba(127, 176, 139, .10); --h-halo2: rgba(127, 176, 139, .06);
   --h-dots: rgba(236, 237, 233, .12); --h-cell: rgba(236, 237, 233, .16); --h-labs: #A5A9A6;
-  --h-footer: #101113; --h-shadow: rgba(0, 0, 0, .7);
+  --h-footer: #101113; --h-shadow: rgba(0, 0, 0, .7); --h-ink2: rgba(236, 237, 233, .72); --h-ink3: rgba(236, 237, 233, .5);
   --h-spring: cubic-bezier(.32, .72, 0, 1);
 
   /* the site's colour names, remapped for this page */
@@ -38,7 +38,7 @@ html:has(.v3) { --v2-page: #141517; }
     --h-rim: rgba(0, 0, 0, .10); --h-rim2: rgba(0, 0, 0, .06);
     --h-halo: rgba(79, 122, 90, .10); --h-halo2: rgba(79, 122, 90, .06);
     --h-dots: rgba(20, 21, 23, .12); --h-cell: rgba(20, 21, 23, .14); --h-labs: #6B6E73;
-    --h-footer: #141517; --h-shadow: rgba(20, 21, 23, .22);
+    --h-footer: #141517; --h-shadow: rgba(20, 21, 23, .22); --h-ink2: rgba(20, 21, 23, .72); --h-ink3: rgba(20, 21, 23, .55);
     --ink-2: rgba(20, 21, 23, .72); --ink-3: rgba(20, 21, 23, .55);
     --lime: #3F6B4B; --sage-lit: #7FB08B;
     color-scheme: light;
@@ -142,3 +142,41 @@ html:has(.v3) { --v2-page: #141517; }
 .v2:has(.v3) .v2-footer__bar { border-top-color: rgba(255, 255, 255, .08); color: rgba(236, 237, 233, .6); }
 .v2:has(.v3) .v2-footer__line, .v2:has(.v3) .v2-footer__cols a, .v2:has(.v3) .v2-footer__cols li { color: rgba(236, 237, 233, .8); }
 .v2:has(.v3) .v2-footer__cols .v2-label, .v2:has(.v3) .v2-footer__mail, .v2:has(.v3) .v2-footer__top { color: #8DB898; }
+
+/* ---------- About (/about) ---------- */
+.v2:has(.v3) .v2-abo__title { font-weight: 400; }
+.v2:has(.v3) .v2-abo__eyebrow { color: var(--h-muted); }
+.v2:has(.v3) .v2-abo__body { color: var(--h-text); }
+.v2:has(.v3) .v2-abo__text { color: var(--ink-2); }
+.v2:has(.v3) .v2-abo__text .v2-sw__hl.is-on { color: var(--h-hi); }
+.v2:has(.v3) .v2-abo.is-dark .v2-abo__title em, .v2:has(.v3) .v2-abo__title em { color: var(--h-hi); }
+.v2:has(.v3) .v2-abo .v2-more { color: var(--h-text); }
+.v2:has(.v3) .v2-ship__tile { background: var(--h-panel); color: var(--h-text); box-shadow: inset 0 0 0 .5px var(--h-rim); }
+.v2:has(.v3) .v2-ship__tile:hover { box-shadow: inset 0 0 0 .5px var(--h-glow), 0 16px 28px -20px var(--h-shadow); }
+.v2:has(.v3) .v2-ship__art::after { background: linear-gradient(transparent 25%, var(--h-panel) 92%); }
+.v2:has(.v3) .v2-ship__art .v2-ribbons { opacity: .7; filter: saturate(.6); }
+.v2:has(.v3) .v2-cream { background: var(--h-bg); }
+.v2:has(.v3) .v2-so { background: var(--h-bg2); box-shadow: inset 0 0 0 .5px var(--h-rim2); }
+.v2:has(.v3) .v2-so__title { font-weight: 400; color: var(--h-text); }
+.v2:has(.v3) .v2-so__title em { color: var(--h-hi); }
+.v2:has(.v3) .v2-so__lead { color: var(--h-ink2); }
+.v2:has(.v3) .v2-so__k { color: var(--h-glow); }
+.v2:has(.v3) .v2-ship__art .v2-ribbons { opacity: .85; }
+.v2:has(.v3) .v2-sp__title { font-weight: 400; }
+.v2:has(.v3) .v2-sp__n { color: var(--h-glow); }
+/* "Read more" links: the same words-and-arrow link as everywhere */
+.v2:has(.v3) .v2-more {
+  gap: .4em; padding-bottom: .14em; font: 400 clamp(1.05rem, .9rem + .5vw, 1.25rem)/1.2 var(--display); letter-spacing: -.01em;
+  background: linear-gradient(currentColor, currentColor) 0 100% / 0 1px no-repeat; transition: background-size .6s var(--ease);
+}
+.v2:has(.v3) .v2-more::after { display: none; }
+.v2:has(.v3) .v2-more:hover { background-size: 100% 1px; }
+.v2:has(.v3) .v2-more .v2-arw { width: auto; height: auto; overflow: visible; color: inherit; transition: transform .5s var(--ease); }
+.v2:has(.v3) .v2-more .v2-arw svg { display: none; }
+.v2:has(.v3) .v2-more .v2-arw::after { content: "\2192"; }
+.v2:has(.v3) .v2-more:hover .v2-arw { transform: translateX(.25em); }
+.v2:has(.v3) .v2-adc { background: var(--h-bg2); color: var(--h-text); }
+.v2:has(.v3) .v2-adc__lead { color: var(--h-ink3); }
+.v2:has(.v3) .v2-adc__lead b, .v2:has(.v3) .v2-adc__stats b { color: var(--h-text); font-weight: 400; }
+.v2:has(.v3) .v2-adc__stats li { border-top-color: var(--h-line); }
+.v2:has(.v3) .v2-adc__stats li > span { color: var(--h-muted); }
