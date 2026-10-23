@@ -10,7 +10,14 @@ export const generateStaticParams = () => posts().map((p) => ({ slug: p.slug }))
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const p = findPost((await params).slug);
   if (!p) return {};
-  return { title: `${p.title} — Shivo Labs`, description: p.description, alternates: { canonical: `/journal/${p.slug}` } };
+  // the same post in its other language: told to search engines, so each reader is sent to the right one
+  const twin = p.pair ? findPost(p.pair) : undefined;
+  const en = p.lang === 'en' ? p : twin?.lang === 'en' ? twin : undefined;
+  const languages = twin ? Object.fromEntries([p, twin].map((x) => [x.lang, `/journal/${x.slug}`])) : undefined;
+  return {
+    title: `${p.title} — Shivo Labs`, description: p.description,
+    alternates: { canonical: `/journal/${p.slug}`, ...(languages ? { languages: { ...languages, 'x-default': en ? `/journal/${en.slug}` : `/journal/${p.slug}` } } : {}) },
+  };
 }
 
 export default async function Page({ params }: Props) {

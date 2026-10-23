@@ -1,3 +1,4 @@
+import LangMenu from './LangMenu';
 import Link from 'next/link';
 import { areas, services, type Lang, type Service } from '@/lib/services';
 import { faq } from '@/lib/faq';
@@ -133,6 +134,7 @@ export function PostView({ post: p }: { post: Post }) {
   const list = allPosts();
   const at = list.findIndex((x) => x.slug === p.slug);
   const older = list[at + 1] ?? null, newer = at > 0 ? list[at - 1] : null;
+  const twin = p.pair ? list.find((x) => x.slug === p.pair) : undefined;
   return (
     <Page lang={p.lang} className="v2-postp v3">
       <JsonLd data={graph(postLd(p), breadcrumbs([{ name: t.home, path: '/' }, { name: t.journal, path: '/journal' }, { name: p.title, path: `/journal/${p.slug}` }]))} />
@@ -146,7 +148,7 @@ export function PostView({ post: p }: { post: Post }) {
         <div className="v2-ph__in">
           <nav className="v2-ph__crumbs" aria-label={p.lang === 'sw' ? 'Ulipo' : 'Breadcrumb'}>
             <Link href={'/journal'}>← {t.journal}</Link>
-            {p.pair && <Link href={`/journal/${p.pair}`} hrefLang={p.lang === 'sw' ? 'en' : 'sw'}>{t.other}</Link>}
+            {twin && <LangMenu align="right" current={p.lang} items={[p, twin].sort((a, b) => (a.lang === 'en' ? -1 : b.lang === 'en' ? 1 : 0)).map((x) => ({ code: x.lang, href: `/journal/${x.slug}` }))} />}
           </nav>
           <p className="v2-ph__meta">{dateFmt(p.date, p.lang)} · {t.minutes(readingTime(p))}{p.tags.length > 0 && <> · {p.tags.map((x) => tc(x)).join(', ')}</>}</p>
           <h1 className="v2-ph__title">{tc(p.title)}</h1>

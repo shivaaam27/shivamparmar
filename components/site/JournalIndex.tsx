@@ -7,6 +7,7 @@ import { copy } from '@/lib/copy';
 import { LOOP, THIN } from './Hero';
 import { ArrowUR } from './Art';
 import Tabs from './Tabs';
+import LangMenu from './LangMenu';
 
 export type PostCard = { slug: string; title: string; description: string; date: string; dateText: string; lang: 'en' | 'sw'; tags: string[]; minutes: string; pair?: string };
 const ALL = '__all';
@@ -40,6 +41,8 @@ export default function JournalIndex({ posts }: { posts: PostCard[] }) {
   const tags = useMemo(() => Array.from(new Set(entries.flatMap((p) => p.tags))).sort(), [entries]);
   const shown = entries.filter((p) => tag === ALL || p.tags.includes(tag));
   const chooseLang = (k: string) => { setLang(k === 'sw' ? 'sw' : 'en'); setTag(ALL); };
+  // the languages the journal exists in, English first
+  const languages = useMemo(() => Array.from(new Set(posts.map((p) => p.lang))).sort((a, b) => (a === 'en' ? -1 : b === 'en' ? 1 : a.localeCompare(b))).map((code) => ({ code })), [posts]);
   const [lead, ...rest] = shown;
 
   return (
@@ -60,8 +63,7 @@ export default function JournalIndex({ posts }: { posts: PostCard[] }) {
       <section className="v2-jx" aria-label="Posts">
         <div className="v2-jx__in">
           <div className="v2-jx__filters">
-            <Tabs label="Language" value={lang} onChange={chooseLang}
-              items={[{ key: 'en', label: 'English' }, { key: 'sw', label: 'Kiswahili' }]} />
+            {languages.length > 1 && <LangMenu items={languages} current={lang} onSelect={chooseLang} />}
             {tags.length > 1 && (
               <Tabs soft label="Topic" value={tag} onChange={setTag}
                 items={[{ key: ALL, label: lang === 'sw' ? 'Mada zote' : 'Every topic' }, ...tags.map((t) => ({ key: t, label: t.length <= 2 ? t.toUpperCase() : tc(t) }))]} />
