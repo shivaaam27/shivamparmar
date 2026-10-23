@@ -1,0 +1,135 @@
+/* =========================================================
+   The home page in the Shivo Labs app's look (branch redesign/app-ui).
+   Taken from the iPhone app (phone/www/app.css, shared/tokens.css): graphite and one soft sage, Sora set light and large,
+   glass for what floats, a hairline rim on everything, rounded shapes, springy motion, a little living light.
+   It only applies where the page has `.v3` (the home page). It remaps the site's own colour names for that page, so the
+   header, menu and footer follow without being touched.
+   ========================================================= */
+
+html:has(.v3) { --v2-page: #141517; }
+.v2:has(.v3) {
+  /* the app's tokens (dark) */
+  --h-bg: #141517; --h-bg2: #161B18; --h-panel: #1B1C1F; --h-soft: #26272B; --h-line: #2A2C2F;
+  --h-text: #ECEDE9; --h-muted: #9A9CA1; --h-faint: #6E7075;
+  --h-sage: #4F7A5A; --h-glow: #7FB08B; --h-sage-soft: #1F2C23;
+  --h-glass: rgba(40, 41, 45, .5); --h-rim: rgba(255, 255, 255, .16); --h-rim2: rgba(255, 255, 255, .06);
+  --h-spring: cubic-bezier(.32, .72, 0, 1);
+
+  /* the site's colour names, remapped for this page */
+  --paper: var(--h-bg); --paper-2: var(--h-panel); --white: var(--h-panel); --mint: var(--h-sage-soft);
+  --ink: var(--h-text); --ink-2: rgba(236, 237, 233, .72); --ink-3: rgba(236, 237, 233, .5);
+  --line: var(--h-line); --line-light: var(--h-line);
+  --forest: var(--h-bg2); --forest-2: var(--h-panel); --pine: var(--h-sage-soft);
+  --leaf: var(--h-glow); --lime: #A9D8B3; --lime-2: var(--h-sage); --lime-3: var(--h-glow);
+  --sage-lit: var(--h-glow);
+  color-scheme: dark;
+}
+
+/* ---------- the hero: graphite, a slow light, the logo, the services as glass chips ---------- */
+.v2:has(.v3) .v2-scene__stick { background: var(--h-bg); }
+/* the slow light behind everything: two soft sage glows that drift, leaning a little toward the pointer */
+.v2:has(.v3) .v2-scene__stick::before, .v2:has(.v3) .v2-scene__stick::after { content: ""; position: absolute; inset: -20%; z-index: -1; pointer-events: none; }
+.v2:has(.v3) .v2-scene__stick::before {
+  background:
+    radial-gradient(38% 42% at 74% 24%, rgba(127, 176, 139, .30), transparent 70%),
+    radial-gradient(34% 40% at 18% 82%, rgba(79, 122, 90, .30), transparent 70%);
+  translate: calc(var(--px) * 26px) calc(var(--py) * 20px);
+  animation: h-drift 22s ease-in-out infinite alternate;
+}
+/* a fine dot grid, fading out toward the edges */
+.v2:has(.v3) .v2-scene__stick::after {
+  inset: 0; opacity: .5;
+  background-image: radial-gradient(rgba(236, 237, 233, .16) 1px, transparent 1.2px); background-size: 34px 34px;
+  -webkit-mask-image: radial-gradient(ellipse 70% 60% at 50% 48%, #000 20%, transparent 85%); mask-image: radial-gradient(ellipse 70% 60% at 50% 48%, #000 20%, transparent 85%);
+}
+@keyframes h-drift { 0% { transform: translate3d(-2%, 1%, 0) scale(1); } 100% { transform: translate3d(3%, -2%, 0) scale(1.08); } }
+
+/* the logo intro, light on graphite */
+.v2:has(.v3) .v2-hlogo { color: var(--h-text); }
+.v2:has(.v3) .v2-jumble__cell { color: rgba(236, 237, 233, .16); }
+.v2:has(.v3) .v2-jumble__cell.is-locked { color: var(--h-text); }
+.v2:has(.v3) .v2-jumble__cell.is-labs { color: #A5A9A6; }
+.v2:has(.v3) .v2-jumble__cell.is-name { color: var(--h-glow); }
+.v2:has(.v3) .v2-jumble__cell.is-settled { color: rgba(236, 237, 233, .16); }
+.v2:has(.v3) .v2-lock { color: var(--h-text); }
+.v2:has(.v3) .v2-lock__mark .is-lit { fill: var(--h-glow); }
+.v2:has(.v3) .v2-lock__word span { color: #A5A9A6; }
+
+/* the line: a thin glowing thread instead of a thick ribbon */
+.v2:has(.v3) .v2-hloop { filter: drop-shadow(0 0 12px rgba(127, 176, 139, .45)); }
+.v2:has(.v3) .v2-hloop__base { stroke: var(--h-glow); stroke-width: 7; opacity: .55; }
+.v2:has(.v3) .v2-hloop__thin { stroke: var(--h-glow); stroke-width: 1.4; opacity: .4; }
+.v2:has(.v3) .v2-hloop__run { stroke: #D6F2DD; stroke-width: 7; }
+
+/* the services: glass chips with the app's breathing sage square */
+.v2:has(.v3) .v2-hero__foot {
+  left: 50%; right: auto; width: min(100% - 2 * var(--gutter), 58rem); translate: -50% 0;
+  justify-content: center; flex-wrap: wrap; gap: .6rem; font: 500 .875rem/1 var(--body); letter-spacing: 0; text-transform: none; color: var(--h-text);
+}
+.v2:has(.v3) .v2-hero__foot li {
+  display: inline-flex; align-items: center; gap: .6rem; padding: .8rem 1.1rem; border-radius: 99px;
+  background: var(--h-glass); -webkit-backdrop-filter: blur(22px) saturate(180%); backdrop-filter: blur(22px) saturate(180%);
+  box-shadow: inset 0 0 0 .5px var(--h-rim2), inset 0 1px 0 var(--h-rim), 0 10px 30px rgba(0, 0, 0, .35);
+}
+.v2:has(.v3) .v2-hero__foot li::before { content: ""; width: 7px; height: 7px; border-radius: 2px; background: var(--h-glow); animation: h-breathe 2.4s ease-in-out infinite; }
+@keyframes h-breathe { 50% { opacity: .35; } }
+@media (max-width: 720px) {
+  .v2:has(.v3) .v2-hero__foot { display: flex; font-size: .8rem; }
+  .v2:has(.v3) .v2-hero__foot li { padding: .65rem .9rem; }
+  .v2:has(.v3) .v2-hero__foot li:nth-child(even) { text-align: left; }
+}
+
+/* ---------- About: plain light words, one soft highlight; no blocks ---------- */
+.v2:has(.v3) .v2-scene__title { font-weight: 400; letter-spacing: -.02em; }
+.v2:has(.v3) .v2-scene__pill { padding: 0; margin: 0; background: none; rotate: 0deg; color: #A5D2B0; text-shadow: 0 0 26px rgba(127, 176, 139, .6); }
+.v2:has(.v3) .v2-scene__body { color: rgba(236, 237, 233, .88); }
+.v2:has(.v3) .v2-scene__body .v2-sw__hl.is-on { color: var(--h-glow); text-decoration-color: rgba(127, 176, 139, .5); }
+.v2:has(.v3) .v2-scene__note { color: var(--h-muted); }
+
+/* ---------- Work: a graphite card with a lit edge; the pictures are rounded tiles with a hairline ---------- */
+.v2:has(.v3) .v2-sheet__card { position: relative; background: var(--h-panel); }
+.v2:has(.v3) .v2-sheet__card::before {
+  content: ""; position: absolute; left: 0; right: 0; top: 0; height: 1px; z-index: 2; pointer-events: none;
+  background: linear-gradient(90deg, transparent, rgba(127, 176, 139, .8) 30%, rgba(236, 237, 233, .55) 50%, rgba(127, 176, 139, .8) 70%, transparent);
+}
+.v2:has(.v3) .v2-wa__head { font-weight: 400; }
+.v2:has(.v3) .v2-wa__tile { background: var(--h-soft); box-shadow: inset 0 0 0 .5px var(--h-rim2), 0 14px 30px -18px rgba(0, 0, 0, .7); border-radius: 20px; transition: translate .6s var(--h-spring), box-shadow .4s; }
+.v2:has(.v3) .v2-wa__tile::after { content: ""; position: absolute; inset: 0; border-radius: inherit; box-shadow: inset 0 0 0 .5px var(--h-rim2), inset 0 1px 0 rgba(255, 255, 255, .1); pointer-events: none; }
+.v2:has(.v3) .v2-wa__tile { position: relative; }
+.v2:has(.v3) .v2-wa__tile:hover { translate: 0 -4px; box-shadow: inset 0 0 0 .5px var(--h-rim), 0 22px 36px -18px rgba(0, 0, 0, .8), 0 0 28px -8px rgba(127, 176, 139, .35); }
+.v2:has(.v3) .v2-wa__lead { color: var(--ink-3); }
+.v2:has(.v3) .v2-wa__lead b { color: var(--h-text); }
+
+/* ---------- Products: glass tiles ---------- */
+.v2:has(.v3) .v2-pr__title { font-weight: 400; }
+.v2:has(.v3) .v2-mq__tile {
+  background: color-mix(in srgb, var(--h-panel) 65%, rgba(255, 255, 255, .04)); border-radius: 22px;
+  box-shadow: inset 0 0 0 .5px var(--h-rim2), inset 0 1px 0 var(--h-rim2), 0 10px 26px -16px rgba(0, 0, 0, .8);
+}
+.v2:has(.v3) .v2-mq__tile:hover { box-shadow: inset 0 0 0 .5px var(--h-rim), inset 0 1px 0 var(--h-rim), 0 0 26px -8px rgba(127, 176, 139, .4); }
+.v2:has(.v3) .v2-mq__tile .v2-logo { --logo-ink: #F3F0E4; --logo-labs: #A5A9A6; --logo-tip: var(--h-glow); }
+.v2:has(.v3) .v2-mq__name { color: var(--h-glow); border-left-color: var(--h-line); }
+
+/* ---------- Contact: a deep sage card with soft light, not a block of colour ---------- */
+.v2:has(.v3) .v2-contact__stick {
+  color: var(--h-text);
+  background:
+    radial-gradient(52% 70% at 88% 6%, rgba(127, 176, 139, .30), transparent 70%),
+    radial-gradient(46% 64% at 0% 100%, rgba(79, 122, 90, .34), transparent 70%),
+    var(--h-sage-soft);
+  box-shadow: inset 0 1px 0 var(--h-rim);
+}
+.v2:has(.v3) .v2-contact__card { --ink: var(--h-text); --ink-2: rgba(236, 237, 233, .75); color: var(--h-text); }
+.v2:has(.v3) .v2-contact__loop path { stroke: var(--h-glow); opacity: .75; }
+.v2:has(.v3) .v2-contact__loop { filter: drop-shadow(0 0 10px rgba(127, 176, 139, .45)); }
+.v2:has(.v3) .v2-contact__leaf { color: var(--h-sage); opacity: .55; --vein: rgba(236, 237, 233, .12); }
+.v2:has(.v3) .v2-contact__petal { color: var(--h-glow); opacity: .7; }
+.v2:has(.v3) .v2-contact__spark { color: var(--h-text); }
+.v2:has(.v3) .v2-contact__mail > span:first-child { background-image: linear-gradient(currentColor, currentColor); }
+.v2:has(.v3) .v2-contact__title { font-weight: 400; }
+
+/* ---------- the footer, in the same graphite ---------- */
+.v2:has(.v3) .v2-footer__hills { display: none; }
+.v2:has(.v3) .v2-footer__body { background: #101113; box-shadow: inset 0 1px 0 var(--h-rim2); }
+.v2:has(.v3) .v2-footer__body .v2-petals { opacity: .035; }
+.v2:has(.v3) .v2-footer__bar { border-top-color: var(--h-line); }

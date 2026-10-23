@@ -14,6 +14,7 @@ import './styles/services.css';
 import './styles/journal.css';
 import './styles/contact.css';
 import './styles/type.css';
+import './styles/app-home.css';
 
 // The fonts are loaded by the root layout: Sora (--font-serif) for headlines and the logo, Hanken Grotesk
 // (--font-sans) for reading and the interface.

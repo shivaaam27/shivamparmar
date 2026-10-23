@@ -37,6 +37,8 @@ export default function V2Hero() {
     const el = root.current!;
     if (prefersReducedMotion()) { el.classList.add('is-still'); return; }
     const q = gsap.utils.selector(el);
+    // the colour the scene settles on is the page's own deep colour (the page's --forest)
+    const deep = getComputedStyle(el).getPropertyValue('--forest').trim() || '#2B6444';
     const words = q('.v2-sw__w') as HTMLElement[];
     const marks = q('.v2-sw__hl') as HTMLElement[];
     gsap.set(q('.v2-scene__about'), { autoAlpha: 0 });
@@ -63,7 +65,7 @@ export default function V2Hero() {
     // 1 → 2: the logo and services leave, the page turns deep green, the line brightens
     tl.to(q('.v2-hero__stage'), { autoAlpha: 0, scale: .9, y: -50, duration: 2.2, ease: 'power1.in' }, 0)
       .to(q('.v2-hero__foot'), { autoAlpha: 0, y: 20, duration: 1.2 }, 0)
-      .to(q('.v2-scene__stick'), { backgroundColor: '#2B6444', duration: 2.4, ease: 'power1.inOut' }, .6)
+      .to(q('.v2-scene__stick'), { backgroundColor: deep, duration: 2.4, ease: 'power1.inOut' }, .6)
       .to(q('.v2-hloop'), { scale: 1.08, duration: 10 }, 0)
       // 3: About rises in the same place
       .to(q('.v2-scene__about'), { autoAlpha: 1, duration: .4 }, 2.6)

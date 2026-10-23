@@ -48,6 +48,9 @@ export default function V2WorkScene({ children }: { children?: React.ReactNode }
     // while it rises, and About, still held, sinks back a little under it.
     const st = { trigger: el, start: () => `top ${RISE * 100}%`, end: 'top top', scrub: PACE.scrub, invalidateOnRefresh: true };
     gsap.fromTo(card, { '--g': 0, y: () => -(RISE - 1) * window.innerHeight }, { '--g': 1, y: 0, ease: 'none', scrollTrigger: st });
+    const tiles = gsap.utils.toArray<HTMLElement>('.v2-wa__tile', el);
+    gsap.fromTo(tiles, { opacity: 0, y: 36, scale: .94 }, { opacity: 1, y: 0, scale: 1, ease: 'power2.out', stagger: { each: .05, from: 'center' }, immediateRender: false,
+      scrollTrigger: { trigger: el, start: () => `top ${RISE * 100 - 40}%`, end: () => `top ${RISE * 40}%`, scrub: PACE.scrub, invalidateOnRefresh: true } });
     if (about) gsap.fromTo(about, { scale: 1, y: 0, opacity: 1 }, { scale: .9, y: -50, opacity: .25, ease: 'none', immediateRender: false, scrollTrigger: st });
   }, { scope: root });
 

@@ -11,7 +11,7 @@ export const metadata: Metadata = {
 /** Home: hero → about → the cream page (work, products) → contact (docs/SITE.md). */
 export default function HomePage() {
   return (
-    <main id="main" className="v2-home">
+    <main id="main" className="v2-home v3">
       {/* one screen that stays put: the hero turns into About, then the cream page rises over it */}
       <V2Hero />
       <V2WorkScene><ProductRows /></V2WorkScene>
