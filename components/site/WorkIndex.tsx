@@ -85,6 +85,8 @@ export default function V2WorkIndex({ entries, title, lead, children }: { entrie
     const show = (on: boolean) => { if (front.current !== on) { front.current = on; setFront(on); } };
     if (prefersReducedMotion()) { el.classList.add('is-still'); show(true); return; }
     const q = gsap.utils.selector(el);
+    // the page's own paper colour (the page's --paper), which the green of the first screen lifts to
+    const paper = getComputedStyle(el).getPropertyValue('--paper').trim() || '#F4F1E6';
     const tl = gsap.timeline({
       defaults: { ease: 'none' },
       scrollTrigger: {
@@ -96,7 +98,7 @@ export default function V2WorkIndex({ entries, title, lead, children }: { entrie
       .to(q('.v2-hloop'), { autoAlpha: 0, duration: 1 }, '<.1')
       .to(q('.v2-wo__veil'), { autoAlpha: 0, duration: 1.4, ease: 'power1.inOut' }, '<.4')
       .fromTo(q('.v2-wo__wall'), { scale: 1.1 }, { scale: 1, duration: 1.4, ease: 'power2.out' }, '<')
-      .to(q('.v2-wo__stick'), { backgroundColor: '#F4F1E6', duration: 1.2, ease: 'power1.inOut' }, '<.5')
+      .to(q('.v2-wo__stick'), { backgroundColor: paper, duration: 1.2, ease: 'power1.inOut' }, '<.5')
       .to({}, { duration: 1.2 });
     fitScene(el, tl, 1);
     return () => { tl.scrollTrigger?.kill(); tl.kill(); };

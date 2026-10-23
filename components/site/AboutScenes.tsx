@@ -36,18 +36,16 @@ function split(text: string, phrases: string[]) {
 /* ------------------------------------------------------------------ 1. opening */
 
 /**
- * Cream, "Hi, I'm Shivam." and the loop line drawing in behind it. Scrolling, the screen turns deep green, the
- * greeting rises to the top, and the introduction fills in word by word; then the words leave and the screen is
- * plain green for the next scene to open over.
+ * The page opens on the introduction: the title "About" rises in by itself, and the introduction under it fills in
+ * word by word as you scroll, then the two links. The screen simply stays put until it is read.
  */
-/** Screens after the opening's words leave: one for the held screen itself, a little more of plain green. */
+/** Screens after the opening's words: just the held screen itself. */
 const OPEN_REST = 1;
 
 export function AboutOpen() {
   const root = useRef<HTMLElement>(null);
   const [drawn, setDrawn] = useState(false);
-  const { headline, eyebrow, intro } = aboutPage;
-  const [hi, name] = headline[0].split(/,\s*/);
+  const { intro } = aboutPage;
 
   useEffect(() => { const t = setTimeout(() => setDrawn(true), 350); return () => clearTimeout(t); }, []);
 
@@ -55,38 +53,32 @@ export function AboutOpen() {
     const el = root.current!;
     if (prefersReducedMotion()) { el.classList.add('is-still'); return; }
     const q = gsap.utils.selector(el);
-    // the colour the opening settles on is the page's own deep colour (the page's --forest)
-    const deep = getComputedStyle(el).getPropertyValue('--forest').trim() || '#2B6444';
     const words = q('.v2-sw__w') as HTMLElement[];
     const marks = q('.v2-sw__hl') as HTMLElement[];
     gsap.set(words, { opacity: .14 });
-    gsap.set(q('.v2-abo__body, .v2-abo__end'), { autoAlpha: 0 });
+    gsap.set(q('.v2-abo__end'), { autoAlpha: 0, y: 14 });
+    // the title arrives on its own, as the page opens
+    gsap.fromTo(q('.v2-abo__title'), { autoAlpha: 0, y: 46 }, { autoAlpha: 1, y: 0, duration: 1.3, ease: 'power3.out', delay: .15 });
     const tl = gsap.timeline({
       defaults: { ease: 'none' },
       scrollTrigger: {
         trigger: el, start: 'top top', end: () => `+=${el.offsetHeight - OPEN_REST * window.innerHeight}`, scrub: PACE.scrub, invalidateOnRefresh: true,
         onUpdate: (st) => {
-          const filled = gsap.utils.clamp(0, 1, (st.progress - .3) / .45) * words.length;
+          const filled = gsap.utils.clamp(0, 1, (st.progress - .02) / .7) * words.length;
           marks.forEach((m) => m.classList.toggle('is-on', filled > Number(m.dataset.at)));
           if (st.progress > .02) setDrawn(true);
-          el.classList.toggle('is-dark', st.progress > .06);
         },
       },
     });
-    tl.to(q('.v2-abo__eyebrow'), { autoAlpha: 0, y: -20, duration: .8 }, 0)
-      .to(q('.v2-scene__stick'), { backgroundColor: deep, duration: 1.6, ease: 'power1.inOut' }, .2)
-      .to(q('.v2-abo__title'), { y: () => -window.innerHeight * .27, scale: .62, color: () => getComputedStyle(el).getPropertyValue('--ink').trim() || '#fff', duration: 1.6, ease: 'power2.inOut' }, .2)
-      .to(q('.v2-hloop'), { opacity: .22, duration: 1.4 }, .4)
-      .to(q('.v2-abo__body'), { autoAlpha: 1, duration: .4 }, 1.5)
-      .to(words, { opacity: 1, duration: 3.6, stagger: { amount: 3.6 } }, 1.7)
-      .to(q('.v2-abo__end'), { autoAlpha: 1, y: 0, duration: .8 }, 5.4)
-      .to({}, { duration: .6 });
+    tl.to(words, { opacity: 1, duration: 3.6, stagger: { amount: 3.6 } }, 0)
+      .to(q('.v2-abo__end'), { autoAlpha: 1, y: 0, duration: .8 }, 3.8)
+      .to({}, { duration: .8 });
     fitScene(el, tl, OPEN_REST);
     return () => { tl.scrollTrigger?.kill(); tl.kill(); };
   }, { scope: root });
 
   return (
-    <section ref={root} className={`v2-scene v2-abo${drawn ? ' is-done' : ''}`} aria-label="Hello">
+    <section ref={root} className={`v2-scene v2-abo${drawn ? ' is-done' : ''}`} aria-label="About">
       <div className="v2-scene__stick">
         <svg className="v2-hloop" viewBox="0 0 1440 900" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
           <path className="v2-hloop__thin" d={THIN} pathLength={1} />
@@ -94,8 +86,7 @@ export function AboutOpen() {
           <path className="v2-hloop__run" d={LOOP} pathLength={1} />
         </svg>
         <div className="v2-abo__head">
-          <p className="v2-abo__eyebrow">{eyebrow.split(' · ').map((e) => tc(e)).join('  ·  ')}</p>
-          <h1 className="v2-abo__title">{hi}, <em>{name}</em></h1>
+          <h1 className="v2-abo__title">About</h1>
         </div>
         <div className="v2-abo__body">
           <ScrollWords className="v2-abo__text" controlled

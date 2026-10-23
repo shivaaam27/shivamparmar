@@ -16,9 +16,12 @@ const LINKS = nav.map((n) => (n.label === 'Contact' ? { ...n, href: '/contact' }
 function darkAt(x: number, y: number, header: HTMLElement | null) {
   for (const el of document.elementsFromPoint(x, y)) {
     if (header?.contains(el) || el.tagName === 'IMG' || el.tagName === 'VIDEO') continue;
-    const m = getComputedStyle(el).backgroundColor.match(/[\d.]+/g);
+    const bg = getComputedStyle(el).backgroundColor;
+    const m = bg.match(/[\d.]+/g);
     if (!m || (m.length > 3 && Number(m[3]) < 0.5)) continue;
-    const [r, g, b] = m.slice(0, 3).map(Number);
+    // rgb() is 0-255; a mixed colour comes back as color(srgb 0-1 0-1 0-1 / alpha)
+    const k = bg.startsWith('color(') ? 255 : 1;
+    const [r, g, b] = m.slice(0, 3).map((v) => Number(v) * k);
     return (0.299 * r + 0.587 * g + 0.114 * b) / 255 < 0.55;
   }
   return false;

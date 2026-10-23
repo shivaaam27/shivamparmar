@@ -16,7 +16,7 @@ export const metadata: Metadata = {
 export default function WorkPage() {
   const entries = wallEntries();
   return (
-    <main id="main" className="v2-page v2-work-film">
+    <main id="main" className="v2-page v2-work-film v3">
       <V2WorkIndex entries={entries} title={['My', 'Work']} lead="Websites, business systems, social media and photography, made in Tanzania.">
         <V2WorkBrowser cats={workData()} initial={{ c: null, s: null }} archive />
         <Cta />
