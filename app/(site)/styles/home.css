@@ -117,7 +117,7 @@
    margin each side, and grows to the full screen over About's last screen, which stays where it is.
    It holds the wall of work, a line about the work, and the products. Then the lime contact block and the footer.
    ========================================================= */
-.v2-sheet { --rise: 2; position: relative; z-index: 3; margin-top: calc(var(--rise) * -100vh); margin-top: calc(var(--rise) * -100svh); }
+.v2-sheet { --rise: 2; position: relative; z-index: 3; margin-top: calc(var(--rise) * -100vh); margin-top: calc(var(--rise) * -100lvh); }
 .v2-sheet__card {
   --g: 0; background: var(--paper); color: var(--ink);
   clip-path: inset(0 calc((1 - var(--g)) * 4%) 0 calc((1 - var(--g)) * 4%) round calc((1 - var(--g)) * 40px) calc((1 - var(--g)) * 40px) 0 0);
@@ -125,7 +125,7 @@
 
 /* the wall: three rows of pictures that fill one screen, the main photograph in the middle */
 .v2-wa__grid {
-  position: relative; height: 100vh; height: 100svh; min-height: 560px; overflow: hidden; display: grid; grid-template-rows: auto 1fr 1.45fr 1fr; gap: var(--gap);
+  position: relative; height: 100vh; height: 100lvh; min-height: 560px; overflow: hidden; display: grid; grid-template-rows: auto 1fr 1.45fr 1fr; gap: var(--gap);
   padding: clamp(1.6rem, 4.5vh, 3rem) 0 1.4rem;
 }
 /* the title arrives first, at the top of the card; the pictures are below it */

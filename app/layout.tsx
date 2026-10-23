@@ -41,9 +41,6 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  // edge to edge on an iPhone (the page runs under the status bar and the toolbar; the CSS keeps things clear of them with
-  // env(safe-area-inset-*)), and the bars take the page's own colour, dark or light
-  viewportFit: 'cover',
   colorScheme: 'dark light',
   themeColor: [{ media: '(prefers-color-scheme: dark)', color: '#141517' }, { media: '(prefers-color-scheme: light)', color: '#F5F5F2' }],
 };

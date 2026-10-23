@@ -1004,3 +1004,8 @@ html.v2-theming .v2, html.v2-theming .v2 *, html.v2-theming .v2 *::before, html.
   .v2-hlogo { --cell: clamp(2.1rem, 11vw, 3.2rem); }
   .v2-menu__list a { font-size: clamp(1.9rem, min(9.4vw, 6vh), 3rem) !important; }
 }
+
+/* Full-screen scenes are as tall as the screen with the browser's bar hidden (100lvh): sized to the shorter screen (svh),
+   they stopped short and left an empty strip at the bottom once Safari or Chrome slid its bar away. The page under them is
+   the same colour all the way down, so nothing shows through. */
+html:has(.v2), html:has(.v2) body { min-height: 100lvh; }

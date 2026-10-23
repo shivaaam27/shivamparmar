@@ -20,7 +20,6 @@ import './styles/app-home.css';
 // (--font-sans) for reading and the interface.
 
 export const viewport: Viewport = {
-  viewportFit: 'cover',
   colorScheme: 'dark light',
   themeColor: [{ media: '(prefers-color-scheme: dark)', color: '#141517' }, { media: '(prefers-color-scheme: light)', color: '#F5F5F2' }],
 };

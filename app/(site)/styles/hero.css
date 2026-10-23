@@ -4,7 +4,7 @@
    ========================================================= */
 .v2-scene { --px: 0; --py: 0; --set: 0; position: relative; height: 460vh; }
 .v2-scene__stick {
-  position: sticky; top: 0; height: 100vh; height: 100svh; min-height: 520px;
+  position: sticky; top: 0; height: 100vh; height: 100lvh; min-height: 520px;
   display: grid; place-items: center; overflow: hidden; isolation: isolate;
   background: var(--paper); color: var(--ink);
 }

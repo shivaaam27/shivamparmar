@@ -25,7 +25,7 @@
   /* three rows at one height; each picture is as wide as its own shape (--ar, its width over its height) */
   --h: calc(100svh - var(--head) - var(--foot)); --rowh: calc((var(--h) - (var(--rows, 3) - 1) * var(--gap)) / var(--rows, 3));
 }
-.v2-wo__stick { position: sticky; top: 0; height: 100vh; height: 100svh; overflow: hidden; background: var(--forest); }
+.v2-wo__stick { position: sticky; top: 0; height: 100vh; height: 100lvh; overflow: hidden; background: var(--forest); }
 .v2-wo__wall {
   position: absolute; inset: 0; padding: var(--head) 0 var(--foot); display: grid; grid-template-columns: minmax(0, 1fr); grid-template-rows: repeat(var(--rows, 3), var(--rowh)); align-content: center; gap: var(--gap);
   overflow: hidden; touch-action: pan-y; user-select: none; transform-origin: 50% 45%; will-change: transform; contain: layout paint;
@@ -152,7 +152,7 @@
 
 /* ---------- a project page: the picture held full screen, the information sliding up over it ---------- */
 .v2-po { position: relative; }
-.v2-po__hero { position: sticky; top: 0; z-index: 0; height: 100vh; height: 100svh; overflow: hidden; background: var(--forest); }
+.v2-po__hero { position: sticky; top: 0; z-index: 0; height: 100vh; height: 100lvh; overflow: hidden; background: var(--forest); }
 /* a light shade only where the words are: the picture stays clear and sharp */
 .v2-po__shade {
   position: absolute; inset: 0; pointer-events: none;
