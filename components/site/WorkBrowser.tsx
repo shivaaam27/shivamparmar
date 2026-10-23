@@ -4,6 +4,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import { createPortal, flushSync } from 'react-dom';
 import { useLenis } from 'lenis/react';
 import Link from 'next/link';
+import { claimPops, pushPage } from '@/components/SmoothScroll';
 import { track } from '@/lib/track';
 import { srcSet } from '@/lib/thumb';
 import { tc } from '@/lib/title-case';
@@ -72,11 +73,45 @@ export default function V2WorkBrowser({ cats, initial, archive }: { cats: Cat[];
     return () => window.removeEventListener('popstate', sync);
   }, [cats]);
 
+  // back and forward between filters: the earlier choice comes back at once, then the page returns to exactly where it
+  // was on it, again each time the grid still grows while it lays out (pictures, measured columns), until the visitor
+  // moves or it has settled
+  useEffect(() => claimPops((to) => {
+    const parts = window.location.pathname.replace(/\/+$/, '').split('/');
+    if (parts[1] !== 'work' || parts.length > 3 || (parts[2] && !cats.some((c) => c.slug === parts[2]))) return false;
+    const next = readSel(cats);
+    flushSync(() => setSel(next));
+    const c = cats.find((x) => x.slug === next.c);
+    document.title = `${c?.collections.find((x) => x.slug === next.s)?.name ?? c?.name ?? 'Work'} — Shivo Labs`;
+    let done = false;
+    let late: ReturnType<typeof setTimeout> | undefined;
+    const stopOn = ['wheel', 'touchstart', 'keydown', 'pointerdown'] as const;
+    const jump = () => {
+      if (done) return;
+      if (lenis) { lenis.resize(); lenis.scrollTo(to, { immediate: true, force: true }); }
+      else window.scrollTo({ top: to, behavior: 'instant' });
+    };
+    const grows = new ResizeObserver(() => jump());
+    const finish = () => {
+      done = true;
+      grows.disconnect();
+      clearTimeout(late);
+      stopOn.forEach((t) => window.removeEventListener(t, finish));
+    };
+    stopOn.forEach((t) => window.addEventListener(t, finish, { passive: true }));
+    jump();
+    grows.observe(document.body);
+    requestAnimationFrame(() => { jump(); requestAnimationFrame(jump); });
+    late = setTimeout(() => { jump(); finish(); }, 1200);
+    return true;
+  }), [cats, lenis]);
+
   const choose = useCallback((next: Sel) => {
     const c = cats.find((x) => x.slug === next.c);
     const s = c?.collections.find((x) => x.slug === next.s);
     track(c ? `Work · ${c.name}${s ? ` › ${s.name}` : ''}` : 'Work · All');
-    window.history.pushState(null, '', pathOf(next));
+    // (the place on the filter being left is kept, so back returns to it)
+    pushPage(pathOf(next));
     document.title = `${s?.name ?? c?.name ?? 'Work'} — Shivo Labs`;
     const apply = () => {
       flushSync(() => setSel(next));

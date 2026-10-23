@@ -593,3 +593,180 @@ html:has(.v3) { --v2-page: #141517; }
 .v2:has(.v3) .v2-ct__profiles .v2-arw svg { display: none; }
 .v2:has(.v3) .v2-ct__profiles .v2-arw::after { content: "\2192"; }
 @media (max-width: 860px) { .v2:has(.v3) .v2-ct__ways { grid-template-columns: 1fr; } }
+
+
+/* =========================================================
+   Project pages (/work/<project>) in the same look, and the soft fade behind the header (23 Oct 2026).
+   The project's picture or recording stays exactly as it is; around it the old green, the lime blocks and the boxed or
+   round buttons give way to graphite, the opening light, plain words and arrows.
+   Parts: ProjectScene.tsx (the opening, the information, the way on), LiveSite.tsx, ProjectWall.tsx (the pictures),
+   Compare.tsx (day / night), Viewer.tsx (full screen).
+   ========================================================= */
+/* the opening: the picture full screen. Behind it (until it has loaded, and while it morphs in) a neutral graphite in
+   both modes, so the header reads it as dark and stays white over the photograph */
+.v2:has(.v3) .v2-po__hero, .v2:has(.v3) .v2-po__hero .v2-pmedia { background: #1B1C1F; }
+.v2:has(.v3) .v2-po__shade { background: linear-gradient(180deg, rgba(10, 10, 12, .46), rgba(10, 10, 12, .14) 16%, transparent 26%, transparent 52%, rgba(10, 10, 12, .66)); }
+.v2:has(.v3) .v2-po__say { text-shadow: 0 1px 24px rgba(0, 0, 0, .3); }
+.v2:has(.v3) .v2-po__crumbs { font: 600 .75rem/1.2 var(--body); letter-spacing: .14em; }
+.v2:has(.v3) .v2-po__crumbs a {
+  padding-bottom: .2em; color: #fff; background: linear-gradient(currentColor, currentColor) 0 100% / 0 1px no-repeat; transition: background-size .6s var(--ease);
+}
+.v2:has(.v3) .v2-po__crumbs a:hover { color: #fff; background-size: 100% 1px; }
+.v2:has(.v3) .v2-po__crumbs span { color: rgba(255, 255, 255, .72); }
+.v2:has(.v3) .v2-po__title { font-weight: 400; letter-spacing: -.012em; word-spacing: .16em; color: #fff; }
+/* back and full screen: the words and a thin icon on the picture, no box */
+.v2:has(.v3) :is(.v2-po__back, .v2-po__expand) {
+  gap: .5rem; height: auto; padding: 0 0 .2em; border-radius: 0; box-shadow: none; -webkit-backdrop-filter: none; backdrop-filter: none;
+  color: #fff; font: 400 1rem/1.2 var(--display); letter-spacing: -.01em;
+  background: linear-gradient(currentColor, currentColor) 0 100% / 0 1px no-repeat; filter: drop-shadow(0 1px 6px rgba(0, 0, 0, .45));
+  transition: background-size .6s var(--ease), translate .5s var(--ease);
+}
+.v2:has(.v3) :is(.v2-po__back, .v2-po__expand):hover { color: #fff; background-size: 100% 1px; box-shadow: none; }
+.v2:has(.v3) .v2-po__back:hover { translate: -3px 0; }
+
+/* the information: graphite with the opening light, rising over the picture with a lit rim along its rounded top */
+.v2:has(.v3) .v2-po__body.v2-dark {
+  isolation: isolate; overflow: hidden; background: var(--h-bg); color: var(--h-text); --line: var(--h-line);
+  box-shadow: inset 0 1px 0 var(--h-rim), 0 -30px 60px -30px rgba(0, 0, 0, .45);
+}
+.v2:has(.v3) .v2-po__body::before, .v2:has(.v3) .v2-po__body::after { content: ""; position: absolute; z-index: -1; pointer-events: none; }
+.v2:has(.v3) .v2-po__body::before {
+  inset: -10%; opacity: .8;
+  background:
+    radial-gradient(55% 50% at 30% 22%, var(--h-halo), transparent 72%),
+    radial-gradient(45% 40% at 92% 12%, var(--h-halo3), transparent 70%),
+    radial-gradient(45% 40% at 85% 88%, var(--h-halo3), transparent 70%);
+  animation: h-drift 26s ease-in-out infinite alternate;
+  /* it fades out before the information ends, so there is no seam with the way on under it */
+  -webkit-mask-image: linear-gradient(#000 40%, transparent 90%); mask-image: linear-gradient(#000 40%, transparent 90%);
+}
+.v2:has(.v3) .v2-po__body::after {
+  inset: 0; opacity: .6;
+  background-image: radial-gradient(var(--h-dots) 1px, transparent 1.2px); background-size: 36px 36px;
+  -webkit-mask-image: radial-gradient(ellipse 70% 60% at 35% 35%, #000 15%, transparent 80%); mask-image: radial-gradient(ellipse 70% 60% at 35% 35%, #000 15%, transparent 80%);
+}
+@media (prefers-reduced-motion: reduce) { .v2:has(.v3) .v2-po__body::before { animation: none; } }
+/* the words, written one way: a small neutral label, the description and the longer text in the calm grey, the facts'
+   values in full ink */
+.v2:has(.v3) .v2-po__meta { font: 600 .75rem/1.2 var(--body); letter-spacing: .14em; text-transform: uppercase; color: var(--h-text-soft); }
+.v2:has(.v3) .v2-po__lead { font: 400 var(--h-fs-lead)/1.5 var(--body); letter-spacing: -.012em; color: var(--h-text-soft); }
+.v2:has(.v3) .v2-po__text { font: 400 var(--h-fs-text)/1.6 var(--body); color: var(--h-text-soft); }
+.v2:has(.v3) :is(.v2-po__lead, .v2-po__text) :is(b, strong) { font-weight: 600; color: var(--h-text-strong); }
+.v2:has(.v3) .v2-po__facts > div { border-top-color: var(--h-line); }
+.v2:has(.v3) .v2-po__facts dt { font: 600 .75rem/1.2 var(--body); letter-spacing: .14em; color: var(--h-text-soft); }
+.v2:has(.v3) .v2-po__facts dd { font: 400 var(--h-fs-text)/1.45 var(--body); color: var(--h-text-strong); }
+.v2:has(.v3) .v2-po__live .v2-btn { color: var(--h-text-strong); }
+.v2:has(.v3) .v2-po__host { font: 400 .9375rem/1.2 var(--body); color: var(--h-text-soft); }
+.v2:has(.v3) .v2-pnav__k { color: var(--h-text-soft); }
+/* (the way on tucks a hair under the end of the opening, so the photograph's last row never shows as a seam) */
+.v2:has(.v3) .v2-po + .v2-pnav { margin-top: -2px; }
+
+/* the rest of the pictures: rounded tiles with a hairline, as on Work; a video shows a plain play mark, no disc */
+.v2:has(.v3) .v2-pw__pic { border-radius: 20px; background: var(--h-soft); box-shadow: 0 14px 30px -20px var(--h-shadow); }
+.v2:has(.v3) .v2-pw__pic::after { content: ""; position: absolute; inset: 0; border-radius: inherit; box-shadow: inset 0 0 0 .5px var(--h-rim); pointer-events: none; }
+.v2:has(.v3) .v2-pw__pic:hover { box-shadow: 0 22px 36px -20px var(--h-shadow); }
+.v2:has(.v3) .v2-pw__pic .v2-shot__play { width: auto; height: auto; border-radius: 0; background: none; color: #fff; filter: drop-shadow(0 1px 6px rgba(0, 0, 0, .55)); }
+.v2:has(.v3) .v2-pw__pic .v2-shot__play svg { width: 1.15rem; height: 1.15rem; }
+.v2:has(.v3) .v2-pw__bar { color: var(--h-text-strong); }
+.v2:has(.v3) .v2-pw__bar .v2-pnav__icon { transition: translate .5s var(--ease); }
+.v2:has(.v3) .v2-pw__bar .v2-pnav__icon:hover { background: none; box-shadow: none; color: var(--h-text-strong); }
+.v2:has(.v3) .v2-pw__bar .v2-pnav__icon:first-child:hover { translate: -3px 0; }
+.v2:has(.v3) .v2-pw__bar .v2-pnav__icon:last-child:hover { translate: 3px 0; }
+.v2:has(.v3) .v2-pw__count { font: 400 .9375rem/1.2 var(--body); color: var(--h-text-soft); }
+
+/* day / night: a thin white divider with a plain arrow either side, the two names as small words on the video */
+.v2:has(.v3) .v2-cv { border-radius: 20px; background: var(--h-soft); box-shadow: 0 14px 30px -20px var(--h-shadow); }
+.v2:has(.v3) .v2-cv::after { content: ""; position: absolute; inset: 0; z-index: 1; border-radius: inherit; box-shadow: inset 0 0 0 .5px var(--h-rim); pointer-events: none; }
+.v2:has(.v3) .v2-cv__line { width: 1.5px; background: #fff; box-shadow: 0 0 10px rgba(0, 0, 0, .35); }
+.v2:has(.v3) .v2-cv__handle {
+  z-index: 2; justify-content: space-between; width: 3.4rem; height: 3rem; border-radius: 0; background: none; box-shadow: none; color: #fff;
+  filter: drop-shadow(0 1px 5px rgba(0, 0, 0, .6));
+}
+.v2:has(.v3) .v2-cv__handle svg { width: 1.3rem; height: 1.3rem; }
+.v2:has(.v3) .v2-cv__handle svg + svg { margin-left: 0; }
+.v2:has(.v3) .v2-cv__label {
+  z-index: 2; padding: 0; border-radius: 0; background: none; color: #fff; font: 600 .72rem/1 var(--body); letter-spacing: .14em;
+  text-shadow: 0 1px 8px rgba(0, 0, 0, .6);
+}
+.v2:has(.v3) .v2-cv__label--a { left: 3.4rem; bottom: 1.15rem; }
+.v2:has(.v3) .v2-cv__label--b { right: 1.1rem; bottom: 1.15rem; }
+.v2:has(.v3) .v2-cv__play { z-index: 2; width: 2.2rem; height: 2.2rem; left: .8rem; bottom: .6rem; border-radius: 0; background: none; color: #fff; filter: drop-shadow(0 1px 5px rgba(0, 0, 0, .6)); }
+.v2:has(.v3) .v2-project .v2-gallery__feature .v2-cv { border-radius: 20px; }
+
+/* full screen: graphite with the opening light; the count and the project as words; plain arrows and a thin close cross */
+.v2:has(.v3) .v2-viewer { isolation: isolate; overflow: hidden; background: var(--h-bg); color: var(--h-text); }
+.v2:has(.v3) .v2-viewer .v2-petals { display: none; }
+.v2:has(.v3) .v2-viewer::before, .v2:has(.v3) .v2-viewer::after { content: ""; position: absolute; z-index: -1; pointer-events: none; }
+.v2:has(.v3) .v2-viewer::before {
+  inset: -10%; opacity: .8;
+  background:
+    radial-gradient(60% 55% at 50% 40%, var(--h-halo), transparent 72%),
+    radial-gradient(45% 40% at 10% 15%, var(--h-halo3), transparent 70%),
+    radial-gradient(45% 40% at 90% 88%, var(--h-halo3), transparent 70%);
+}
+.v2:has(.v3) .v2-viewer::after {
+  inset: 0; opacity: .6;
+  background-image: radial-gradient(var(--h-dots) 1px, transparent 1.2px); background-size: 36px 36px;
+  -webkit-mask-image: radial-gradient(ellipse 75% 65% at 50% 48%, #000 15%, transparent 80%); mask-image: radial-gradient(ellipse 75% 65% at 50% 48%, #000 15%, transparent 80%);
+}
+.v2:has(.v3) .v2-viewer__bar { gap: 1.6rem; }
+.v2:has(.v3) .v2-viewer__bar .v2-pill { padding: 0 0 .14em; border-radius: 0; background: none; box-shadow: none; font: 400 .9375rem/1.2 var(--body); }
+.v2:has(.v3) .v2-viewer__bar .v2-pill--lime { color: var(--h-text-soft); font-variant-numeric: tabular-nums; }
+.v2:has(.v3) .v2-viewer__project {
+  gap: .4em; color: var(--h-text-strong); background: linear-gradient(currentColor, currentColor) 0 100% / 0 1px no-repeat; transition: background-size .6s var(--ease);
+}
+.v2:has(.v3) .v2-viewer__project:hover { background-size: 100% 1px; }
+.v2:has(.v3) .v2-viewer__project .v2-arw { display: none; }
+.v2:has(.v3) .v2-viewer__project::after { content: "\2192"; }
+.v2:has(.v3) .v2-viewer__close { width: 2.75rem; height: 2.75rem; margin-right: -.5rem; border-radius: 0; background: none; }
+.v2:has(.v3) .v2-viewer__close i { width: 1.4rem; height: 1.25px; border-radius: 0; background: var(--h-text-strong); }
+.v2:has(.v3) .v2-viewer__arrow {
+  width: 3rem; height: 3rem; border-radius: 0; background: none; box-shadow: none; color: var(--h-text-strong); font: 300 1.6rem/1 var(--body);
+  transition: translate .5s var(--ease), opacity .3s;
+}
+.v2:has(.v3) .v2-viewer__arrow:hover:not(:disabled) { background: none; box-shadow: none; color: var(--h-text-strong); transform: none; }
+.v2:has(.v3) .v2-viewer__arrow:first-child:hover:not(:disabled) { translate: -4px 0; }
+.v2:has(.v3) .v2-viewer__arrow:last-child:hover:not(:disabled) { translate: 4px 0; }
+.v2:has(.v3) .v2-viewer__frame :is(img, video) { border-radius: 16px; }
+.v2:has(.v3) .v2-viewer__thumbs button { border-radius: 10px; }
+.v2:has(.v3) .v2-viewer__thumbs button.is-on { box-shadow: 0 0 0 1.5px var(--h-text-strong); }
+.v2:has(.v3) .v2-viewer__rights { font: 400 .75rem/1.4 var(--body); color: var(--h-text-soft); opacity: 1; }
+
+/* a live site in the frame: the same graphite bar, "Back" as words, the logo in the page's ink */
+.v2:has(.v3) .v2-live { background: var(--h-bg); }
+.v2:has(.v3) .v2-live__bar { color: var(--h-text); }
+.v2:has(.v3) .v2-live__back {
+  height: auto; padding: 0 0 .14em; border-radius: 0; color: var(--h-text-strong); font: 400 1rem/1.2 var(--display); letter-spacing: -.01em;
+  background: linear-gradient(currentColor, currentColor) 0 100% / 0 1px no-repeat; transition: background-size .6s var(--ease);
+}
+.v2:has(.v3) .v2-live__back:hover { background-size: 100% 1px; }
+.v2:has(.v3) .v2-live .v2-logo { --logo-ink: var(--h-text); --logo-labs: var(--h-labs); --logo-tip: var(--h-sage); }
+.v2:has(.v3) .v2-live__host { color: var(--h-text-soft); }
+.v2:has(.v3) .v2-live__out { color: var(--h-text-strong); font: 400 .9375rem/1 var(--body); }
+.v2:has(.v3) .v2-live__frame { border-radius: 20px 20px 0 0; box-shadow: 0 0 0 .5px var(--h-rim); }
+
+/* ---------- the soft fade behind the header ----------
+   Once the page has scrolled, the page colour fades down from the top edge behind the logo and the menu lines, so words
+   never run visibly under them (phones above all). It is drawn on the page root, under the header and under the Work
+   filters (they keep their own bar), takes no clicks, and the header's colour reading never sees it (it reads the page
+   colour under it, which is this same colour). Hidden while the menu is open. */
+.v2:has(.v3)::before {
+  content: ""; position: fixed; z-index: 59; left: 0; right: 0; top: 0; height: calc(var(--h-hdr) + 1.5rem); pointer-events: none;
+  /* the page colour, strong at the top and fading out with no edge; under it a soft blur, so words that still show
+     through are only a haze, while a smooth light (the openings) passes through unchanged */
+  background: linear-gradient(color-mix(in srgb, var(--h-bg) 88%, transparent), color-mix(in srgb, var(--h-bg) 62%, transparent) 50%, transparent);
+  -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px);
+  -webkit-mask-image: linear-gradient(#000 45%, transparent); mask-image: linear-gradient(#000 45%, transparent);
+  opacity: 0; transition: opacity .45s var(--ease);
+}
+.v2:has(.v3):has(.v2-header.is-scrolled:not(.is-open))::before { opacity: 1; }
+/* not over the Work opening while its lit cover is held (it would show as a flat band over the light) */
+.v2:has(.v3 .v2-wo:not(.is-front)):has(.v2-header.is-scrolled:not(.is-open))::before { opacity: 0; }
+/* a project page: not over its photograph; it comes in only as the information reaches the top */
+.v2:has(.v3 .v2-po):has(.v2-header.is-scrolled:not(.is-open))::before { opacity: 0; }
+@supports (animation-timeline: scroll()) {
+  .v2:has(.v3 .v2-po):has(.v2-header.is-scrolled:not(.is-open))::before {
+    animation: v2-scrim-in linear both; animation-timeline: scroll(root); animation-range: calc(100svh - 7rem) calc(100svh - 1.5rem);
+  }
+}
+@keyframes v2-scrim-in { from { opacity: 0; } to { opacity: 1; } }

@@ -84,7 +84,7 @@ function ProjectPage({ slug }: { slug: string }) {
   const rest = shots.filter((s, i) => i !== lead || s.compare);
 
   return (
-    <main id="main" className="v2-page v2-project">
+    <main id="main" className="v2-page v2-project v3">
       <ProjectOpen e={e} index={at} total={all.length} facts={facts} details={project.details} shots={shots} lead={lead}>
         {link && (
           <p className="v2-po__live v2-po__rise">

@@ -8,7 +8,34 @@ import { gsap, ScrollTrigger } from '@/lib/motion';
 
 /** Where each page was left (by its path and query), kept for the tab so a reload finds it too. */
 const STORE = 'v2-scroll';
-const pageKey = () => window.location.pathname + window.location.search;
+/** The history entry on screen: its path and query, and its own mark when a page made it itself (pushPage), so the same
+ *  address twice in the history (All, Photography, All) keeps two places. */
+const pageKey = () => {
+  const own = (window.history.state as { v2e?: string } | null)?.v2e;
+  return window.location.pathname + window.location.search + (own ? `@${own}` : '');
+};
+
+/** What the page on screen can ask of the scroll keeper (set while SmoothScroll is mounted). */
+const keeper: { push?: (url: string) => void; pop?: ((to: number) => boolean) | null } = {};
+
+/**
+ * A page that changes its own address without a page change (the work filters) moves on with this instead of
+ * history.pushState: the place on the entry it leaves is kept first, and the new entry gets its own mark.
+ */
+export function pushPage(url: string) {
+  if (keeper.push) keeper.push(url);
+  else window.history.pushState(null, '', url);
+}
+
+/**
+ * Back and forward between such entries of the same page: `put(to)` is called with the place the entry was left at; it
+ * returns true when the page shows that entry itself (and puts the place back once it has drawn it), false to leave it
+ * to the usual page change. Returns the undo.
+ */
+export function claimPops(put: (to: number) => boolean) {
+  keeper.pop = put;
+  return () => { if (keeper.pop === put) keeper.pop = null; };
+}
 
 /** ScrollTrigger moves in the same frame as the smoothed scroll (Lenis exists only after its first render). */
 const syncTriggers = () => { ScrollTrigger.update(); };
@@ -61,6 +88,11 @@ export default function SmoothScroll({ children }: { children: React.ReactNode }
       // only the #section changed: the page stays where it is
       if (key === shown.current) return;
       const to = saved.current.get(key) ?? 0;
+      // the page on screen shows this entry itself (a work filter): from now on the places belong to it
+      const was = shown.current;
+      shown.current = key;
+      if (keeper.pop?.(to)) return;
+      shown.current = was;
       back.current = to;
       // only the query changed (the same page, e.g. a work filter): no page change picks it up, so let it go
       clearTimeout(unclaimed);
@@ -71,12 +103,20 @@ export default function SmoothScroll({ children }: { children: React.ReactNode }
       try { sessionStorage.setItem(STORE, JSON.stringify([...saved.current].slice(-60))); } catch { /* storage off */ }
     };
     const onHide = () => { if (document.visibilityState === 'hidden') store(); };
+    let mark = 0;
+    keeper.push = (url) => {
+      keep();
+      window.history.pushState({ v2e: `${Date.now().toString(36)}${(mark++).toString(36)}` }, '', url);
+      shown.current = pageKey();
+      saved.current.set(shown.current, Math.round(window.scrollY));
+    };
     window.addEventListener('scroll', keep, { passive: true });
     window.addEventListener('popstate', onPop);
     window.addEventListener('pagehide', store);
     document.addEventListener('visibilitychange', onHide);
     return () => {
       clearTimeout(unclaimed);
+      keeper.push = undefined;
       window.removeEventListener('scroll', keep);
       window.removeEventListener('popstate', onPop);
       window.removeEventListener('pagehide', store);
