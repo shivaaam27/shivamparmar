@@ -10,22 +10,22 @@ html:has(.v3) { --v2-page: #141517; }
 .v2:has(.v3) {
   /* dark (the app's tokens) */
   --h-bg: #141517; --h-bg2: #151A17; --h-panel: #1B1C1F; --h-soft: #26272B; --h-line: #2A2C2F;
-  --h-text: #ECEDE9; --h-muted: #9A9CA1; --h-faint: #6E7075;
+  --h-text: #F4F5F1; --h-muted: #DADBD7; --h-faint: #C2C3BF;
   --h-sage: #4F7A5A; --h-glow: #8DB898; --h-hi: #A5D2B0; --h-card: #1A1D1B;
   --h-rim: rgba(255, 255, 255, .14); --h-rim2: rgba(255, 255, 255, .06);
   --h-halo: rgba(127, 176, 139, .20); --h-halo2: rgba(127, 176, 139, .12); --h-halo3: rgba(127, 176, 139, .09);
   --h-dots: rgba(236, 237, 233, .12); --h-cell: rgba(236, 237, 233, .16); --h-labs: #A5A9A6;
-  --h-footer: #101113; --h-shadow: rgba(0, 0, 0, .7); --h-ink2: rgba(236, 237, 233, .72); --h-ink3: rgba(236, 237, 233, .5);
+  --h-footer: #101113; --h-shadow: rgba(0, 0, 0, .7); --h-ink2: #F4F5F1; --h-ink3: #F4F5F1;
   --h-spring: cubic-bezier(.32, .72, 0, 1);
   /* text: every description, lead, paragraph and label uses these two (see "One way of writing", at the end) */
-  --h-text-strong: var(--h-text); --h-text-soft: #9D9E9B;
+  --h-text-strong: var(--h-text); --h-text-soft: #F4F5F1;
   --h-fs-lead: clamp(1.25rem, .7rem + 1.05vw, 1.6rem); --h-fs-text: clamp(1rem, .96rem + .2vw, 1.125rem);
   /* the footer stays graphite in both modes, so its text keeps the dark values */
-  --h-foot-strong: #ECEDE9; --h-foot-soft: #9D9E9B;
+  --h-foot-strong: #F4F5F1; --h-foot-soft: #F4F5F1;
 
   /* the site's colour names, remapped for this page */
   --paper: var(--h-bg); --paper-2: var(--h-panel); --white: var(--h-panel); --mint: var(--h-card);
-  --ink: var(--h-text); --ink-2: rgba(236, 237, 233, .72); --ink-3: rgba(236, 237, 233, .5);
+  --ink: var(--h-text); --ink-2: #F4F5F1; --ink-3: #F4F5F1;
   --line: var(--h-line); --line-light: var(--h-line);
   --forest: var(--h-bg2); --forest-2: var(--h-panel); --pine: var(--h-card);
   --leaf: var(--h-glow); --lime: var(--h-hi); --lime-2: var(--h-sage); --lime-3: var(--h-glow);
@@ -38,14 +38,14 @@ html:has(.v3) { --v2-page: #141517; }
   html:has(.v3) { --v2-page: #F5F5F2; }
   .v2:has(.v3) {
     --h-bg: #F5F5F2; --h-bg2: #EDF1EE; --h-panel: #FFFFFF; --h-soft: #ECECE8; --h-line: #E0E0DB;
-    --h-text: #141517; --h-muted: #6B6E73; --h-faint: #9A9C9F;
+    --h-text: #0B0C0D; --h-muted: #2A2B2E; --h-faint: #45474B;
     --h-sage: #4F7A5A; --h-glow: #4F7A5A; --h-hi: #3F6B4B; --h-card: #ECF1EC;
     --h-rim: rgba(0, 0, 0, .10); --h-rim2: rgba(0, 0, 0, .06);
     --h-halo: rgba(79, 122, 90, .15); --h-halo2: rgba(79, 122, 90, .09); --h-halo3: rgba(79, 122, 90, .07);
     --h-dots: rgba(20, 21, 23, .12); --h-cell: rgba(20, 21, 23, .14); --h-labs: #6B6E73;
-    --h-footer: #141517; --h-shadow: rgba(20, 21, 23, .22); --h-ink2: rgba(20, 21, 23, .72); --h-ink3: rgba(20, 21, 23, .55);
-    --ink-2: rgba(20, 21, 23, .72); --ink-3: rgba(20, 21, 23, .55);
-    --h-text-soft: #6B6C6E;
+    --h-footer: #141517; --h-shadow: rgba(20, 21, 23, .22); --h-ink2: #0B0C0D; --h-ink3: #0B0C0D;
+    --ink-2: #0B0C0D; --ink-3: #0B0C0D;
+    --h-text-soft: #0B0C0D;
     --lime: #3F6B4B; --sage-lit: #7FB08B;
     color-scheme: light;
   }
@@ -183,7 +183,7 @@ html:has(.v3) { --v2-page: #141517; }
 .v2:has(.v3) .v2-footer__hills { display: none; }
 .v2:has(.v3) .v2-footer__body { background: var(--h-footer); color: #ECEDE9; box-shadow: inset 0 1px 0 var(--h-rim2); }
 .v2:has(.v3) .v2-footer__body .v2-petals { opacity: .03; }
-.v2:has(.v3) .v2-footer__bar { border-top-color: rgba(255, 255, 255, .08); color: rgba(236, 237, 233, .6); }
+.v2:has(.v3) .v2-footer__bar { border-top-color: rgba(255, 255, 255, .08); color: #F4F5F1; }
 .v2:has(.v3) .v2-footer__line, .v2:has(.v3) .v2-footer__cols a, .v2:has(.v3) .v2-footer__cols li { color: rgba(236, 237, 233, .8); }
 .v2:has(.v3) .v2-footer__cols .v2-label, .v2:has(.v3) .v2-footer__mail, .v2:has(.v3) .v2-footer__top { color: #8DB898; }
 
@@ -770,3 +770,10 @@ html:has(.v3) { --v2-page: #141517; }
   }
 }
 @keyframes v2-scrim-in { from { opacity: 0; } to { opacity: 1; } }
+
+
+/* Text is always the full ink (white on the dark page, black on the light page). What matters is shown by weight:
+   key phrases, names and the chosen filter are bold; the rest is regular. */
+.v2:has(.v3) :is(.v2-tabs__b[aria-pressed="true"], .v2-art__size button[aria-pressed="true"], .v2-art__toc a[aria-current]) { font-weight: 600; }
+.v2:has(.v3) :is(b, strong) { font-weight: 700; }
+.v2:has(.v3) :is(.v2-sw__hl, .v2-sw__hl.is-on) { font-weight: 700; }
