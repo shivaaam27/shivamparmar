@@ -11,6 +11,8 @@ import { Leaf, Loop, LOOPS } from './Art';
 
 /** The pages in the menu; Contact has its own page. */
 const LINKS = nav.map((n) => (n.label === 'Contact' ? { ...n, href: '/contact' } : n));
+/** The page links along the top on a computer (the logo is Home). */
+const BAR = LINKS.filter((n) => n.label !== 'Home');
 
 /** Is the page dark where (x, y) is? Reads the first coloured background under that point, skipping the header itself. */
 function darkAt(x: number, y: number, header: HTMLElement | null) {
@@ -29,7 +31,9 @@ function darkAt(x: number, y: number, header: HTMLElement | null) {
 
 /**
  * Header, as on the first site and the same everywhere: the logo on the left and the menu lines on the right, always
- * there, never a bar. Scrolling down, the words SHIVO LABS fold away and the logo mark stays. The lines are one per
+ * there. On a computer the page links sit right after the logo, as on Apple's site; on a phone or tablet there are
+ * only the logo and the lines. A button beside the lines switches between the dark and the light look.
+ * (Before: never a bar.) Scrolling down, the words SHIVO LABS fold away and the logo mark stays. The lines are one per
  * section of the page and the long one is the section you are in. Both turn light or dark with the page under them.
  * The pages are in a full-screen green menu that opens from the lines as a circle.
  */
@@ -41,6 +45,7 @@ export default function V2Header() {
   const [darkR, setDarkR] = useState(false);
   const [count, setCount] = useState(3);
   const [at, setAt] = useState(0);
+  const [theme, setTheme] = useState<'light' | 'dark'>('dark');
   const head = useRef<HTMLElement>(null);
   const btn = useRef<HTMLButtonElement>(null);
   const lenis = useLenis();
@@ -98,12 +103,43 @@ export default function V2Header() {
   // a new page closes the menu
   useEffect(() => { setOpen(false); }, [pathname]);
 
+  // the look now in use: the choice made with the button, else the device's
+  useEffect(() => {
+    const chosen = document.documentElement.dataset.theme;
+    setTheme(chosen === 'light' || chosen === 'dark' ? chosen : window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark');
+  }, []);
+  const switchTheme = () => {
+    const next = theme === 'light' ? 'dark' : 'light';
+    try { localStorage.setItem('shivo-theme', next); } catch { /* storage off: the choice lasts until the page is closed */ }
+    document.documentElement.dataset.theme = next;
+    // the scenes read their colours when they start, so the page starts again in the new look, at the same place
+    window.location.reload();
+  };
+  const here = (href: string) => { const h = href.split('#')[0]; return h !== '/' && (pathname === h || pathname.startsWith(`${h}/`)); };
+
   return (
     <>
       <header ref={head} className={`v2-header${open ? ' is-open' : ''}${scrolled ? ' is-scrolled' : ''}`}>
-        <Link className="v2-header__logo" href={'/'} aria-label="Shivo Labs — home">
-          <Logo loader tone={darkL || open ? 'dark' : 'light'} />
-        </Link>
+        <div className="v2-header__start">
+          <Link className="v2-header__logo" href={'/'} aria-label="Shivo Labs — home">
+            <Logo loader tone={darkL || open ? 'dark' : 'light'} />
+          </Link>
+          <nav className={`v2-header__nav${darkL || open ? ' is-light' : ''}`} aria-label="Main">
+            {BAR.map((n) => (
+              <Link key={n.href} href={n.href} className={here(n.href) ? 'is-here' : undefined} aria-current={here(n.href) ? 'page' : undefined}>{n.label}</Link>
+            ))}
+          </nav>
+        </div>
+
+        <div className="v2-header__end">
+        <button type="button" className={`v2-header__theme${darkR || open ? ' is-light' : ''}`} onClick={switchTheme}
+          aria-label={theme === 'light' ? 'Switch to the dark look' : 'Switch to the light look'} title={theme === 'light' ? 'Dark look' : 'Light look'}>
+          {theme === 'light' ? (
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20.5 14.2A8.5 8.5 0 0 1 9.8 3.5a8.5 8.5 0 1 0 10.7 10.7Z" /></svg>
+          ) : (
+            <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4.2" /><path d="M12 2.5v2.2M12 19.3v2.2M2.5 12h2.2M19.3 12h2.2M5.3 5.3l1.6 1.6M17.1 17.1l1.6 1.6M18.7 5.3l-1.6 1.6M6.9 17.1l-1.6 1.6" /></svg>
+          )}
+        </button>
 
         <button ref={btn} type="button" className={`v2-header__menu${darkR || open ? ' is-light' : ''}`} aria-expanded={open} aria-controls="v2-menu" onClick={() => setOpen((o) => !o)}>
           <span className="sr-only">Menu</span>
@@ -113,6 +149,7 @@ export default function V2Header() {
             ))}
           </span>
         </button>
+        </div>
       </header>
 
       <div id="v2-menu" className={`v2-menu${open ? ' is-open' : ''}`} inert={!open}>

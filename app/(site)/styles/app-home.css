@@ -33,10 +33,25 @@ html:has(.v3) { --v2-page: #141517; }
   color-scheme: dark;
 }
 
-/* light (the app's light tokens) */
+/* light (the app's light tokens): used when the device is light and no choice was made, or when the button chose light */
 @media (prefers-color-scheme: light) {
-  html:has(.v3) { --v2-page: #F5F5F2; }
-  .v2:has(.v3) {
+  html:not([data-theme]):has(.v3) { --v2-page: #F5F5F2; }
+  html:not([data-theme]) .v2:has(.v3) {
+      --h-bg: #F5F5F2; --h-bg2: #EDF1EE; --h-panel: #FFFFFF; --h-soft: #ECECE8; --h-line: #E0E0DB;
+      --h-text: #0B0C0D; --h-muted: #2A2B2E; --h-faint: #45474B;
+      --h-sage: #4F7A5A; --h-glow: #4F7A5A; --h-hi: #3F6B4B; --h-card: #ECF1EC;
+      --h-rim: rgba(0, 0, 0, .10); --h-rim2: rgba(0, 0, 0, .06);
+      --h-halo: rgba(79, 122, 90, .15); --h-halo2: rgba(79, 122, 90, .09); --h-halo3: rgba(79, 122, 90, .07);
+      --h-dots: rgba(20, 21, 23, .12); --h-cell: rgba(20, 21, 23, .14); --h-labs: #6B6E73;
+      --h-footer: #141517; --h-shadow: rgba(20, 21, 23, .22); --h-ink2: #0B0C0D; --h-ink3: #0B0C0D;
+      --ink-2: #0B0C0D; --ink-3: #0B0C0D;
+      --h-text-soft: #0B0C0D;
+      --lime: #3F6B4B; --sage-lit: #7FB08B;
+      color-scheme: light;
+  }
+}
+html[data-theme="light"]:has(.v3) { --v2-page: #F5F5F2; }
+html[data-theme="light"] .v2:has(.v3) {
     --h-bg: #F5F5F2; --h-bg2: #EDF1EE; --h-panel: #FFFFFF; --h-soft: #ECECE8; --h-line: #E0E0DB;
     --h-text: #0B0C0D; --h-muted: #2A2B2E; --h-faint: #45474B;
     --h-sage: #4F7A5A; --h-glow: #4F7A5A; --h-hi: #3F6B4B; --h-card: #ECF1EC;
@@ -48,7 +63,6 @@ html:has(.v3) { --v2-page: #141517; }
     --h-text-soft: #0B0C0D;
     --lime: #3F6B4B; --sage-lit: #7FB08B;
     color-scheme: light;
-  }
 }
 
 /* ---------- the hero: quiet graphite, one wide soft light, the logo, the services along the bottom ---------- */
@@ -149,12 +163,15 @@ html:has(.v3) { --v2-page: #141517; }
 .v2:has(.v3) .v2-menu__list a:hover { color: var(--h-glow); }
 .v2:has(.v3) .v2-menu .v2-petals, .v2:has(.v3) .v2-menu__loop, .v2:has(.v3) .v2-menu__leaf { display: none; }
 .v2:has(.v3) .v2-menu__list a { font-weight: 400; }
-/* light: the menu is light, so the logo and the close cross stay dark while it is open (they turned white for the old green menu) */
+/* light: the menu is light, so the logo, the links and the close cross stay dark while it is open */
 @media (prefers-color-scheme: light) {
-  .v2:has(.v3) .v2-header.is-open .v2-logo { --logo-ink: #141517; --logo-labs: #7E8082; --logo-tip: var(--sage); }
-  .v2:has(.v3) .v2-header.is-open .v2-header__logo, .v2:has(.v3) .v2-header.is-open .v2-header__menu { filter: drop-shadow(0 0 6px rgba(244, 241, 230, .85)); }
-  .v2:has(.v3) .v2-header.is-open .v2-header__menu { color: #141517; }
+  html:not([data-theme]) .v2:has(.v3) .v2-header.is-open .v2-logo { --logo-ink: #141517; --logo-labs: #7E8082; --logo-tip: var(--sage); }
+  html:not([data-theme]) .v2:has(.v3) .v2-header.is-open .v2-header__logo, html:not([data-theme]) .v2:has(.v3) .v2-header.is-open .v2-header__menu, html:not([data-theme]) .v2:has(.v3) .v2-header.is-open .v2-header__theme { filter: drop-shadow(0 0 6px rgba(244, 241, 230, .85)); }
+  html:not([data-theme]) .v2:has(.v3) .v2-header.is-open .v2-header__menu, html:not([data-theme]) .v2:has(.v3) .v2-header.is-open .v2-header__theme, html:not([data-theme]) .v2:has(.v3) .v2-header.is-open .v2-header__nav a { color: #141517; }
 }
+html[data-theme="light"] .v2:has(.v3) .v2-header.is-open .v2-logo { --logo-ink: #141517; --logo-labs: #7E8082; --logo-tip: var(--sage); }
+html[data-theme="light"] .v2:has(.v3) .v2-header.is-open .v2-header__logo, html[data-theme="light"] .v2:has(.v3) .v2-header.is-open .v2-header__menu, html[data-theme="light"] .v2:has(.v3) .v2-header.is-open .v2-header__theme { filter: drop-shadow(0 0 6px rgba(244, 241, 230, .85)); }
+html[data-theme="light"] .v2:has(.v3) .v2-header.is-open .v2-header__menu, html[data-theme="light"] .v2:has(.v3) .v2-header.is-open .v2-header__theme, html[data-theme="light"] .v2:has(.v3) .v2-header.is-open .v2-header__nav a { color: #141517; }
 /* the same soft light as the openings, held still (the menu scrolls on short screens, so nothing reaches past its edges) */
 .v2:has(.v3) .v2-menu::before, .v2:has(.v3) .v2-menu::after { content: ""; position: absolute; inset: 0; z-index: 0; pointer-events: none; }
 .v2:has(.v3) .v2-menu::before {
@@ -777,3 +794,40 @@ html:has(.v3) { --v2-page: #141517; }
 .v2:has(.v3) :is(.v2-tabs__b[aria-pressed="true"], .v2-art__size button[aria-pressed="true"], .v2-art__toc a[aria-current]) { font-weight: 600; }
 .v2:has(.v3) :is(b, strong) { font-weight: 700; }
 .v2:has(.v3) :is(.v2-sw__hl, .v2-sw__hl.is-on) { font-weight: 700; }
+
+
+/* =========================================================
+   The header on a computer: the page links right after the logo (as on Apple's site), a flat translucent bar once the
+   page has scrolled. On a phone or tablet only the logo and the lines. The theme button sits beside the lines.
+   ========================================================= */
+.v2-header__start, .v2-header__end { display: flex; align-items: center; }
+.v2-header__start { gap: clamp(1.4rem, 2.6vw, 2.8rem); }
+.v2-header__end { gap: .1rem; }
+.v2-header__nav { display: none; }
+.v2-header__nav a {
+  pointer-events: auto; padding-bottom: .18em; font: 400 .9375rem/1.2 var(--body); letter-spacing: -.005em; color: #141517;
+  background: linear-gradient(currentColor, currentColor) 0 100% / 0 1px no-repeat; transition: background-size .45s var(--ease), color .3s;
+}
+.v2-header__nav.is-light a { color: #F3F0E4; }
+.v2-header__nav a:hover, .v2-header__nav a.is-here { background-size: 100% 1px; }
+.v2-header__theme {
+  pointer-events: auto; width: 44px; height: 44px; display: grid; place-items: center; color: #141517; transition: color .4s, transform .5s var(--ease); cursor: pointer;
+  filter: drop-shadow(0 0 6px rgba(244, 241, 230, .85));
+}
+.v2-header__theme.is-light { color: #F3F0E4; filter: drop-shadow(0 0 6px rgba(20, 50, 34, .7)); }
+.v2-header__theme svg { width: 21px; height: 21px; fill: none; stroke: currentColor; stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
+.v2-header__theme:hover { transform: rotate(18deg); }
+@media (min-width: 1025px) {
+  .v2-header__nav { display: flex; gap: clamp(1.2rem, 2vw, 2.2rem); }
+  /* the bar: flat, translucent, from the left edge to the right, with a hairline under it, only once the page has scrolled */
+  .v2:has(.v3)::before {
+    height: var(--h-hdr);
+    background: color-mix(in srgb, var(--h-bg) 72%, transparent);
+    -webkit-backdrop-filter: blur(20px) saturate(180%); backdrop-filter: blur(20px) saturate(180%);
+    -webkit-mask-image: none; mask-image: none; box-shadow: 0 1px 0 var(--h-line);
+  }
+  /* the Work filters now sit under the bar, as a second row */
+  .v2:has(.v3) .v2-wf, .v2:has(.v3) .v2-wbar { top: var(--h-hdr); }
+  .v2:has(.v3) .v2-wf__in, .v2:has(.v3) .v2-wbar__in { padding-inline: var(--gutter); }
+  .v2:has(.v3) .v2-wf__in > .v2-tabs, .v2:has(.v3) .v2-wbar__in > .v2-tabs { min-height: 3.4rem; }
+}
