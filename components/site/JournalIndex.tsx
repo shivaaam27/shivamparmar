@@ -33,9 +33,9 @@ export default function JournalIndex({ posts }: { posts: PostCard[] }) {
           <path className="v2-hloop__base" d={LOOP} pathLength={1} />
         </svg>
         <div className="v2-jo__head">
-          <p className="v2-jo__k">Journal · Makala</p>
-          <h1 id="journal-title" className="v2-jo__title">{tc('Notes on websites, systems and AI')} <em>{tc('for businesses in Africa', { start: false })}</em></h1>
-          <p className="v2-jo__lead">Plain guides from Shivo Labs in Dar es Salaam, in English and Kiswahili.</p>
+          <p className="v2-jo__k">Makala</p>
+          <h1 id="journal-title" className="v2-jo__title">Journal</h1>
+          <p className="v2-jo__lead">Notes on websites, systems and AI for businesses in Africa. Plain guides from Shivo Labs in Dar es Salaam, in English and Kiswahili.</p>
         </div>
       </section>
 

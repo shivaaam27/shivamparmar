@@ -116,7 +116,7 @@ export function JournalView({ posts }: { posts: Post[] }) {
     minutes: UI[p.lang].minutes(readingTime(p)),
   }));
   return (
-    <Page lang="en" className="v2-journal">
+    <Page lang="en" className="v2-journal v3">
       <JsonLd data={graph(breadcrumbs([{ name: UI.en.home, path: '/' }, { name: UI.en.journal, path: '/journal' }]))} />
       <JournalIndex posts={cards} />
     </Page>
@@ -134,7 +134,7 @@ export function PostView({ post: p }: { post: Post }) {
   const at = list.findIndex((x) => x.slug === p.slug);
   const older = list[at + 1] ?? null, newer = at > 0 ? list[at - 1] : null;
   return (
-    <Page lang={p.lang} className="v2-postp">
+    <Page lang={p.lang} className="v2-postp v3">
       <JsonLd data={graph(postLd(p), breadcrumbs([{ name: t.home, path: '/' }, { name: t.journal, path: '/journal' }, { name: p.title, path: `/journal/${p.slug}` }]))} />
       <ReadingBar />
       <header className="v2-ph v2-dark">
