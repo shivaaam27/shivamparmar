@@ -61,7 +61,7 @@ export default function V2WorkScene({ children }: { children?: React.ReactNode }
       <div className="v2-sheet__card">
       <section className="v2-wa" id="work" aria-label="Selected work">
         <div className="v2-wa__grid">
-          <h2 className="v2-wa__head">My <em>Work</em></h2>
+          <h2 className="v2-wa__head">Work</h2>
           {TILES.map((row, r) => (
             <div key={r} className={`v2-wa__row v2-wa__row--${r}`}>
               {row.map((t, i) => (

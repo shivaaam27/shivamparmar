@@ -50,7 +50,7 @@ function CategoryPage({ category }: { category: Category }) {
   }
   return (
     <main id="main" className="v2-page v2-work-film v3">
-      <V2WorkIndex entries={entries} title={['My', category.name]} lead={`${category.name}, made in Tanzania.`}>
+      <V2WorkIndex entries={entries} title={category.name} lead={`${category.name}, made in Tanzania.`}>
         <V2WorkBrowser cats={workData()} initial={{ c: category.slug, s: null }} archive />
         <Cta />
       </V2WorkIndex>

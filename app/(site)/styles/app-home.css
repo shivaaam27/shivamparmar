@@ -17,6 +17,11 @@ html:has(.v3) { --v2-page: #141517; }
   --h-dots: rgba(236, 237, 233, .12); --h-cell: rgba(236, 237, 233, .16); --h-labs: #A5A9A6;
   --h-footer: #101113; --h-shadow: rgba(0, 0, 0, .7); --h-ink2: rgba(236, 237, 233, .72); --h-ink3: rgba(236, 237, 233, .5);
   --h-spring: cubic-bezier(.32, .72, 0, 1);
+  /* text: every description, lead, paragraph and label uses these two (see "One way of writing", at the end) */
+  --h-text-strong: var(--h-text); --h-text-soft: #9D9E9B;
+  --h-fs-lead: clamp(1.25rem, .7rem + 1.05vw, 1.6rem); --h-fs-text: clamp(1rem, .96rem + .2vw, 1.125rem);
+  /* the footer stays graphite in both modes, so its text keeps the dark values */
+  --h-foot-strong: #ECEDE9; --h-foot-soft: #9D9E9B;
 
   /* the site's colour names, remapped for this page */
   --paper: var(--h-bg); --paper-2: var(--h-panel); --white: var(--h-panel); --mint: var(--h-card);
@@ -40,6 +45,7 @@ html:has(.v3) { --v2-page: #141517; }
     --h-dots: rgba(20, 21, 23, .12); --h-cell: rgba(20, 21, 23, .14); --h-labs: #6B6E73;
     --h-footer: #141517; --h-shadow: rgba(20, 21, 23, .22); --h-ink2: rgba(20, 21, 23, .72); --h-ink3: rgba(20, 21, 23, .55);
     --ink-2: rgba(20, 21, 23, .72); --ink-3: rgba(20, 21, 23, .55);
+    --h-text-soft: #6B6C6E;
     --lime: #3F6B4B; --sage-lit: #7FB08B;
     color-scheme: light;
   }
@@ -448,14 +454,91 @@ html:has(.v3) { --v2-page: #141517; }
   .v2:has(.v3) .v2-scene__stick::before, .v2:has(.v3) :is(.v2-wo__veil, .v2-jo, .v2-ph, .v2-whero, .v2-wo.is-still .v2-wo__head)::before { animation: none; }
 }
 
-/* the big titles (My Work, About, Journal): lighter letters need less tightening, and a clear space between the words */
+/* the big titles (Work, About, Journal): lighter letters need less tightening, and a clear space between the words */
 .v2:has(.v3) .v2-wa__head, .v2:has(.v3) .v2-wo__title, .v2:has(.v3) .v2-abo__title, .v2:has(.v3) .v2-jo__title, .v2:has(.v3) .v2-pr__title {
   letter-spacing: -.012em; word-spacing: .16em; font-kerning: normal;
 }
 .v2:has(.v3) .v2-scene__title, .v2:has(.v3) .v2-contact__title, .v2:has(.v3) .v2-so__title { letter-spacing: -.012em; word-spacing: .1em; }
 
-/* The capital Y: Sora's own Y has a short, stepped join that reads as broken at large sizes (My Work, Biashara yako).
+/* The capital Y: Sora's own Y has a short, stepped join that reads as broken at large sizes (Biashara yako).
    On the redesigned pages every headline takes that one letter from Hanken Grotesk, drawn at the same height. */
 @font-face { font-family: "SoraY"; src: url("/fonts/HankenGrotesk-Regular.ttf") format("truetype"); font-weight: 100 500; unicode-range: U+0059; size-adjust: 104%; font-display: swap; }
 @font-face { font-family: "SoraY"; src: url("/fonts/HankenGrotesk-SemiBold.ttf") format("truetype"); font-weight: 501 900; unicode-range: U+0059; size-adjust: 104%; font-display: swap; }
 .v2:has(.v3) { --display: "SoraY", var(--font-serif), system-ui, sans-serif; }
+
+
+/* =========================================================
+   One way of writing (23 Oct 2026, Shivam's rule): every description reads like the line under the work wall.
+   Plain neutral text in a calm grey (--h-text-soft), the key phrases in bold at full ink (--h-text-strong), Hanken,
+   one lead size (--h-fs-lead) and one smaller text size (--h-fs-text). No green or grey-green text, no coloured
+   underlines, no sage phrases. The tokens are set once, for dark and light, in the token block at the top.
+   ========================================================= */
+/* the descriptions under the titles and in the sections */
+.v2:has(.v3) :is(.v2-scene__body, .v2-abo__text, .v2-wo__lead, .v2-jo__lead, .v2-wa__lead, .v2-adc__lead, .v2-so__lead,
+  .v2-sp__short, .v2-sp__areas, .v2-jx__text, .v2-whero__lead, .v2-ph__dek) {
+  font-family: var(--body); font-weight: 400; line-height: 1.5; letter-spacing: -.012em; color: var(--h-text-soft); opacity: 1;
+}
+.v2:has(.v3) :is(.v2-jo__lead, .v2-wa__lead, .v2-adc__lead, .v2-so__lead, .v2-sp__short, .v2-sp__areas, .v2-jx__text, .v2-whero__lead, .v2-ph__dek) { font-size: var(--h-fs-lead); }
+/* the key phrases: bold, full ink (the filling-in words keep their reveal: dim until read, then this colour) */
+.v2:has(.v3) :is(.v2-scene__body, .v2-abo__text, .v2-wo__lead, .v2-jo__lead, .v2-wa__lead, .v2-adc__lead, .v2-so__lead,
+  .v2-sp__short, .v2-sp__areas, .v2-jx__text, .v2-whero__lead, .v2-ph__dek) :is(b, strong, .v2-sw__hl, .v2-sw__hl.is-on) {
+  font-weight: 600; color: var(--h-text-strong); background: none; text-decoration: none;
+}
+/* smaller paragraphs: a post's line in the list, the software list, the closing card, notes */
+.v2:has(.v3) :is(.v2-jx__body span, .v2-notes p, .v2-pcta__text, .v2-scene__note, .v2-contact__based) {
+  font-family: var(--body); font-weight: 400; font-size: var(--h-fs-text); line-height: 1.55; color: var(--h-text-soft);
+}
+.v2:has(.v3) :is(.v2-jx__body span, .v2-notes p, .v2-pcta__text) :is(b, strong) { font-weight: 600; color: var(--h-text-strong); }
+.v2:has(.v3) .v2-scene__note { font-size: .875rem; }
+/* dates, reading times, hints: the same grey */
+.v2:has(.v3) :is(.v2-ph__meta, .v2-jx__meta, .v2-jx__date, .v2-jx__info, .v2-wo__hint, .v2-adc__stats li > span, .v2-crumbs, .v2-crumbs a, .v2-crumbs button) { color: var(--h-text-soft); opacity: 1; }
+/* small labels: one style, neutral (no sage) */
+.v2:has(.v3) :is(.v2-abo__eyebrow, .v2-jo__k, .v2-so__k, .v2-art__tock, .v2-jx__meta b, .v2-wheel__label) {
+  font: 600 .75rem/1.2 var(--body); letter-spacing: .14em; text-transform: uppercase; color: var(--h-text-soft);
+}
+.v2:has(.v3) .v2-jx__meta b { color: var(--h-text-strong); }
+.v2:has(.v3) :is(.v2-sp__n, .v2-ph__by, .v2-mq__name, .v2-menu__n, .v2-pa__end .v2-post__end) { color: var(--h-text-soft); }
+
+/* the reading text of a post: grey text, headings, bold words and quotes in full ink, links underlined in grey */
+.v2:has(.v3) .v2-art__text { font-family: var(--body); color: var(--h-text-soft); }
+.v2:has(.v3) .v2-art__text :is(h2, h3, h4, b, strong, blockquote) { color: var(--h-text-strong); }
+.v2:has(.v3) .v2-art__text :is(b, strong) { font-weight: 600; }
+.v2:has(.v3) .v2-art__text li::marker { color: var(--h-text-soft); }
+.v2:has(.v3) .v2-art__text a { color: var(--h-text-strong); text-decoration-color: var(--h-text-soft); text-decoration-thickness: 1px; }
+.v2:has(.v3) .v2-art__text blockquote { box-shadow: inset 2px 0 0 var(--h-text-strong); }
+.v2:has(.v3) .v2-art__toc a { color: var(--h-text-soft); }
+.v2:has(.v3) .v2-art__toc a:hover, .v2:has(.v3) .v2-art__toc a[aria-current] { color: var(--h-text-strong); border-left-color: var(--h-text-strong); }
+.v2:has(.v3) .v2-art__size button { color: var(--h-text-soft); }
+.v2:has(.v3) .v2-art__size button[aria-pressed="true"] { color: var(--h-text-strong); }
+
+/* filters (Work and Journal): the chosen one in full ink with an ink line, the others the calm grey */
+.v2:has(.v3) .v2-tabs__b, .v2:has(.v3) .v2-wf .v2-tabs__b { color: var(--h-text-soft); }
+.v2:has(.v3) .v2-tabs__b:hover:not([aria-pressed="true"]) { color: var(--h-text-strong); }
+.v2:has(.v3) .v2-tabs__b[aria-pressed="true"], .v2:has(.v3) .v2-wf .v2-tabs__b[aria-pressed="true"] { color: var(--h-text-strong); }
+.v2:has(.v3) :is(.v2-tabs, .v2-tabs--soft, .v2-wf .v2-tabs, .v2-wf .v2-tabs--soft) .v2-tabs__mark { background: var(--h-text-strong); }
+.v2:has(.v3) .v2-tabs__b sup { color: inherit; opacity: .8; }
+/* on phones the topic row scrolls sideways inside the page instead of widening the list past the screen */
+.v2:has(.v3) .v2-jx__in { grid-template-columns: minmax(0, 1fr); }
+.v2:has(.v3) .v2-jx__filters > .v2-tabs { min-width: 0; }
+
+/* the contact lines in the menu and on the home page */
+.v2:has(.v3) .v2-menu__foot .v2-pill, .v2:has(.v3) .v2-menu__foot .v2-pill--line { color: var(--h-text-soft); }
+.v2:has(.v3) .v2-menu__foot a.v2-pill { color: var(--h-text-strong); }
+.v2:has(.v3) .v2-menu__list a:hover { color: var(--h-text-soft); }
+/* links and arrows: words and an arrow in ink; on hover they stay ink (the line draws in, the arrow moves), never sage */
+.v2:has(.v3) :is(.v2-ph__crumbs a, .v2-crumbs a, .v2-crumbs button, .v2-dark .v2-wheel__list button, .v2-wo__arrow:not(:disabled), .v2-screen__go):hover,
+.v2:has(.v3) .v2-screen:hover .v2-screen__go, .v2:has(.v3) .v2-jx__row:hover .v2-jx__arrow { color: var(--h-text-strong); }
+
+/* the footer (graphite in both modes): the line and labels grey, the links and the email in full ink */
+.v2:has(.v3) :is(.v2-footer__line, .v2-footer__bar, .v2-footer__cols .v2-label) { color: var(--h-foot-soft); }
+.v2:has(.v3) :is(.v2-footer__cols a, .v2-footer__cols li, .v2-footer__mail, .v2-footer__top) { color: var(--h-foot-strong); }
+
+/* headings: one weight and one spacing everywhere; the three big titles (Work, About, Journal) in plain ink */
+.v2:has(.v3) :is(.v2-wo__title, .v2-abo__title, .v2-jo__title, .v2-wa__head) { font-weight: 400; color: var(--h-text-strong); text-transform: uppercase; }
+.v2:has(.v3) :is(.v2-sp__title, .v2-jx__title, .v2-ph__title, .v2-whero__title, .v2-pcta .v2-h2, .v2-notes h3) { font-weight: 400; letter-spacing: -.012em; color: var(--h-text-strong); }
+.v2:has(.v3) .v2-jx__body b { font-weight: 600; color: var(--h-text-strong); }
+/* on phones the three big titles share one size; a long word (Photography) shrinks to fit the width */
+@media (max-width: 720px) {
+  .v2:has(.v3) :is(.v2-wo__title, .v2-abo__title, .v2-jo__title) { font-size: clamp(2.6rem, 13vw, 4rem); }
+  .v2:has(.v3) .v2-wo__title { font-size: min(clamp(2.6rem, 13vw, 4rem), calc((100vw - 2 * var(--gutter)) / (var(--chars, 4) * .78))); }
+}

@@ -58,7 +58,7 @@ const mod = (a: number, m: number) => ((a % m) + m) % m;
  * a shorter row stays still in the middle. Drag, swipe, trackpad or the arrows move it, with a little glide.
  * On the main page a big category is one tile that opens its own page. Below (children): the filters, every picture.
  */
-export default function V2WorkIndex({ entries, title, lead, children }: { entries: ReelEntry[]; title: [string, string]; lead: string; children?: React.ReactNode }) {
+export default function V2WorkIndex({ entries, title, lead, children }: { entries: ReelEntry[]; title: string; lead: string; children?: React.ReactNode }) {
   const root = useRef<HTMLElement>(null);
   const wall = useRef<HTMLDivElement>(null);
   const rowEls = useRef<(HTMLDivElement | null)[]>([]);
@@ -250,7 +250,8 @@ export default function V2WorkIndex({ entries, title, lead, children }: { entrie
             </svg>
           </div>
           <div className="v2-wo__head">
-            <h1 className="v2-wo__title">{title[0] && <>{tc(title[0])} </>}<em>{tc(title[1], { start: !title[0] })}</em></h1>
+            {/* --chars: the longest word, so a long one (Photography) still fits a phone's width */}
+            <h1 className="v2-wo__title" style={{ '--chars': Math.max(...title.split(/\s+/).map((w) => w.length)) } as React.CSSProperties}>{tc(title)}</h1>
             <ScrollWords className="v2-wo__lead" controlled parts={[{ t: lead }]} />
             <p className="v2-wo__hint">{projects} {projects === 1 ? 'project' : 'projects'} · scroll</p>
           </div>

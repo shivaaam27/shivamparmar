@@ -74,7 +74,7 @@ Research: stacked full-screen project panels are the common pattern on strong po
 over the last, which steps back); React 19.3's `<ViewTransition>` gives shared-element morphs between pages in the App
 Router with no setup; Apple keeps the picture full screen with the words over it, then pulls back.
 
-- **/work** (components/site/WorkIndex.tsx, lib/work-reel.ts wallEntries, changed 22 Oct on Shivam's word): "My Work"
+- **/work** (components/site/WorkIndex.tsx, lib/work-reel.ts wallEntries, changed 22 Oct on Shivam's word): "Work"
   on the deep green with the lime loop line (it fades where it meets the words) over a wall of the work, drifting
   slowly to the right under the green. Scrolling (a long, calm hand-over) the title and line leave, the green turns to
   the paper and the wall comes forward: three rows of pictures at one height, **each at its own uploaded shape**
@@ -137,7 +137,7 @@ Taken back from the first (dark) site: the compact description, the header and t
 ### Round 2 (23 Oct 2026)
 
 - **The cream rise has depth:** it takes `RISE` (2) screens (lib/motion.ts) and climbs at about half the speed of the scroll, while
-  About, still held, sinks back and dims under it. The card opens with the title "My Work", the pictures under it.
+  About, still held, sinks back and dims under it. The card opens with the title "Work", the pictures under it.
   The line under the wall is the same narrow column and size as the About description.
 - **Contact:** the lime card grows from a rounded card to the full width as it arrives (components/site/Grow.tsx); one number,
   written once, with Call and WhatsApp; the email is shivam@shivolabs.com everywhere (`site.email`, FAQ, journal posts).
