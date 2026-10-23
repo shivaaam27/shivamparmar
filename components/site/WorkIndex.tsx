@@ -241,11 +241,14 @@ export default function V2WorkIndex({ entries, title, lead, children }: { entrie
               </div>
             ))}
           </div>
-          <div className="v2-wo__veil" aria-hidden="true" />
-          <svg className="v2-hloop" viewBox="0 0 1440 900" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
-            <path className="v2-hloop__thin" d={THIN} pathLength={1} />
-            <path className="v2-hloop__base" d={LOOP} pathLength={1} />
-          </svg>
+          {/* the solid cover over the wall: it carries the light, the dots and the line, so they leave together with it */}
+          <div className="v2-wo__veil" aria-hidden="true">
+            <svg className="v2-hloop" viewBox="0 0 1440 900" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+              <path className="v2-hloop__thin" d={THIN} pathLength={1} />
+              <path className="v2-hloop__base" d={LOOP} pathLength={1} />
+              <path className="v2-hloop__run" d={LOOP} pathLength={1} />
+            </svg>
+          </div>
           <div className="v2-wo__head">
             <h1 className="v2-wo__title">{title[0] && <>{tc(title[0])} </>}<em>{tc(title[1], { start: !title[0] })}</em></h1>
             <ScrollWords className="v2-wo__lead" controlled parts={[{ t: lead }]} />

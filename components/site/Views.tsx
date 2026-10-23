@@ -141,6 +141,7 @@ export function PostView({ post: p }: { post: Post }) {
         <svg className="v2-hloop" viewBox="0 0 1440 900" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
           <path className="v2-hloop__thin" d={THIN} pathLength={1} />
           <path className="v2-hloop__base" d={LOOP} pathLength={1} />
+          <path className="v2-hloop__run" d={LOOP} pathLength={1} />
         </svg>
         <div className="v2-ph__in">
           <nav className="v2-ph__crumbs" aria-label={p.lang === 'sw' ? 'Ulipo' : 'Breadcrumb'}>

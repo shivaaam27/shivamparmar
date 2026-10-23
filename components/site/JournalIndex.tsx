@@ -31,6 +31,7 @@ export default function JournalIndex({ posts }: { posts: PostCard[] }) {
         <svg className="v2-hloop" viewBox="0 0 1440 900" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
           <path className="v2-hloop__thin" d={THIN} pathLength={1} />
           <path className="v2-hloop__base" d={LOOP} pathLength={1} />
+          <path className="v2-hloop__run" d={LOOP} pathLength={1} />
         </svg>
         <div className="v2-jo__head">
           <p className="v2-jo__k">Makala</p>

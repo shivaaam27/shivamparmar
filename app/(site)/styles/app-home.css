@@ -142,6 +142,38 @@ html:has(.v3) { --v2-page: #141517; }
 .v2:has(.v3) .v2-menu__n { color: var(--h-glow); }
 .v2:has(.v3) .v2-menu__list a:hover { color: var(--h-glow); }
 .v2:has(.v3) .v2-menu .v2-petals, .v2:has(.v3) .v2-menu__loop, .v2:has(.v3) .v2-menu__leaf { display: none; }
+.v2:has(.v3) .v2-menu__list a { font-weight: 400; }
+/* light: the menu is light, so the logo and the close cross stay dark while it is open (they turned white for the old green menu) */
+@media (prefers-color-scheme: light) {
+  .v2:has(.v3) .v2-header.is-open .v2-logo { --logo-ink: #141517; --logo-labs: #7E8082; --logo-tip: var(--sage); }
+  .v2:has(.v3) .v2-header.is-open .v2-header__logo, .v2:has(.v3) .v2-header.is-open .v2-header__menu { filter: drop-shadow(0 0 6px rgba(244, 241, 230, .85)); }
+  .v2:has(.v3) .v2-header.is-open .v2-header__menu { color: #141517; }
+}
+/* the same soft light as the openings, held still (the menu scrolls on short screens, so nothing reaches past its edges) */
+.v2:has(.v3) .v2-menu::before, .v2:has(.v3) .v2-menu::after { content: ""; position: absolute; inset: 0; z-index: 0; pointer-events: none; }
+.v2:has(.v3) .v2-menu::before {
+  opacity: .8;
+  background:
+    radial-gradient(60% 55% at 30% 40%, var(--h-halo), transparent 72%),
+    radial-gradient(45% 40% at 90% 85%, var(--h-halo3), transparent 70%),
+    radial-gradient(70% 40% at 50% 105%, var(--h-halo2), transparent 70%);
+}
+.v2:has(.v3) .v2-menu::after {
+  opacity: .6; background-image: radial-gradient(var(--h-dots) 1px, transparent 1.2px); background-size: 36px 36px;
+  -webkit-mask-image: radial-gradient(ellipse 70% 60% at 35% 48%, #000 15%, transparent 80%); mask-image: radial-gradient(ellipse 70% 60% at 35% 48%, #000 15%, transparent 80%);
+}
+/* the contact lines under the menu: plain words, the links with an arrow, no pills */
+.v2:has(.v3) .v2-menu__foot { gap: .6rem 1.8rem; align-items: baseline; }
+.v2:has(.v3) .v2-menu__foot .v2-pill {
+  padding: 0 0 .14em; border-radius: 0; background: none; box-shadow: none; color: var(--h-ink2); font: 400 clamp(1rem, .9rem + .3vw, 1.15rem)/1.2 var(--body);
+}
+.v2:has(.v3) .v2-menu__foot a.v2-pill {
+  color: var(--h-text); background: linear-gradient(currentColor, currentColor) 0 100% / 0 1px no-repeat; transition: background-size .6s var(--ease);
+}
+.v2:has(.v3) .v2-menu__foot a.v2-pill::after { content: "\2192"; transition: transform .5s var(--ease); }
+.v2:has(.v3) .v2-menu__foot a.v2-pill:hover { background-size: 100% 1px; }
+.v2:has(.v3) .v2-menu__foot a.v2-pill:hover::after { transform: translateX(.25em); }
+.v2:has(.v3) .v2-menu__foot .v2-pill--line { color: var(--h-muted); }
 .v2:has(.v3) .v2-footer__hills { display: none; }
 .v2:has(.v3) .v2-footer__body { background: var(--h-footer); color: #ECEDE9; box-shadow: inset 0 1px 0 var(--h-rim2); }
 .v2:has(.v3) .v2-footer__body .v2-petals { opacity: .03; }
@@ -162,7 +194,7 @@ html:has(.v3) { --v2-page: #141517; }
 .v2:has(.v3) .v2-ship__art::after { background: linear-gradient(transparent 25%, var(--h-panel) 92%); }
 .v2:has(.v3) .v2-ship__art .v2-ribbons { opacity: .7; filter: saturate(.6); }
 .v2:has(.v3) .v2-cream { background: var(--h-bg); }
-.v2:has(.v3) .v2-so { background: var(--h-bg2); box-shadow: inset 0 0 0 .5px var(--h-rim2); }
+.v2:has(.v3) .v2-so { background: radial-gradient(60% 90% at 90% 0%, var(--h-halo), transparent 70%), var(--h-bg2); box-shadow: inset 0 0 0 .5px var(--h-rim2); }
 .v2:has(.v3) .v2-so__title { font-weight: 400; color: var(--h-text); }
 .v2:has(.v3) .v2-so__title em { color: var(--h-hi); }
 .v2:has(.v3) .v2-so__lead { color: var(--h-ink2); }
@@ -182,6 +214,11 @@ html:has(.v3) { --v2-page: #141517; }
 .v2:has(.v3) .v2-more .v2-arw::after { content: "\2192"; }
 .v2:has(.v3) .v2-more:hover .v2-arw { transform: translateX(.25em); }
 .v2:has(.v3) .v2-adc { background: var(--h-bg2); color: var(--h-text); }
+/* its top is a lit hairline, as on the home page's work card, so it reads as a panel and not as a seam */
+.v2:has(.v3) .v2-adc::before {
+  content: ""; position: absolute; left: 0; right: 0; top: 0; height: 1px; pointer-events: none;
+  background: linear-gradient(90deg, transparent, var(--h-rim) 30%, var(--h-rim) 70%, transparent);
+}
 .v2:has(.v3) .v2-adc__lead { color: var(--h-ink3); }
 .v2:has(.v3) .v2-adc__lead b, .v2:has(.v3) .v2-adc__stats b { color: var(--h-text); font-weight: 400; }
 .v2:has(.v3) .v2-adc__stats li { border-top-color: var(--h-line); }
@@ -264,6 +301,9 @@ html:has(.v3) { --v2-page: #141517; }
 .v2:has(.v3) .v2-whero { color: var(--h-text); border-radius: 0 0 28px 28px; }
 .v2:has(.v3) .v2-whero__title { font-weight: 400; color: var(--h-text); }
 .v2:has(.v3) .v2-whero__lead { color: var(--h-ink2); }
+/* its lines: not the two thick shapes of the old look, only the thin thread, soft (the light and dots: "the opening light") */
+.v2:has(.v3) .v2-whero__lines path:not(:last-child) { display: none; }
+.v2:has(.v3) .v2-whero__lines path:last-child { stroke: var(--h-glow); stroke-width: 2; stroke-opacity: .5; }
 .v2:has(.v3) .v2-wheel__label { color: var(--h-muted); }
 .v2:has(.v3) .v2-dark .v2-wheel__list button { color: var(--h-text); }
 .v2:has(.v3) .v2-dark .v2-wheel__list button:hover { color: var(--h-hi); }
@@ -276,10 +316,10 @@ html:has(.v3) { --v2-page: #141517; }
 .v2:has(.v3) .v2-pcta .v2-h2 { font-weight: 400; }
 
 
-/* the Work opening: the title and the description on solid graphite (as About), the pictures fade up out of the dark after */
+/* the Work opening: the title and the description on solid graphite with the same light as About (below, "the opening
+   light"); the cover carries that light and the line, so the pictures fade up out of the dark untinted after */
 .v2:has(.v3) .v2-wo__stick { background: var(--h-bg); }
 .v2:has(.v3) .v2-wo__veil { background: var(--h-bg); }
-.v2:has(.v3) .v2-wo .v2-hloop { display: none; }
 .v2:has(.v3) .v2-wo__head { gap: clamp(1.6rem, 5vh, 3rem); }
 .v2:has(.v3) .v2-wo__title { font-size: clamp(3.4rem, 10vw, 9.6rem); line-height: .92; }
 .v2:has(.v3) .v2-wo__lead { max-width: 40rem; font: 400 min(clamp(1.25rem, .7rem + 1.05vw, 1.6rem), 3.8vh)/1.5 var(--body); letter-spacing: -.018em; color: var(--h-ink2); text-wrap: pretty; }
@@ -290,9 +330,8 @@ html:has(.v3) { --v2-page: #141517; }
 /* =========================================================
    Journal (/journal and each post) in the same look
    ========================================================= */
-/* the opening: the title and one line, on solid graphite, as About and Work */
+/* the opening: the title and one line, on graphite with the same light as About and Work (below, "the opening light") */
 .v2:has(.v3) .v2-jo.v2-dark, .v2:has(.v3) .v2-ph.v2-dark { background: var(--h-bg); color: var(--h-text); border-radius: 0; }
-.v2:has(.v3) .v2-jo .v2-hloop, .v2:has(.v3) .v2-ph .v2-hloop { display: none; }
 .v2:has(.v3) .v2-jo { min-height: 62svh; }
 .v2:has(.v3) .v2-jo__head { gap: clamp(1rem, 3vh, 1.6rem); }
 .v2:has(.v3) .v2-jo__k { color: var(--h-glow); }
@@ -352,7 +391,62 @@ html:has(.v3) { --v2-page: #141517; }
   .v2:has(.v3) .v2-art__side { background: color-mix(in srgb, var(--h-bg) 88%, transparent); border-radius: 0; box-shadow: 0 1px 0 var(--h-line); }
 }
 .v2:has(.v3) .v2-pa__end .v2-post__end { color: var(--h-glow); }
+/* the way on under a post: plain words and arrows (no pill, no circles), in the page's colours (the old dark greys
+   disappeared on graphite) */
+.v2:has(.v3) .v2-pnav__in::before { background: var(--h-line); }
+.v2:has(.v3) .v2-pnav__side { color: var(--h-text); }
+.v2:has(.v3) .v2-pnav__k { color: var(--h-muted); }
+.v2:has(.v3) .v2-pnav__t { color: var(--h-text); font-weight: 500; }
+.v2:has(.v3) .v2-pnav__icon { width: auto; height: auto; border-radius: 0; background: none; box-shadow: none; }
+.v2:has(.v3) .v2-pnav__side:hover .v2-pnav__icon { background: none; box-shadow: none; color: var(--h-hi); }
+.v2:has(.v3) .v2-pnav__all {
+  padding: 0 0 .14em; border-radius: 0; box-shadow: none; color: var(--h-text); font: 400 1rem/1.2 var(--display);
+  background: linear-gradient(currentColor, currentColor) 0 100% / 0 1px no-repeat; transition: background-size .6s var(--ease);
+}
+.v2:has(.v3) .v2-pnav__all:hover { background: linear-gradient(currentColor, currentColor) 0 100% / 100% 1px no-repeat; color: var(--h-text); box-shadow: none; }
 
+
+/* =========================================================
+   The opening light, as on the home hero and About: one wide soft sage glow drifting a little, a fine dot grid fading
+   toward the edges, and the thin line drawn in with a light running along it. Used on Work's solid cover (it fades
+   away with the cover), the category band (/work/software...), the Journal opening and each post's opening.
+   ========================================================= */
+.v2:has(.v3) :is(.v2-wo__veil, .v2-jo, .v2-ph, .v2-whero, .v2-wo.is-still .v2-wo__head) { isolation: isolate; overflow: hidden; }
+.v2:has(.v3) :is(.v2-wo__veil, .v2-jo, .v2-ph, .v2-whero, .v2-wo.is-still .v2-wo__head)::before,
+.v2:has(.v3) :is(.v2-wo__veil, .v2-jo, .v2-ph, .v2-whero, .v2-wo.is-still .v2-wo__head)::after { content: ""; position: absolute; z-index: -1; pointer-events: none; }
+.v2:has(.v3) :is(.v2-wo__veil, .v2-jo, .v2-ph, .v2-whero, .v2-wo.is-still .v2-wo__head)::before {
+  inset: -10%; opacity: .8;
+  background:
+    radial-gradient(60% 55% at 50% 36%, var(--h-halo), transparent 72%),
+    radial-gradient(45% 40% at 12% 18%, var(--h-halo3), transparent 70%),
+    radial-gradient(45% 40% at 90% 85%, var(--h-halo3), transparent 70%),
+    radial-gradient(70% 40% at 50% 105%, var(--h-halo2), transparent 70%);
+  animation: h-drift 26s ease-in-out infinite alternate;
+}
+.v2:has(.v3) :is(.v2-wo__veil, .v2-jo, .v2-ph, .v2-whero, .v2-wo.is-still .v2-wo__head)::after {
+  inset: 0; opacity: .6;
+  background-image: radial-gradient(var(--h-dots) 1px, transparent 1.2px); background-size: 36px 36px;
+  -webkit-mask-image: radial-gradient(ellipse 70% 60% at 50% 48%, #000 15%, transparent 80%); mask-image: radial-gradient(ellipse 70% 60% at 50% 48%, #000 15%, transparent 80%);
+}
+/* the line, as on About: thin and soft, out of the way of the words */
+.v2:has(.v3) :is(.v2-wo, .v2-jo, .v2-ph) .v2-hloop { opacity: .8; }
+.v2:has(.v3) .v2-wo .v2-hloop {
+  -webkit-mask-image: radial-gradient(ellipse 46% 40% at 50% 50%, transparent 52%, #000 100%); mask-image: radial-gradient(ellipse 46% 40% at 50% 50%, transparent 52%, #000 100%);
+}
+@media (max-width: 720px) {
+  .v2:has(.v3) .v2-wo .v2-hloop { -webkit-mask-image: radial-gradient(ellipse 60% 40% at 50% 50%, transparent 55%, #000 100%); mask-image: radial-gradient(ellipse 60% 40% at 50% 50%, transparent 55%, #000 100%); }
+}
+/* Journal and posts are not full screens: the light and the line fade out before the section ends, so there is no seam */
+.v2:has(.v3) :is(.v2-jo, .v2-ph)::before { -webkit-mask-image: linear-gradient(#000 45%, transparent 88%); mask-image: linear-gradient(#000 45%, transparent 88%); }
+.v2:has(.v3) :is(.v2-jo, .v2-ph) .v2-hloop {
+  -webkit-mask-image: radial-gradient(ellipse 60% 52% at 50% 52%, transparent 55%, #000 100%), linear-gradient(#000 50%, transparent 90%);
+  mask-image: radial-gradient(ellipse 60% 52% at 50% 52%, transparent 55%, #000 100%), linear-gradient(#000 50%, transparent 90%);
+  -webkit-mask-composite: source-in; mask-composite: intersect;
+}
+.v2:has(.v3) .v2-wo.is-drawn .v2-hloop__run, .v2:has(.v3) .v2-jo.is-drawn .v2-hloop__run, .v2:has(.v3) .v2-ph .v2-hloop__run { animation: v2-hloop-run 9s linear 3s infinite; }
+@media (prefers-reduced-motion: reduce) {
+  .v2:has(.v3) .v2-scene__stick::before, .v2:has(.v3) :is(.v2-wo__veil, .v2-jo, .v2-ph, .v2-whero, .v2-wo.is-still .v2-wo__head)::before { animation: none; }
+}
 
 /* the big titles (My Work, About, Journal): lighter letters need less tightening, and a clear space between the words */
 .v2:has(.v3) .v2-wa__head, .v2:has(.v3) .v2-wo__title, .v2:has(.v3) .v2-abo__title, .v2:has(.v3) .v2-jo__title, .v2:has(.v3) .v2-pr__title {
