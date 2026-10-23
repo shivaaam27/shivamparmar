@@ -17,7 +17,7 @@ export default function Contact() {
     { label: 'Instagram', href: site.sameAs.find((u) => u.includes('instagram')) },
   ].filter((p): p is { label: string; href: string } => Boolean(p.href));
   return (
-    <Page className="v2-contactp" cta={false}>
+    <Page className="v2-contactp v3" cta={false}>
       <ContactPage headline={[contact.headline[0], contact.headline[1]]} email={site.email} phone={site.phones[0]} location={site.location}
         profiles={profiles} topics={services.map((s) => s.en.title)} />
     </Page>

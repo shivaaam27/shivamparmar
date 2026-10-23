@@ -43,7 +43,6 @@ export default function ContactPage({ headline, email, phone, location, profiles
         <div className="v2-ct__head">
           <p className="v2-ct__k">Contact</p>
           <h1 id="contact-title" className="v2-ct__title">{tc(headline[0])} <em>{tc(headline[1], { start: false })}</em></h1>
-          <a className="v2-ct__mail" href={mail} onClick={() => track('Contact · page email')}><span>{email}</span><ArrowUR /></a>
         </div>
 
         <div className="v2-ct__topics">
@@ -56,29 +55,23 @@ export default function ContactPage({ headline, email, phone, location, profiles
         </div>
 
         <ul className="v2-ct__ways">
-          <li>
-            <a className="v2-ct__way is-lime" href={wa} target="_blank" rel="noopener" onClick={() => track('Contact · page WhatsApp')}>
-              <span className="v2-ct__wk">WhatsApp</span>
-              <span className="v2-ct__wv">{phone.label}</span>
-              <span className="v2-ct__wn">{topic ? `Opens with: "${hello}"` : 'Message any time'}</span>
-              <span className="v2-ct__arrow" aria-hidden="true"><ArrowUR /></span>
-            </a>
+          {/* one number, written once: it is the call and the WhatsApp */}
+          <li className="v2-ct__way">
+            <p className="v2-ct__wk">Phone</p>
+            <p className="v2-ct__wv">{phone.label}</p>
+            <p className="v2-ct__links">
+              <a className="v2-btn" href={wa} target="_blank" rel="noopener" onClick={() => track('Contact · page WhatsApp')}>WhatsApp<span className="v2-btn__dot"><ArrowUR /></span></a>
+              <a className="v2-btn" href={`tel:${phone.tel}`} onClick={() => track('Contact · page call')}>Call<span className="v2-btn__dot"><ArrowUR /></span></a>
+            </p>
+            <p className="v2-ct__wn">{topic ? `WhatsApp opens with: "${hello}"` : `Message any time. It is ${time || '…'} in Dar es Salaam now.`}</p>
           </li>
-          <li>
-            <a className="v2-ct__way" href={`tel:${phone.tel}`} onClick={() => track('Contact · page call')}>
-              <span className="v2-ct__wk">Call</span>
-              <span className="v2-ct__wv">{phone.label}</span>
-              <span className="v2-ct__wn">It is {time || '…'} in Dar es Salaam now</span>
-              <span className="v2-ct__arrow" aria-hidden="true"><ArrowUR /></span>
-            </a>
-          </li>
-          <li>
-            <a className="v2-ct__way" href={mail} onClick={() => track('Contact · page email tile')}>
-              <span className="v2-ct__wk">Email</span>
-              <span className="v2-ct__wv">{email}</span>
-              <span className="v2-ct__wn">{topic ? `Subject: ${tc(topic)}` : 'For quotes and longer questions'}</span>
-              <span className="v2-ct__arrow" aria-hidden="true"><ArrowUR /></span>
-            </a>
+          <li className="v2-ct__way">
+            <p className="v2-ct__wk">Email</p>
+            <p className="v2-ct__wv">{email}</p>
+            <p className="v2-ct__links">
+              <a className="v2-btn" href={mail} onClick={() => track('Contact · page email')}>Write an email<span className="v2-btn__dot"><ArrowUR /></span></a>
+            </p>
+            <p className="v2-ct__wn">{topic ? `Subject: ${tc(topic)}` : 'For quotes and longer questions.'}</p>
           </li>
         </ul>
 
