@@ -1,4 +1,5 @@
 import type { Tone } from './content';
+import { copy } from './copy';
 
 /**
  * All work on the site: Category → Sub-category → Project → Images.
@@ -44,8 +45,11 @@ export type Category = { slug: string; name: string; cover?: string; subcategori
 const soon = (slug: string, tone: Tone): Project => ({ slug, title: 'Coming soon', tone });
 
 /** A piece of software: its own collection, held as a title and a description until it has pictures. */
-const soft = (slug: string, name: string, summary: string): Subcategory =>
-  ({ slug, name, listed: true, projects: [{ slug, title: name, tone: 'ink', summary }] });
+const soft = (slug: string, name: string, summary: string): Subcategory => {
+  // the words are kept in content/site-text.json (npm run text:edit); the ones here are the fallback
+  const title = copy(`software.${slug}.title`, name);
+  return { slug, name: title, listed: true, projects: [{ slug, title, tone: 'ink', summary: copy(`software.${slug}.text`, summary) }] };
+};
 
 /** CocoZuri's chocolate photographs, ordered so no two look-alike pictures sit near each other. */
 const CZ = '/images/cocozuri-social';

@@ -1,4 +1,5 @@
 import { contact, site } from '@/lib/content';
+import { parts as richParts } from '@/lib/copy';
 import { ArrowUR, BigLeaf, Loop, LOOPS, Petals, Sparkle } from './Art';
 import Grow from './Grow';
 
@@ -7,6 +8,8 @@ export const KEY_PHRASES = ['iPhone, Android and Windows apps', 'custom systems*
 
 /** Splits the about text so the key phrases can be marked. */
 export function marked(text: string) {
+  // words written between [[double brackets]] (content/site-text.json) are the highlighted ones
+  if (text.includes('[[')) return richParts(text);
   const parts: { t: string; hl: boolean }[] = [];
   let rest = text;
   while (rest) {

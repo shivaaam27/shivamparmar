@@ -2,6 +2,7 @@ import Link from 'next/link';
 import { products } from '@/lib/products';
 import { ArrowUR } from './Art';
 import { Mark } from './Logo';
+import { copy } from '@/lib/copy';
 import Marquee from './Marquee';
 
 /**
@@ -10,6 +11,7 @@ import Marquee from './Marquee';
  * so one shows in one row only.
  */
 export default function ProductRows() {
+  const title = copy('products.title', 'Shivo Labs Products').split(' ');
   const half = Math.ceil(products.length / 2);
   const tile = (p: (typeof products)[number]) => (
     <Link className="v2-mq__tile" href={'/about#products'} aria-label={`Shivo Labs ${p.name}: ${p.line}`}>
@@ -20,7 +22,7 @@ export default function ProductRows() {
   return (
     <section className="v2-pr" id="products" aria-label="Shivo Labs products">
       <div className="v2-pr__head">
-        <h2 className="v2-pr__title">Shivo Labs <em>Products</em></h2>
+        <h2 className="v2-pr__title">{title.slice(0, -1).join(' ')} <em>{title[title.length - 1]}</em></h2>
       </div>
       <Marquee label="Shivo Labs products" rows={[products.slice(0, half).map(tile), products.slice(half).map(tile)]} />
       <p className="v2-pr__all">

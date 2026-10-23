@@ -6,6 +6,7 @@
     "setup": "node scripts/setup.mjs",
     "dev": "node scripts/build-geo.mjs && node scripts/build-thumbs.mjs && next dev -p 3210",
     "products:edit": "node scripts/products-editor.mjs",
+    "text:edit": "node scripts/text-editor.mjs",
     "build": "node scripts/build-geo.mjs && node scripts/build-thumbs.mjs && next build",
     "start": "next start -p 3210",
     "cf:build": "opennextjs-cloudflare build && node scripts/static-pages.mjs",

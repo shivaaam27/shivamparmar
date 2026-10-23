@@ -4,6 +4,8 @@
  * engines as a Service of Shivo Labs. Edit the words here; the pages only handle layout.
  */
 
+import { copy } from './copy';
+
 export type Lang = 'en' | 'sw';
 export type ServiceText = {
   title: string;
@@ -202,6 +204,9 @@ export const services: Service[] = [
     },
   },
 ];
+
+// the English title, short line and opening paragraph can be changed in content/site-text.json (npm run text:edit)
+services.forEach((v) => { v.en.title = copy(`services.${v.slug}.title`, v.en.title); v.en.short = copy(`services.${v.slug}.short`, v.en.short); v.en.lead = copy(`services.${v.slug}.lead`, v.en.lead); });
 
 export const findService = (slug: string) => services.find((s) => s.slug === slug);
 export const findServiceSw = (slug: string) => services.find((s) => s.swSlug === slug);

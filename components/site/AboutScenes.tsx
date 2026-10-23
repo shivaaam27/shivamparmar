@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
 import { aboutPage, site } from '@/lib/content';
+import { copy, parts } from '@/lib/copy';
 import { PACE, fitScene, gsap, prefersReducedMotion, useGSAP } from '@/lib/motion';
 import { tc } from '@/lib/title-case';
 import { pagedProjects, visibleCategories } from '@/lib/work';
@@ -86,11 +87,11 @@ export function AboutOpen() {
           <path className="v2-hloop__run" d={LOOP} pathLength={1} />
         </svg>
         <div className="v2-abo__head">
-          <h1 className="v2-abo__title">About</h1>
+          <h1 className="v2-abo__title">{copy('about.title', 'About')}</h1>
         </div>
         <div className="v2-abo__body">
           <ScrollWords className="v2-abo__text" controlled
-            parts={split(intro[0], ['websites, apps and custom systems', 'AI workflows', 'functional at their core and considered in every detail'])} />
+            parts={parts(aboutPage.introRich[0])} />
           <div className="v2-abo__end">
             <Link className="v2-btn" href={'/work'}>See the work<span className="v2-btn__dot"><ArrowUR /></span></Link>
             <a className="v2-btn" href={`mailto:${site.email}`} data-umami-event="Contact · About email">Email me<span className="v2-btn__dot"><ArrowUR /></span></a>
@@ -121,7 +122,7 @@ export function AboutBelief() {
       <div className="v2-adc__body">
         <div className="v2-adc__cols">
           <p className="v2-adc__lead v2-adc__rise">
-            {split(intro[1], ['technical precision with emotional depth', 'resonate with the people they serve', 'long-term growth']).map((p, i) => (p.hl ? <b key={i}>{p.t}</b> : <span key={i}>{p.t}</span>))}
+            {parts(aboutPage.introRich[1]).map((p, i) => (p.hl ? <b key={i}>{p.t}</b> : <span key={i}>{p.t}</span>))}
           </p>
           <ul className="v2-adc__stats">
             {stats.map((s) => (

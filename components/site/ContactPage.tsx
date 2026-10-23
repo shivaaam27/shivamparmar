@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import { track } from '@/lib/track';
 import { tc } from '@/lib/title-case';
+import { copy } from '@/lib/copy';
 import { LOOP, THIN } from './Hero';
 import { ArrowUR } from './Art';
 
@@ -46,7 +47,7 @@ export default function ContactPage({ headline, email, phone, location, profiles
         </div>
 
         <div className="v2-ct__topics">
-          <p className="v2-ct__label" id="ct-topic">What is it about?</p>
+          <p className="v2-ct__label" id="ct-topic">{copy('contact.topics', 'What is it about?')}</p>
           <div className="v2-ct__chips" role="group" aria-labelledby="ct-topic">
             {topics.map((t) => (
               <button key={t} type="button" aria-pressed={topic === t} onClick={() => setTopic(topic === t ? null : t)}>{tc(t)}</button>
@@ -76,7 +77,7 @@ export default function ContactPage({ headline, email, phone, location, profiles
         </ul>
 
         <div className="v2-ct__foot">
-          <p><span className="v2-ct__label">Based in</span>{location} · working with people anywhere, in person or online</p>
+          <p><span className="v2-ct__label">Based in</span>{location} · {copy('contact.based')}</p>
           <p className="v2-ct__profiles">
             {profiles.map((p) => <a key={p.href} href={p.href} target="_blank" rel="noopener me">{p.label} <ArrowUR /></a>)}
           </p>

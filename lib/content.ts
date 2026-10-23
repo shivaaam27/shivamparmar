@@ -4,6 +4,8 @@
  * (Everything marked lorem ipsum is a placeholder.)
  */
 
+import { copy, copyLines, plain } from './copy';
+
 export const site = {
   name: 'Shivo Labs',
   fullName: 'Shivo Labs',
@@ -33,7 +35,7 @@ export const nav = [
 export const hero = {
   /** Letters that jumble; the centre row resolves into this word. */
   word: 'SHIVAM',
-  footer: ['Websites & apps', 'Custom systems', 'AI & MCP', 'Branding & content'],
+  footer: copyLines('home.hero.services', ['Websites & apps', 'Custom systems', 'AI & MCP', 'Branding & content']),
   /** Put a photo in /public and set e.g. '/hero.jpg'. Set to null for the Three.js light instead. */
   image: null as string | null,
   /** Optional portrait crop used on phones (screens up to 720px wide). */
@@ -56,13 +58,15 @@ export type Tone =
 
 export const about = {
   tag: 'About',
-  headline: ['Freelance digital solutions,', 'from Dar es Salaam.'],
+  headline: copyLines('home.about.headline', ['Freelance digital solutions,', 'from Dar es Salaam.']),
   /** Part of the headline whose letters jumble, then land (like the hero). */
-  scramble: 'digital solutions',
-  body: 'I’m Shivam Parmar, and Shivo Labs is my freelance software and digital solutions business in Dar es Salaam, Tanzania. I design and build websites, iPhone, Android and Windows apps, and custom systems* such as task and document management, dashboards and internal tools. I set up AI workflows and automation, including MCP connections that let AI agents work with your own systems, saving you time. I also do branding, photography and social media for businesses in Tanzania, East Africa and beyond.',
+  scramble: copy('home.about.highlight', 'digital solutions'),
+  body: plain(copy('home.about.body')),
+  /** The same, with the [[highlighted words]] marked. */
+  bodyRich: copy('home.about.body'),
   /** Small print under the description (for the asterisk). */
-  note: '*Not limited to those listed.',
-  link: { label: 'Read more about me', href: '/about' },
+  note: copy('home.about.note', '*Not limited to those listed.'),
+  link: { label: copy('home.about.link', 'Read more about me'), href: '/about' },
 };
 
 /** The full /about page. */
@@ -91,10 +95,9 @@ export const aboutPage = {
     { label: 'Languages', value: 'English, Kiswahili, Hindi, Gujarati' },
   ],
   headline: ['Hi, I’m Shivam.'],
-  intro: [
-    'I run Shivo Labs, my freelance software and digital solutions business in Dar es Salaam. I design and build websites, apps and custom systems for businesses, and set up the AI workflows that run inside them: functional at their core and considered in every detail.',
-    'I believe the most lasting work pairs technical precision with emotional depth. It creates systems that resonate with the people they serve, from customers to teams and communities, and builds strong connections and long-term growth in business and in life.',
-  ],
+  intro: [plain(copy('about.intro')), plain(copy('about.belief'))],
+  /** The same two, with the [[highlighted words]] marked. */
+  introRich: [copy('about.intro'), copy('about.belief')],
   disciplinesTag: 'What I do',
   disciplines: [
     {
@@ -125,17 +128,8 @@ export const aboutPage = {
   ],
   /** Highlights from the CV: things I've built, in plain words (no employer named). */
   highlights: {
-    title: ['Things I’ve built', 'and shipped.'],
-    items: [
-      { title: 'Task management platform', text: 'For a group of companies, on the web, Android and iPhone: user portals, live progress updates and admin workflows, from version 1 to 3 in five months.' },
-      { title: 'AI document agent', text: 'Reads, renames, tags and files company documents into a linked master register, with a quarantine step and no deletions.' },
-      { title: 'Compliance alert engine', text: 'Tracks permits, visas, contracts and payments, with tiered reminders and weekly and monthly digests.' },
-      { title: 'Custom MCP server', text: 'Runs the whole platform from a chat with Claude, packaged with Docker for self-hosting.' },
-      { title: 'AI image pipeline', text: 'Makes natural, on-brand product images in batches of 120 to 200, saving about six hours per batch.' },
-      { title: 'Shivo Labs apps', text: 'My own apps for iPhone, Android, Windows and Android TV: an AI assistant, file sharing, a camera and a TV home screen.' },
-      { title: 'V1 Supermarket website', text: 'A game-style store you can walk through, aisle by aisle, by day and by night.' },
-      { title: 'Seven research papers', text: 'Co-written in pharmacy and pharmacology, from a lozenge formulation to reviews on heart disease.' },
-    ],
+    title: copyLines('about.shipped.title', ['Things I’ve built', 'and shipped.']),
+    items: Array.from({ length: 8 }, (_, k) => ({ title: copy(`about.shipped.${k + 1}.title`), text: copy(`about.shipped.${k + 1}.text`) })),
   },
   clients: {
     title: ['Brands, projects and people', 'I’ve worked with.'],
@@ -218,12 +212,12 @@ export const work = {
 
 export const contact = {
   tag: 'Contact',
-  headline: ['Got something', 'worth making?'],
+  headline: copyLines('contact.headline', ['Got something', 'worth making?']),
   columns: [
     { label: 'Call', links: site.phones.map((p) => ({ label: p.label, href: `tel:${p.tel}` })) },
     { label: 'WhatsApp', links: site.phones.map((p) => ({ label: p.label, href: `https://wa.me/${p.wa}` })) },
     { label: 'Based in', lines: [site.location, 'Working with people anywhere'] },
   ] as { label: string; links?: { label: string; href: string }[]; lines?: string[] }[],
   /** Shown in the footer; the site counts visits anonymously with Umami (no cookies). */
-  footerNote: 'No cookies · anonymous visit stats',
+  footerNote: copy('footer.note', 'No cookies · anonymous visit stats'),
 };

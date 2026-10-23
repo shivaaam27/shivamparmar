@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import { site } from '@/lib/content';
+import { copy } from '@/lib/copy';
 import type { Lang } from '@/lib/services';
 import { tc } from '@/lib/title-case';
 import { ArrowUR, BigLeaf, Loop, LOOPS } from './Art';
@@ -92,14 +93,17 @@ export function Section({ label, children, id, n }: { label: string; children: R
 export function Cta({ lang = 'en' }: { lang?: Lang }) {
   const t = UI[lang];
   const [phone] = site.phones;
+  // the English words can be changed in content/site-text.json
+  const ctaTitle = lang === 'en' ? copy('cta.title', t.ctaTitle) : t.ctaTitle;
+  const ctaText = lang === 'en' ? copy('cta.text', t.ctaText) : t.ctaText;
   return (
-    <section className="v2-sec v2-pcta" aria-label={t.ctaTitle}>
+    <section className="v2-sec v2-pcta" aria-label={ctaTitle}>
       <div className="v2-wrap">
         <div className="v2-card v2-card--lime v2-pcta__card" data-reveal>
           <Loop className="v2-pcta__loop" d={LOOPS.spring} viewBox="0 0 560 160" color="var(--forest)" width={9} />
           <BigLeaf className="v2-pcta__leaf v2-sway v2-sway--slow" />
-          <h2 className="v2-h2 v2-rise">{tc(t.ctaTitle)}</h2>
-          <p className="v2-pcta__text v2-rise" style={{ '--d': 1 } as React.CSSProperties}>{t.ctaText}</p>
+          <h2 className="v2-h2 v2-rise">{tc(ctaTitle)}</h2>
+          <p className="v2-pcta__text v2-rise" style={{ '--d': 1 } as React.CSSProperties}>{ctaText}</p>
           <div className="v2-pcta__row v2-rise" style={{ '--d': 2 } as React.CSSProperties}>
             <a className="v2-btn" href={`https://wa.me/${phone.wa}`} target="_blank" rel="noopener" data-umami-event={`Contact · WhatsApp (${lang})`}>
               {t.whatsapp} {phone.label}<span className="v2-btn__dot"><ArrowUR /></span>

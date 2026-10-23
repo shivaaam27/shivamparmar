@@ -1,0 +1,552 @@
+{
+  "groups": [
+    {
+      "id": "home",
+      "title": "Home page",
+      "page": "/",
+      "items": [
+        {
+          "key": "home.hero.services",
+          "label": "First screen: the four words along the bottom (one per line)",
+          "kind": "lines",
+          "value": [
+            "Websites & apps",
+            "Custom systems",
+            "AI & MCP",
+            "Branding & content"
+          ]
+        },
+        {
+          "key": "home.about.headline",
+          "label": "About section: the headline (one line per row)",
+          "kind": "lines",
+          "value": [
+            "Freelance digital solutions,",
+            "from Dar es Salaam."
+          ]
+        },
+        {
+          "key": "home.about.highlight",
+          "label": "About section: the part of the headline that is highlighted (write it exactly as it is in the headline)",
+          "kind": "line",
+          "value": "digital solutions"
+        },
+        {
+          "key": "home.about.body",
+          "label": "About section: the description",
+          "kind": "text",
+          "value": "I’m Shivam Parmar, and Shivo Labs is my freelance software and digital solutions business in Dar es Salaam, Tanzania. I design and build websites, [[iPhone, Android and Windows apps]], and [[custom systems*]] such as task and document management, dashboards and internal tools. I set up AI workflows and automation, including [[MCP connections]] that let AI agents work with your own systems, saving you time. I also do branding, photography and social media for businesses in Tanzania, East Africa and beyond."
+        },
+        {
+          "key": "home.about.note",
+          "label": "About section: the small line under it",
+          "kind": "line",
+          "value": "*Not limited to those listed."
+        },
+        {
+          "key": "home.about.link",
+          "label": "About section: the link",
+          "kind": "line",
+          "value": "Read more about me"
+        },
+        {
+          "key": "work.title",
+          "label": "Work card (and the Work page): the title",
+          "kind": "line",
+          "value": "Work"
+        },
+        {
+          "key": "work.paragraph",
+          "label": "Under the pictures (home and Work page): the paragraph",
+          "kind": "text",
+          "value": "Working Across [[Companies, Hotels And Brands Across Tanzania]], Building [[Client-Tailored Software, Applications, Websites]], And More, But Not Limited To These. [[More Than 20 Projects Completed]], And More Ongoing."
+        },
+        {
+          "key": "products.title",
+          "label": "Products rows (home and About): the title",
+          "kind": "line",
+          "value": "Shivo Labs Products"
+        },
+        {
+          "key": "contact.headline",
+          "label": "Contact card (home, About and the Contact page): the headline (one line per row)",
+          "kind": "lines",
+          "value": [
+            "Got something",
+            "worth making?"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "about",
+      "title": "About page",
+      "page": "/about",
+      "items": [
+        {
+          "key": "about.title",
+          "label": "The big title",
+          "kind": "line",
+          "value": "About"
+        },
+        {
+          "key": "about.intro",
+          "label": "The opening description",
+          "kind": "text",
+          "value": "I run Shivo Labs, my freelance software and digital solutions business in Dar es Salaam. I design and build [[websites, apps and custom systems]] for businesses, and set up the [[AI workflows]] that run inside them: [[functional at their core and considered in every detail]]."
+        },
+        {
+          "key": "about.belief",
+          "label": "What I believe (next to the numbers)",
+          "kind": "text",
+          "value": "I believe the most lasting work pairs [[technical precision with emotional depth]]. It creates systems that [[resonate with the people they serve]], from customers to teams and communities, and builds strong connections and [[long-term growth]] in business and in life."
+        },
+        {
+          "key": "about.shipped.title",
+          "label": "Things built and shipped: the title (one line per row)",
+          "kind": "lines",
+          "value": [
+            "Things I’ve built",
+            "and shipped."
+          ]
+        },
+        {
+          "key": "about.shipped.1.title",
+          "label": "Built and shipped 1: the name",
+          "kind": "line",
+          "value": "Task management platform"
+        },
+        {
+          "key": "about.shipped.1.text",
+          "label": "Built and shipped 1: what it is",
+          "kind": "text",
+          "value": "For a group of companies, on the web, Android and iPhone: user portals, live progress updates and admin workflows, from version 1 to 3 in five months."
+        },
+        {
+          "key": "about.shipped.2.title",
+          "label": "Built and shipped 2: the name",
+          "kind": "line",
+          "value": "AI document agent"
+        },
+        {
+          "key": "about.shipped.2.text",
+          "label": "Built and shipped 2: what it is",
+          "kind": "text",
+          "value": "Reads, renames, tags and files company documents into a linked master register, with a quarantine step and no deletions."
+        },
+        {
+          "key": "about.shipped.3.title",
+          "label": "Built and shipped 3: the name",
+          "kind": "line",
+          "value": "Compliance alert engine"
+        },
+        {
+          "key": "about.shipped.3.text",
+          "label": "Built and shipped 3: what it is",
+          "kind": "text",
+          "value": "Tracks permits, visas, contracts and payments, with tiered reminders and weekly and monthly digests."
+        },
+        {
+          "key": "about.shipped.4.title",
+          "label": "Built and shipped 4: the name",
+          "kind": "line",
+          "value": "Custom MCP server"
+        },
+        {
+          "key": "about.shipped.4.text",
+          "label": "Built and shipped 4: what it is",
+          "kind": "text",
+          "value": "Runs the whole platform from a chat with Claude, packaged with Docker for self-hosting."
+        },
+        {
+          "key": "about.shipped.5.title",
+          "label": "Built and shipped 5: the name",
+          "kind": "line",
+          "value": "AI image pipeline"
+        },
+        {
+          "key": "about.shipped.5.text",
+          "label": "Built and shipped 5: what it is",
+          "kind": "text",
+          "value": "Makes natural, on-brand product images in batches of 120 to 200, saving about six hours per batch."
+        },
+        {
+          "key": "about.shipped.6.title",
+          "label": "Built and shipped 6: the name",
+          "kind": "line",
+          "value": "Shivo Labs apps"
+        },
+        {
+          "key": "about.shipped.6.text",
+          "label": "Built and shipped 6: what it is",
+          "kind": "text",
+          "value": "My own apps for iPhone, Android, Windows and Android TV: an AI assistant, file sharing, a camera and a TV home screen."
+        },
+        {
+          "key": "about.shipped.7.title",
+          "label": "Built and shipped 7: the name",
+          "kind": "line",
+          "value": "V1 Supermarket website"
+        },
+        {
+          "key": "about.shipped.7.text",
+          "label": "Built and shipped 7: what it is",
+          "kind": "text",
+          "value": "A game-style store you can walk through, aisle by aisle, by day and by night."
+        },
+        {
+          "key": "about.shipped.8.title",
+          "label": "Built and shipped 8: the name",
+          "kind": "line",
+          "value": "Seven research papers"
+        },
+        {
+          "key": "about.shipped.8.text",
+          "label": "Built and shipped 8: what it is",
+          "kind": "text",
+          "value": "Co-written in pharmacy and pharmacology, from a lozenge formulation to reviews on heart disease."
+        }
+      ]
+    },
+    {
+      "id": "services",
+      "title": "Services (on the About page and the Services pages, English)",
+      "page": "/about#services",
+      "items": [
+        {
+          "key": "services.websites-and-apps.title",
+          "label": "Websites and apps: the name",
+          "kind": "line",
+          "value": "Websites and apps"
+        },
+        {
+          "key": "services.websites-and-apps.short",
+          "label": "Websites and apps: the short line",
+          "kind": "text",
+          "value": "Websites and web apps for businesses in Tanzania and East Africa, fast on any phone and easy to find on Google and AI search."
+        },
+        {
+          "key": "services.websites-and-apps.lead",
+          "label": "Websites and apps: the opening paragraph",
+          "kind": "text",
+          "value": "A website is often the first thing a customer sees of your business. Shivo Labs designs and builds websites and web apps in Dar es Salaam that load fast on any phone and any network, read well in English and Kiswahili, and are set up to be found on Google and in AI assistants like ChatGPT and Claude."
+        },
+        {
+          "key": "services.custom-software.title",
+          "label": "Custom software and business systems: the name",
+          "kind": "line",
+          "value": "Custom software and business systems"
+        },
+        {
+          "key": "services.custom-software.short",
+          "label": "Custom software and business systems: the short line",
+          "kind": "text",
+          "value": "Business systems built around how your company works: tasks, files, permits, stock and reports in one place."
+        },
+        {
+          "key": "services.custom-software.lead",
+          "label": "Custom software and business systems: the opening paragraph",
+          "kind": "text",
+          "value": "Spreadsheets and WhatsApp groups only go so far. Shivo Labs builds custom systems around how your company actually works: tasks, files, approvals, permits and reports in one place, for one company or a whole group of companies. Built in Tanzania, for the way work is done here."
+        },
+        {
+          "key": "services.ai-automation.title",
+          "label": "AI workflows and automation: the name",
+          "kind": "line",
+          "value": "AI workflows and automation"
+        },
+        {
+          "key": "services.ai-automation.short",
+          "label": "AI workflows and automation: the short line",
+          "kind": "text",
+          "value": "AI and automation that save your team hours every week: reports, replies, data entry and documents done for you."
+        },
+        {
+          "key": "services.ai-automation.lead",
+          "label": "AI workflows and automation: the opening paragraph",
+          "kind": "text",
+          "value": "Much of the work in an office repeats every day: copying data, writing the same replies, preparing the same reports. Shivo Labs designs AI workflows with tools like Claude and builds automations into your everyday work, so the repetitive part happens by itself and your people spend their time where it matters."
+        },
+        {
+          "key": "services.branding-and-social-media.title",
+          "label": "Branding, content and social media: the name",
+          "kind": "line",
+          "value": "Branding, content and social media"
+        },
+        {
+          "key": "services.branding-and-social-media.short",
+          "label": "Branding, content and social media: the short line",
+          "kind": "text",
+          "value": "Brand identity, photography, posters and social media posts that make a business look as good as it is."
+        },
+        {
+          "key": "services.branding-and-social-media.lead",
+          "label": "Branding, content and social media: the opening paragraph",
+          "kind": "text",
+          "value": "People judge a brand in seconds, on a phone screen. Shivo Labs creates the look and the content that make a business recognisable: logos and brand identity, photography, posters, and social media posts planned month by month, for brands in Tanzania and beyond."
+        }
+      ]
+    },
+    {
+      "id": "work",
+      "title": "Work page",
+      "page": "/work",
+      "items": [
+        {
+          "key": "work.lead",
+          "label": "The opening line under the title",
+          "kind": "text",
+          "value": "Websites, business systems, social media and photography, made in Tanzania."
+        },
+        {
+          "key": "software.task-management-platform.title",
+          "label": "Software, Task management platform: the name",
+          "kind": "line",
+          "value": "Task management platform"
+        },
+        {
+          "key": "software.task-management-platform.text",
+          "label": "Software, Task management platform: what it is",
+          "kind": "text",
+          "value": "For a group of companies, on the web, Android and iPhone: user portals, live progress updates and admin workflows, from version 1 to 3 in five months."
+        },
+        {
+          "key": "software.ai-document-agent.title",
+          "label": "Software, AI document agent: the name",
+          "kind": "line",
+          "value": "AI document agent"
+        },
+        {
+          "key": "software.ai-document-agent.text",
+          "label": "Software, AI document agent: what it is",
+          "kind": "text",
+          "value": "Reads, renames, tags and files company documents into a linked master register, with a quarantine step and no deletions."
+        },
+        {
+          "key": "software.compliance-alert-engine.title",
+          "label": "Software, Compliance alert engine: the name",
+          "kind": "line",
+          "value": "Compliance alert engine"
+        },
+        {
+          "key": "software.compliance-alert-engine.text",
+          "label": "Software, Compliance alert engine: what it is",
+          "kind": "text",
+          "value": "Tracks permits, visas, contracts and payments, with tiered reminders and weekly and monthly digests."
+        },
+        {
+          "key": "software.custom-mcp-server.title",
+          "label": "Software, Custom MCP server: the name",
+          "kind": "line",
+          "value": "Custom MCP server"
+        },
+        {
+          "key": "software.custom-mcp-server.text",
+          "label": "Software, Custom MCP server: what it is",
+          "kind": "text",
+          "value": "Runs the whole platform from a chat with Claude, packaged with Docker for self-hosting."
+        },
+        {
+          "key": "software.ai-image-pipeline.title",
+          "label": "Software, AI image pipeline: the name",
+          "kind": "line",
+          "value": "AI image pipeline"
+        },
+        {
+          "key": "software.ai-image-pipeline.text",
+          "label": "Software, AI image pipeline: what it is",
+          "kind": "text",
+          "value": "Makes natural, on-brand product images in batches of 120 to 200, saving about six hours per batch."
+        },
+        {
+          "key": "software.product-hub.title",
+          "label": "Software, Shivo Labs Hub: the name",
+          "kind": "line",
+          "value": "Shivo Labs Hub"
+        },
+        {
+          "key": "software.product-hub.text",
+          "label": "Software, Shivo Labs Hub: what it is",
+          "kind": "text",
+          "value": "All Shivo Labs Apps in One Place. One app that holds every Shivo Labs tool. Updates install automatically. Works on Windows, iPhone and Android."
+        },
+        {
+          "key": "software.product-ai.title",
+          "label": "Software, Shivo Labs AI: the name",
+          "kind": "line",
+          "value": "Shivo Labs AI"
+        },
+        {
+          "key": "software.product-ai.text",
+          "label": "Software, Shivo Labs AI: what it is",
+          "kind": "text",
+          "value": "AI Assistant for Windows. Ask questions, write and edit documents, and write code. Works with the files on your computer. Works on Windows."
+        },
+        {
+          "key": "software.product-chat.title",
+          "label": "Software, Shivo Labs Chat: the name",
+          "kind": "line",
+          "value": "Shivo Labs Chat"
+        },
+        {
+          "key": "software.product-chat.text",
+          "label": "Software, Shivo Labs Chat: what it is",
+          "kind": "text",
+          "value": "Team and Personal Messaging. Message your team, friends and family one to one or in groups, and share photos and files. Works on phone and computer. Works on iPhone, Android and Windows."
+        },
+        {
+          "key": "software.product-cloud.title",
+          "label": "Software, Shivo Labs Cloud: the name",
+          "kind": "line",
+          "value": "Shivo Labs Cloud"
+        },
+        {
+          "key": "software.product-cloud.text",
+          "label": "Software, Shivo Labs Cloud: what it is",
+          "kind": "text",
+          "value": "File Storage. Keep your files in one place and open them on your phone or computer. Works on iPhone and Windows."
+        },
+        {
+          "key": "software.product-beam.title",
+          "label": "Software, Shivo Labs Beam: the name",
+          "kind": "line",
+          "value": "Shivo Labs Beam"
+        },
+        {
+          "key": "software.product-beam.text",
+          "label": "Software, Shivo Labs Beam: what it is",
+          "kind": "text",
+          "value": "File Transfer over Wi-Fi. Send photos, videos and documents from an iPhone to a Windows computer. Works on iPhone and Windows."
+        },
+        {
+          "key": "software.product-mirror.title",
+          "label": "Software, Shivo Labs Mirror: the name",
+          "kind": "line",
+          "value": "Shivo Labs Mirror"
+        },
+        {
+          "key": "software.product-mirror.text",
+          "label": "Software, Shivo Labs Mirror: what it is",
+          "kind": "text",
+          "value": "iPhone Screen on Your Computer. Show your iPhone screen on a Windows computer without a cable, for presentations or screen recording. AI agents can see the screen too, so they can find and fix problems in your app. Works on iPhone and Windows."
+        },
+        {
+          "key": "software.product-tools.title",
+          "label": "Software, Shivo Labs iPhone App Signing: the name",
+          "kind": "line",
+          "value": "Shivo Labs iPhone App Signing"
+        },
+        {
+          "key": "software.product-tools.text",
+          "label": "Software, Shivo Labs iPhone App Signing: what it is",
+          "kind": "text",
+          "value": "Build and Install iPhone Apps on Windows. Build, install and update your own iPhone apps from a Windows computer over Wi-Fi, and renew them before they expire. No Mac needed. Works on Windows and iPhone."
+        },
+        {
+          "key": "software.product-tv.title",
+          "label": "Software, Shivo Labs TV: the name",
+          "kind": "line",
+          "value": "Shivo Labs TV"
+        },
+        {
+          "key": "software.product-tv.text",
+          "label": "Software, Shivo Labs TV: what it is",
+          "kind": "text",
+          "value": "Home Screen for Android TV. A clean home screen for your TV without the preinstalled apps you never use. It shows your apps, recent shows and inputs, adds extra smart features, and turns your phone into a smart remote. Works on Android TV and Google TV."
+        },
+        {
+          "key": "software.product-camera.title",
+          "label": "Software, Shivo Labs Camera: the name",
+          "kind": "line",
+          "value": "Shivo Labs Camera"
+        },
+        {
+          "key": "software.product-camera.text",
+          "label": "Software, Shivo Labs Camera: what it is",
+          "kind": "text",
+          "value": "Camera App for iPhone. Take photos with film-style colour, using looks we made ourselves. Works on iPhone."
+        },
+        {
+          "key": "software.product-website-insights.title",
+          "label": "Software, Shivo Labs Website Insights: the name",
+          "kind": "line",
+          "value": "Shivo Labs Website Insights"
+        },
+        {
+          "key": "software.product-website-insights.text",
+          "label": "Software, Shivo Labs Website Insights: what it is",
+          "kind": "text",
+          "value": "Website Visitor Reports. See how many people visit your website, where they come from and which pages they read. No cookies, and bots are filtered out. Works on Web."
+        }
+      ]
+    },
+    {
+      "id": "journal",
+      "title": "Journal page (the posts themselves are in the content/journal folder)",
+      "page": "/journal",
+      "items": [
+        {
+          "key": "journal.kicker",
+          "label": "The small word above the title",
+          "kind": "line",
+          "value": "Makala"
+        },
+        {
+          "key": "journal.title",
+          "label": "The big title",
+          "kind": "line",
+          "value": "Journal"
+        },
+        {
+          "key": "journal.lead",
+          "label": "The line under the title",
+          "kind": "text",
+          "value": "Notes on websites, systems and AI for businesses in Africa. Plain guides from Shivo Labs in Dar es Salaam, in English and Kiswahili."
+        }
+      ]
+    },
+    {
+      "id": "contact",
+      "title": "Contact page, the closing card and the footer",
+      "page": "/contact",
+      "items": [
+        {
+          "key": "contact.topics",
+          "label": "Contact page: the question above the topics",
+          "kind": "line",
+          "value": "What is it about?"
+        },
+        {
+          "key": "contact.based",
+          "label": "Contact page: the \"Based in\" line",
+          "kind": "text",
+          "value": "working with people anywhere, in person or online"
+        },
+        {
+          "key": "cta.title",
+          "label": "Closing card on other pages: the title",
+          "kind": "line",
+          "value": "Tell us what you need"
+        },
+        {
+          "key": "cta.text",
+          "label": "Closing card on other pages: the line under it",
+          "kind": "line",
+          "value": "The first conversation is free."
+        },
+        {
+          "key": "footer.line",
+          "label": "Footer: the line under the logo",
+          "kind": "text",
+          "value": "Software and digital solutions, from Dar es Salaam, Tanzania. Working with people anywhere."
+        },
+        {
+          "key": "footer.note",
+          "label": "Footer: the small note at the bottom",
+          "kind": "line",
+          "value": "No cookies · anonymous visit stats"
+        }
+      ]
+    }
+  ]
+}

@@ -123,7 +123,7 @@ export default function V2Hero() {
             <span className="v2-scene__line" aria-hidden="true"><span className="v2-scene__pill">{tc(about.scramble, { start: false })}</span>,</span>
             <span className="v2-scene__line" aria-hidden="true">{tc(second, { start: false })}</span>
           </h2>
-          <ScrollWords className="v2-scene__body" parts={marked(about.body)} controlled />
+          <ScrollWords className="v2-scene__body" parts={marked(about.bodyRich)} controlled />
           <div className="v2-scene__end">
             <Link className="v2-btn" href={about.link.href}>{about.link.label}<span className="v2-btn__dot"><ArrowUR /></span></Link>
             <p className="v2-scene__note">{about.note}</p>
