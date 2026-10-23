@@ -53,9 +53,9 @@ const mod = (a: number, m: number) => ((a % m) + m) % m;
  * green. Scrolling, the title and the line leave, the green turns to the light paper and the wall comes forward.
  *
  * The wall is up to three rows of pictures at one height, each as wide as its own shape (nothing is cropped into another
- * shape). Each piece of work is in one row only. A row wider than the screen runs on endlessly (its set laid a few times
- * over, moved by a transform that wraps at the set's width, so a picture and its repeat are never on screen together);
- * a shorter row stays still in the middle. Drag, swipe, trackpad or the arrows move it, with a little glide.
+ * shape). Each piece of work is in one row only. Every row runs on endlessly (its set laid enough times over to fill the
+ * screen, moved by a transform that wraps at the set's width; a short row repeats its pictures), and drifts on its own until
+ * touched. Drag, swipe, trackpad or the arrows move it, with a little glide.
  * On the main page a big category is one tile that opens its own page. Below (children): the filters, every picture.
  */
 export default function V2WorkIndex({ entries, title, lead, children }: { entries: ReelEntry[]; title: string; lead: string; children?: React.ReactNode }) {
@@ -74,10 +74,16 @@ export default function V2WorkIndex({ entries, title, lead, children }: { entrie
   useEffect(() => { const t = setTimeout(() => setDrawn(true), 300); return () => clearTimeout(t); }, []);
   const projects = entries.reduce((sum, e) => sum + (e.count ?? 1), 0);
 
-  // each tile is in one row only (dealt out in turn), so the same work never shows twice on screen; a row runs on
-  // endlessly only when it is wider than the screen by a tile, otherwise it stays still in the middle
+  // each piece of work is in one row only; every row runs on endlessly (a short row repeats its set to fill the screen)
   const count = few ? 1 : n < 7 ? 2 : ROWS;
-  const rows = Array.from({ length: count }, (_, r) => entries.filter((_, i) => i % count === r));
+  // dealt to the shortest row each time, so the rows come out about as long as each other (dealt in turn, one row was
+  // often much longer than the rest)
+  const rows = (() => {
+    const out: ReelEntry[][] = Array.from({ length: count }, () => []);
+    const len = new Array(count).fill(0);
+    entries.forEach((e) => { const r = len.indexOf(Math.min(...len)); out[r].push(e); len[r] += ratio(e); });
+    return out;
+  })();
   const still = loops.slice(0, count).every((l) => !l);
 
   // scrolling: the words go, the green lifts to the paper and the wall settles, then it holds
@@ -127,8 +133,9 @@ export default function V2WorkIndex({ entries, title, lead, children }: { entrie
         if (!row || !t || !t[per - 1]) { widths[r] = 0; runs[r] = false; return 1; }
         const gap = parseFloat(getComputedStyle(row).columnGap) || 0;
         widths[r] = t[per - 1].offsetLeft + t[per - 1].offsetWidth + gap - t[0].offsetLeft;
-        const widest = Math.max(...Array.from(t).slice(0, per).map((x) => x.offsetWidth));
-        runs[r] = widths[r] >= w.clientWidth + widest + gap;
+        // every row runs on, however short: before, only a row wider than the screen moved, so one row drifted and
+        // took the finger while the one above it stood still (and on a wide screen none moved at all)
+        runs[r] = widths[r] > 0;
         return runs[r] ? Math.ceil(w.clientWidth / widths[r]) + 2 : 1;
       });
       setCopies((c) => (c.join() === need.join() ? c : need));
@@ -143,7 +150,7 @@ export default function V2WorkIndex({ entries, title, lead, children }: { entrie
     const tick = (t: number) => {
       const dt = Math.min(64, t - last); last = t;
       const p = pos.current;
-      if (!held && !front.current && !still) p.target -= dt * .028;    // the drift, to the right
+      if (!held && !still) p.target -= dt * .028;                      // the drift, to the right (on a computer it waits while the pointer is on the wall)
       const d = p.target - p.x;
       if (Math.abs(d) > .05) p.x += still ? d : d * Math.min(1, dt * .012);
       if (p.x !== shown) {
@@ -189,7 +196,11 @@ export default function V2WorkIndex({ entries, title, lead, children }: { entrie
       held = true;
       pos.current.target += e.deltaX;
     };
+    const rest = () => { held = true; };
+    const resume = () => { if (!start) held = false; };
     w.addEventListener('pointerdown', down);
+    w.addEventListener('mouseenter', rest);
+    w.addEventListener('mouseleave', resume);
     window.addEventListener('pointermove', move);
     window.addEventListener('pointerup', up);
     window.addEventListener('pointercancel', up);
@@ -198,6 +209,8 @@ export default function V2WorkIndex({ entries, title, lead, children }: { entrie
     return () => {
       cancelAnimationFrame(raf); ro.disconnect();
       w.removeEventListener('pointerdown', down);
+      w.removeEventListener('mouseenter', rest);
+      w.removeEventListener('mouseleave', resume);
       window.removeEventListener('pointermove', move);
       window.removeEventListener('pointerup', up);
       window.removeEventListener('pointercancel', up);

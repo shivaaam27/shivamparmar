@@ -897,3 +897,54 @@ html[data-theme="light"] .v2:has(.v3) .v2-header.is-open .v2-header__menu, html[
 .v2:has(.v3) .v2-ctq__in { max-width: var(--max); margin: 0 auto; display: grid; gap: clamp(1.4rem, 4vh, 2.4rem); }
 .v2:has(.v3) .v2-ctq__title { font: 400 clamp(1.8rem, 3.4vw, 3rem)/1.1 var(--display); letter-spacing: -.012em; color: var(--h-text-strong); }
 .v2:has(.v3) .v2-ctq__title em { font-style: normal; color: var(--h-text-soft); }
+
+
+/* =========================================================
+   Phones (24 Oct 2026): lighter while the page is moving, and the menu as a balanced list.
+   Measured on the home page with a phone's screen and a slowed processor: the cream page's rise took 100 to 126 ms a
+   frame (a custom property on a page-sized block, now written straight onto the clip, see lib/motion.ts growClip);
+   what is left here is everything that repaints on its own every frame.
+   ========================================================= */
+/* the hero's lights stop once the cream page has covered them; a moving line or row of drawings stops when it is off screen
+   (Reveal.tsx puts is-off on it) and starts again as it comes back */
+.v2:has(.v3) .v2-scene.is-covered .v2-scene__stick::before { animation-play-state: paused !important; }
+.is-off :is(.v2-ribbons path, .v2-hloop path) { animation-play-state: paused !important; }
+.v2:has(.v3) :is(.v2-jo, .v2-ph, .v2-ct, .v2-whero).is-off::before { animation-play-state: paused !important; }
+@media (pointer: coarse) {
+  /* lines and lights that repaint every frame wait while a finger is scrolling (SmoothScroll.tsx adds is-scrolling).
+     Named by class on purpose: a rule on <html> that names `path` or `rect` makes the browser re-check every drawing on the page */
+  html.is-scrolling :is(.v2-hloop__run, .v2-hloop__base) { animation-play-state: paused !important; }
+  html.is-scrolling .v2:has(.v3) :is(.v2-scene__stick, .v2-wo__veil, .v2-jo, .v2-ph, .v2-whero, .v2-ct, .v2-po__body)::before { animation-play-state: paused !important; }
+  /* blurring the page behind a fixed bar is the heaviest thing a phone's graphics chip is asked to do while scrolling:
+     the same bar, the page colour fading down, without the blur */
+  .v2:has(.v3)::before {
+    -webkit-backdrop-filter: none; backdrop-filter: none;
+    background: linear-gradient(color-mix(in srgb, var(--h-bg) 95%, transparent), color-mix(in srgb, var(--h-bg) 74%, transparent) 55%, transparent);
+  }
+  .v2:has(.v3) :is(.v2-wf, .v2-wbar) { background: color-mix(in srgb, var(--h-bg) 97%, transparent); }
+  .v2:has(.v3) .v2-art__side { background: color-mix(in srgb, var(--h-bg) 97%, transparent); }
+  /* no blur behind anything on a touch screen (the bars above are solid enough to read without it) */
+  .v2 * { -webkit-backdrop-filter: none !important; backdrop-filter: none !important; }
+  /* the shimmer in the header's logo runs three times and rests, instead of repainting for as long as the page is open */
+  .v2-mark--loader rect:not(.is-lit) { animation-iteration-count: 3; }
+}
+
+/* the menu on a phone or tablet: a list between hairlines, the words large and even, the ways to reach me anchored at the foot */
+@media (max-width: 900px) {
+  .v2:has(.v3) .v2-menu {
+    align-content: space-between; gap: 1.6rem;
+    padding: calc(env(safe-area-inset-top, 0px) + 5.6rem) var(--gutter) calc(env(safe-area-inset-bottom, 0px) + 1.8rem);
+  }
+  .v2:has(.v3) .v2-menu__list { border-top: 1px solid var(--h-line); }
+  .v2:has(.v3) .v2-menu__list a {
+    display: grid; grid-template-columns: 2.5rem minmax(0, 1fr) auto; align-items: center; gap: 0; width: 100%;
+    padding: clamp(.8rem, 2.4vh, 1.15rem) 0; border-bottom: 1px solid var(--h-line);
+    font-size: clamp(2.1rem, min(10.4vw, 6.4vh), 3.4rem); line-height: 1;
+  }
+  .v2:has(.v3) .v2-menu__list a::after { content: "\2192"; font-size: .55em; opacity: .55; transition: transform .5s var(--ease), opacity .3s; }
+  .v2:has(.v3) .v2-menu__list a:hover::after, .v2:has(.v3) .v2-menu__list a:active::after { transform: translateX(.25em); opacity: 1; }
+  .v2:has(.v3) .v2-menu__n { translate: 0; align-self: center; font-size: .72rem; letter-spacing: .1em; }
+  .v2:has(.v3) .v2-menu__foot { display: grid; gap: .1rem; }
+  .v2:has(.v3) .v2-menu__foot .v2-pill { padding-block: .4rem; font-size: 1.05rem; }
+  .v2:has(.v3) .v2-menu__foot .v2-pill--line { margin-top: .6rem; font-size: .72rem; letter-spacing: .14em; text-transform: uppercase; }
+}

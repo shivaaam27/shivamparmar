@@ -199,6 +199,20 @@ export default function SmoothScroll({ children }: { children: React.ReactNode }
     return () => { clearTimeout(t); window.removeEventListener('hashchange', onHash); };
   }, [pathname]);
 
+  // while the page is moving, `is-scrolling` is on <html>: on a phone the lines and lights that repaint every frame wait
+  // for the scroll to stop (app-home.css, "Phones"), so the finger gets the whole frame
+  useEffect(() => {
+    const root = document.documentElement;
+    let t: ReturnType<typeof setTimeout> | undefined, on = false;
+    const moving = () => {
+      if (!on) { on = true; root.classList.add('is-scrolling'); }
+      clearTimeout(t);
+      t = setTimeout(() => { on = false; root.classList.remove('is-scrolling'); }, 140);
+    };
+    window.addEventListener('scroll', moving, { passive: true });
+    return () => { clearTimeout(t); window.removeEventListener('scroll', moving); root.classList.remove('is-scrolling'); };
+  }, []);
+
   const options = { autoRaf: false, lerp: 0.075, wheelMultiplier: 0.85, touchMultiplier: 1, anchors: { offset: 0 }, stopInertiaOnNavigate: true };
 
   return (

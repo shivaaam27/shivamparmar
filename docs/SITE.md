@@ -122,8 +122,9 @@ and hreflang in the pages and the sitemap. Arabic reads right to left. The trans
   `--forest-ink`, for text on light and lime.
 - Every main description on the site is one size: `--fs-lead` in base.css.
 - The footer is the same on every page, compact, and nothing in it moves; it no longer slides over the contact screen.
-- The work wall gives each piece of work one row only; a row loops only when it is wider than the screen by a tile,
-  otherwise it stays still in the middle, so the same picture is never on screen twice.
+- The work wall gives each piece of work one row only. (Changed 24 Oct: every row now runs on and drifts, however short;
+  a short row repeats its pictures to fill the screen. Before, a row moved only when wider than the screen, so one row
+  could drift while the one above stood still, and on a wide screen none moved.)
 
 ## Home, header and links, on Shivam's word (23 Oct 2026)
 
@@ -168,3 +169,26 @@ Taken back from the first (dark) site: the compact description, the header and t
 
 - **Contact** (app/(site)/contact, components/site/ContactPage.tsx, app/(site)/styles/contact.css): its own full page. Topics prefill the WhatsApp
   message and the email subject; the Call tile shows the time in Dar es Salaam. Contact and Start a project link here.
+
+
+## Phone smoothness (24 Oct 2026)
+Measured with a script (phone-sized screen, real touch swipes, processor slowed 4×, Chrome): the home page's Work
+section took 100 to 126 ms a frame. Cause: the cream card's rise (and the contact block's growth) was driven by a CSS
+custom property (`--g`) written every frame onto a page-sized block; custom properties are inherited, so the browser
+re-styled everything inside it (the whole wall of work and the products) on every frame. Now the clip is written
+straight onto the element (`growClip`, lib/motion.ts). Same look, 4× lighter. Rule: never animate a custom property on a
+big block; animate the property itself.
+
+Also done, all small:
+- Lines and lights that repaint on their own stop while off screen (`is-off`, Reveal.tsx), once the cream page covers the
+  hero (`is-covered`, Hero.tsx) and, on a touch screen, while the finger is scrolling (`is-scrolling` on `<html>`,
+  SmoothScroll.tsx; the rules are named by class on purpose, a rule on `<html>` that names `path` or `rect` makes the
+  browser re-check every drawing on the page).
+- No `backdrop-filter` on touch screens (the fixed bar behind the header, the Work filters, the contents list).
+- The header's colour reading under the logo and menu runs about ten times a second, not every frame.
+- On touch screens the cream rise follows the finger closer (scrub .3 instead of .8): the long trail felt like a bounce.
+- Marquee tracks are their own layers (`will-change: transform`); the wall's photos load lazily; the big Mikumi photo
+  uses the phone-sized copy on a phone.
+- Footer: the two blocks inside it were auto-margin boxes in a column and shrank to their text (the small print sat
+  indented). Fixed, and on a phone it is about half as tall. The menu on a phone or tablet is a list between hairlines.
+Not tested on a real iPhone or Xiaomi: only in Chrome with a phone screen and a slowed processor.

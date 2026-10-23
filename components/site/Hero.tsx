@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
 import { about, hero, site } from '@/lib/content';
 import { tc } from '@/lib/title-case';
-import { PACE, RISE, fitScene, gsap, prefersReducedMotion, useGSAP } from '@/lib/motion';
+import { PACE, RISE, ScrollTrigger, fitScene, gsap, prefersReducedMotion, useGSAP } from '@/lib/motion';
 import HeroLogo from './HeroLogo';
 import ScrollWords from './ScrollWords';
 import { ArrowUR } from './Art';
@@ -76,7 +76,12 @@ export default function V2Hero() {
       // a short hold to finish reading; then the cream page rises over About as it stands (the next section)
       .to({}, { duration: .8 });
     fitScene(el, tl, 1 + RISE);
-    return () => { tl.scrollTrigger?.kill(); tl.kill(); };
+    // once the cream page has covered the scene, its lines and light stop moving (nothing on screen shows them)
+    const covered = ScrollTrigger.create({
+      trigger: el, start: () => `bottom ${RISE * 100}%`, end: '+=99999',
+      onToggle: (s) => el.classList.toggle('is-covered', s.isActive),
+    });
+    return () => { covered.kill(); tl.scrollTrigger?.kill(); tl.kill(); };
   }, { scope: root });
 
   // the line leans a little toward the pointer (eased); not on touch screens or with reduced motion

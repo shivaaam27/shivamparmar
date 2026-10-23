@@ -2,11 +2,11 @@
 
 import { Fragment, useRef } from 'react';
 import Link from 'next/link';
-import { PACE, RISE, gsap, prefersReducedMotion, useGSAP } from '@/lib/motion';
+import { PACE, RISE, growClip, gsap, onTouch, prefersReducedMotion, useGSAP } from '@/lib/motion';
 import { ArrowUR } from './Art';
 import Rich from './Rich';
 import { copy } from '@/lib/copy';
-import { thumbOf } from '@/lib/thumb';
+import { srcSet, thumbOf } from '@/lib/thumb';
 
 const PHOTO = { src: '/images/mikumi-elephants.jpg', alt: 'Elephants in the grass at Mikumi National Park, photographed by Shivam Parmar', slug: 'mikumi-national-park', title: 'Mikumi National Park' };
 /** The wall of work, row by row (the middle row has the main photo in its centre). */
@@ -49,8 +49,16 @@ export default function V2WorkScene({ children }: { children?: React.ReactNode }
     // The page's own top reaches the top of the screen after RISE screens of scrolling, but the card is held back
     // so it climbs at about half the speed of the scroll: --g goes 0 → 1 (the rounded card grows to the full width)
     // while it rises, and About, still held, sinks back a little under it.
-    const st = { trigger: el, start: () => `top ${RISE * 100}%`, end: 'top top', scrub: PACE.scrub, invalidateOnRefresh: true };
-    gsap.fromTo(card, { '--g': 0, y: () => -(RISE - 1) * window.innerHeight }, { '--g': 1, y: 0, ease: 'none', scrollTrigger: st });
+    // (on a touch screen the page follows the finger a little closer: the long trail made this rise bounce)
+    const st = { trigger: el, start: () => `top ${RISE * 100}%`, end: 'top top', scrub: onTouch() ? .3 : PACE.scrub, invalidateOnRefresh: true };
+    // the clip is written onto the card itself (growClip), never as a custom property: see lib/motion.ts
+    const open = { g: 0 };
+    const clip = card as HTMLElement;
+    const paint = () => { clip.style.clipPath = growClip(open.g); };
+    paint();
+    gsap.timeline({ defaults: { ease: 'none' }, scrollTrigger: st })
+      .fromTo(card, { y: () => -(RISE - 1) * window.innerHeight }, { y: 0 }, 0)
+      .to(open, { g: 1, onUpdate: paint }, 0);
     // the rows drift slowly past each other while the wall is on screen (top and bottom one way, the middle the other)
     const drift = { trigger: el.querySelector('.v2-wa__grid'), start: 'top bottom', end: 'bottom top', scrub: PACE.scrub, invalidateOnRefresh: true };
     gsap.fromTo(el.querySelectorAll('.v2-wa__row--0, .v2-wa__row--2'), { xPercent: 1.5 }, { xPercent: -1.5, ease: 'none', scrollTrigger: drift });
@@ -70,11 +78,12 @@ export default function V2WorkScene({ children }: { children?: React.ReactNode }
                 <Fragment key={t.src}>
                   {r === 1 && i === 1 && (
                     <Link href={`/work/${PHOTO.slug}`} className="v2-wa__tile v2-wa__tile--main" aria-label="Mikumi National Park photographs">
-                      <img src={PHOTO.src} alt={PHOTO.alt} decoding="async" />
+                      {/* the phone-sized copy on a phone (the original is 1600 × 2000, ~13 MB once decoded) */}
+                      <img src={thumbOf(PHOTO.src, 1600)} srcSet={srcSet(PHOTO.src, 1600)} sizes="(max-width: 720px) 80vw, 42vw" alt={PHOTO.alt} width={1600} height={2000} decoding="async" loading="lazy" />
                       <span className="v2-wa__cap" aria-hidden="true">{PHOTO.title}</span>
                     </Link>
                   )}
-                  <Link href={`/work/${t.slug}`} className="v2-wa__tile" tabIndex={-1} aria-hidden="true"><img src={thumbOf(t.src, 2000)} alt="" loading="eager" decoding="async" /><span className="v2-wa__cap">{t.title}</span></Link>
+                  <Link href={`/work/${t.slug}`} className="v2-wa__tile" tabIndex={-1} aria-hidden="true"><img src={thumbOf(t.src, 2000)} alt="" loading="lazy" decoding="async" /><span className="v2-wa__cap">{t.title}</span></Link>
                 </Fragment>
               ))}
             </div>

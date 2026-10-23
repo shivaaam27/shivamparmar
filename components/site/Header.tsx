@@ -51,13 +51,18 @@ export default function V2Header() {
   const lenis = useLenis();
 
   useEffect(() => {
-    let frame = 0, until = 0;
+    let frame = 0, until = 0, probed = 0;
     const sections = () => Array.from(document.querySelectorAll<HTMLElement>('main section'))
       .filter((el) => !el.parentElement?.closest('section'));
     const update = () => {
       frame = 0;
       const y = window.scrollY;
       setScrolled(y > 40);
+      // reading the colours and the sections under the header makes the browser lay the page out: about ten times a
+      // second is plenty (the last read comes when the scroll has stopped), not on every frame of a phone's scroll
+      const now = performance.now();
+      if (now - probed < 100 && now < until) { frame = requestAnimationFrame(update); return; }
+      probed = now;
       // the page under the logo and under the menu lines
       const h = head.current;
       const bar = h?.querySelector<HTMLElement>('.v2-header__logo')?.getBoundingClientRect();

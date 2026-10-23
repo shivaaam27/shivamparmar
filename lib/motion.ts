@@ -35,6 +35,20 @@ export function fitScene(el: HTMLElement, tl: gsap.core.Timeline, rest: number) 
 /** How many screens of scrolling the cream page takes to rise over the home page's About scene. */
 export const RISE = 2;
 
+/**
+ * The rounded card that grows to the full width (the cream page, the contact block): the clip it has at `g` (0 to 1).
+ * Written straight onto the one element. It used to be a `--g` custom property read by the clip-path in CSS, but a
+ * custom property is inherited, so every frame of the scroll the browser re-styled everything inside the card (the whole
+ * wall of work and the products): 25 s of style work in one test scroll, frames of 100 ms on a phone. Same look, now cheap.
+ */
+export const growClip = (g: number) => {
+  const k = 1 - g;
+  return `inset(0 ${(k * 4).toFixed(2)}% 0 ${(k * 4).toFixed(2)}% round ${(k * 40).toFixed(1)}px ${(k * 40).toFixed(1)}px 0 0)`;
+};
+
+/** Touch screens scroll by themselves, ahead of the page's script, so a long trail behind the finger feels like a bounce. */
+export const onTouch = () => typeof window !== 'undefined' && window.matchMedia('(pointer: coarse)').matches;
+
 export const prefersReducedMotion = () =>
   typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
