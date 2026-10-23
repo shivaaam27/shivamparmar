@@ -112,7 +112,7 @@ export function FaqView({ lang }: { lang: Lang }) {
 /** /journal: the opening, the newest post as a cover, every post in rows with language and topic filters. */
 export function JournalView({ posts }: { posts: Post[] }) {
   const cards = posts.map((p) => ({
-    slug: p.slug, title: p.title, description: p.description, date: p.date, dateText: dateFmt(p.date, p.lang), lang: p.lang, tags: p.tags,
+    slug: p.slug, title: p.title, description: p.description, date: p.date, dateText: dateFmt(p.date, p.lang), lang: p.lang, tags: p.tags, pair: p.pair,
     minutes: UI[p.lang].minutes(readingTime(p)),
   }));
   return (

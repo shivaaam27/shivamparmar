@@ -8,22 +8,38 @@ import { LOOP, THIN } from './Hero';
 import { ArrowUR } from './Art';
 import Tabs from './Tabs';
 
-export type PostCard = { slug: string; title: string; description: string; date: string; dateText: string; lang: 'en' | 'sw'; tags: string[]; minutes: string };
+export type PostCard = { slug: string; title: string; description: string; date: string; dateText: string; lang: 'en' | 'sw'; tags: string[]; minutes: string; pair?: string };
 const ALL = '__all';
 
 /**
- * The journal (docs/SITE.md, "Journal"): the title on the deep green with the loop line; the newest post as a
- * large cover on the paper, the line drawing in behind it; then every post as a row, which language and topic can
- * narrow down. Reading is the point, so the motion stays at the edges.
+ * The journal (docs/SITE.md, "Journal"): the title with the opening light; the newest post as a large cover; then every
+ * post as a row. Every post is shown once: the language tabs switch the whole list between English and Kiswahili in
+ * place (English first), and a post that exists in both languages is one entry, shown in the chosen language. A post
+ * that exists in one language only is shown in that language. Topic narrows the list further.
  */
 export default function JournalIndex({ posts }: { posts: PostCard[] }) {
   const [drawn, setDrawn] = useState(false);
-  const [lang, setLang] = useState<string>(ALL);
+  const [lang, setLang] = useState<'en' | 'sw'>('en');
   const [tag, setTag] = useState<string>(ALL);
   useEffect(() => { const t = setTimeout(() => setDrawn(true), 300); return () => clearTimeout(t); }, []);
 
-  const tags = useMemo(() => Array.from(new Set(posts.flatMap((p) => p.tags))).sort(), [posts]);
-  const shown = posts.filter((p) => (lang === ALL || p.lang === lang) && (tag === ALL || p.tags.includes(tag)));
+  // one entry per post: a pair (the same post in both languages) shows in the chosen language
+  const entries = useMemo(() => {
+    const bySlug = new Map(posts.map((p) => [p.slug, p]));
+    const seen = new Set<string>();
+    const out: PostCard[] = [];
+    for (const p of posts) {
+      if (seen.has(p.slug)) continue;
+      const twin = p.pair ? bySlug.get(p.pair) : undefined;
+      seen.add(p.slug);
+      if (twin) seen.add(twin.slug);
+      out.push(twin && twin.lang === lang ? twin : twin && p.lang === lang ? p : p);
+    }
+    return out;
+  }, [posts, lang]);
+  const tags = useMemo(() => Array.from(new Set(entries.flatMap((p) => p.tags))).sort(), [entries]);
+  const shown = entries.filter((p) => tag === ALL || p.tags.includes(tag));
+  const chooseLang = (k: string) => { setLang(k === 'sw' ? 'sw' : 'en'); setTag(ALL); };
   const [lead, ...rest] = shown;
 
   return (
@@ -44,11 +60,11 @@ export default function JournalIndex({ posts }: { posts: PostCard[] }) {
       <section className="v2-jx" aria-label="Posts">
         <div className="v2-jx__in">
           <div className="v2-jx__filters">
-            <Tabs label="Language" value={lang} onChange={setLang}
-              items={[{ key: ALL, label: 'All', count: posts.length }, { key: 'en', label: 'English' }, { key: 'sw', label: 'Kiswahili' }]} />
+            <Tabs label="Language" value={lang} onChange={chooseLang}
+              items={[{ key: 'en', label: 'English' }, { key: 'sw', label: 'Kiswahili' }]} />
             {tags.length > 1 && (
               <Tabs soft label="Topic" value={tag} onChange={setTag}
-                items={[{ key: ALL, label: 'Every topic' }, ...tags.map((t) => ({ key: t, label: t.length <= 2 ? t.toUpperCase() : tc(t) }))]} />
+                items={[{ key: ALL, label: lang === 'sw' ? 'Mada zote' : 'Every topic' }, ...tags.map((t) => ({ key: t, label: t.length <= 2 ? t.toUpperCase() : tc(t) }))]} />
             )}
           </div>
 
