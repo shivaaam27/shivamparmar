@@ -41,8 +41,11 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  // the phone's browser bar in the site's deep green
-  themeColor: '#0A2E20',
+  // edge to edge on an iPhone (the page runs under the status bar and the toolbar; the CSS keeps things clear of them with
+  // env(safe-area-inset-*)), and the bars take the page's own colour, dark or light
+  viewportFit: 'cover',
+  colorScheme: 'dark light',
+  themeColor: [{ media: '(prefers-color-scheme: dark)', color: '#141517' }, { media: '(prefers-color-scheme: light)', color: '#F5F5F2' }],
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
@@ -50,7 +53,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="en" className={`${serif.variable} ${sans.variable} ${mono.variable} ${arabic.variable} ${devanagari.variable} ${gujarati.variable}`} suppressHydrationWarning>
       <head>
         {/* hide hero chrome + reveal items until JS animates them in */}
-        <script dangerouslySetInnerHTML={{ __html: "document.documentElement.classList.add('js');try{var t=localStorage.getItem('shivo-theme');if(t==='light'||t==='dark')document.documentElement.dataset.theme=t}catch(e){}" }} />
+        <script dangerouslySetInnerHTML={{ __html: "document.documentElement.classList.add('js');try{var t=localStorage.getItem('shivo-theme');if(t==='light'||t==='dark'){document.documentElement.dataset.theme=t;document.querySelectorAll('meta[name=theme-color]').forEach(function(m){m.setAttribute('content',t==='light'?'#F5F5F2':'#141517')})}}catch(e){}" }} />
       </head>
       <body>
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(personJsonLd()) }} />

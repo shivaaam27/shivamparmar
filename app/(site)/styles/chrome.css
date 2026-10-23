@@ -24,7 +24,7 @@
 .v2-header {
   position: fixed; inset: 0 0 auto; z-index: 70;
   display: flex; align-items: center; justify-content: space-between;
-  padding: clamp(1rem, 2.2vw, 1.75rem) var(--gutter);
+  padding: calc(clamp(1rem, 2.2vw, 1.75rem) + env(safe-area-inset-top, 0px)) var(--gutter) clamp(1rem, 2.2vw, 1.75rem);
   pointer-events: none;
 }
 .v2-header__logo { pointer-events: auto; display: inline-flex; align-items: center; transition: opacity .3s; filter: drop-shadow(0 0 6px rgba(244, 241, 230, .85)); }
@@ -105,7 +105,7 @@ html.v2-menu-open { overflow: hidden; }
 .v2-footer__bar {
   position: relative; z-index: 1;
   display: flex; flex-wrap: wrap; justify-content: space-between; gap: .5rem 2rem;
-  padding-block: 1rem 1.2rem; border-top: 1px solid var(--line-light);
+  padding-block: 1rem calc(1.2rem + env(safe-area-inset-bottom, 0px)); border-top: 1px solid var(--line-light);
   font-size: .72rem; letter-spacing: .08em; text-transform: uppercase; color: rgba(255, 255, 255, .7);
 }
 .v2-footer__top { color: var(--lime); font-weight: 700; }

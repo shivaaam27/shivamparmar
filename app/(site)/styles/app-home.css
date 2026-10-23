@@ -279,7 +279,7 @@ html[data-theme="light"] .v2:has(.v3) .v2-header.is-open .v2-header__menu, html[
 /* the filters: one flat row that stays at the top as a second header (not a floating pill) */
 .v2:has(.v3) { --h-hdr: calc(clamp(1rem, 2.2vw, 1.75rem) * 2 + 44px); }
 .v2:has(.v3) .v2-wf, .v2:has(.v3) .v2-wbar {
-  position: sticky; top: 0; left: auto; right: auto; z-index: 60; padding: 0; margin: 0; display: block; pointer-events: auto; transition: none;
+  position: sticky; top: 0; left: auto; right: auto; z-index: 60; padding: env(safe-area-inset-top, 0px) 0 0; margin: 0; display: block; pointer-events: auto; transition: none;
   background: color-mix(in srgb, var(--h-bg) 84%, transparent); -webkit-backdrop-filter: blur(22px) saturate(160%); backdrop-filter: blur(22px) saturate(160%);
   box-shadow: 0 1px 0 var(--h-line);
 }
@@ -768,7 +768,7 @@ html[data-theme="light"] .v2:has(.v3) .v2-header.is-open .v2-header__menu, html[
    filters (they keep their own bar), takes no clicks, and the header's colour reading never sees it (it reads the page
    colour under it, which is this same colour). Hidden while the menu is open. */
 .v2:has(.v3)::before {
-  content: ""; position: fixed; z-index: 59; left: 0; right: 0; top: 0; height: calc(var(--h-hdr) + 1.5rem); pointer-events: none;
+  content: ""; position: fixed; z-index: 59; left: 0; right: 0; top: 0; height: calc(var(--h-hdr) + env(safe-area-inset-top, 0px) + 1.5rem); pointer-events: none;
   /* the page colour, strong at the top and fading out with no edge; under it a soft blur, so words that still show
      through are only a haze, while a smooth light (the openings) passes through unchanged */
   background: linear-gradient(color-mix(in srgb, var(--h-bg) 88%, transparent), color-mix(in srgb, var(--h-bg) 62%, transparent) 50%, transparent);
@@ -947,4 +947,60 @@ html[data-theme="light"] .v2:has(.v3) .v2-header.is-open .v2-header__menu, html[
   .v2:has(.v3) .v2-menu__foot { display: grid; gap: .1rem; }
   .v2:has(.v3) .v2-menu__foot .v2-pill { padding-block: .4rem; font-size: 1.05rem; }
   .v2:has(.v3) .v2-menu__foot .v2-pill--line { margin-top: .6rem; font-size: .72rem; letter-spacing: .14em; text-transform: uppercase; }
+}
+
+
+/* iPhone, edge to edge (viewport-fit=cover): the full-screen scenes keep their middle clear of the status bar */
+.v2-scene__stick, .v2-wo__stick { padding-top: env(safe-area-inset-top, 0px); }
+
+/* the light / dark button: the colours fade instead of snapping (Header.tsx adds v2-theming for half a second) */
+html.v2-theming .v2, html.v2-theming .v2 *, html.v2-theming .v2 *::before, html.v2-theming .v2 *::after {
+  transition: background-color .35s var(--ease), color .35s var(--ease), border-color .35s var(--ease), box-shadow .35s var(--ease), fill .35s var(--ease), stroke .35s var(--ease) !important;
+}
+
+
+/* =========================================================
+   Phones, 24 Oct 2026: the lines behind the words, and the size of the words.
+   ========================================================= */
+@media (max-width: 720px) {
+  /* The moving line behind the words was drawn so large on a phone (the whole 1440-wide drawing, cropped to its middle) that
+     only a sliver of it, hidden by the fade over the words, was ever on screen. Now drawn about half that size, so its loops
+     show, a little stronger because it is smaller. Every page that has the line. */
+  .v2-hloop { left: -21%; width: 185%; top: 50%; height: 450px; margin-top: -225px; }
+  .v2:has(.v3) .v2-hloop__base { stroke-width: 9; opacity: .6; }
+  .v2:has(.v3) .v2-hloop__run { stroke-width: 9; }
+  .v2:has(.v3) .v2-hloop__thin { stroke-width: 2; }
+  .v2:has(.v3) :is(.v2-scene, .v2-wo) .v2-hloop {
+    -webkit-mask-image: radial-gradient(ellipse 62% 30% at 50% 52%, transparent 30%, #000 90%); mask-image: radial-gradient(ellipse 62% 30% at 50% 52%, transparent 30%, #000 90%);
+  }
+
+  /* One size for every description on a phone (the lead, and one smaller for the rest), a calmer line, and set a little in
+     from the edges instead of running edge to edge. The smallest of the sizes the site had is the one that stays. */
+  .v2:has(.v3) { --h-fs-lead: 1.0625rem; --h-fs-text: .9375rem; --gutter: max(1.45rem, env(safe-area-inset-left, 0px), env(safe-area-inset-right, 0px)); }
+  .v2:has(.v3) :is(.v2-scene__body, .v2-abo__text, .v2-wo__lead, .v2-jo__lead, .v2-wa__lead, .v2-adc__lead, .v2-so__lead, .v2-sp__short, .v2-sp__areas, .v2-jx__text, .v2-whero__lead, .v2-ph__dek) {
+    font-size: var(--h-fs-lead); line-height: 1.55;
+  }
+  .v2:has(.v3) :is(.v2-scene__body, .v2-abo__text, .v2-wo__lead, .v2-jo__lead, .v2-wa__lead, .v2-adc__lead, .v2-so__lead, .v2-whero__lead) { padding-inline: .9rem; }
+  .v2:has(.v3) .v2-jx__body span { font-size: var(--h-fs-text); }
+  .v2:has(.v3) .v2-jx__body b { font-size: 1.02rem; }
+  /* Journal: the latest post's card and a post's opening, a size down */
+  .v2:has(.v3) .v2-jx__title { font-size: 1.65rem; }
+  .v2:has(.v3) .v2-ph__title { font-size: 1.75rem; }
+  .v2:has(.v3) .v2-art__text { line-height: 1.66; }
+  /* the three big page titles, a little smaller */
+  .v2:has(.v3) :is(.v2-wo__title, .v2-abo__title, .v2-jo__title) { font-size: clamp(2.4rem, 11.5vw, 3.6rem); }
+  .v2:has(.v3) .v2-wo__title { font-size: min(clamp(2.4rem, 11.5vw, 3.6rem), calc((100vw - 2 * var(--gutter)) / (var(--chars, 4) * .78))); }
+}
+
+/* Phones: the whole site a step smaller ("zoomed out"), so it reads relaxed. Every size in rem follows the root size; the
+   few titles sized to the screen width are brought down in step. */
+@media (max-width: 720px) {
+  html:has(.v2) { font-size: 90%; }
+  .v2-scene__title { font-size: min(6.8vw, 4.9vh); }
+  .v2:has(.v3) .v2-wa__head { font-size: clamp(2.1rem, 9vw, 3rem); }
+  .v2:has(.v3) .v2-pr__title { font-size: clamp(1.8rem, 7.6vw, 2.6rem); }
+  .v2:has(.v3) :is(.v2-wo__title, .v2-abo__title, .v2-jo__title) { font-size: clamp(2.2rem, 10.5vw, 3.2rem); }
+  .v2:has(.v3) .v2-wo__title { font-size: min(clamp(2.2rem, 10.5vw, 3.2rem), calc((100vw - 2 * var(--gutter)) / (var(--chars, 4) * .78))); }
+  .v2-hlogo { --cell: clamp(2.1rem, 11vw, 3.2rem); }
+  .v2-menu__list a { font-size: clamp(1.9rem, min(9.4vw, 6vh), 3rem) !important; }
 }

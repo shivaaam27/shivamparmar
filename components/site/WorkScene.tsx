@@ -49,21 +49,25 @@ export default function V2WorkScene({ children }: { children?: React.ReactNode }
     // The page's own top reaches the top of the screen after RISE screens of scrolling, but the card is held back
     // so it climbs at about half the speed of the scroll: --g goes 0 → 1 (the rounded card grows to the full width)
     // while it rises, and About, still held, sinks back a little under it.
-    // (on a touch screen the page follows the finger a little closer: the long trail made this rise bounce)
-    const st = { trigger: el, start: () => `top ${RISE * 100}%`, end: 'top top', scrub: onTouch() ? .3 : PACE.scrub, invalidateOnRefresh: true };
+    const touch = onTouch();
+    // On a touch screen the browser scrolls by itself, a frame ahead of any script, so a card that is pushed by script at half
+    // the speed of the scroll jitters up and down against the finger. There the card simply rises with the page (no push), over
+    // the last screen, and only its corners and sides open as it arrives. On a computer it climbs at half speed, as before.
+    const st = { trigger: el, start: () => (touch ? 'top 100%' : `top ${RISE * 100}%`), end: 'top top', scrub: touch ? .2 : PACE.scrub, invalidateOnRefresh: true };
     // the clip is written onto the card itself (growClip), never as a custom property: see lib/motion.ts
     const open = { g: 0 };
     const clip = card as HTMLElement;
     const paint = () => { clip.style.clipPath = growClip(open.g); };
     paint();
-    gsap.timeline({ defaults: { ease: 'none' }, scrollTrigger: st })
-      .fromTo(card, { y: () => -(RISE - 1) * window.innerHeight }, { y: 0 }, 0)
-      .to(open, { g: 1, onUpdate: paint }, 0);
+    const rise = gsap.timeline({ defaults: { ease: 'none' }, scrollTrigger: st });
+    if (!touch) rise.fromTo(card, { y: () => -(RISE - 1) * window.innerHeight }, { y: 0 }, 0);
+    rise.to(open, { g: 1, onUpdate: paint }, 0);
     // the rows drift slowly past each other while the wall is on screen (top and bottom one way, the middle the other)
-    const drift = { trigger: el.querySelector('.v2-wa__grid'), start: 'top bottom', end: 'bottom top', scrub: PACE.scrub, invalidateOnRefresh: true };
+    const drift = { trigger: el.querySelector('.v2-wa__grid'), start: 'top bottom', end: 'bottom top', scrub: touch ? .2 : PACE.scrub, invalidateOnRefresh: true };
     gsap.fromTo(el.querySelectorAll('.v2-wa__row--0, .v2-wa__row--2'), { xPercent: 1.5 }, { xPercent: -1.5, ease: 'none', scrollTrigger: drift });
     gsap.fromTo(el.querySelector('.v2-wa__row--1'), { xPercent: -1.5 }, { xPercent: 1.5, ease: 'none', scrollTrigger: drift });
-    if (about) gsap.fromTo(about, { scale: 1, y: 0, opacity: 1 }, { scale: .9, y: -50, opacity: .25, ease: 'none', immediateRender: false, scrollTrigger: st });
+    // About, held, dims under the card (on a touch screen it only dims: a layer that changes size while it is scrolled flickers)
+    if (about) gsap.fromTo(about, touch ? { opacity: 1 } : { scale: 1, y: 0, opacity: 1 }, touch ? { opacity: .25, ease: 'none', immediateRender: false, scrollTrigger: st } : { scale: .9, y: -50, opacity: .25, ease: 'none', immediateRender: false, scrollTrigger: st });
   }, { scope: root });
 
   return (

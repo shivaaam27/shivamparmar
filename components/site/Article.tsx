@@ -19,7 +19,7 @@ export default function Article({ html, toc, lang }: { html: string; toc: Toc; l
   const aside = useRef<HTMLElement>(null);
   const lenis = useLenis();
   const [current, setCurrent] = useState(toc[0]?.id ?? '');
-  const [size, setSize] = useState(1);
+  const [size, setSize] = useState(SIZES[0]); // the smallest is the default; a size chosen with the buttons is remembered
   const [open, setOpen] = useState(false);
   const w = WORDS[lang];
 

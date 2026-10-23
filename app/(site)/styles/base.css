@@ -48,7 +48,7 @@
   --r-xl: clamp(20px, 2vw, 28px);
   --r-lg: clamp(16px, 1.5vw, 22px);
   --r-md: 12px;
-  --gutter: clamp(1.15rem, 4vw, 3.5rem);
+  --gutter: max(clamp(1.15rem, 4vw, 3.5rem), env(safe-area-inset-left, 0px), env(safe-area-inset-right, 0px));
   --gap: clamp(.6rem, 1vw, .85rem);
   --section: clamp(3.25rem, 6vw, 5.5rem);
   --max: 1320px;

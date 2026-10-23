@@ -19,7 +19,11 @@ import './styles/app-home.css';
 // The fonts are loaded by the root layout: Sora (--font-serif) for headlines and the logo, Hanken Grotesk
 // (--font-sans) for reading and the interface.
 
-export const viewport: Viewport = { themeColor: '#2B6444' };
+export const viewport: Viewport = {
+  viewportFit: 'cover',
+  colorScheme: 'dark light',
+  themeColor: [{ media: '(prefers-color-scheme: dark)', color: '#141517' }, { media: '(prefers-color-scheme: light)', color: '#F5F5F2' }],
+};
 
 export default function SiteLayout({ children }: { children: React.ReactNode }) {
   return (

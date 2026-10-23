@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useLenis } from 'lenis/react';
 import { nav, site } from '@/lib/content';
+import { ScrollTrigger } from '@/lib/motion';
 
 import Logo from './Logo';
 import { Leaf, Loop, LOOPS } from './Art';
@@ -116,9 +117,15 @@ export default function V2Header() {
   const switchTheme = () => {
     const next = theme === 'light' ? 'dark' : 'light';
     try { localStorage.setItem('shivo-theme', next); } catch { /* storage off: the choice lasts until the page is closed */ }
-    document.documentElement.dataset.theme = next;
-    // the scenes read their colours when they start, so the page starts again in the new look, at the same place
-    window.location.reload();
+    const root = document.documentElement;
+    // the page changes look where it stands (it used to reload, which showed the bare text for a moment and then the intro
+    // again): the colours fade over a third of a second, the bars take the new colour, and the scenes read their colours again
+    root.classList.add('v2-theming');
+    root.dataset.theme = next;
+    setTheme(next);
+    document.querySelectorAll('meta[name=theme-color]').forEach((m) => m.setAttribute('content', next === 'light' ? '#F5F5F2' : '#141517'));
+    requestAnimationFrame(() => { ScrollTrigger.refresh(); window.dispatchEvent(new Event('resize')); });
+    setTimeout(() => root.classList.remove('v2-theming'), 500);
   };
   const here = (href: string) => { const h = href.split('#')[0]; return h !== '/' && (pathname === h || pathname.startsWith(`${h}/`)); };
 
