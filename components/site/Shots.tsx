@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { srcSet } from '@/lib/thumb';
 
 /**
@@ -13,13 +13,14 @@ export function Masonry<T extends { w: number; h: number }>({ items, render, cla
 }) {
   const box = useRef<HTMLDivElement>(null);
   const [cols, setCols] = useState(3);
-  useEffect(() => {
+  // measured before the first paint, so the grid never draws at the wrong count and then jumps (the page's height,
+  // and a position returned to with back, would move under the reader)
+  useLayoutEffect(() => {
     const el = box.current;
     if (!el) return;
-    const ro = new ResizeObserver(([e]) => {
-      const w = e.contentRect.width;
-      setCols(w >= 1080 ? 4 : w >= 640 ? 3 : 2);
-    });
+    const fit = (w: number) => setCols(w >= 1080 ? 4 : w >= 640 ? 3 : 2);
+    fit(el.clientWidth);
+    const ro = new ResizeObserver(([e]) => fit(e.contentRect.width));
     ro.observe(el);
     return () => ro.disconnect();
   }, []);

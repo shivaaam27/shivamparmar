@@ -121,7 +121,10 @@ export default function V2Header() {
         <Leaf className="v2-menu__leaf" />
         <nav className="v2-menu__list" aria-label="Menu">
           {LINKS.map((n, i) => (
-            <Link key={n.href} href={n.href} style={{ '--i': i } as React.CSSProperties} onClick={() => setOpen(false)}>
+            // another page: the menu stays until that page is there (closing it at once showed the old page again
+            // while the new one loaded); the same page (/#contact on the home page): it closes at once
+            <Link key={n.href} href={n.href} style={{ '--i': i } as React.CSSProperties}
+              onClick={() => { if (n.href.split('#')[0] === pathname) setOpen(false); }}>
               <span className="v2-menu__n">{String(i + 1).padStart(2, '0')}</span>
               <span className="v2-menu__word">{n.label}</span>
             </Link>

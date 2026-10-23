@@ -1,6 +1,8 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
+import { flushSync } from 'react-dom';
+import { useLenis } from 'lenis/react';
 
 type Toc = { id: string; text: string }[];
 const SIZES = [.92, 1, 1.1, 1.22];
@@ -13,6 +15,8 @@ const SIZES = [.92, 1, 1.1, 1.22];
  */
 export default function Article({ html, toc, lang }: { html: string; toc: Toc; lang: 'en' | 'sw' }) {
   const body = useRef<HTMLDivElement>(null);
+  const aside = useRef<HTMLElement>(null);
+  const lenis = useLenis();
   const [current, setCurrent] = useState(toc[0]?.id ?? '');
   const [size, setSize] = useState(1);
   const [open, setOpen] = useState(false);
@@ -52,18 +56,27 @@ export default function Article({ html, toc, lang }: { html: string; toc: Toc; l
     return () => io.disconnect();
   }, [html]);
 
+  // a section from the list: the list closes first (on phones it sits above the text, so closing it moves the text
+  // up), then one glide to the heading, clear of the bar that stays at the top on phones. The click goes no further,
+  // or the smooth scrolling would start a second glide of its own to the same # and the two would fight.
   const jump = (id: string) => (e: React.MouseEvent) => {
     const h = document.getElementById(id);
     if (!h) return;
     e.preventDefault();
-    setOpen(false);
-    window.scrollTo({ top: h.getBoundingClientRect().top + window.scrollY - 110, behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' });
+    e.stopPropagation();
+    flushSync(() => setOpen(false));
+    const side = aside.current, text = body.current;
+    const stacked = side && text && side.getBoundingClientRect().right > text.getBoundingClientRect().left;
+    const clear = stacked ? parseFloat(getComputedStyle(side).top) + side.offsetHeight + 16 : 110;
+    const top = h.getBoundingClientRect().top + window.scrollY - clear;
+    if (lenis) lenis.scrollTo(top, { force: true });
+    else window.scrollTo({ top, behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' });
     history.replaceState(null, '', `#${id}`);
   };
 
   return (
     <div className="v2-art" style={{ '--size': size } as React.CSSProperties}>
-      <aside className="v2-art__side">
+      <aside ref={aside} className="v2-art__side">
         <div className="v2-art__tools">
           {toc.length > 1 && (
             <button type="button" className="v2-art__tocbtn" onClick={() => setOpen((o) => !o)} aria-expanded={open} aria-controls="art-toc">
