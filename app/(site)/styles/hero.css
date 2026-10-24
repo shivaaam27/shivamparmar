@@ -63,7 +63,9 @@
 /* ---------- the services along the bottom ---------- */
 .v2-hero__foot {
   position: absolute; z-index: 2; left: var(--gutter); right: var(--gutter);
-  bottom: clamp(1.4rem, 3vw, 2.2rem);
+  /* clear of the home bar / the browser's bottom bar when the page runs edge to edge (the second part is the height of the
+     browser bar that slides away, 0 where there is none) */
+  bottom: calc(clamp(1.4rem, 3vw, 2.2rem) + env(safe-area-inset-bottom, 0px) + max(0px, 100lvh - 100svh));
   list-style: none; margin: 0; padding: 0;
   display: flex; justify-content: space-between; gap: 1rem;
   font: 600 .75rem/1.2 var(--body); letter-spacing: .14em; text-transform: uppercase; color: var(--ink);

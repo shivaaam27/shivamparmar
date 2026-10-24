@@ -20,6 +20,9 @@ import './styles/app-home.css';
 // (--font-sans) for reading and the interface.
 
 export const viewport: Viewport = {
+  // edge to edge: the page runs under the status bar and the browser's bottom bar (iPhone and Android), as every other site
+  // does; the CSS keeps the words clear of them with env(safe-area-inset-*)
+  viewportFit: 'cover',
   colorScheme: 'dark light',
   themeColor: [{ media: '(prefers-color-scheme: dark)', color: '#141517' }, { media: '(prefers-color-scheme: light)', color: '#F5F5F2' }],
 };
