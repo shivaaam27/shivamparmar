@@ -9,24 +9,26 @@ import { copy } from '@/lib/copy';
 import { srcSet, thumbOf } from '@/lib/thumb';
 
 const PHOTO = { src: '/images/mikumi-elephants.jpg', alt: 'Elephants in the grass at Mikumi National Park, photographed by Shivam Parmar', slug: 'mikumi-national-park', title: 'Mikumi National Park' };
-/** The wall of work, row by row (the middle row has the main photo in its centre). */
-const TILES: { src: string; slug: string; title: string }[][] = [
+/** The wall of work, row by row (the middle row has the main photo in its centre). A website plays its walkthrough
+ *  (`video`, a light copy made by scripts/record_site.py) in a 16:9 tile; `src` is then its poster. */
+const WEB = '/images/websites';
+const TILES: { src: string; slug: string; title: string; video?: string }[][] = [
   [
-    { src: '/images/work-dashboard-ipad.jpg', slug: 'task-management', title: 'Task Management' },
-    { src: '/images/websites/terragreen-poster.jpg', slug: 'terragreen-website', title: 'TerraGreen' },
+    { src: '/images/roros-boat-bar.jpg', slug: 'roros', title: 'Roro’s' },
+    { src: `${WEB}/terragreen-poster.jpg`, video: `${WEB}/terragreen-tile.mp4`, slug: 'terragreen-website', title: 'TerraGreen' },
     { src: '/images/cocozuri-pralines.jpg', slug: 'cocozuri', title: 'CocoZuri' },
-    { src: '/images/delta-facade.jpg', slug: 'delta-hotel', title: 'Delta Hotels' },
+    { src: `${WEB}/v1-poster.jpg`, video: `${WEB}/v1-tile.mp4`, slug: 'v1-supermarket-website', title: 'V1 Supermarket' },
     { src: '/images/cocozuri-social/strawberry-and-basil-2.jpg', slug: 'cocozuri-social', title: 'CocoZuri Social Media' },
   ],
   [
-    { src: '/images/roros-boat-bar.jpg', slug: 'roros', title: 'Roro’s' },
-    { src: '/images/sgr-platform.jpg', slug: 'sgr-train', title: 'SGR Train' },
+    { src: '/images/work-dashboard-ipad.jpg', slug: 'task-management', title: 'Task Management' },
+    { src: '/images/delta-facade.jpg', slug: 'delta-hotel', title: 'Delta Hotels' },
   ],
   [
-    { src: '/images/websites/cocozuri-poster.jpg', slug: 'cocozuri-website', title: 'CocoZuri Website' },
     { src: '/images/dar-kayak.jpg', slug: 'dar-es-salaam', title: 'Dar es Salaam' },
-    { src: '/images/morogoro-aerial.jpg', slug: 'morogoro-hotel', title: 'Morogoro Hotel' },
-    { src: '/images/websites/group-poster.jpg', slug: 'oracle-consultancy-group', title: 'Oracle Consultancy Group' },
+    { src: `${WEB}/cocozuri-poster.jpg`, video: `${WEB}/cocozuri-tile.mp4`, slug: 'cocozuri-website', title: 'CocoZuri Website' },
+    { src: '/images/sgr-platform.jpg', slug: 'sgr-train', title: 'SGR Train' },
+    { src: `${WEB}/dar-distributors-poster.jpg`, video: `${WEB}/dar-distributors-tile.mp4`, slug: 'dar-distributors-website', title: 'Dar Distributors' },
     { src: '/images/moshi-fields.jpg', slug: 'moshi', title: 'Moshi' },
   ],
 ];
@@ -44,6 +46,13 @@ export default function V2WorkScene({ children }: { children?: React.ReactNode }
   useGSAP(() => {
     const el = root.current!;
     if (prefersReducedMotion()) { el.classList.add('is-still'); return; }
+    // the websites play their walkthroughs while the wall is on screen, and stop when it leaves
+    const videos = [...el.querySelectorAll<HTMLVideoElement>('.v2-wa__tile--web video')];
+    const seen = new IntersectionObserver((es) => es.forEach((e) => {
+      const v = e.target as HTMLVideoElement;
+      if (e.isIntersecting) v.play().catch(() => {}); else v.pause();
+    }), { rootMargin: '25% 0px' });
+    videos.forEach((v) => seen.observe(v));
     const card = el.querySelector('.v2-sheet__card');
     const about = document.querySelector('.v2-scene__about');
     // The page's own top reaches the top of the screen after RISE screens of scrolling, but the card is held back
@@ -68,6 +77,7 @@ export default function V2WorkScene({ children }: { children?: React.ReactNode }
     gsap.fromTo(el.querySelector('.v2-wa__row--1'), { xPercent: -1.5 }, { xPercent: 1.5, ease: 'none', scrollTrigger: drift });
     // About, held, dims under the card (on a touch screen it only dims: a layer that changes size while it is scrolled flickers)
     if (about) gsap.fromTo(about, touch ? { opacity: 1 } : { scale: 1, y: 0, opacity: 1 }, touch ? { opacity: .25, ease: 'none', immediateRender: false, scrollTrigger: st } : { scale: .9, y: -50, opacity: .25, ease: 'none', immediateRender: false, scrollTrigger: st });
+    return () => seen.disconnect();
   }, { scope: root });
 
   return (
@@ -87,7 +97,12 @@ export default function V2WorkScene({ children }: { children?: React.ReactNode }
                       <span className="v2-wa__cap" aria-hidden="true">{PHOTO.title}</span>
                     </Link>
                   )}
-                  <Link href={`/work/${t.slug}`} className="v2-wa__tile" tabIndex={-1} aria-hidden="true"><img src={thumbOf(t.src, 2000)} alt="" loading="lazy" decoding="async" /><span className="v2-wa__cap">{t.title}</span></Link>
+                  <Link href={`/work/${t.slug}`} className={`v2-wa__tile${t.video ? ' v2-wa__tile--web' : ''}`} tabIndex={-1} aria-hidden="true">
+                    {t.video
+                      ? <video src={t.video} poster={t.src} muted loop playsInline preload="none" />
+                      : <img src={thumbOf(t.src, 2000)} alt="" loading="lazy" decoding="async" />}
+                    <span className="v2-wa__cap">{t.title}</span>
+                  </Link>
                 </Fragment>
               ))}
             </div>

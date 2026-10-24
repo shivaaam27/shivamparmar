@@ -69,7 +69,7 @@ const site = (slug: string, name: string, file: string, tone: Tone, summary: str
   slug, name,
   projects: [{
     slug, title: name, tone, cover: `${WEB}/${file}-poster.jpg`, summary,
-    link: { label: 'Visit the website', href: `https://oracleconsultancygroup.vercel.app${path}`, title: label },
+    link: { label: 'Visit the website', href: path.startsWith('https://') ? path : `https://oracleconsultancygroup.vercel.app${path}`, title: label },
     images: [{ src: `${WEB}/${file}-poster.jpg`, video: `${WEB}/${file}.mp4`, alt: `${name} website: a walkthrough recording`, caption: 'Website walkthrough', screen: true }],
   }],
 });
@@ -171,19 +171,12 @@ export const categories: Category[] = [
       site('cocozuri-website', 'CocoZuri', 'cocozuri', 'oxblood',
         'CocoZuri Chocolat makes artisanal chocolate in small batches in Dar es Salaam: Belgian couverture with Tanzanian fruit, spice and nuts, tempered, filled and finished by hand in Masaki.',
         'oracleconsultancygroup.vercel.app/cocozuri', '/cocozuri/'),
-      {
-        slug: 'v1-supermarket-website',
-        name: 'V1 Supermarket',
-        projects: [
-          {
-            slug: 'v1-supermarket-website',
-            title: 'V1 Supermarket',
-            tone: 'stone',
-            summary: 'V1 Supermarket, a neighbourhood supermarket in Kisutu, Dar es Salaam, as a 3D store: the site opens on a landing page, then moves into the shop itself, where customers can explore and search the products on its shelves.',
-            link: { label: 'Visit the website', href: 'https://oracleconsultancygroup.vercel.app/v1supermarket/', title: 'oracleconsultancygroup.vercel.app/v1supermarket' },
-          },
-        ],
-      },
+      site('v1-supermarket-website', 'V1 Supermarket', 'v1', 'stone',
+        'V1 Supermarket is a one-stop mini mart in the city centre of Dar es Salaam, on Zanaki Street in Kisutu: groceries, fresh produce, cold drinks, household and personal care products at competitive prices, with orders by WhatsApp or phone and delivery across the city centre.',
+        'v1.co.tz', 'https://v1.co.tz/'),
+      site('dar-distributors-website', 'Dar Distributors', 'dar-distributors', 'oxblood',
+        'Dar Distributors is a Tanzanian FMCG wholesale and distribution company in Dar es Salaam, bringing quality food brands into Tanzania and keeping them in stock for hotels, restaurants and caterers, shops, wholesalers and corporate buyers: more than 800 products from over 20 brands.',
+        'dardistributors.com', 'https://dardistributors.com/'),
     ],
   },
   {

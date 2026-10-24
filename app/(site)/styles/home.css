@@ -125,7 +125,7 @@
 
 /* the wall: three rows of pictures that fill one screen, the main photograph in the middle */
 .v2-wa__grid {
-  position: relative; height: 100vh; height: 100lvh; min-height: 560px; overflow: hidden; display: grid; grid-template-rows: auto 1fr 1.45fr 1fr; gap: var(--gap);
+  position: relative; height: 100vh; height: 100lvh; min-height: 560px; overflow: hidden; display: grid; grid-template-columns: minmax(0, 1fr); grid-template-rows: auto 1fr 1.45fr 1fr; gap: var(--gap);
   padding: clamp(1.6rem, 4.5vh, 3rem) 0 1.4rem;
 }
 /* the title arrives first, at the top of the card; the pictures are below it */
@@ -136,6 +136,13 @@
 .v2-wa__tile { display: block; min-height: 0; overflow: hidden; border-radius: 16px; background: var(--paper-2); }
 .v2-wa__tile img { width: 100%; height: 100%; object-fit: cover; transition: scale 1s var(--ease); }
 .v2-wa__tile:hover img { scale: 1.06; }
+/* the outer rows: websites keep the true shape of a screen (16:9) at any size, playing their walkthroughs; the photos share
+   what is left (an overflowing row spills evenly off both sides) */
+.v2-wa__row--0, .v2-wa__row--2 { display: flex; justify-content: center; }
+.v2-wa__row--0 > .v2-wa__tile, .v2-wa__row--2 > .v2-wa__tile { flex: 1 1 0; min-width: 9%; }
+.v2-wa__row--0 > .v2-wa__tile--web, .v2-wa__row--2 > .v2-wa__tile--web { flex: none; height: 100%; aspect-ratio: 16 / 9; }
+.v2-wa__tile video { display: block; width: 100%; height: 100%; object-fit: cover; transition: scale 1s var(--ease); }
+.v2-wa__tile:hover video { scale: 1.04; }
 .v2-wa__tile--main { border-radius: 20px; }
 .v2-wa__tile--main img { object-position: 50% 62%; }
 @media (max-width: 720px) {

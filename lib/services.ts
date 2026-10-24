@@ -24,7 +24,7 @@ export const services: Service[] = [
   {
     slug: 'websites-and-apps',
     swSlug: 'tovuti-na-programu',
-    work: ['oracle-consultancy-group', 'terragreen-website', 'cocozuri-website', 'v1-supermarket-website'],
+    work: ['oracle-consultancy-group', 'terragreen-website', 'cocozuri-website', 'v1-supermarket-website', 'dar-distributors-website'],
     picture: '/images/websites/terragreen-poster.jpg',
     en: {
       title: 'Websites and apps',
