@@ -1016,6 +1016,15 @@ html:has(.v2), html:has(.v2) body { min-height: 100lvh; }
    edges, hidden ones too, and kept this one's old colour after a light/dark switch. Without it Safari follows the page
    background, which it watches live. (The colour goes only after the closing wipe has finished.) */
 .v2:has(.v3) .v2-menu:not(.is-open) { background-color: transparent; }
+/* the same rule for sticky elements: a full-screen pinned stage with a colour of its own (the home and About opening,
+   the Work opening, a project's picture) touches both edges, so Safari painted both bars as solid strips while it was
+   pinned and the page stopped running under them. The stages carry no colour; their section behind them carries the
+   same one (the header still reads it there). */
+.v2:has(.v3) .v2-scene { background: var(--h-bg); }
+.v2:has(.v3) .v2-scene:not(.is-still) .v2-scene__stick,
+.v2:has(.v3) .v2-wo:not(.is-still) .v2-wo__stick,
+.v2:has(.v3) .v2-po__hero { background-color: transparent; }
+.v2:has(.v3) .v2-po { background: #1B1C1F; }
 .v2:has(.v3) .v2-menu__list { border-top: 0; gap: clamp(.25rem, 1vw, .75rem); }
 .v2:has(.v3) .v2-menu__list a {
   display: inline-flex; grid-template-columns: none; align-items: baseline; gap: clamp(1rem, 2vw, 2rem); width: fit-content; padding: 0; border-bottom: 0;
