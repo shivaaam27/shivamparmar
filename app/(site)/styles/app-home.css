@@ -1008,10 +1008,14 @@ html:has(.v2), html:has(.v2) body { min-height: 100lvh; }
   display: flex; flex-direction: column; justify-content: center; align-content: normal; gap: 0;
   padding: calc(env(safe-area-inset-top, 0px) + 6rem) var(--gutter) 4.5rem;
   background: var(--h-bg); color: var(--h-text);
-  clip-path: inset(0 0 100% 0); transition: clip-path .8s var(--ease-io), visibility 0s .8s;
+  clip-path: inset(0 0 100% 0); transition: clip-path .8s var(--ease-io), visibility 0s .8s, background-color 0s .8s;
 }
 .v2:has(.v3) .v2-menu.is-open { clip-path: inset(0 0 0 0); visibility: visible; transition-delay: 0s; }
 .v2:has(.v3) .v2-menu::before, .v2:has(.v3) .v2-menu::after { display: none; }
+/* closed, the menu has no colour: iPhone Safari 26 colours its status bar and bottom bar from fixed elements at the screen
+   edges, hidden ones too, and kept this one's old colour after a light/dark switch. Without it Safari follows the page
+   background, which it watches live. (The colour goes only after the closing wipe has finished.) */
+.v2:has(.v3) .v2-menu:not(.is-open) { background-color: transparent; }
 .v2:has(.v3) .v2-menu__list { border-top: 0; gap: clamp(.25rem, 1vw, .75rem); }
 .v2:has(.v3) .v2-menu__list a {
   display: inline-flex; grid-template-columns: none; align-items: baseline; gap: clamp(1rem, 2vw, 2rem); width: fit-content; padding: 0; border-bottom: 0;

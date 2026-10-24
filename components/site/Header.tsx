@@ -153,13 +153,6 @@ export default function V2Header() {
         </div>
       </header>
 
-      {/* iPhone Safari 26 paints its status-bar and bottom-bar strips one solid colour, read from a solid fixed element at
-          the page's top and bottom edges (theme-color is ignored), and reads it only when that element appears: these two
-          page-coloured strips give it the page colour, and are put in again (key) when the look switches so it reads the
-          new one. iPhone only (CSS), no clicks. */}
-      <i key={`t-${theme}`} className="v2-edge v2-edge--top" aria-hidden="true" />
-      <i key={`b-${theme}`} className="v2-edge v2-edge--bottom" aria-hidden="true" />
-
       <div id="v2-menu" className={`v2-menu${open ? ' is-open' : ''}`} inert={!open}>
         <div className="v2-petals" aria-hidden="true" />
         <Loop className="v2-menu__loop" d={LOOPS.long} color="var(--lime)" width={16} draw={false} />
