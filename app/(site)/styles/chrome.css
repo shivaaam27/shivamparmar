@@ -27,8 +27,8 @@
   padding: calc(clamp(1rem, 2.2vw, 1.75rem) + env(safe-area-inset-top, 0px)) var(--gutter) clamp(1rem, 2.2vw, 1.75rem);
   pointer-events: none;
 }
-.v2-header__logo { pointer-events: auto; display: inline-flex; align-items: center; transition: opacity .3s; filter: drop-shadow(0 0 6px rgba(244, 241, 230, .85)); }
-.v2-header__logo:has(.v2-logo--dark) { filter: drop-shadow(0 0 6px rgba(20, 50, 34, .7)); }
+.v2-header__logo { pointer-events: auto; display: inline-flex; align-items: center; transition: opacity .3s; filter: none; }
+.v2-header__logo:has(.v2-logo--dark) { filter: none; }
 .v2-header__logo:hover { opacity: .75; }
 .v2-header__logo .v2-logo { font-size: clamp(1.15rem, 1.5vw, 1.4rem); transition: gap .5s var(--ease), color .4s; }
 /* scrolling down, the words fold away and the mark stays */
@@ -37,9 +37,9 @@
 .v2-header.is-scrolled:not(.is-open) .v2-logo__text { max-width: 0; opacity: 0; }
 .v2-header__menu {
   pointer-events: auto; width: 44px; height: 44px; margin-right: -8px; display: grid; place-items: center;
-  color: #141517; transition: color .4s; cursor: pointer; filter: drop-shadow(0 0 6px rgba(244, 241, 230, .85));
+  color: #141517; transition: color .4s; cursor: pointer; filter: none;
 }
-.v2-header__menu.is-light { color: #F3F0E4; filter: drop-shadow(0 0 6px rgba(20, 50, 34, .7)); }
+.v2-header__menu.is-light { color: #F3F0E4; filter: none; }
 .v2-header__lines { --gap: 5px; position: relative; width: 30px; height: calc((var(--n) - 1) * var(--gap) + 1.5px); }
 /* one line per section; the long one is the section on screen, and it slides on as the page moves */
 .v2-header__lines i {

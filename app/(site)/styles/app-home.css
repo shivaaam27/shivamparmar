@@ -9,11 +9,12 @@
 html:has(.v3) { --v2-page: #141517; }
 .v2:has(.v3) {
   /* dark (the app's tokens) */
-  --h-bg: #141517; --h-bg2: #151A17; --h-panel: #1B1C1F; --h-soft: #26272B; --h-line: #2A2C2F;
+  --h-bg: #141517; --h-bg2: #151618; --h-panel: #1B1C1F; --h-soft: #26272B; --h-line: #2A2C2F;
   --h-text: #F4F5F1; --h-muted: #DADBD7; --h-faint: #C2C3BF;
-  --h-sage: #4F7A5A; --h-glow: #8DB898; --h-hi: #A5D2B0; --h-card: #1A1D1B;
+  --h-sage: #4F7A5A; --h-glow: #8DB898; --h-hi: #A5D2B0; --h-card: #1B1C1E;
   --h-rim: rgba(255, 255, 255, .14); --h-rim2: rgba(255, 255, 255, .06);
-  --h-halo: rgba(127, 176, 139, .20); --h-halo2: rgba(127, 176, 139, .12); --h-halo3: rgba(127, 176, 139, .09);
+  /* no coloured glow: the halos are off, the page is plain balanced grey-black */
+  --h-halo: transparent; --h-halo2: transparent; --h-halo3: transparent;
   --h-dots: rgba(236, 237, 233, .12); --h-cell: rgba(236, 237, 233, .16); --h-labs: #A5A9A6;
   --h-footer: #101113; --h-shadow: rgba(0, 0, 0, .7); --h-ink2: #F4F5F1; --h-ink3: #F4F5F1;
   --h-spring: cubic-bezier(.32, .72, 0, 1);
@@ -37,11 +38,11 @@ html:has(.v3) { --v2-page: #141517; }
 @media (prefers-color-scheme: light) {
   html:not([data-theme]):has(.v3) { --v2-page: #F5F5F2; }
   html:not([data-theme]) .v2:has(.v3) {
-      --h-bg: #F5F5F2; --h-bg2: #EDF1EE; --h-panel: #FFFFFF; --h-soft: #ECECE8; --h-line: #E0E0DB;
+      --h-bg: #F5F5F2; --h-bg2: #EFEFEC; --h-panel: #FFFFFF; --h-soft: #ECECE8; --h-line: #E0E0DB;
       --h-text: #0B0C0D; --h-muted: #2A2B2E; --h-faint: #45474B;
-      --h-sage: #4F7A5A; --h-glow: #4F7A5A; --h-hi: #3F6B4B; --h-card: #ECF1EC;
+      --h-sage: #4F7A5A; --h-glow: #4F7A5A; --h-hi: #3F6B4B; --h-card: #ECECEA;
       --h-rim: rgba(0, 0, 0, .10); --h-rim2: rgba(0, 0, 0, .06);
-      --h-halo: rgba(79, 122, 90, .15); --h-halo2: rgba(79, 122, 90, .09); --h-halo3: rgba(79, 122, 90, .07);
+      --h-halo: transparent; --h-halo2: transparent; --h-halo3: transparent;
       --h-dots: rgba(20, 21, 23, .12); --h-cell: rgba(20, 21, 23, .14); --h-labs: #6B6E73;
       --h-footer: #141517; --h-shadow: rgba(20, 21, 23, .22); --h-ink2: #0B0C0D; --h-ink3: #0B0C0D;
       --ink-2: #0B0C0D; --ink-3: #0B0C0D;
@@ -52,11 +53,11 @@ html:has(.v3) { --v2-page: #141517; }
 }
 html[data-theme="light"]:has(.v3) { --v2-page: #F5F5F2; }
 html[data-theme="light"] .v2:has(.v3) {
-    --h-bg: #F5F5F2; --h-bg2: #EDF1EE; --h-panel: #FFFFFF; --h-soft: #ECECE8; --h-line: #E0E0DB;
+    --h-bg: #F5F5F2; --h-bg2: #EFEFEC; --h-panel: #FFFFFF; --h-soft: #ECECE8; --h-line: #E0E0DB;
     --h-text: #0B0C0D; --h-muted: #2A2B2E; --h-faint: #45474B;
-    --h-sage: #4F7A5A; --h-glow: #4F7A5A; --h-hi: #3F6B4B; --h-card: #ECF1EC;
+    --h-sage: #4F7A5A; --h-glow: #4F7A5A; --h-hi: #3F6B4B; --h-card: #ECECEA;
     --h-rim: rgba(0, 0, 0, .10); --h-rim2: rgba(0, 0, 0, .06);
-    --h-halo: rgba(79, 122, 90, .15); --h-halo2: rgba(79, 122, 90, .09); --h-halo3: rgba(79, 122, 90, .07);
+    --h-halo: transparent; --h-halo2: transparent; --h-halo3: transparent;
     --h-dots: rgba(20, 21, 23, .12); --h-cell: rgba(20, 21, 23, .14); --h-labs: #6B6E73;
     --h-footer: #141517; --h-shadow: rgba(20, 21, 23, .22); --h-ink2: #0B0C0D; --h-ink3: #0B0C0D;
     --ink-2: #0B0C0D; --ink-3: #0B0C0D;
@@ -173,11 +174,11 @@ html[data-theme="light"] .v2:has(.v3) {
 /* light: the menu is light, so the logo, the links and the close cross stay dark while it is open */
 @media (prefers-color-scheme: light) {
   html:not([data-theme]) .v2:has(.v3) .v2-header.is-open .v2-logo { --logo-ink: #141517; --logo-labs: #7E8082; --logo-tip: var(--sage); }
-  html:not([data-theme]) .v2:has(.v3) .v2-header.is-open .v2-header__logo, html:not([data-theme]) .v2:has(.v3) .v2-header.is-open .v2-header__menu, html:not([data-theme]) .v2:has(.v3) .v2-header.is-open .v2-header__theme { filter: drop-shadow(0 0 6px rgba(244, 241, 230, .85)); }
+  html:not([data-theme]) .v2:has(.v3) .v2-header.is-open .v2-header__logo, html:not([data-theme]) .v2:has(.v3) .v2-header.is-open .v2-header__menu, html:not([data-theme]) .v2:has(.v3) .v2-header.is-open .v2-header__theme { filter: none; }
   html:not([data-theme]) .v2:has(.v3) .v2-header.is-open .v2-header__menu, html:not([data-theme]) .v2:has(.v3) .v2-header.is-open .v2-header__theme, html:not([data-theme]) .v2:has(.v3) .v2-header.is-open .v2-header__nav a { color: #141517; }
 }
 html[data-theme="light"] .v2:has(.v3) .v2-header.is-open .v2-logo { --logo-ink: #141517; --logo-labs: #7E8082; --logo-tip: var(--sage); }
-html[data-theme="light"] .v2:has(.v3) .v2-header.is-open .v2-header__logo, html[data-theme="light"] .v2:has(.v3) .v2-header.is-open .v2-header__menu, html[data-theme="light"] .v2:has(.v3) .v2-header.is-open .v2-header__theme { filter: drop-shadow(0 0 6px rgba(244, 241, 230, .85)); }
+html[data-theme="light"] .v2:has(.v3) .v2-header.is-open .v2-header__logo, html[data-theme="light"] .v2:has(.v3) .v2-header.is-open .v2-header__menu, html[data-theme="light"] .v2:has(.v3) .v2-header.is-open .v2-header__theme { filter: none; }
 html[data-theme="light"] .v2:has(.v3) .v2-header.is-open .v2-header__menu, html[data-theme="light"] .v2:has(.v3) .v2-header.is-open .v2-header__theme, html[data-theme="light"] .v2:has(.v3) .v2-header.is-open .v2-header__nav a { color: #141517; }
 /* the same soft light as the openings, held still (the menu scrolls on short screens, so nothing reaches past its edges) */
 .v2:has(.v3) .v2-menu::before, .v2:has(.v3) .v2-menu::after { content: ""; position: absolute; inset: 0; z-index: 0; pointer-events: none; }
@@ -812,9 +813,9 @@ html[data-theme="light"] .v2:has(.v3) .v2-header.is-open .v2-header__menu, html[
 .v2-header__end { gap: .1rem; }
 .v2-header__theme {
   pointer-events: auto; width: 44px; height: 44px; display: grid; place-items: center; color: #141517; transition: color .4s, transform .5s var(--ease); cursor: pointer;
-  filter: drop-shadow(0 0 6px rgba(244, 241, 230, .85));
+  filter: none;
 }
-.v2-header__theme.is-light { color: #F3F0E4; filter: drop-shadow(0 0 6px rgba(20, 50, 34, .7)); }
+.v2-header__theme.is-light { color: #F3F0E4; filter: none; }
 .v2-header__theme svg { width: 21px; height: 21px; fill: none; stroke: currentColor; stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
 .v2-header__theme:hover { transform: rotate(18deg); }
 @media (min-width: 1025px) {

@@ -26,10 +26,6 @@ export default function V2Footer() {
         <div className="v2-wrap v2-footer__in">
           <div className="v2-footer__brand">
             <Link href={'/'} aria-label="Shivo Labs — home"><Logo tone="dark" /></Link>
-            <p className="v2-footer__line">{copy('footer.line')}</p>
-            <a className="v2-footer__mail" href={`mailto:${site.email}`} data-umami-event="Contact · footer email">
-              {site.email} <ArrowUR size={14} />
-            </a>
           </div>
 
           <nav className="v2-footer__cols" aria-label="Footer">

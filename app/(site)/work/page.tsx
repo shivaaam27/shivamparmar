@@ -19,7 +19,7 @@ export default function WorkPage() {
   const entries = wallEntries();
   return (
     <main id="main" className="v2-page v2-work-film v3">
-      <V2WorkIndex entries={entries} title={copy('work.title', 'Work')} lead={copy('work.lead')}>
+      <V2WorkIndex entries={entries} title={copy('work.title', 'Work')}>
         {/* after the wall: a line about the work, then the filters and every picture */}
         <section className="v2-wa__body v2-work-note" aria-label="About this work">
           <p className="v2-wa__lead"><Rich text={copy('work.paragraph')} /></p>

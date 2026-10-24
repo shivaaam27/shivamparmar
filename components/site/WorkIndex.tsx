@@ -2,12 +2,10 @@
 
 import { ViewTransition, useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
-import { PACE, ScrollTrigger, fitScene, gsap, prefersReducedMotion, useGSAP } from '@/lib/motion';
+import { prefersReducedMotion } from '@/lib/motion';
 import { track } from '@/lib/track';
 import { tc } from '@/lib/title-case';
 import { ArrowUR } from './Art';
-import { LOOP, THIN } from './Hero';
-import ScrollWords from './ScrollWords';
 import { thumbOf } from '@/lib/thumb';
 
 /** One project on the work page (made on the server from lib/work.ts). */
@@ -48,30 +46,24 @@ const ratio = (e: ReelEntry) => Math.min(2, Math.max(.5, e.coverW && e.coverH ? 
 const mod = (a: number, m: number) => ((a % m) + m) % m;
 
 /**
- * The top of the work page (docs/SITE.md, "Work pages"): on the deep green, the title and the loop line (it fades
- * where it meets the words, as on the home page) over a wall of the work, drifting slowly to the right under the
- * green. Scrolling, the title and the line leave, the green turns to the light paper and the wall comes forward.
- *
+ * The top of the work page (docs/SITE.md, "Work pages"): the title, centred at the top when the page opens, and under it
+ * a wall of the work, drifting slowly to the right. There is no scroll-driven opening: the wall is there from the start.
  * The wall is up to three rows of pictures at one height, each as wide as its own shape (nothing is cropped into another
  * shape). Each piece of work is in one row only. Every row runs on endlessly (its set laid enough times over to fill the
  * screen, moved by a transform that wraps at the set's width; a short row repeats its pictures), and drifts on its own until
  * touched. Drag, swipe, trackpad or the arrows move it, with a little glide.
  * On the main page a big category is one tile that opens its own page. Below (children): the filters, every picture.
  */
-export default function V2WorkIndex({ entries, title, lead, children }: { entries: ReelEntry[]; title: string; lead: string; children?: React.ReactNode }) {
+export default function V2WorkIndex({ entries, title, children }: { entries: ReelEntry[]; title: string; children?: React.ReactNode }) {
   const root = useRef<HTMLElement>(null);
   const wall = useRef<HTMLDivElement>(null);
   const rowEls = useRef<(HTMLDivElement | null)[]>([]);
   const bar = useRef<HTMLElement>(null);
-  const front = useRef(false);
   const pos = useRef({ x: 0, target: 0 });
-  const [isFront, setFront] = useState(false);
-  const [drawn, setDrawn] = useState(false);
   const n = entries.length;
   const few = n <= 2; // one or two pictures: one row, at their own shapes, still
   const [copies, setCopies] = useState<number[]>(() => Array(ROWS).fill(1));
   const [loops, setLoops] = useState<boolean[]>(() => Array(ROWS).fill(false));
-  useEffect(() => { const t = setTimeout(() => setDrawn(true), 300); return () => clearTimeout(t); }, []);
   const projects = entries.reduce((sum, e) => sum + (e.count ?? 1), 0);
 
   // each piece of work is in one row only; every row runs on endlessly (a short row repeats its set to fill the screen)
@@ -85,39 +77,6 @@ export default function V2WorkIndex({ entries, title, lead, children }: { entrie
     return out;
   })();
   const still = loops.slice(0, count).every((l) => !l);
-
-  // scrolling: the words go, the green lifts to the paper and the wall settles, then it holds
-  useGSAP(() => {
-    const el = root.current!;
-    const show = (on: boolean) => { if (front.current !== on) { front.current = on; setFront(on); } };
-    if (prefersReducedMotion()) { el.classList.add('is-still'); show(true); return; }
-    const q = gsap.utils.selector(el);
-    const words = q('.v2-sw__w') as HTMLElement[];
-    const marks = q('.v2-sw__hl') as HTMLElement[];
-    gsap.set(words, { opacity: .14 });
-    // the wall counts as in front (drag, arrows, links) once the solid cover is nearly gone
-    let frontAt = .6;
-    const tl = gsap.timeline({
-      defaults: { ease: 'none' },
-      scrollTrigger: {
-        trigger: el, start: 'top top', end: () => `+=${el.offsetHeight - window.innerHeight}`, scrub: PACE.scrub, invalidateOnRefresh: true,
-        onUpdate: (s) => show(s.progress > frontAt),
-      },
-    });
-    // 1. on solid graphite: the title, and the description filling in word by word
-    tl.to(words, { opacity: 1, duration: 2.4, stagger: { amount: 2.4 } }, 0)
-      .to({}, { duration: .5 })
-      // 2. the words leave, and the pictures fade up out of the dark
-      .to(q('.v2-wo__head'), { autoAlpha: 0, y: -50, duration: 1, ease: 'power2.in' })
-      .to(q('.v2-wo__veil'), { autoAlpha: 0, duration: 1.6, ease: 'power1.inOut' }, '<.3')
-      .fromTo(q('.v2-wo__wall'), { scale: 1.08 }, { scale: 1, duration: 1.6, ease: 'power2.out' }, '<')
-      .addLabel('seen')
-      .to({}, { duration: 1.2 });
-    frontAt = tl.labels.seen / tl.duration();
-    void marks;
-    fitScene(el, tl, 1);
-    return () => { tl.scrollTrigger?.kill(); tl.kill(); };
-  }, { scope: root });
 
   // the rows: measure each set's width, lay enough copies to cover the screen, and move them every frame
   useEffect(() => {
@@ -168,7 +127,7 @@ export default function V2WorkIndex({ entries, title, lead, children }: { entrie
     let start: { x: number; at: number; t: number; id: number } | null = null, dragged = false, vx = 0;
     const down = (e: PointerEvent) => {
       held = true;
-      if (!front.current || e.button > 0) return;
+      if (e.button > 0) return;
       start = { x: e.clientX, at: pos.current.target, t: e.timeStamp, id: e.pointerId }; dragged = false; vx = 0;
     };
     const move = (e: PointerEvent) => {
@@ -191,7 +150,7 @@ export default function V2WorkIndex({ entries, title, lead, children }: { entrie
     const click = (e: MouseEvent) => { if (dragged) { e.preventDefault(); e.stopPropagation(); } };
     // a trackpad's sideways swipe moves the wall; up and down stay with the page
     const wheel = (e: WheelEvent) => {
-      if (!front.current || Math.abs(e.deltaX) <= Math.abs(e.deltaY)) return;
+      if (Math.abs(e.deltaX) <= Math.abs(e.deltaY)) return;
       e.preventDefault(); e.stopPropagation();
       held = true;
       pos.current.target += e.deltaX;
@@ -219,14 +178,16 @@ export default function V2WorkIndex({ entries, title, lead, children }: { entrie
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [few, count]);
-  useEffect(() => { ScrollTrigger.refresh(); }, []);
 
   const step = (d: number) => { pos.current.target += d * (wall.current?.clientWidth ?? 1000) * .6; };
 
   return (
     <>
-      <section ref={root} className={`v2-wo${isFront ? ' is-front' : ''}${drawn ? ' is-drawn' : ''}${few ? ' is-few' : ''}${still ? ' is-held' : ''}`}
+      <section ref={root} className={`v2-wo is-front${few ? ' is-few' : ''}${still ? ' is-held' : ''}`}
         style={{ '--rows': count } as React.CSSProperties} aria-label="Work">
+        {/* the title, centred at the top: it is the first thing on the page when it opens */}
+        {/* --chars: the longest word, so a long one (Photography) still fits a phone's width */}
+        <h1 className="v2-wo__heading" style={{ '--chars': Math.max(...title.split(/\s+/).map((w) => w.length)) } as React.CSSProperties}>{tc(title)}</h1>
         <div className="v2-wo__stick">
           <div ref={wall} className="v2-wo__wall">
             {rows.map((seq, r) => (
@@ -241,7 +202,7 @@ export default function V2WorkIndex({ entries, title, lead, children }: { entrie
                   const ar = ratio(e);
                   return (
                     <Link key={`${c}-${i}`} href={href} draggable={false} className={`v2-wo__tile${ar > 1.15 ? ' is-land' : ar < .7 ? ' is-tall' : ''}`}
-                      style={{ '--ar': ar } as React.CSSProperties} tabIndex={isFront && real ? 0 : -1} aria-hidden={!real || undefined}
+                      style={{ '--ar': ar } as React.CSSProperties} tabIndex={real ? 0 : -1} aria-hidden={!real || undefined}
                       aria-label={real ? `${e.title}, ${label}. Open` : undefined} onClick={() => track(`Open ${e.count ? 'category' : 'project'} · ${e.title}`)}>
                       {real
                         ? <ProjectMedia e={{ ...e, cover }} active={false} priority />
@@ -254,29 +215,15 @@ export default function V2WorkIndex({ entries, title, lead, children }: { entrie
               </div>
             ))}
           </div>
-          {/* the solid cover over the wall: it carries the light, the dots and the line, so they leave together with it */}
-          <div className="v2-wo__veil" aria-hidden="true">
-            <svg className="v2-hloop" viewBox="0 0 1440 900" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
-              <path className="v2-hloop__thin" d={THIN} pathLength={1} />
-              <path className="v2-hloop__base" d={LOOP} pathLength={1} />
-              <path className="v2-hloop__run" d={LOOP} pathLength={1} />
-            </svg>
-          </div>
-          <div className="v2-wo__head">
-            {/* --chars: the longest word, so a long one (Photography) still fits a phone's width */}
-            <h1 className="v2-wo__title" style={{ '--chars': Math.max(...title.split(/\s+/).map((w) => w.length)) } as React.CSSProperties}>{tc(title)}</h1>
-            <ScrollWords className="v2-wo__lead" controlled parts={[{ t: lead }]} />
-            <p className="v2-wo__hint">{projects} {projects === 1 ? 'project' : 'projects'} · scroll</p>
-          </div>
-          {/* under the wall, centred: back, how far along, forward */}
-          <div className="v2-wo__bar">
-            <button type="button" className="v2-wo__arrow" onClick={() => step(-1)} aria-label="Earlier work"><Arrow flip /></button>
-            <span className="v2-wo__meter">
-              <span className="v2-wo__count"><b>{projects}</b> {projects === 1 ? 'project' : 'projects'}</span>
-              <span className="v2-wo__track" aria-hidden="true"><i ref={bar} /></span>
-            </span>
-            <button type="button" className="v2-wo__arrow" onClick={() => step(1)} aria-label="More work"><Arrow /></button>
-          </div>
+        </div>
+        {/* under the wall, centred: back, how far along, forward */}
+        <div className="v2-wo__bar">
+          <button type="button" className="v2-wo__arrow" onClick={() => step(-1)} aria-label="Earlier work"><Arrow flip /></button>
+          <span className="v2-wo__meter">
+            <span className="v2-wo__count"><b>{projects}</b> {projects === 1 ? 'project' : 'projects'}</span>
+            <span className="v2-wo__track" aria-hidden="true"><i ref={bar} /></span>
+          </span>
+          <button type="button" className="v2-wo__arrow" onClick={() => step(1)} aria-label="More work"><Arrow /></button>
         </div>
       </section>
       {children}

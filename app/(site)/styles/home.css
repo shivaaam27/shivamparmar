@@ -184,12 +184,12 @@
 .v2-ship__tile {
   position: relative; display: flex; align-items: flex-end; overflow: hidden; isolation: isolate;
   width: clamp(15rem, 20vw, 19rem); height: clamp(7.5rem, 10vw, 9.5rem); padding: 1rem 1.2rem; border-radius: 20px;
-  background: linear-gradient(165deg, #2F6E4A, #1E4C33 70%); color: #fff;
+  background: #1B1C1E; color: #fff;
   transition: translate .5s var(--ease), box-shadow .4s;
 }
 .v2-ship__tile:hover { translate: 0 -3px; box-shadow: 0 18px 30px -20px rgba(10, 46, 32, .6); }
 .v2-ship__art { position: absolute; inset: 0; z-index: -1; transition: transform .8s var(--ease); }
-.v2-ship__art::after { content: ""; position: absolute; inset: 0; background: linear-gradient(transparent 35%, rgba(20, 60, 40, .85)); }
+.v2-ship__art::after { content: ""; position: absolute; inset: 0; background: linear-gradient(transparent 35%, rgba(20, 21, 23, .85)); }
 .v2-ship__art .v2-ribbons { position: absolute; }
 .v2-ship__tile:hover .v2-ship__art { transform: scale(1.14) rotate(-1.5deg); }
 .v2-ship__tile:hover .v2-ribbons path { animation-duration: 3s; }
