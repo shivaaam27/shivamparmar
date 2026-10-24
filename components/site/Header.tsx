@@ -11,8 +11,6 @@ import { Leaf, Loop, LOOPS } from './Art';
 
 /** The pages in the menu; Contact has its own page. */
 const LINKS = nav.map((n) => (n.label === 'Contact' ? { ...n, href: '/contact' } : n));
-/** The page links along the top on a computer (the logo is Home). */
-const BAR = LINKS.filter((n) => n.label !== 'Home');
 
 /** Is the page dark where (x, y) is? Reads the first coloured background under that point, skipping the header itself. */
 function darkAt(x: number, y: number, header: HTMLElement | null) {
@@ -31,9 +29,8 @@ function darkAt(x: number, y: number, header: HTMLElement | null) {
 
 /**
  * Header, as on the first site and the same everywhere: the logo on the left and the menu lines on the right, always
- * there. On a computer the page links sit right after the logo, as on Apple's site; on a phone or tablet there are
- * only the logo and the lines. A button beside the lines switches between the dark and the light look.
- * (Before: never a bar.) Scrolling down, the words SHIVO LABS fold away and the logo mark stays. The lines are one per
+ * there, on the bare page (no bar, no frosted back on a computer). The page links (About, Work, Journal, Contact) are
+ * only in the menu. A button beside the lines switches between the dark and the light look. Scrolling down, the words SHIVO LABS fold away and the logo mark stays. The lines are one per
  * section of the page and the long one is the section you are in. Both turn light or dark with the page under them.
  * The pages are in a full-screen green menu that opens from the lines as a circle.
  */
@@ -125,7 +122,6 @@ export default function V2Header() {
     document.querySelectorAll('meta[name=theme-color]').forEach((m) => m.setAttribute('content', next === 'light' ? '#F5F5F2' : '#141517'));
     requestAnimationFrame(() => { window.dispatchEvent(new Event('v2-theme')); window.dispatchEvent(new Event('scroll')); });
   };
-  const here = (href: string) => { const h = href.split('#')[0]; return h !== '/' && (pathname === h || pathname.startsWith(`${h}/`)); };
 
   return (
     <>
@@ -134,11 +130,6 @@ export default function V2Header() {
           <Link className="v2-header__logo" href={'/'} aria-label="Shivo Labs — home">
             <Logo loader tone={darkL || open ? 'dark' : 'light'} />
           </Link>
-          <nav className={`v2-header__nav${darkL || open ? ' is-light' : ''}`} aria-label="Main">
-            {BAR.map((n) => (
-              <Link key={n.href} href={n.href} className={here(n.href) ? 'is-here' : undefined} aria-current={here(n.href) ? 'page' : undefined}>{n.label}</Link>
-            ))}
-          </nav>
         </div>
 
         <div className="v2-header__end">

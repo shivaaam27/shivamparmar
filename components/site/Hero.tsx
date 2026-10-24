@@ -88,7 +88,14 @@ export default function V2Hero() {
       onToggle: (s) => el.classList.toggle('is-covered', s.isActive),
     });
     // the light / dark button: read the deep colour again and redraw where the scroll is (no full refresh of every scene)
-    const retheme = () => { const p = tl.progress(); tl.invalidate().progress(0, true).progress(p); };
+    // (the scene's background colour is written on the element by the timeline: it is cleared first, otherwise the old
+    // look's colour stays on it and the hero keeps the other look's colour, and the turn to the deep colour runs through grey)
+    const retheme = () => {
+      const p = tl.progress();
+      tl.progress(0, true);
+      gsap.set(q('.v2-scene__stick'), { clearProps: 'backgroundColor' });
+      tl.invalidate().progress(0, true).progress(p);
+    };
     window.addEventListener('v2-theme', retheme);
     return () => { window.removeEventListener('v2-theme', retheme); covered.kill(); tl.scrollTrigger?.kill(); tl.kill(); };
   }, { scope: root });

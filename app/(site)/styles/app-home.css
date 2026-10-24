@@ -803,13 +803,6 @@ html[data-theme="light"] .v2:has(.v3) .v2-header.is-open .v2-header__menu, html[
 .v2-header__start, .v2-header__end { display: flex; align-items: center; }
 .v2-header__start { gap: clamp(1.4rem, 2.6vw, 2.8rem); }
 .v2-header__end { gap: .1rem; }
-.v2-header__nav { display: none; }
-.v2-header__nav a {
-  pointer-events: auto; padding-bottom: .18em; font: 400 .9375rem/1.2 var(--body); letter-spacing: -.005em; color: #141517;
-  background: linear-gradient(currentColor, currentColor) 0 100% / 0 1px no-repeat; transition: background-size .45s var(--ease), color .3s;
-}
-.v2-header__nav.is-light a { color: #F3F0E4; }
-.v2-header__nav a:hover, .v2-header__nav a.is-here { background-size: 100% 1px; }
 .v2-header__theme {
   pointer-events: auto; width: 44px; height: 44px; display: grid; place-items: center; color: #141517; transition: color .4s, transform .5s var(--ease); cursor: pointer;
   filter: drop-shadow(0 0 6px rgba(244, 241, 230, .85));
@@ -818,18 +811,8 @@ html[data-theme="light"] .v2:has(.v3) .v2-header.is-open .v2-header__menu, html[
 .v2-header__theme svg { width: 21px; height: 21px; fill: none; stroke: currentColor; stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
 .v2-header__theme:hover { transform: rotate(18deg); }
 @media (min-width: 1025px) {
-  .v2-header__nav { display: flex; gap: clamp(1.2rem, 2vw, 2.2rem); }
-  /* the bar: flat, translucent, from the left edge to the right, with a hairline under it, only once the page has scrolled */
-  .v2:has(.v3)::before {
-    height: var(--h-hdr);
-    background: color-mix(in srgb, var(--h-bg) 72%, transparent);
-    -webkit-backdrop-filter: blur(20px) saturate(180%); backdrop-filter: blur(20px) saturate(180%);
-    -webkit-mask-image: none; mask-image: none; box-shadow: 0 1px 0 var(--h-line);
-  }
-  /* the Work filters now sit under the bar, as a second row */
-  .v2:has(.v3) .v2-wf, .v2:has(.v3) .v2-wbar { top: var(--h-hdr); }
-  .v2:has(.v3) .v2-wf__in, .v2:has(.v3) .v2-wbar__in { padding-inline: var(--gutter); }
-  .v2:has(.v3) .v2-wf__in > .v2-tabs, .v2:has(.v3) .v2-wbar__in > .v2-tabs { min-height: 3.4rem; }
+  /* no bar and no fade behind the header on a computer: the logo and the lines sit straight on the page, as on the first site */
+  .v2:has(.v3)::before { display: none; }
 }
 
 
@@ -1008,3 +991,38 @@ html { -webkit-tap-highlight-color: transparent; }
    they stopped short and left an empty strip at the bottom once Safari or Chrome slid its bar away. The page under them is
    the same colour all the way down, so nothing shows through. */
 html:has(.v2), html:has(.v2) body { min-height: 100lvh; }
+
+
+/* =========================================================
+   The menu, as on the first site (24 Oct 2026): the page's own colour, wiped down from the top; the words large, in capitals,
+   standing on the left with their small numbers, centred on the screen; one quiet line at the bottom left. No hairlines,
+   no arrows, no glow, no circle. Hover dims a word.
+   ========================================================= */
+.v2:has(.v3) .v2-menu {
+  display: flex; flex-direction: column; justify-content: center; align-content: normal; gap: 0;
+  padding: calc(env(safe-area-inset-top, 0px) + 6rem) var(--gutter) 4.5rem;
+  background: var(--h-bg); color: var(--h-text);
+  clip-path: inset(0 0 100% 0); transition: clip-path .8s var(--ease-io), visibility 0s .8s;
+}
+.v2:has(.v3) .v2-menu.is-open { clip-path: inset(0 0 0 0); visibility: visible; transition-delay: 0s; }
+.v2:has(.v3) .v2-menu::before, .v2:has(.v3) .v2-menu::after { display: none; }
+.v2:has(.v3) .v2-menu__list { border-top: 0; gap: clamp(.25rem, 1vw, .75rem); }
+.v2:has(.v3) .v2-menu__list a {
+  display: inline-flex; grid-template-columns: none; align-items: baseline; gap: clamp(1rem, 2vw, 2rem); width: fit-content; padding: 0; border-bottom: 0;
+  font-weight: 400; font-size: clamp(2.25rem, min(9vw, 9.2vh), 8rem) !important; line-height: .95;
+  transform: translateY(40%); transition: opacity .6s var(--ease), transform .8s var(--ease), color .3s;
+}
+.v2:has(.v3) .v2-menu.is-open .v2-menu__list a { transform: none; transition-delay: calc(.25s + var(--i) * .06s); }
+.v2:has(.v3) .v2-menu__list a::after { display: none; }
+.v2:has(.v3) .v2-menu__list a:hover { color: var(--h-text); opacity: .6; }
+.v2:has(.v3) .v2-menu__n { translate: 0 -.2em; align-self: baseline; font: 400 .75rem/1 var(--body); letter-spacing: .08em; color: var(--h-text-soft); }
+.v2:has(.v3) .v2-menu__foot {
+  position: absolute; left: var(--gutter); right: var(--gutter); bottom: calc(env(safe-area-inset-bottom, 0px) + var(--gutter));
+  display: flex; flex-wrap: wrap; gap: .3rem 1.6rem; align-items: baseline;
+}
+.v2:has(.v3) .v2-menu__foot .v2-pill, .v2:has(.v3) .v2-menu__foot .v2-pill--line {
+  padding: 0; font: 400 .75rem/1.4 var(--body); letter-spacing: .08em; text-transform: uppercase; color: var(--h-text-soft);
+}
+.v2:has(.v3) .v2-menu__foot a.v2-pill { background: none; color: var(--h-text-soft); }
+.v2:has(.v3) .v2-menu__foot a.v2-pill::after { display: none; }
+.v2:has(.v3) .v2-menu__foot a.v2-pill:hover { opacity: .6; }
