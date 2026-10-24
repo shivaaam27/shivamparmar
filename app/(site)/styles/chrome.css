@@ -82,6 +82,14 @@
 .v2-menu .v2-petals { opacity: .12; }
 html.v2-menu-open { overflow: hidden; }
 
+/* ---------- the strips Safari 26 colours its bars from (Header.tsx); iPhone and iPad only ---------- */
+.v2-edge { display: none; }
+@supports (-webkit-touch-callout: none) {
+  .v2-edge { display: block; position: fixed; left: 0; right: 0; height: 12px; z-index: 58; pointer-events: none; background: var(--h-bg, var(--paper)); }
+  .v2-edge--top { top: 0; }
+  .v2-edge--bottom { bottom: 0; }
+}
+
 /* ---------- footer: the same on every page, compact, nothing moves ---------- */
 .v2-footer { position: relative; margin-top: 0; }
 .v2-footer__hills { position: relative; height: clamp(44px, 5vw, 76px); background: var(--paper); overflow: hidden; }

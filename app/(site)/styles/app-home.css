@@ -81,6 +81,12 @@ html[data-theme="light"] .v2:has(.v3) {
   animation: h-drift 26s ease-in-out infinite alternate;
 }
 .v2:has(.v3) .v2-scene.is-dark .v2-scene__stick::before { opacity: 1; }
+/* the glow fades out before the top and bottom edges, so the hero meets the phone's status bar and the browser's bottom bar
+   (painted in the plain page colour) with no seam (the layer overhangs by 10% on each side, hence 8% / 92%) */
+.v2:has(.v3) .v2-scene__stick::before {
+  -webkit-mask-image: linear-gradient(transparent 8%, #000 20%, #000 78%, transparent 92%);
+  mask-image: linear-gradient(transparent 8%, #000 20%, #000 78%, transparent 92%);
+}
 /* a fine dot grid, fading out toward the edges */
 .v2:has(.v3) .v2-scene__stick::after {
   inset: 0; opacity: .6;
