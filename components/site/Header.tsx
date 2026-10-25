@@ -42,7 +42,7 @@ export default function V2Header() {
   const [darkR, setDarkR] = useState(false);
   const [count, setCount] = useState(3);
   const [at, setAt] = useState(0);
-  const [theme, setTheme] = useState<'light' | 'dark'>('dark');
+  const [theme, setTheme] = useState<'light' | 'dark'>('light');
   const head = useRef<HTMLElement>(null);
   const btn = useRef<HTMLButtonElement>(null);
   const lenis = useLenis();
@@ -108,7 +108,7 @@ export default function V2Header() {
   // the look now in use: the choice made with the button, else the device's
   useEffect(() => {
     const chosen = document.documentElement.dataset.theme;
-    setTheme(chosen === 'light' || chosen === 'dark' ? chosen : window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark');
+    setTheme(chosen === 'light' || chosen === 'dark' ? chosen : 'light');
   }, []);
   const switchTheme = () => {
     const next = theme === 'light' ? 'dark' : 'light';
@@ -119,7 +119,7 @@ export default function V2Header() {
     // their colours again a frame later
     root.dataset.theme = next;
     setTheme(next);
-    document.querySelectorAll('meta[name=theme-color]').forEach((m) => m.setAttribute('content', next === 'light' ? '#F5F5F2' : '#141517'));
+    document.querySelectorAll('meta[name=theme-color]').forEach((m) => m.setAttribute('content', next === 'light' ? '#F9F9F9' : '#141517'));
     requestAnimationFrame(() => { window.dispatchEvent(new Event('v2-theme')); window.dispatchEvent(new Event('scroll')); });
   };
 

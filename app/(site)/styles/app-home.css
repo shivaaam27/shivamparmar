@@ -36,11 +36,11 @@ html:has(.v3) { --v2-page: #141517; }
 
 /* light (the app's light tokens): used when the device is light and no choice was made, or when the button chose light */
 @media (prefers-color-scheme: light) {
-  html:not([data-theme]):has(.v3) { --v2-page: #F5F5F2; }
+  html:not([data-theme]):has(.v3) { --v2-page: #F9F9F9; }
   html:not([data-theme]) .v2:has(.v3) {
-      --h-bg: #F5F5F2; --h-bg2: #EFEFEC; --h-panel: #FFFFFF; --h-soft: #ECECE8; --h-line: #E0E0DB;
+      --h-bg: #F9F9F9; --h-bg2: #F4F4F4; --h-panel: #FFFFFF; --h-soft: #ECECEC; --h-line: #E0E0E0;
       --h-text: #0B0C0D; --h-muted: #2A2B2E; --h-faint: #45474B;
-      --h-sage: #4F7A5A; --h-glow: #4F7A5A; --h-hi: #3F6B4B; --h-card: #ECECEA;
+      --h-sage: #4F7A5A; --h-glow: #4F7A5A; --h-hi: #3F6B4B; --h-card: #EDEDED;
       --h-rim: rgba(0, 0, 0, .10); --h-rim2: rgba(0, 0, 0, .06);
       --h-halo: transparent; --h-halo2: transparent; --h-halo3: transparent;
       --h-dots: rgba(20, 21, 23, .12); --h-cell: rgba(20, 21, 23, .14); --h-labs: #6B6E73;
@@ -51,11 +51,11 @@ html:has(.v3) { --v2-page: #141517; }
       color-scheme: light;
   }
 }
-html[data-theme="light"]:has(.v3) { --v2-page: #F5F5F2; }
+html[data-theme="light"]:has(.v3) { --v2-page: #F9F9F9; }
 html[data-theme="light"] .v2:has(.v3) {
-    --h-bg: #F5F5F2; --h-bg2: #EFEFEC; --h-panel: #FFFFFF; --h-soft: #ECECE8; --h-line: #E0E0DB;
+    --h-bg: #F9F9F9; --h-bg2: #F4F4F4; --h-panel: #FFFFFF; --h-soft: #ECECEC; --h-line: #E0E0E0;
     --h-text: #0B0C0D; --h-muted: #2A2B2E; --h-faint: #45474B;
-    --h-sage: #4F7A5A; --h-glow: #4F7A5A; --h-hi: #3F6B4B; --h-card: #ECECEA;
+    --h-sage: #4F7A5A; --h-glow: #4F7A5A; --h-hi: #3F6B4B; --h-card: #EDEDED;
     --h-rim: rgba(0, 0, 0, .10); --h-rim2: rgba(0, 0, 0, .06);
     --h-halo: transparent; --h-halo2: transparent; --h-halo3: transparent;
     --h-dots: rgba(20, 21, 23, .12); --h-cell: rgba(20, 21, 23, .14); --h-labs: #6B6E73;
@@ -72,11 +72,7 @@ html[data-theme="light"] .v2:has(.v3) {
 /* the light: one wide, very soft glow centred above the middle, drifting a little, leaning toward the pointer */
 .v2:has(.v3) .v2-scene__stick::before {
   inset: -10%;
-  background:
-    radial-gradient(60% 55% at 50% 36%, var(--h-halo), transparent 72%),
-    radial-gradient(45% 40% at 12% 18%, var(--h-halo3), transparent 70%),
-    radial-gradient(45% 40% at 90% 85%, var(--h-halo3), transparent 70%),
-    radial-gradient(70% 40% at 50% 105%, var(--h-halo2), transparent 70%);
+  background: none;
   opacity: .8; transition: opacity 1.2s;
   translate: calc(var(--px) * 18px) calc(var(--py) * 14px);
   animation: h-drift 26s ease-in-out infinite alternate;
@@ -91,7 +87,7 @@ html[data-theme="light"] .v2:has(.v3) {
 /* a fine dot grid, fading out toward the edges */
 .v2:has(.v3) .v2-scene__stick::after {
   inset: 0; opacity: .6;
-  background-image: radial-gradient(var(--h-dots) 1px, transparent 1.2px); background-size: 36px 36px;
+  background-image: none; background-size: 36px 36px;
   -webkit-mask-image: radial-gradient(ellipse 70% 60% at 50% 48%, #000 15%, transparent 80%); mask-image: radial-gradient(ellipse 70% 60% at 50% 48%, #000 15%, transparent 80%);
 }
 @keyframes h-drift { 0% { transform: translate3d(-1%, 1%, 0) scale(1); } 100% { transform: translate3d(1%, -1%, 0) scale(1.05); } }
@@ -128,7 +124,7 @@ html[data-theme="light"] .v2:has(.v3) {
 .v2:has(.v3) .v2-sheet__card { position: relative; background: var(--h-panel); }
 .v2:has(.v3) .v2-sheet__card::before {
   content: ""; position: absolute; left: 0; right: 0; top: 0; height: 1px; z-index: 2; pointer-events: none;
-  background: linear-gradient(90deg, transparent, var(--h-rim) 30%, var(--h-rim) 70%, transparent);
+  background: none;
 }
 .v2:has(.v3) .v2-wa__head { font-weight: 400; }
 /* the wall: rows of different rhythms, never five equal boxes */
@@ -141,7 +137,7 @@ html[data-theme="light"] .v2:has(.v3) {
 /* the name of the work, on a soft shade at the foot of the picture, when the pointer is on it */
 .v2:has(.v3) .v2-wa__cap {
   position: absolute; left: 0; right: 0; bottom: 0; z-index: 1; padding: 2.2rem 1rem .85rem;
-  background: linear-gradient(transparent, rgba(10, 10, 12, .62)); color: #fff; font: 500 .8125rem/1.2 var(--body); letter-spacing: .01em;
+  background: rgba(10, 10, 12, .42); color: #fff; font: 500 .8125rem/1.2 var(--body); letter-spacing: .01em;
   opacity: 0; translate: 0 6px; transition: opacity .35s, translate .5s var(--h-spring); pointer-events: none;
 }
 .v2:has(.v3) .v2-wa__tile:hover .v2-wa__cap { opacity: 1; translate: 0 0; }
@@ -157,7 +153,7 @@ html[data-theme="light"] .v2:has(.v3) {
 
 /* ---------- Contact: a calm graphite card; no drawings, the words carry it ---------- */
 .v2:has(.v3) .v2-contact__stick {
-  color: var(--h-text); background: radial-gradient(60% 90% at 90% 0%, var(--h-halo), transparent 70%), var(--h-card);
+  color: var(--h-text); background: var(--h-card);
   box-shadow: inset 0 1px 0 var(--h-rim);
 }
 .v2:has(.v3) .v2-contact__card { --ink: var(--h-text); color: var(--h-text); }
@@ -184,13 +180,10 @@ html[data-theme="light"] .v2:has(.v3) .v2-header.is-open .v2-header__menu, html[
 .v2:has(.v3) .v2-menu::before, .v2:has(.v3) .v2-menu::after { content: ""; position: absolute; inset: 0; z-index: 0; pointer-events: none; }
 .v2:has(.v3) .v2-menu::before {
   opacity: .8;
-  background:
-    radial-gradient(60% 55% at 30% 40%, var(--h-halo), transparent 72%),
-    radial-gradient(45% 40% at 90% 85%, var(--h-halo3), transparent 70%),
-    radial-gradient(70% 40% at 50% 105%, var(--h-halo2), transparent 70%);
+  background: none;
 }
 .v2:has(.v3) .v2-menu::after {
-  opacity: .6; background-image: radial-gradient(var(--h-dots) 1px, transparent 1.2px); background-size: 36px 36px;
+  opacity: .6; background-image: none; background-size: 36px 36px;
   -webkit-mask-image: radial-gradient(ellipse 70% 60% at 35% 48%, #000 15%, transparent 80%); mask-image: radial-gradient(ellipse 70% 60% at 35% 48%, #000 15%, transparent 80%);
 }
 /* the contact lines under the menu: plain words, the links with an arrow, no pills */
@@ -222,10 +215,10 @@ html[data-theme="light"] .v2:has(.v3) .v2-header.is-open .v2-header__menu, html[
 .v2:has(.v3) .v2-abo .v2-more { color: var(--h-text); }
 .v2:has(.v3) .v2-ship__tile { background: var(--h-panel); color: var(--h-text); box-shadow: inset 0 0 0 .5px var(--h-rim); }
 .v2:has(.v3) .v2-ship__tile:hover { box-shadow: inset 0 0 0 .5px var(--h-glow), 0 16px 28px -20px var(--h-shadow); }
-.v2:has(.v3) .v2-ship__art::after { background: linear-gradient(transparent 25%, var(--h-panel) 92%); }
+.v2:has(.v3) .v2-ship__art::after { background: none; }
 .v2:has(.v3) .v2-ship__art .v2-ribbons { opacity: .7; filter: saturate(.6); }
 .v2:has(.v3) .v2-cream { background: var(--h-bg); }
-.v2:has(.v3) .v2-so { background: radial-gradient(60% 90% at 90% 0%, var(--h-halo), transparent 70%), var(--h-bg2); box-shadow: inset 0 0 0 .5px var(--h-rim2); }
+.v2:has(.v3) .v2-so { background: var(--h-bg2); box-shadow: inset 0 0 0 .5px var(--h-rim2); }
 .v2:has(.v3) .v2-so__title { font-weight: 400; color: var(--h-text); }
 .v2:has(.v3) .v2-so__title em { color: var(--h-hi); }
 .v2:has(.v3) .v2-so__lead { color: var(--h-ink2); }
@@ -248,7 +241,7 @@ html[data-theme="light"] .v2:has(.v3) .v2-header.is-open .v2-header__menu, html[
 /* its top is a lit hairline, as on the home page's work card, so it reads as a panel and not as a seam */
 .v2:has(.v3) .v2-adc::before {
   content: ""; position: absolute; left: 0; right: 0; top: 0; height: 1px; pointer-events: none;
-  background: linear-gradient(90deg, transparent, var(--h-rim) 30%, var(--h-rim) 70%, transparent);
+  background: none;
 }
 .v2:has(.v3) .v2-adc__lead { color: var(--h-ink3); }
 .v2:has(.v3) .v2-adc__lead b, .v2:has(.v3) .v2-adc__stats b { color: var(--h-text); font-weight: 400; }
@@ -268,7 +261,7 @@ html[data-theme="light"] .v2:has(.v3) .v2-header.is-open .v2-header__menu, html[
 .v2:has(.v3) .v2-wo__lead { color: var(--h-ink2); }
 .v2:has(.v3) .v2-wo__hint { color: var(--h-muted); }
 .v2:has(.v3) .v2-wo__tile { background: var(--h-soft); border-radius: 20px; box-shadow: 0 14px 30px -20px var(--h-shadow); }
-.v2:has(.v3) .v2-wo__tile::after { background: linear-gradient(180deg, transparent 55%, rgba(8, 9, 10, .72)); box-shadow: inset 0 0 0 .5px var(--h-rim); }
+.v2:has(.v3) .v2-wo__tile::after { background: rgba(10, 10, 12, .42); box-shadow: inset 0 0 0 .5px var(--h-rim); }
 .v2:has(.v3) .v2-wo__name { font-weight: 500; text-transform: none; letter-spacing: 0; font-size: clamp(.82rem, 1vw, .98rem); }
 .v2:has(.v3) .v2-wo__cat { font-weight: 500; letter-spacing: .08em; }
 /* the little arrow on a tile: just the arrow, no box */
@@ -319,7 +312,7 @@ html[data-theme="light"] .v2:has(.v3) .v2-header.is-open .v2-header__menu, html[
 .v2:has(.v3) .v2-shot::after, .v2:has(.v3) .v2-screen__media::after { content: ""; position: absolute; inset: 0; border-radius: inherit; box-shadow: inset 0 0 0 .5px var(--h-rim); pointer-events: none; }
 .v2:has(.v3) .v2-shot:hover, .v2:has(.v3) .v2-screen__open:hover .v2-screen__media { box-shadow: 0 22px 36px -20px var(--h-shadow); }
 .v2:has(.v3) .v2-shot__name {
-  left: 0; right: 0; top: auto; bottom: 0; max-width: none; padding: 2.2rem 1rem .85rem; border-radius: 0; background: linear-gradient(transparent, rgba(10, 10, 12, .62));
+  left: 0; right: 0; top: auto; bottom: 0; max-width: none; padding: 2.2rem 1rem .85rem; border-radius: 0; background: rgba(10, 10, 12, .42);
   color: #fff; font: 500 .8125rem/1.2 var(--body);
 }
 .v2:has(.v3) .v2-shot__play { background: rgba(255, 255, 255, .88); }
@@ -341,7 +334,7 @@ html[data-theme="light"] .v2:has(.v3) .v2-header.is-open .v2-header__menu, html[
 .v2:has(.v3) .v2-crumbs, .v2:has(.v3) .v2-crumbs a, .v2:has(.v3) .v2-crumbs button { color: var(--h-ink2); }
 
 /* the closing card: calm, no colour block, no drawings */
-.v2:has(.v3) .v2-pcta__card.v2-card--lime { background: radial-gradient(60% 90% at 90% 0%, var(--h-halo), transparent 70%), var(--h-card); color: var(--h-text); box-shadow: inset 0 0 0 .5px var(--h-rim); --ink: var(--h-text); }
+.v2:has(.v3) .v2-pcta__card.v2-card--lime { background: var(--h-card); color: var(--h-text); box-shadow: inset 0 0 0 .5px var(--h-rim); --ink: var(--h-text); }
 .v2:has(.v3) .v2-pcta__text { color: var(--h-ink2); }
 .v2:has(.v3) .v2-pcta__loop, .v2:has(.v3) .v2-pcta__leaf { display: none; }
 .v2:has(.v3) .v2-pcta .v2-h2 { font-weight: 400; }
@@ -374,7 +367,7 @@ html[data-theme="light"] .v2:has(.v3) .v2-header.is-open .v2-header__menu, html[
 .v2:has(.v3) .v2-jx__filters .v2-tabs { background: none; }
 .v2:has(.v3) .v2-jx__filters { gap: .4rem 2.4rem; }
 .v2:has(.v3) .v2-jx__cover {
-  background: radial-gradient(60% 90% at 90% 0%, var(--h-halo), transparent 70%), var(--h-card); color: var(--h-text); border-radius: 24px;
+  background: var(--h-card); color: var(--h-text); border-radius: 24px;
   box-shadow: inset 0 0 0 .5px var(--h-rim);
 }
 .v2:has(.v3) .v2-jx__cover:hover { box-shadow: inset 0 0 0 .5px var(--h-rim), 0 26px 44px -34px var(--h-shadow); }
@@ -447,16 +440,12 @@ html[data-theme="light"] .v2:has(.v3) .v2-header.is-open .v2-header__menu, html[
 .v2:has(.v3) :is(.v2-wo__veil, .v2-jo, .v2-ph, .v2-whero, .v2-wo.is-still .v2-wo__head)::after { content: ""; position: absolute; z-index: -1; pointer-events: none; }
 .v2:has(.v3) :is(.v2-wo__veil, .v2-jo, .v2-ph, .v2-whero, .v2-wo.is-still .v2-wo__head)::before {
   inset: -10%; opacity: .8;
-  background:
-    radial-gradient(60% 55% at 50% 36%, var(--h-halo), transparent 72%),
-    radial-gradient(45% 40% at 12% 18%, var(--h-halo3), transparent 70%),
-    radial-gradient(45% 40% at 90% 85%, var(--h-halo3), transparent 70%),
-    radial-gradient(70% 40% at 50% 105%, var(--h-halo2), transparent 70%);
+  background: none;
   animation: h-drift 26s ease-in-out infinite alternate;
 }
 .v2:has(.v3) :is(.v2-wo__veil, .v2-jo, .v2-ph, .v2-whero, .v2-wo.is-still .v2-wo__head)::after {
   inset: 0; opacity: .6;
-  background-image: radial-gradient(var(--h-dots) 1px, transparent 1.2px); background-size: 36px 36px;
+  background-image: none; background-size: 36px 36px;
   -webkit-mask-image: radial-gradient(ellipse 70% 60% at 50% 48%, #000 15%, transparent 80%); mask-image: radial-gradient(ellipse 70% 60% at 50% 48%, #000 15%, transparent 80%);
 }
 /* the line, as on About: thin and soft, out of the way of the words */
@@ -577,16 +566,12 @@ html[data-theme="light"] .v2:has(.v3) .v2-header.is-open .v2-header__menu, html[
 .v2:has(.v3) .v2-ct::before, .v2:has(.v3) .v2-ct::after { content: ""; position: absolute; z-index: -1; pointer-events: none; }
 .v2:has(.v3) .v2-ct::before {
   inset: -10%; opacity: .8;
-  background:
-    radial-gradient(60% 55% at 50% 36%, var(--h-halo), transparent 72%),
-    radial-gradient(45% 40% at 12% 18%, var(--h-halo3), transparent 70%),
-    radial-gradient(45% 40% at 90% 85%, var(--h-halo3), transparent 70%),
-    radial-gradient(70% 40% at 50% 105%, var(--h-halo2), transparent 70%);
+  background: none;
   animation: h-drift 26s ease-in-out infinite alternate;
 }
 .v2:has(.v3) .v2-ct::after {
   inset: 0; opacity: .6;
-  background-image: radial-gradient(var(--h-dots) 1px, transparent 1.2px); background-size: 36px 36px;
+  background-image: none; background-size: 36px 36px;
   -webkit-mask-image: radial-gradient(ellipse 70% 60% at 50% 48%, #000 15%, transparent 80%); mask-image: radial-gradient(ellipse 70% 60% at 50% 48%, #000 15%, transparent 80%);
 }
 .v2:has(.v3) .v2-ct .v2-hloop { opacity: .8; }
@@ -630,7 +615,7 @@ html[data-theme="light"] .v2:has(.v3) .v2-header.is-open .v2-header__menu, html[
 /* the opening: the picture full screen. Behind it (until it has loaded, and while it morphs in) a neutral graphite in
    both modes, so the header reads it as dark and stays white over the photograph */
 .v2:has(.v3) .v2-po__hero, .v2:has(.v3) .v2-po__hero .v2-pmedia { background: #1B1C1F; }
-.v2:has(.v3) .v2-po__shade { background: linear-gradient(180deg, rgba(10, 10, 12, .46), rgba(10, 10, 12, .14) 16%, transparent 26%, transparent 52%, rgba(10, 10, 12, .66)); }
+.v2:has(.v3) .v2-po__shade { background: rgba(10, 10, 12, .42); }
 .v2:has(.v3) .v2-po__say { text-shadow: 0 1px 24px rgba(0, 0, 0, .3); }
 .v2:has(.v3) .v2-po__crumbs { font: 600 .75rem/1.2 var(--body); letter-spacing: .14em; }
 .v2:has(.v3) .v2-po__crumbs a {
@@ -657,17 +642,14 @@ html[data-theme="light"] .v2:has(.v3) .v2-header.is-open .v2-header__menu, html[
 .v2:has(.v3) .v2-po__body::before, .v2:has(.v3) .v2-po__body::after { content: ""; position: absolute; z-index: -1; pointer-events: none; }
 .v2:has(.v3) .v2-po__body::before {
   inset: -10%; opacity: .8;
-  background:
-    radial-gradient(55% 50% at 30% 22%, var(--h-halo), transparent 72%),
-    radial-gradient(45% 40% at 92% 12%, var(--h-halo3), transparent 70%),
-    radial-gradient(45% 40% at 85% 88%, var(--h-halo3), transparent 70%);
+  background: none;
   animation: h-drift 26s ease-in-out infinite alternate;
   /* it fades out before the information ends, so there is no seam with the way on under it */
   -webkit-mask-image: linear-gradient(#000 40%, transparent 90%); mask-image: linear-gradient(#000 40%, transparent 90%);
 }
 .v2:has(.v3) .v2-po__body::after {
   inset: 0; opacity: .6;
-  background-image: radial-gradient(var(--h-dots) 1px, transparent 1.2px); background-size: 36px 36px;
+  background-image: none; background-size: 36px 36px;
   -webkit-mask-image: radial-gradient(ellipse 70% 60% at 35% 35%, #000 15%, transparent 80%); mask-image: radial-gradient(ellipse 70% 60% at 35% 35%, #000 15%, transparent 80%);
 }
 @media (prefers-reduced-motion: reduce) { .v2:has(.v3) .v2-po__body::before { animation: none; } }
@@ -724,14 +706,11 @@ html[data-theme="light"] .v2:has(.v3) .v2-header.is-open .v2-header__menu, html[
 .v2:has(.v3) .v2-viewer::before, .v2:has(.v3) .v2-viewer::after { content: ""; position: absolute; z-index: -1; pointer-events: none; }
 .v2:has(.v3) .v2-viewer::before {
   inset: -10%; opacity: .8;
-  background:
-    radial-gradient(60% 55% at 50% 40%, var(--h-halo), transparent 72%),
-    radial-gradient(45% 40% at 10% 15%, var(--h-halo3), transparent 70%),
-    radial-gradient(45% 40% at 90% 88%, var(--h-halo3), transparent 70%);
+  background: none;
 }
 .v2:has(.v3) .v2-viewer::after {
   inset: 0; opacity: .6;
-  background-image: radial-gradient(var(--h-dots) 1px, transparent 1.2px); background-size: 36px 36px;
+  background-image: none; background-size: 36px 36px;
   -webkit-mask-image: radial-gradient(ellipse 75% 65% at 50% 48%, #000 15%, transparent 80%); mask-image: radial-gradient(ellipse 75% 65% at 50% 48%, #000 15%, transparent 80%);
 }
 .v2:has(.v3) .v2-viewer__bar { gap: 1.6rem; }
@@ -779,7 +758,7 @@ html[data-theme="light"] .v2:has(.v3) .v2-header.is-open .v2-header__menu, html[
   content: ""; position: fixed; z-index: 59; left: 0; right: 0; top: 0; height: calc(var(--h-hdr) + env(safe-area-inset-top, 0px) + 1.5rem); pointer-events: none;
   /* the page colour, strong at the top and fading out with no edge; under it a soft blur, so words that still show
      through are only a haze, while a smooth light (the openings) passes through unchanged */
-  background: linear-gradient(color-mix(in srgb, var(--h-bg) 88%, transparent), color-mix(in srgb, var(--h-bg) 62%, transparent) 50%, transparent);
+  background: none;
   -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px);
   -webkit-mask-image: linear-gradient(#000 45%, transparent); mask-image: linear-gradient(#000 45%, transparent);
   opacity: 0; transition: opacity .45s var(--ease);
@@ -910,7 +889,7 @@ html[data-theme="light"] .v2:has(.v3) .v2-header.is-open .v2-header__menu, html[
      the same bar, the page colour fading down, without the blur */
   .v2:has(.v3)::before {
     -webkit-backdrop-filter: none; backdrop-filter: none;
-    background: linear-gradient(color-mix(in srgb, var(--h-bg) 95%, transparent), color-mix(in srgb, var(--h-bg) 74%, transparent) 55%, transparent);
+    background: none;
   }
   .v2:has(.v3) :is(.v2-wf, .v2-wbar) { background: color-mix(in srgb, var(--h-bg) 97%, transparent); }
   .v2:has(.v3) .v2-art__side { background: color-mix(in srgb, var(--h-bg) 97%, transparent); }
@@ -1047,3 +1026,58 @@ html:has(.v2), html:has(.v2) body { min-height: 100lvh; }
 .v2:has(.v3) .v2-menu__foot a.v2-pill { background: none; color: var(--h-text-soft); }
 .v2:has(.v3) .v2-menu__foot a.v2-pill::after { display: none; }
 .v2:has(.v3) .v2-menu__foot a.v2-pill:hover { opacity: .6; }
+/* Plain surfaces: no ambient glows or decorative gradient backgrounds. */
+.v2:has(.v3) :is(.v2-scene__stick, .v2-abo__stick, .v2-menu, .v2-wo__veil, .v2-jo, .v2-ph, .v2-whero, .v2-wo.is-still .v2-wo__head)::before,
+.v2:has(.v3) :is(.v2-scene__stick, .v2-abo__stick, .v2-menu, .v2-wo__veil, .v2-jo, .v2-ph, .v2-whero, .v2-wo.is-still .v2-wo__head)::after { background-image: none; animation: none; }
+
+/* About opens in normal flow, with the same compact title as Work. */
+.v2:has(.v3) .v2-about-intro { background: var(--h-bg); color: var(--h-text); padding-bottom: clamp(3rem, 6vw, 5rem); }
+.v2-about-intro__body { width: min(calc(100% - 2 * var(--gutter)), 72rem); margin-inline: auto; }
+.v2:has(.v3) .v2-about-intro__body p { margin: 0 0 1.5rem; font: 400 var(--h-fs-lead)/1.6 var(--body); color: var(--h-text); text-wrap: pretty; }
+.v2-about-intro__body b { font-weight: 600; }
+.v2-about-intro__links { display: flex; flex-wrap: wrap; gap: 1rem 2rem; margin-top: 2rem; }
+/* One centered About description, edited in a single field. */
+.v2-about-intro__body { text-align: center; }
+.v2-about-intro__links { justify-content: center; }
+/* The About story holds one paragraph in place while the scroll advances it. */
+.v2:has(.v3) .v2-about-story { padding-bottom: 0; position: relative; }
+.v2-about-story__frame { padding-bottom: 4rem; }
+.v2-about-story__panels { display: grid; gap: 1.5rem; }
+.v2-about-story__panel .v2-sw__hl { background: none; color: inherit; font-weight: 600; }
+.v2-about-story.is-animated .v2-about-story__frame { position: sticky; top: 0; height: 100svh; display: flex; flex-direction: column; padding-bottom: max(5rem, env(safe-area-inset-bottom)); box-sizing: border-box; }
+.v2-about-story.is-animated .v2-about-intro__body { flex: 1; display: flex; flex-direction: column; justify-content: center; }
+.v2-about-story.is-animated .v2-about-story__panels { display: grid; align-items: center; gap: 0; }
+.v2-about-story.is-animated .v2-about-story__panel { grid-area: 1 / 1; }
+.v2:has(.v3) .v2-about-story__panel p { margin: 0; }
+.v2-about-story.is-animated .v2-about-intro__links { min-height: 2.5rem; }
+@media (max-width: 720px) {
+  .v2:has(.v3) .v2-about-story__panel p { font-size: clamp(1rem, 3.5vw, 1.25rem); line-height: 1.55; }
+}
+/* Shared reading column and spacing for the Home and About stories. */
+.v2:has(.v3) :is(.v2-scene__about, .v2-about-intro__body) {
+  width: min(calc(100% - 2 * var(--gutter)), 58rem);
+  margin-inline: auto;
+  text-align: center;
+}
+.v2:has(.v3) :is(.v2-scene__body, .v2-about-story__panel p) {
+  box-sizing: border-box;
+  width: 100%;
+  max-width: 40rem;
+  margin-inline: auto;
+  padding-inline: clamp(1rem, 2.5vw, 1.5rem);
+  font: 400 min(clamp(1.25rem, .7rem + 1.05vw, 1.6rem), 3.3vh)/1.5 var(--body);
+  letter-spacing: -.012em;
+  text-align: center;
+  text-wrap: pretty;
+}
+.v2:has(.v3) :is(.v2-scene__end, .v2-about-intro__links) {
+  justify-content: center;
+  gap: 1rem 1.8rem;
+}
+@media (max-width: 720px) {
+  .v2:has(.v3) :is(.v2-scene__body, .v2-about-story__panel p) {
+    font-size: var(--h-fs-lead);
+    line-height: 1.55;
+    padding-inline: .9rem;
+  }
+}

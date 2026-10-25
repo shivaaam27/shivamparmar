@@ -35,7 +35,7 @@
           "key": "home.about.body",
           "label": "About section: the description",
           "kind": "text",
-          "value": "I’m Shivam Parmar, and Shivo Labs is my freelance software and digital solutions business in Dar es Salaam, Tanzania. I design and build websites, [[iPhone, Android and Windows apps]], and [[custom systems*]] such as task and document management, dashboards and internal tools. I set up AI workflows and automation, including [[MCP connections]] that let AI agents work with your own systems, saving you time. I also do branding, photography and social media for businesses in Tanzania, East Africa and beyond."
+          "value": "I’m Shivam Parmar, and Shivo Labs is my freelance software and digital solutions business in Dar es Salaam, Tanzania. I design and build websites, [[iPhone, Android and Windows apps]], and [[custom systems*]] such as task and document management, dashboards and internal tools. I set up AI workflows and automation, including [[MCP connections]] that let AI agents work with your own systems, saving you time. I also do professional branding, photography and social media for businesses in Tanzania, East Africa and beyond."
         },
         {
           "key": "home.about.note",
@@ -59,7 +59,7 @@
           "key": "work.paragraph",
           "label": "Under the pictures (home and Work page): the paragraph",
           "kind": "text",
-          "value": "Working Across [[Companies, Hotels And Brands Across Tanzania]], Building [[Client-Tailored Software, Applications, Websites]], And More, But Not Limited To These. [[More Than 20 Projects Completed]], And More Ongoing."
+          "value": "Working Across [[Companies, Hotels, Brands and More]], Creating and Building [[Client-Tailored Software, Applications, Websites, Photography, Socials]], And More, But Not Limited To These. [[More Than 20 Projects Completed]], And More Ongoing."
         },
         {
           "key": "products.title",
@@ -91,15 +91,9 @@
         },
         {
           "key": "about.intro",
-          "label": "The opening description",
+          "label": "About description (both paragraphs; leave a blank line between paragraphs)",
           "kind": "text",
-          "value": "I run Shivo Labs, my freelance software and digital solutions business in Dar es Salaam. I design and build [[websites, apps and custom systems]] for businesses, and set up the [[AI workflows]] that run inside them: [[functional at their core and considered in every detail]]."
-        },
-        {
-          "key": "about.belief",
-          "label": "What I believe (next to the numbers)",
-          "kind": "text",
-          "value": "I believe the most lasting work pairs [[technical precision with emotional depth]]. It creates systems that [[resonate with the people they serve]], from customers to teams and communities, and builds strong connections and [[long-term growth]] in business and in life."
+          "value": "I’m Shivam Parmar. I run Shivo Labs, a freelance software and digital solutions business in Dar es Salaam, Tanzania. I build [[websites, iPhone, Android and Windows apps, and custom business systems]], including tools for managing tasks and documents, dashboards and internal workflows. I also set up AI automation and MCP connections so AI tools can work with a business’s own systems. My creative work includes branding, photography, social media setup and content production for businesses in Tanzania, East Africa and beyond. I care about work that is well built, useful and easy for people to use.\n\nI spent eight years studying and working in pharmacy. That included a diploma, fieldwork, volunteering, a scholarship to study for my degree in India, and research and publications. I later began a master’s degree but stopped after a few months for personal reasons. Along the way, I met and married my wife, who is from Mozambique. Her support has meant a lot to me through these changes.\n\nPhotography has been a part of my life throughout. Taking photos with my Sony camera, flying my DJI drone and editing the results give me a sense of peace. I enjoy getting lost in making something beautiful, but I still wanted to explore other kinds of work.\n\nThen a career change gave me that chance. It has been one of the best things to happen to me, and I still remember the question that opened the door: [[“Can you automate things and use AI?”]]"
         },
         {
           "key": "about.shipped.title",

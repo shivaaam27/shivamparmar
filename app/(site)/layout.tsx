@@ -23,8 +23,8 @@ export const viewport: Viewport = {
   // edge to edge: the page runs under the status bar and the browser's bottom bar (iPhone and Android), as every other site
   // does; the CSS keeps the words clear of them with env(safe-area-inset-*)
   viewportFit: 'cover',
-  colorScheme: 'dark light',
-  themeColor: [{ media: '(prefers-color-scheme: dark)', color: '#141517' }, { media: '(prefers-color-scheme: light)', color: '#F5F5F2' }],
+  colorScheme: 'light dark',
+  themeColor: [{ media: '(prefers-color-scheme: dark)', color: '#141517' }, { media: '(prefers-color-scheme: light)', color: '#F9F9F9' }],
 };
 
 export default function SiteLayout({ children }: { children: React.ReactNode }) {
@@ -32,6 +32,11 @@ export default function SiteLayout({ children }: { children: React.ReactNode }) 
     <div className="v2">
       <span id="top" aria-hidden="true" />
       <V2Header />
+      {process.env.NODE_ENV === 'development' && <nav aria-label="Preview editing" style={{position:'fixed',bottom:16,right:16,zIndex:9999,display:'flex',gap:12,padding:'12px 18px',borderRadius:12,background:'#fff',color:'#141517',boxShadow:'0 2px 14px #0002',fontSize:14}}>
+        <a href="http://localhost:8794/#about" target="_blank" rel="noopener noreferrer">Edit About</a>
+        <a href="http://localhost:8794/cv" target="_blank" rel="noopener noreferrer">Open / edit CV ↗</a>
+      </nav>}
+
       <V2Reveal />
       {children}
       <V2Footer />

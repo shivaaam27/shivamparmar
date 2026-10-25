@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
 import { site } from '@/lib/content';
-import { AboutBelief, AboutOpen } from '@/components/site/AboutScenes';
+import { AboutOpen } from '@/components/site/AboutScenes';
 import ShippedRow from '@/components/site/ShippedRow';
 import ProductRows from '@/components/site/ProductRows';
 import { ServicesBlock, ServicesLd } from '@/components/site/Views';
@@ -21,7 +21,7 @@ export default function AboutPage() {
     <main id="main" className="v2-home v2-aboutp v3">
       <ServicesLd />
       <AboutOpen />
-      <AboutBelief />
+
       {/* on the cream: what I have built and shipped in one row, and the products in two */}
       <div className="v2-cream">
         <ShippedRow />

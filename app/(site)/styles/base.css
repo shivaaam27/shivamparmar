@@ -159,7 +159,7 @@ html:has(.v2), html:has(.v2) body { background: var(--v2-page, #2B6444); }
   padding-bottom: .05em;
 }
 .v2-link:hover, .v2-link:focus-visible { background-size: 100% .35em; }
-.v2-dark .v2-link { background-image: linear-gradient(rgba(200, 241, 105, .45), rgba(200, 241, 105, .45)); }
+.v2-dark .v2-link { background-image: none; }
 
 /* ---------- cards ---------- */
 .v2-card {

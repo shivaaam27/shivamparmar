@@ -95,9 +95,9 @@ export const aboutPage = {
     { label: 'Languages', value: 'English, Kiswahili, Hindi, Gujarati' },
   ],
   headline: ['Hi, I’m Shivam.'],
-  intro: [plain(copy('about.intro')), plain(copy('about.belief'))],
+  intro: copy('about.intro').split(/\n\s*\n/).map(plain),
   /** The same two, with the [[highlighted words]] marked. */
-  introRich: [copy('about.intro'), copy('about.belief')],
+  introRich: copy('about.intro').split(/\n\s*\n/),
   disciplinesTag: 'What I do',
   disciplines: [
     {
